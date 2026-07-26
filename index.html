@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-/* ===== MOBILE RESPONSIVE STYLES ===== */
 .mobile-menu-btn { display: none; position: fixed; top: 16px; left: 16px; width: 44px; height: 44px; background: var(--white); border: 1px solid var(--line); border-radius: 12px; z-index: 1001; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow); color: var(--text); font-size: 1.2rem; }
 .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
 
@@ -77,13 +76,11 @@ body.dark-mode {
 }
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
 
-/* FIX: Lock the body to prevent window scroll and empty space gaps */
 html, body { background: var(--bg); color: var(--text); height: 100%; overflow: hidden; -webkit-font-smoothing: antialiased; transition: background .2s, color .2s; }
 i.fa-solid, i.fa-regular { font-size: 18px; }
 
 body:not(.app-active) #chatbase-bubble-button, body:not(.app-active) #chatbase-bubble-window, body:not(.app-active) .chatbase-launcher, body:not(.app-active) iframe[src*="chatbase.co"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
 
-/* ===== ENHANCED ORIGINAL SPLASH SCREEN ===== */
 #splash-screen { position: fixed; inset: 0; background: #fff; z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; transition: opacity 0.5s ease, visibility 0.5s ease; }
 body.dark-mode #splash-screen { background: #11151c; }
 #splash-screen.hidden { opacity: 0; visibility: hidden; }
@@ -99,8 +96,6 @@ body.dark-mode .splash-loader { background: #2a303d; }
 .splash-loader-bar { width: 0; height: 100%; background: var(--accent); border-radius: 2px; transition: width 1.2s ease 1.2s; }
 #splash-screen.animate .splash-loader-bar { width: 100%; }
 
-/* ===== IN-APP ANIMATIONS ===== */
-/* FIX: Brought back animations but optimized for performance (transform/opacity only) */
 .screen { display: none; height: 100vh; height: -webkit-fill-available; overflow: hidden; }
 .screen.active { display: block; animation: fadeIn 0.3s ease; }
 #screen-landing.active { display: block; overflow-y: auto; }
@@ -208,7 +203,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .side-btn { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border: none; background: transparent; border-radius: 10px; cursor: pointer; font-weight: 500; font-size: .9rem; color: var(--muted); text-align: left; font-family: inherit; transition: all 0.2s ease; }
 .side-btn:hover { background: var(--bg); color: var(--text); transform: translateX(4px); }
 .side-btn.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
-.main { flex: 1 1 0%; min-width: 0; padding: 34px clamp(18px, 4vw, 52px); width: 100%; overflow-x: hidden; overflow-y: auto; height: 100vh; height: -webkit-fill-available; -webkit-overflow-scrolling: touch; }
+.main { flex: 1 1 0%; min-width: 0; padding: 34px clamp(18px, 4vw, 52px); width: 100%; overflow-x: hidden; overflow-y: auto; height: 100vh; height: -webkit-fill-available; -webkit-overflow-scrolling: touch; position: relative; z-index: 1; }
 
 .collapse-btn { position: absolute; right: -12px; top: 40px; width: 24px; height: 24px; background: var(--white); border: 1px solid var(--line); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; opacity: 0; transition: opacity 0.2s; color: var(--muted); font-size: 10px; }
 .sidebar:hover .collapse-btn { opacity: 1; }
@@ -347,7 +342,6 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .meal-body b { display:block; font-size:.95rem; margin-bottom:4px; }
 .meal-body small { display:block; font-size:.82rem; }
 
-/* ===== COACH APP STYLES ===== */
 #screen-coach-app.active { display: flex; min-height: 0; }
 #screen-coach-app .sidebar { width: 234px !important; padding: 22px 14px !important; border-right: 1px solid var(--line) !important; }
 #screen-coach-app .expand-btn, #screen-coach-app .collapse-btn { display: none !important; }
@@ -398,7 +392,6 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .footnote { font-size: .85rem; color: var(--muted); margin-top: 16px; text-align: center; }
 .footnote .inline { display: inline; font-weight: 600; }
 
-/* ===== FANCY SURVEY ===== */
 .survey-progress-fancy { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
 .survey-progress-fancy-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-dark)); border-radius: 4px; transition: width 0.4s ease; }
 .survey-counter { text-align: center; font-size: .82rem; color: var(--muted); margin-bottom: 24px; font-weight: 500; }
@@ -413,7 +406,6 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .survey-text-input { width: 100%; padding: 14px 18px; border: 2px solid var(--line); border-radius: 12px; font-size: 1.1rem; text-align: center; background: var(--white); color: var(--text); transition: border-color 0.2s; animation: slideUp 0.4s ease; }
 .survey-text-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
 
-/* ===== DAILY EXERCISE ENHANCED ===== */
 .daily-exercise-container { max-width: 700px; margin: 0 auto; }
 .de-step-title { font-size: 1.3rem; font-weight: 700; text-align: center; margin-bottom: 8px; animation: slideUp 0.4s ease; }
 .de-step-desc { color: var(--muted); text-align: center; font-size: .9rem; margin-bottom: 24px; animation: slideUp 0.5s ease; }
@@ -465,7 +457,6 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .de-day-header h2 { font-size: 1.5rem; font-weight: 700; }
 .de-day-header small { color: var(--muted); }
 
-/* ===== FANCY FITNESS CALCULATOR ===== */
 .calc-fancy-container { max-width: 600px; margin: 20px auto; }
 .calc-input-card { background: var(--white); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); border: 1px solid var(--line); display: flex; align-items: center; gap: 20px; flex-wrap: wrap; animation: popIn 0.4s ease; }
 .calc-current-display { flex: 1; text-align: center; min-width: 120px; }
@@ -1237,7 +1228,6 @@ function loginSuccess(email) {
 }
 function logout() { store.session = null; showScreen('screen-landing'); }
 
-// ===== 35-Question Survey =====
 const surveyQuestions = [
   {key:'name', q:'What is your full name?', icon:'fa-user', type:'text', placeholder:'e.g. Alex Johnson'},
   {key:'gender', q:'What is your gender?', icon:'fa-venus-mars', type:'select', options:['Male', 'Female']},
@@ -1415,11 +1405,11 @@ function closeGoalModal() {
   enterApp();
 }
 
-function currentUser() { return store.users[store.session]; }
+function currentUser() { return store.users[store.session] || null; }
 function showScreen(id) { 
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
   document.getElementById(id).classList.add('active'); 
-  window.scrollTo(0, 0); // Fix: Reset scroll position on screen change
+  window.scrollTo(0, 0);
   applySettings(); updateChatbaseVisibility(); 
 }
 function showTab(name) { 
@@ -1442,8 +1432,8 @@ function showTab(name) {
 function enterApp() { 
   showScreen('screen-app'); 
   showTab('home'); 
-  renderAllDynamic(); 
-  if (store.locationEnabled) loadWeather(); 
+  try { renderAllDynamic(); } catch(e) { console.error(e); }
+  try { if (store.locationEnabled) loadWeather(); } catch(e) { console.error(e); }
   if(!store.welcomed){ openModal('welcome-modal'); store.welcomed = true; } 
   updateChatbaseVisibility();
   
@@ -1594,8 +1584,9 @@ function getDailyItems(arr, count) { const seed = new Date().getDate(); let shuf
 function animateCount(el, target, decimals = 0, suffix = '') { const duration = 800; let start = 0; let startTime = null; function step(timestamp) { if (!startTime) startTime = timestamp; const progress = Math.min((timestamp - startTime) / duration, 1); const current = progress * target; el.textContent = current.toFixed(decimals) + suffix; if (progress < 1) requestAnimationFrame(step); } requestAnimationFrame(step); }
 
 function renderHome() {
-  const u = currentUser(), p = u.profile;
-  if (!p) return;
+  const u = currentUser();
+  if (!u || !u.profile) return;
+  const p = u.profile;
   document.getElementById('greeting').textContent = `Welcome ${p.name.split(' ')[0]}`;
   const bmi = p.weight / Math.pow(p.height / 100, 2);
   animateCount(document.getElementById('stat-bmi'), parseFloat(bmi.toFixed(1)), 1);
@@ -1619,8 +1610,9 @@ function renderHome() {
 }
 
 function renderCoachRecommendation() {
-  const u = currentUser(), p = u.profile;
-  if (!p) return;
+  const u = currentUser();
+  if (!u || !u.profile) return;
+  const p = u.profile;
   
   const sportMap = {
     'Lose weight': ['Running', 'Cycling', 'Boxing', 'HIIT'],
@@ -1668,6 +1660,8 @@ function renderChart() {
 }
 
 function renderSports() {
+  const u = currentUser();
+  if (!u || !u.profile) return;
   const limit = store.sportsShown;
   const sortedSports = [...SPORTS].sort((a, b) => {
     const aRec = store.recommendedSports.includes(a.name) ? 0 : 1;
@@ -1746,7 +1740,6 @@ function startLiveSession(name) {
 }
 function updateSessionTime() { if (isPaused) return; const elapsed = Math.floor((Date.now() - sessionStart) / 1000); const mins = Math.floor(elapsed / 60).toString().padStart(2, '0'); const secs = (elapsed % 60).toString().padStart(2, '0'); document.getElementById('session-timer').textContent = `${mins}:${secs}`; const cals = Math.round((elapsed / 60) * 8); document.getElementById('session-calories').innerHTML = `<i class="fa-solid fa-fire"></i> ${cals} kcal`; }
 
-// FIX: Stop Spotify when paused
 function pauseLiveSession() { 
   if (isPaused) return; 
   isPaused = true; 
@@ -1784,7 +1777,9 @@ function saveInlineSession() { const date = document.getElementById('log-date').
 function bumpStreak() { const u = currentUser(); const today = new Date().toDateString(); if (u.lastDone === today) return u.streak; const yesterday = new Date(Date.now() - 864e5).toDateString(); u.streak = (u.lastDone === yesterday) ? (u.streak || 0) + 1 : 1; u.lastDone = today; saveUser(store.session, u); return u.streak; }
 
 function renderDiet() {
-  const u = currentUser(), p = u.profile, s = u.survey;
+  const u = currentUser();
+  if (!u || !u.profile) return;
+  const p = u.profile, s = u.survey;
   let bmr = p.gender === 'Female' ? 447.6 + (9.25 * p.weight) + (3.1 * p.height) - (4.33 * p.age) : 88.36 + (13.4 * p.weight) + (4.8 * p.height) - (5.68 * p.age);
   let days = s?.schedule || '3-4'; let af = days === '1-2' ? 1.375 : days === '3-4' ? 1.55 : days === '5+' ? 1.725 : 1.9;
   let tdee = bmr * af; let target = tdee;
@@ -1802,11 +1797,15 @@ function renderDiet() {
 function showMealInfo(name) { const m = MEALS.find(x=>x.name===name); document.getElementById('modal-title').textContent = getMealName(m); document.getElementById('modal-desc').textContent = getMealDesc(m); document.getElementById('modal-macros').innerHTML = `<span class="macro-pill macro-kcal">${m.kcal} kcal</span><span class="macro-pill macro-p">P: ${m.p}g</span><span class="macro-pill macro-c">C: ${m.c}g</span><span class="macro-pill macro-f">F: ${m.f}g</span>`; document.getElementById('modal-ing-title').textContent = 'Nutrition & Ingredients'; document.getElementById('modal-ingredients').innerHTML = m.ingredients.map(i => `<li>${i}</li>`).join(''); document.getElementById('modal-rec-title').textContent = 'Recipe Steps'; document.getElementById('modal-recipe').innerHTML = m.recipe.map(r => `<li>${r}</li>`).join(''); openModal('meal-modal'); }
 
 function renderCalc() {
-  const u = currentUser(), p = u.profile;
+  const u = currentUser();
+  if (!u || !u.profile) return;
+  const p = u.profile;
   document.getElementById('calc-current-display').textContent = p.weight + ' kg';
 }
 function calculateGoalFancy() {
-  const u = currentUser(), p = u.profile, s = u.survey;
+  const u = currentUser();
+  if (!u || !u.profile) return;
+  const p = u.profile, s = u.survey;
   const current = p.weight;
   const target = parseFloat(document.getElementById('calc-target-only').value);
   if (!target) { alert("Please enter a target weight."); return; }
@@ -1839,7 +1838,6 @@ function calculateGoalFancy() {
   `;
 }
 
-// ===== DAILY EXERCISE ENHANCED =====
 let deState = { step: 1, view: 'front', muscles: [], numDays: 7, daysOfWeek: [], workouts: [], currentWorkout: 0 };
 const WORKOUT_DB = {
   'Chest': ['Push-ups', 'Incline Push-ups', 'Chest Dips', 'Pec Flyes'],
@@ -1860,7 +1858,7 @@ const WORKOUT_INFO = {
 
 function renderDailyExercise() {
   const u = currentUser();
-  if (!u.profile) return;
+  if (!u || !u.profile) return;
   const container = document.getElementById('daily-exercise-content');
   
   if (deState.step === 1) {
@@ -2210,7 +2208,9 @@ function renderWeather() {
 }
 
 function renderProfile() {
-  const u = currentUser(), p = u.profile, s = u.survey;
+  const u = currentUser();
+  if (!u || !u.profile) return;
+  const p = u.profile, s = u.survey;
   document.getElementById('profile-view').innerHTML = `
     <ul style="margin:0 0 12px 20px;line-height:1.9;font-size:.92rem;">
       <li><b>Name:</b> ${p.name}</li><li><b>Email:</b> ${store.session}</li>
@@ -2224,6 +2224,7 @@ function renderProfile() {
 
 function renderReminders() {
   const u = currentUser();
+  if (!u) return;
   const reminders = u.reminders || [];
   const list = document.getElementById('reminders-list');
   if (reminders.length === 0) { list.innerHTML = `<p style="color:var(--muted); text-align:center; padding: 20px 0;">No reminders yet. Create one above!</p>`; return; }
@@ -2262,9 +2263,6 @@ function exportToCalendar(index) {
 function checkReminders() { const u = currentUser(); if (!u || !u.reminders || u.reminders.length === 0) return; const now = new Date(); u.reminders.forEach((r, i) => { const rDate = new Date(`${r.date}T${r.time || '09:00'}`); const diff = (rDate - now) / 1000; if (diff <= 0 && diff > -30 && !r.triggered) { playReminderSound(); alert(`⏰ Reminder: ${r.title}\n${r.note || ''}`); r.triggered = true; saveUser(store.session, u); } }); }
 function playReminderSound() { try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const oscillator = ctx.createOscillator(); const gainNode = ctx.createGain(); oscillator.connect(gainNode); gainNode.connect(ctx.destination); oscillator.type = 'sine'; oscillator.frequency.value = 800; gainNode.gain.setValueAtTime(0.3, ctx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1); oscillator.start(ctx.currentTime); oscillator.stop(ctx.currentTime + 1); } catch(e) {} }
 
-// ==========================================
-// COACH ATHLETE MANAGEMENT
-// ==========================================
 const COACH_ATHLETES_KEY = 'volta_coach_athletes';
 const COACH_USERS_KEY = 'volta_coach_users';
 const COACH_SESSION_KEY = 'volta_coach_session';
@@ -2450,9 +2448,6 @@ function renderCoachSessionsChart() {
   });
 }
 
-// ==========================================
-// COACH MEALS FOR USER
-// ==========================================
 const COACH_MEALS_KEY = 'volta_coach_meals';
 function renderCoachMealsForUser() {
   const container = document.getElementById('diet-coach-meals');
@@ -2485,7 +2480,16 @@ function autofillFromInBody() {
   }).catch(err => { setMsg('inbody-status', 'Could not read image. Please enter manually.', 'error'); });
 }
 
-// ===== INITIALIZATION WITH INSTANT LOGIN =====
+// FIX: App disappears when entering Google Maps and coming back
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) {
+    const splash = document.getElementById('splash-screen');
+    if (splash && !splash.classList.contains('hidden')) {
+      splash.classList.add('hidden');
+    }
+  }
+});
+
 (function init() {
   applySettings(); 
   const splash = document.getElementById('splash-screen');
@@ -2498,7 +2502,6 @@ function autofillFromInBody() {
   const isUser = email && store.users[email];
   
   if (isCoach || isUser) {
-    // Returning user: Quick splash (500ms) -> Instant Login
     splash.classList.add('animate');
     setTimeout(() => {
       splash.classList.add('hidden');
@@ -2513,7 +2516,6 @@ function autofillFromInBody() {
       updateChatbaseVisibility();
     }, 500);
   } else {
-    // First time: Full splash animation (2.5s) -> Landing Page
     setTimeout(() => { 
       splash.classList.add('animate'); 
       setTimeout(() => { 
