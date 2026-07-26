@@ -29,6 +29,14 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; -webkit-fon
 i.fa-solid, i.fa-regular { font-size: 18px; }
 
 body:not(.app-active) #chatbase-bubble-button, body:not(.app-active) #chatbase-bubble-window, body:not(.app-active) .chatbase-launcher, body:not(.app-active) iframe[src*="chatbase.co"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+/* Hide chatbase FAB when overlays are open */
+#session-overlay.active ~ #chatbase-bubble-button,
+#session-overlay.active ~ iframe[src*="chatbase.co"],
+#meditation-overlay.active ~ #chatbase-bubble-button,
+#meditation-overlay.active ~ iframe[src*="chatbase.co"],
+.modal-overlay.active ~ #chatbase-bubble-button,
+.modal-overlay.active ~ iframe[src*="chatbase.co"] { display: none !important; }
+body.sidebar-mobile-open #chatbase-bubble-button, body.sidebar-mobile-open iframe[src*="chatbase.co"] { display: none !important; }
 
 /* ===== ENHANCED ORIGINAL SPLASH SCREEN ===== */
 #splash-screen { position: fixed; inset: 0; background: #fff; z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; transition: opacity 0.5s ease, visibility 0.5s ease; }
@@ -73,7 +81,7 @@ body.dark-mode .splash-loader { background: #2a303d; }
 .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 15px rgba(100,149,237,0.15); }
 .stat-icon { width: 42px; height: 42px; border-radius: 11px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .stat-card b { font-size: 1.2rem; display: block; letter-spacing: -.02em; margin-bottom: 2px; }
-.stat-card small { color: var(--muted); font-size: .78rem; font-weight: 500; display: block; }
+.stat-card small { color: var(--muted); font-size: .78rem; font-weight: 500; display: block; white-space: normal; overflow-wrap: break-word; }
 
 .landing-nav { display: flex; justify-content: space-between; align-items: center; padding: 24px clamp(20px, 5vw, 60px); }
 .landing-nav .brand { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
@@ -198,7 +206,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .see-more-btn:hover { background: var(--accent-soft); }
 
 .rec-sports-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 14px; }
-.rec-sport-card { background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: .88rem; color: var(--accent); }
+.rec-sport-card { background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: .88rem; color: var(--accent); word-wrap: break-word; overflow-wrap: break-word; }
 .rec-sport-card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(100,149,237,0.2); }
 .rec-sport-card i { display: block; font-size: 1.5rem; margin-bottom: 8px; }
 
@@ -212,7 +220,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .inline-logger { margin-top: 16px; padding: 16px; background: var(--bg); border-radius: 12px; border: 1px solid var(--line); }
 .inline-logger input, .inline-logger select { margin-bottom: 10px; }
 
-#session-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; animation: fadeIn 0.3s ease; overflow-y: auto; }
+#session-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; animation: fadeIn 0.3s ease; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 #session-overlay.active { display: flex; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .session-exit-btn { position: absolute; top: 24px; right: 24px; background: transparent; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; }
@@ -278,9 +286,9 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 #map-container { height: 400px; width: 100%; border-radius: var(--radius); z-index: 1; }
 .map-info { background: var(--white); padding: 16px; border-radius: var(--radius); margin-top: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
 
-.meditation-overlay { position: fixed; inset: 0; background: rgba(16,20,28,.95); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; color: #fff; animation: fadeIn 0.3s ease; }
+.meditation-overlay { position: fixed; inset: 0; background: #10141c; z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; color: #fff; animation: fadeIn 0.3s ease; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 40px 16px; }
 .meditation-overlay.active { display: flex; }
-.breath-circle { width: 200px; height: 200px; border-radius: 50%; background: rgba(100,149,237,.2); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; transition: transform 4s ease-in-out; margin-bottom: 40px; }
+.breath-circle { width: 200px; height: 200px; border-radius: 50%; background: rgba(100,149,237,.2); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: transform 4s ease-in-out; margin-bottom: 40px; padding: 20px; word-break: break-word; text-align: center; line-height: 1.3; }
 .breath-circle.grow { transform: scale(1.5); }
 .meditation-close { position: absolute; top: 30px; right: 30px; background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer; }
 
@@ -462,7 +470,7 @@ html { scroll-behavior: smooth; }
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.4);
+  background: rgba(0,0,0,.6);
   z-index: 9999;
   opacity: 0;
   transition: opacity .25s ease;
@@ -506,6 +514,16 @@ html { scroll-behavior: smooth; }
     padding: 70px 16px 24px 16px !important;
     width: 100% !important;
   }
+  /* Push header text past hamburger button */
+  #tab-home h1, #tab-home > p, #tab-sports h1, #tab-sports > p,
+  #tab-daily h1, #tab-daily > p, #tab-marathon h1, #tab-marathon > p,
+  #tab-diet h1, #tab-diet > p, #tab-calc h1, #tab-calc > p,
+  #tab-weather h1, #tab-weather > p, #tab-moodmorph h1, #tab-moodmorph > p,
+  #tab-reminders h1, #tab-reminders > p, #tab-profile h1, #tab-profile > p,
+  #tab-settings h1, #tab-settings > p {
+    padding-left: 0;
+    margin-left: 0;
+  }
 
   /* Auth shell responsive */
   .auth-shell { flex-direction: column; max-width: 100%; border-radius: 0; }
@@ -534,7 +552,11 @@ html { scroll-behavior: smooth; }
   .landing-features { grid-template-columns: 1fr 1fr; }
 
   /* Survey search grid */
-  #sport-search-grid { grid-template-columns: 1fr 1fr; }
+  #sport-search-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  #sport-search-grid .sport-card { padding: 10px 8px; font-size: .82rem; }
+  #sport-search-grid .sport-card .s-icon { width: 32px; height: 32px; }
+  #sport-search-grid .sport-card .s-icon i { font-size: 16px; }
+  #sport-search-grid .sport-card b { font-size: .8rem; }
 
   /* Session overlay */
   #session-overlay { padding: 16px; }
@@ -566,12 +588,17 @@ html { scroll-behavior: smooth; }
   .body-figure { width: 140px; }
   .muscle-buttons-grid { max-width: 100%; }
 
+  /* Reminder form inputs */
+  #tab-reminders input[type="date"],
+  #tab-reminders input[type="time"] { max-width: 100%; box-sizing: border-box; }
+  #tab-reminders .panel { overflow: hidden; }
+
   /* Mood row */
   .mood-row { gap: 6px; }
   .mood-btn { padding: 7px 12px; font-size: .82rem; }
 
   /* Meditation */
-  .breath-circle { width: 150px; height: 150px; font-size: 1.2rem; }
+  .breath-circle { width: 180px; height: 180px; font-size: 1rem; letter-spacing: 0.5px; padding: 30px; }
 
   /* Calculator */
   .calc-input-card { padding: 20px; }
@@ -664,11 +691,18 @@ html { scroll-behavior: smooth; }
 @media (max-width: 400px) {
   /* Very small screens */
   .cards-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card { padding: 10px; gap: 8px; }
+  .stat-icon { width: 32px; height: 32px; font-size: 14px; }
+  .stat-card b { font-size: .9rem; }
+  .stat-card small { font-size: .72rem; }
   .banner-grid { grid-template-columns: 1fr; }
   .landing-features { grid-template-columns: 1fr; }
   .sports-grid { grid-template-columns: repeat(2, 1fr); }
   .safety-grid { grid-template-columns: repeat(2, 1fr); }
   .landing-hero h1 { font-size: 1.5rem; }
+  .rec-sports-grid { grid-template-columns: 1fr 1fr; }
+  .rec-sport-card { padding: 10px; font-size: .82rem; }
+  .rec-sport-card i { font-size: 1.2rem; margin-bottom: 4px; }
 }
 
 /* ===== PERFORMANCE: Reduce animation overhead ===== */
@@ -698,6 +732,17 @@ html { scroll-behavior: smooth; }
 
 /* Prevent double-tap zoom delay on buttons */
 button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn, .survey-option-fancy { touch-action: manipulation; }
+
+
+/* On mobile, hide chatbase when overlays are open via JS class */
+body.overlay-active #chatbase-bubble-button,
+body.overlay-active #chatbase-bubble-window,
+body.overlay-active .chatbase-launcher,
+body.overlay-active iframe[src*="chatbase.co"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+
+
+/* Weather fallback mobile */
+#weather-city-input { font-size: .9rem; }
 
 </style>
 </head>
@@ -886,7 +931,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       </div>
       <div class="panel" id="coach-recommendation-panel">
         <h3><i class="fa-solid fa-brain"></i> Coach's Recommendation</h3>
-        <div id="recommendation-content">Analyzing your profile...</div>
+        <div id="recommendation-content" style="overflow-wrap: break-word; word-wrap: break-word;">Analyzing your profile...</div>
       </div>
       <div class="banner-grid">
         <div class="banner-card" onclick="showTab('diet')"><img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Diet"><div class="banner-overlay"><h4>Diet System</h4><p>Get personalized meal plans.</p></div></div>
@@ -961,7 +1006,17 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <div id="tab-weather" class="tab">
       <h1 style="font-size:1.45rem;font-weight:700;">Weather &amp; Outdoor Sport Safety</h1>
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;">Live conditions and per-sport recommendations for training outside.</p>
-      <div class="panel"><div id="weather-current">--</div><button class="btn ghost small" onclick="loadWeather(true)"><i class="fa-solid fa-rotate-right"></i> Refresh</button></div>
+      <div class="panel">
+        <div id="weather-current">--</div>
+        <div id="weather-fallback" style="display:none; margin-top:12px;">
+          <label style="font-size:.85rem;font-weight:600;color:var(--muted);">Search city manually (works in APK too):</label>
+          <div style="display:flex;gap:8px;margin-top:6px;">
+            <input type="text" id="weather-city-input" placeholder="e.g. Cairo, London" style="flex:1;margin:0;" />
+            <button class="btn primary small" onclick="searchWeatherCity()" style="margin:0;white-space:nowrap;"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+          </div>
+        </div>
+        <button class="btn ghost small" onclick="loadWeather(true)"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+      </div>
       <div class="panel"><h3><i class="fa-solid fa-shield-halved"></i> Outdoor sport safety right now</h3><div id="safety-grid" class="safety-grid"><i>...</i></div></div>
     </div>
 
@@ -1094,7 +1149,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 <section id="screen-coach-app" class="screen">
   
 <button id="mobile-menu-btn-coach" onclick="toggleMobileSidebarCoach()" style="display:none;position:fixed;top:10px;left:10px;z-index:10001;width:40px;height:40px;background:var(--white);border:1px solid var(--line);border-radius:10px;cursor:pointer;align-items:center;justify-content:center;color:var(--text);font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.12);"><i class="fa-solid fa-bars"></i></button>
-<div id="mobile-sidebar-overlay-coach" onclick="closeMobileSidebarCoach()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;opacity:0;transition:opacity .25s ease;pointer-events:none;"></div>
+<div id="mobile-sidebar-overlay-coach" onclick="closeMobileSidebarCoach()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;opacity:0;transition:opacity .25s ease;pointer-events:none;"></div>
 
   <aside class="sidebar"
     <div class="brand"><i class="fa-solid fa-bolt"></i><span>Volta</span><em>Coach</em></div>
@@ -1271,7 +1326,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <button class="modal-close" onclick="closeModal('sport-search-modal')" style="align-self: flex-end; margin-bottom: -10px;">&times;</button>
     <h3>Explore All 100 Sports</h3>
     <input type="text" id="sport-search-input" placeholder="Search sports..." oninput="renderSportSearchList()" style="margin-bottom: 16px;">
-    <div id="sport-search-grid" style="overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;"></div>
+    <div id="sport-search-grid" style="overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;"></div>
   </div>
 </div>
 
@@ -1473,8 +1528,8 @@ function ensureUserRecord(email, opts = {}) {
 }
 function setMsg(id, text, cls) { const el = document.getElementById(id); if (!el) return; el.textContent = text; el.className = 'msg ' + (cls || ''); }
 function togglePwd(id, el) { const i = document.getElementById(id); i.type = i.type === 'password' ? 'text' : 'password'; el.innerHTML = i.type === 'password' ? '<i class="fa-solid fa-eye"></i>' : '<i class="fa-solid fa-eye-slash"></i>'; }
-function openModal(id) { document.getElementById(id).classList.add('active'); }
-function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function openModal(id) { document.getElementById(id).classList.add('active'); document.body.classList.add('overlay-active'); try { if (window.chatbase) window.chatbase('hide'); } catch(e) {} }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); if (!document.querySelector('.modal-overlay.active') && !document.getElementById('session-overlay').classList.contains('active') && !document.getElementById('meditation-overlay').classList.contains('active')) { document.body.classList.remove('overlay-active'); try { if (window.chatbase) window.chatbase('show'); } catch(e) {} } }
 
 function updateChatbaseVisibility() {
   const isAppActive = document.getElementById('screen-app').classList.contains('active') || document.getElementById('screen-coach-app').classList.contains('active');
@@ -2015,6 +2070,7 @@ function showWorkout(name) {
 
 function startLiveSession(name) {
   if (sessionTimerInt) clearInterval(sessionTimerInt); if (pauseCountdownInt) clearInterval(pauseCountdownInt); isPaused = false;
+  try { if (window.chatbase) window.chatbase('hide'); } catch(e) {}
   currentLogSport = name;
   currentLogIntensity = document.getElementById('pre-session-intensity').value;
   sessionStart = Date.now();
@@ -2027,6 +2083,7 @@ function startLiveSession(name) {
   document.getElementById('session-pause-btn').classList.remove('hidden');
   document.getElementById('session-pause-timer').classList.add('hidden');
   document.getElementById('session-overlay').classList.add('active');
+  document.body.classList.add('overlay-active');
   sessionTimerInt = setInterval(updateSessionTime, 1000);
 }
 function updateSessionTime() { if (isPaused) return; const elapsed = Math.floor((Date.now() - sessionStart) / 1000); const mins = Math.floor(elapsed / 60).toString().padStart(2, '0'); const secs = (elapsed % 60).toString().padStart(2, '0'); document.getElementById('session-timer').textContent = `${mins}:${secs}`; const cals = Math.round((elapsed / 60) * 8); document.getElementById('session-calories').innerHTML = `<i class="fa-solid fa-fire"></i> ${cals} kcal`; }
@@ -2034,8 +2091,10 @@ function pauseLiveSession() { if (isPaused) return; isPaused = true; pauseSpotif
 function pauseSpotifyEmbed() { const iframe = document.querySelector('#session-playlist-container iframe'); if (iframe) { try { iframe.contentWindow.postMessage({ type: 'pause' }, '*'); } catch(e) {} } }
 function resumeSpotifyEmbed() { const iframe = document.querySelector('#session-playlist-container iframe'); if (iframe) { try { iframe.contentWindow.postMessage({ type: 'play' }, '*'); } catch(e) {} } }
 function resumeLiveSession() { isPaused = false; sessionStart += 60000; resumeSpotifyEmbed(); document.getElementById('session-pause-btn').classList.remove('hidden'); document.getElementById('session-pause-timer').classList.remove('hidden'); }
-function exitSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--muted); font-weight:600;">Session exited without logging.</p>`; }
-function stopLiveSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); const elapsedMins = Math.max(1, Math.round((Date.now() - sessionStart) / 60000)); const cals = Math.round(elapsedMins * 8); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--green); font-weight:600;">Session stopped! Duration: ${elapsedMins}m, Calories: ${cals}kcal</p>`; const logger = document.getElementById('inline-logger'); logger.classList.remove('hidden'); logger.innerHTML = `<h4 style="margin-bottom:10px;">Log Session: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}</h4><input type="date" id="log-date" required value="${new Date().toISOString().slice(0, 10)}"><input type="number" id="log-duration" min="1" max="600" value="${elapsedMins}" required><select id="log-intensity" required><option value="Light" ${currentLogIntensity === 'Light' ? 'selected' : ''}>Light</option><option value="Moderate" ${currentLogIntensity === 'Moderate' ? 'selected' : ''}>Moderate</option><option value="Intense" ${currentLogIntensity === 'Intense' ? 'selected' : ''}>Intense</option></select><input type="text" id="log-note" placeholder="Notes (optional)"><button class="btn primary small" onclick="saveInlineSession()"><i class="fa-solid fa-check"></i> Save Session</button>`; }
+function exitSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.body.classList.remove('overlay-active');
+  try { if (window.chatbase) window.chatbase('show'); } catch(e) {} document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--muted); font-weight:600;">Session exited without logging.</p>`; }
+function stopLiveSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.body.classList.remove('overlay-active');
+  try { if (window.chatbase) window.chatbase('show'); } catch(e) {} document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); const elapsedMins = Math.max(1, Math.round((Date.now() - sessionStart) / 60000)); const cals = Math.round(elapsedMins * 8); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--green); font-weight:600;">Session stopped! Duration: ${elapsedMins}m, Calories: ${cals}kcal</p>`; const logger = document.getElementById('inline-logger'); logger.classList.remove('hidden'); logger.innerHTML = `<h4 style="margin-bottom:10px;">Log Session: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}</h4><input type="date" id="log-date" required value="${new Date().toISOString().slice(0, 10)}"><input type="number" id="log-duration" min="1" max="600" value="${elapsedMins}" required><select id="log-intensity" required><option value="Light" ${currentLogIntensity === 'Light' ? 'selected' : ''}>Light</option><option value="Moderate" ${currentLogIntensity === 'Moderate' ? 'selected' : ''}>Moderate</option><option value="Intense" ${currentLogIntensity === 'Intense' ? 'selected' : ''}>Intense</option></select><input type="text" id="log-note" placeholder="Notes (optional)"><button class="btn primary small" onclick="saveInlineSession()"><i class="fa-solid fa-check"></i> Save Session</button>`; }
 function getSessionStats() { const sessions = currentUser().sessions || []; const totalMin = sessions.reduce((a, s) => a + s.duration, 0); const weekAgo = Date.now() - 7 * 864e5; const weekMin = sessions.filter(s => new Date(s.date).getTime() >= weekAgo).reduce((a, s) => a + s.duration, 0); const perSport = {}; sessions.forEach(s => { perSport[s.sport] = (perSport[s.sport] || 0) + s.duration; }); const top = Object.entries(perSport).sort((a, b) => b[1] - a[1])[0]; return { total: sessions.length, totalMin, weekMin, top }; }
 function renderTracker() { const stats = getSessionStats(); document.getElementById('tr-total').textContent = stats.total; document.getElementById('tr-minutes').textContent = stats.totalMin; document.getElementById('tr-week').textContent = stats.weekMin; document.getElementById('tr-top').textContent = stats.top ? getSportName(SPORTS.find(x=>x.name===stats.top[0])) : '--'; }
 function saveInlineSession() { const date = document.getElementById('log-date').value, duration = document.getElementById('log-duration').value, intensity = document.getElementById('log-intensity').value, note = document.getElementById('log-note').value.trim(); if(!date || !duration || !intensity) { alert('Please fill in date, duration, and intensity.'); return; } const u = currentUser(); if (!u.sessions) u.sessions = []; u.sessions.push({ sport: currentLogSport, date, duration: +duration, intensity, note }); saveUser(store.session, u); document.getElementById('inline-logger').innerHTML = `<p style="color:var(--green);font-weight:600;"><i class="fa-solid fa-check-circle"></i> Session logged successfully!</p>`; renderTracker(); bumpStreak(); renderHome(); }
@@ -2352,7 +2411,7 @@ function generateMoodWorkout() {
   document.getElementById('playlist-container').innerHTML = todaysPlaylists.map(id => `<iframe style="border-radius:12px; margin-bottom:10px;" src="https://open.spotify.com/embed/playlist/${id}" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`).join('');
 }
 let meditationBreathInt = null;
-function startMeditation() {
+function startMeditation() { document.body.classList.add('overlay-active'); try { if (window.chatbase) window.chatbase('hide'); } catch(e) {}
   document.getElementById('meditation-overlay').classList.add('active');
   const todaysTracks = getDailyItems(VIBE_PLAYLISTS.calm, 2);
   document.getElementById('meditation-audio').innerHTML = todaysTracks.map(id => `<iframe style="border-radius:12px;" src="https://open.spotify.com/embed/playlist/${id}" width="300" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`).join('');
@@ -2365,7 +2424,7 @@ function startMeditation() {
     isGrowing = !isGrowing;
   }, 4000);
 }
-function stopMeditation() { if (meditationBreathInt) clearInterval(meditationBreathInt); meditationBreathInt = null; document.getElementById('meditation-audio').innerHTML = ''; document.getElementById('meditation-overlay').classList.remove('active'); }
+function stopMeditation() { if (meditationBreathInt) clearInterval(meditationBreathInt); meditationBreathInt = null; document.getElementById('meditation-audio').innerHTML = ''; document.getElementById('meditation-overlay').classList.remove('active'); document.body.classList.remove('overlay-active'); try { if (window.chatbase) window.chatbase('show'); } catch(e) {} }
 
 function initMap() {
   if (map) { map.invalidateSize(); return; }
@@ -2446,15 +2505,16 @@ function loadWeather(force) {
     fetchWeather(lat, lon);
   }, (err) => {
     console.warn('Weather geolocation error:', err.message);
+    document.getElementById('weather-fallback').style.display = 'block';
     if (err.code === 1) {
-      el.innerHTML = '<div style="padding:16px;text-align:center;"><i class="fa-solid fa-location-crosshairs" style="font-size:24px;color:var(--muted);display:block;margin-bottom:8px;"></i><b>Location access denied</b><br><small style="color:var(--muted);">Please enable location in your browser settings to get weather data. On iOS: Settings > Safari > Location. On Android: Settings > Site settings > Location.</small></div>';
-      document.getElementById('safety-grid').innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">Enable location in browser settings to get outdoor safety alerts.</div>';
+      el.innerHTML = '<div style="padding:16px;text-align:center;"><i class="fa-solid fa-location-crosshairs" style="font-size:24px;color:var(--muted);display:block;margin-bottom:8px;"></i><b>Location access denied</b><br><small style="color:var(--muted);">You can search your city manually below, or enable location in your browser/app settings.</small></div>';
+      document.getElementById('safety-grid').innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">Search a city above or enable location to get outdoor safety alerts.</div>';
     } else if (err.code === 2) {
-      el.textContent = 'Location unavailable. Try again later.';
+      el.innerHTML = '<div style="padding:8px;text-align:center;"><b>Location unavailable</b><br><small style="color:var(--muted);">Try searching your city manually below.</small></div>';
     } else if (err.code === 3) {
-      el.textContent = 'Location request timed out. Tap Refresh to try again.';
+      el.innerHTML = '<div style="padding:8px;text-align:center;"><b>Location timed out</b><br><small style="color:var(--muted);">Try searching your city manually below.</small></div>';
     } else {
-      el.textContent = 'Could not get location.';
+      el.innerHTML = '<div style="padding:8px;text-align:center;"><b>Could not get location</b><br><small style="color:var(--muted);">Try searching your city manually below.</small></div>';
     }
   }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 });
 }
@@ -2465,8 +2525,32 @@ async function fetchWeather(lat, lon) {
     const data = await res.json(); 
     lastWeather = data.current; 
     store.weatherCache = { data: lastWeather, time: Date.now() };
+    store.locCache = { lat, lon, time: Date.now() };
     renderWeather();
-  } catch (err) { el.textContent = 'Could not load weather.'; }
+    document.getElementById('weather-fallback').style.display = 'none';
+  } catch (err) { 
+    el.textContent = 'Could not load weather.'; 
+    document.getElementById('weather-fallback').style.display = 'block';
+  }
+}
+async function searchWeatherCity() {
+  const city = document.getElementById('weather-city-input').value.trim();
+  if (!city) { alert('Please enter a city name.'); return; }
+  const el = document.getElementById('weather-current');
+  el.textContent = 'Searching for ' + city + '...';
+  try {
+    const geoRes = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(city) + '&count=1');
+    const geoData = await geoRes.json();
+    if (!geoData.results || geoData.results.length === 0) {
+      el.textContent = 'City not found. Try a different name.';
+      return;
+    }
+    const result = geoData.results[0];
+    store.locCache = { lat: result.latitude, lon: result.longitude, time: Date.now() };
+    await fetchWeather(result.latitude, result.longitude);
+  } catch (err) {
+    el.textContent = 'Could not search city. Check your connection.';
+  }
 }
 function renderWeather() {
   const w = lastWeather;
