@@ -280,7 +280,7 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 
 .meditation-overlay { position: fixed; inset: 0; background: rgba(16,20,28,.95); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; color: #fff; animation: fadeIn 0.3s ease; }
 .meditation-overlay.active { display: flex; }
-.breath-circle { width: 200px; height: 200px; border-radius: 50%; background: rgba(100,149,237,.2); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; transition: transform 4s ease-in-out; margin-bottom: 40px; }
+.breath-circle { width: 200px; height: 200px; border-radius: 50%; background: rgba(100,149,237,.2); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; transition: transform 4s ease-in-out; margin-bottom: 40px; text-indent: 2px; /* compensate for trailing letter-spacing so the visible text stays visually centered */ }
 .breath-circle.grow { transform: scale(1.5); }
 .meditation-close { position: absolute; top: 30px; right: 30px; background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer; }
 
@@ -494,6 +494,8 @@ html { scroll-behavior: smooth; }
   .sidebar.mobile-open {
     transform: translateX(0);
   }
+  /* Shift the brand/logo right so it isn't covered by the hamburger (show sidebar) button on mobile */
+  .sidebar .brand { padding-left: 50px; }
   #mobile-sidebar-overlay.active {
     display: block;
   }
@@ -578,7 +580,7 @@ html { scroll-behavior: smooth; }
   .mood-btn { padding: 7px 12px; font-size: .82rem; }
 
   /* Meditation */
-  .breath-circle { width: 150px; height: 150px; font-size: 1.2rem; }
+  .breath-circle { width: 150px; height: 150px; font-size: 1.1rem; letter-spacing: 1px; text-indent: 1px; }
 
   /* Calculator */
   .calc-input-card { padding: 20px; }
@@ -618,6 +620,9 @@ html { scroll-behavior: smooth; }
 
   /* Workout timer */
   .workout-timer-display { font-size: 2rem; }
+
+  /* Center the "Add Reminder" (set timer) button on mobile - it uses .fit so it's auto-width and would otherwise sit left-aligned */
+  #tab-reminders .panel > .btn.primary.fit { display: block; width: fit-content; margin-left: auto; margin-right: auto; }
 
   /* Session overlay scroll fix */
   #session-overlay.active { overflow-y: auto; align-items: flex-start; justify-content: flex-start; padding-top: 40px; }
