@@ -544,7 +544,12 @@ html { scroll-behavior: smooth; }
 
   /* Map */
   #map-container { height: 250px; }
-  .map-info { flex-direction: column; }
+  /* Center the Distance / Timer / buttons stack on mobile */
+  .map-info { flex-direction: column; align-items: center; text-align: center; }
+  .map-info > div { width: 100%; text-align: center; }
+  .map-info > div > h3 { text-align: center; }
+  /* Center the Start / Stop & Log buttons row (keep them side-by-side) */
+  .map-info > div[style*="display:flex"] { justify-content: center !important; }
 
   /* Panels */
   .panel { padding: 16px; margin-top: 12px; }
@@ -557,12 +562,14 @@ html { scroll-behavior: smooth; }
   /* Modal */
   .modal-content { padding: 20px; max-height: 90vh; }
   .modal-overlay { padding: 12px; }
+  /* Center the "Explore All 100 Sports" modal heading on mobile so it balances with the top-right close button */
+  #sport-search-modal .modal-content > h3 { text-align: center; }
 
   /* Auth card */
   .auth-card { padding: 24px 16px; border-radius: 0; }
 
   /* Muscle selector layout */
-  .muscle-selector-layout { flex-direction: column; }
+  .muscle-selector-layout { flex-direction: column; align-items: center; }
   .body-figure { width: 140px; }
   .muscle-buttons-grid { max-width: 100%; }
 
@@ -2098,7 +2105,7 @@ function calculateGoalFancy() {
 }
 
 // ===== DAILY EXERCISE ENHANCED =====
-let deState = { step: 1, view: 'front', muscles: [], numDays: 7, daysOfWeek: [], workouts: [], currentWorkout: 0 };
+let deState = { step: 1, view: 'front', muscles: [], numDays: 7, daysOfWeek: [], workouts: [], currentWorkout: 0, initialized: false };
 const WORKOUT_DB = {
   'Chest': ['Push-ups', 'Incline Push-ups', 'Chest Dips', 'Pec Flyes'],
   'Back': ['Pull-ups', 'Bent-over Rows', 'Superman Hold', 'Lat Pulldowns'],
@@ -2122,12 +2129,16 @@ function renderDailyExercise() {
   const container = document.getElementById('daily-exercise-content');
   
   if (deState.step === 1) {
-    const favSport = u.profile.sport;
-    let sportFocus = [];
-    if (['Running', 'Cycling', 'Football', 'Basketball'].includes(favSport)) sportFocus = ['Legs', 'Core'];
-    if (['Swimming', 'Boxing', 'Tennis', 'Martial Arts'].includes(favSport)) sportFocus = ['Back', 'Shoulders', 'Arms'];
-    if (['Weightlifting', 'Calisthenics'].includes(favSport)) sportFocus = ['Chest', 'Back', 'Legs'];
-    deState.muscles = [...new Set([...deState.muscles, ...sportFocus])];
+    // Only apply sport-based focus ONCE on first init so the user can freely toggle any muscle (incl. Legs/Core) afterwards
+    if (!deState.initialized) {
+      const favSport = u.profile.sport;
+      let sportFocus = [];
+      if (['Running', 'Cycling', 'Football', 'Basketball'].includes(favSport)) sportFocus = ['Legs', 'Core'];
+      if (['Swimming', 'Boxing', 'Tennis', 'Martial Arts'].includes(favSport)) sportFocus = ['Back', 'Shoulders', 'Arms'];
+      if (['Weightlifting', 'Calisthenics'].includes(favSport)) sportFocus = ['Chest', 'Back', 'Legs'];
+      deState.muscles = [...new Set([...deState.muscles, ...sportFocus])];
+      deState.initialized = true;
+    }
     
     container.innerHTML = `
       <div class="panel daily-exercise-container">
@@ -2244,11 +2255,8 @@ function toggleDayOfWeek(i, el) {
 function generateWorkoutList() {
   if (deState.daysOfWeek.length === 0) { alert('Please select at least one day.'); return; }
   deState.workouts = [];
-  const favSport = currentUser().profile.sport;
-  let sportFocus = [];
-  if (['Running', 'Cycling', 'Football', 'Basketball'].includes(favSport)) sportFocus = ['Legs', 'Core'];
-  if (['Swimming', 'Boxing', 'Tennis', 'Martial Arts'].includes(favSport)) sportFocus = ['Back', 'Shoulders', 'Arms'];
-  const targetMuscles = [...new Set([...deState.muscles, ...sportFocus])];
+  // Respect the user's explicit muscle selections (do not re-add sport focus here)
+  const targetMuscles = [...deState.muscles];
   targetMuscles.forEach(m => {
     (WORKOUT_DB[m] || []).forEach(w => deState.workouts.push({ name: w, done: false, info: WORKOUT_INFO[w] || {muscle: m} }));
   });
@@ -2328,7 +2336,7 @@ function finishDailyWorkout() {
   }
   bumpStreak();
   alert('Daily workout finished! Streak increased.');
-  deState.step = 1; deState.muscles = []; deState.daysOfWeek = []; deState.workouts = [];
+  deState.step = 1; deState.muscles = []; deState.daysOfWeek = []; deState.workouts = []; deState.initialized = false;
   renderDailyExercise();
   renderHome();
 }
