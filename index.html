@@ -2,63 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Volta — Smart Fitness Companion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-.mobile-menu-btn { display: none; position: fixed; top: 16px; left: 16px; width: 44px; height: 44px; background: var(--white); border: 1px solid var(--line); border-radius: 12px; z-index: 1001; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow); color: var(--text); font-size: 1.2rem; }
-.sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
-
-@media (max-width: 768px) {
-  .mobile-menu-btn { display: flex; top: calc(16px + env(safe-area-inset-top)); }
-  .landing-nav { padding: 16px 20px; }
-  .landing-nav .btn.ghost, .landing-nav .btn.primary { padding: 8px 14px; font-size: .8rem; }
-  .landing-hero { padding: 20px 16px; }
-  .landing-hero h1 { font-size: 2.2rem; }
-  .landing-hero p { font-size: 1rem; }
-  .landing-features { padding: 0 16px 40px; gap: 16px; }
-  .auth-shell { flex-direction: column; max-width: 100%; border-radius: 0; border: none; min-height: 100vh; }
-  .auth-side { display: none; }
-  .auth-main { padding: 60px 20px 40px; }
-  .auth-card { padding: 24px; border-radius: 16px; }
-  #screen-forgot.active, #screen-onboarding.active { padding: 16px; }
-  #screen-app.active, #screen-coach-app.active { flex-direction: column; }
-  .sidebar { position: fixed; top: 0; left: 0; height: 100vh; height: -webkit-fill-available; width: 260px; z-index: 1000; transform: translateX(-100%); transition: transform 0.3s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.15); padding-top: env(safe-area-inset-top); }
-  #screen-app.mobile-sidebar-open .sidebar, #screen-coach-app.mobile-sidebar-open .sidebar { transform: translateX(0); }
-  #screen-app.mobile-sidebar-open .sidebar-backdrop, #screen-coach-app.mobile-sidebar-open .sidebar-backdrop { display: block; }
-  .collapse-btn, .expand-btn { display: none !important; }
-  .main { padding: 70px 16px 40px; padding-top: calc(70px + env(safe-area-inset-top)); width: 100%; }
-  .cards-row, .banner-grid, .sports-grid, .diet-grid, .task-grid, .athletes-grid, .plans-grid { grid-template-columns: 1fr 1fr; }
-  .rec-sports-grid, .safety-grid, .muscle-buttons-grid { grid-template-columns: 1fr 1fr; }
-  .modal-content { padding: 24px 20px; max-width: 95% !important; }
-  #sport-search-modal .modal-content { height: 90vh; }
-  .sessions-table { font-size: .78rem; }
-  .sessions-table th, .sessions-table td { padding: 8px 6px; }
-  #map-container { height: 300px; }
-  .map-info { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .map-info div { width: 100%; }
-  .session-timer { font-size: 3.5rem; }
-  .session-calories { font-size: 1.5rem; }
-  .session-exit-btn { top: 16px; right: 16px; }
-  .calc-input-card { flex-direction: column; }
-  .calc-arrow { transform: rotate(90deg); }
-  .de-days-display { font-size: 2.5rem; }
-  .calc-result-days { font-size: 2.2rem; }
-  .muscle-selector-layout { flex-direction: column; align-items: center; }
-  .body-figure { margin-bottom: 20px; }
-  .breath-circle { width: 150px; height: 150px; }
-  .meditation-close { top: 16px; right: 16px; }
-}
-@media (max-width: 480px) {
-  .cards-row, .banner-grid, .diet-grid, .task-grid, .athletes-grid, .plans-grid { grid-template-columns: 1fr; }
-  .sports-grid { grid-template-columns: 1fr 1fr; }
-}
-@media (min-width: 769px) {
-  .mobile-menu-btn, .sidebar-backdrop { display: none !important; }
-}
 :root {
   --accent: #6495ED; --accent-dark: #4a7bd9; --accent-soft: #eaf1fd; --accent-border: #d5e3fa;
   --bg: #f5f8fd; --white: #ffffff; --text: #1a2233; --muted: #64718a; --line: #e6ecf6;
@@ -75,12 +25,12 @@ body.dark-mode {
   --sidebar-bg: #1a1f29;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
-
-html, body { background: var(--bg); color: var(--text); height: 100%; overflow: hidden; -webkit-font-smoothing: antialiased; transition: background .2s, color .2s; }
+body { background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background .2s, color .2s; }
 i.fa-solid, i.fa-regular { font-size: 18px; }
 
 body:not(.app-active) #chatbase-bubble-button, body:not(.app-active) #chatbase-bubble-window, body:not(.app-active) .chatbase-launcher, body:not(.app-active) iframe[src*="chatbase.co"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
 
+/* ===== ENHANCED ORIGINAL SPLASH SCREEN ===== */
 #splash-screen { position: fixed; inset: 0; background: #fff; z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; transition: opacity 0.5s ease, visibility 0.5s ease; }
 body.dark-mode #splash-screen { background: #11151c; }
 #splash-screen.hidden { opacity: 0; visibility: hidden; }
@@ -96,28 +46,30 @@ body.dark-mode .splash-loader { background: #2a303d; }
 .splash-loader-bar { width: 0; height: 100%; background: var(--accent); border-radius: 2px; transition: width 1.2s ease 1.2s; }
 #splash-screen.animate .splash-loader-bar { width: 100%; }
 
-.screen { display: none; height: 100vh; height: -webkit-fill-available; overflow: hidden; }
-.screen.active { display: block; animation: fadeIn 0.3s ease; }
-#screen-landing.active { display: block; overflow-y: auto; }
-#screen-auth.active, #screen-forgot.active, #screen-onboarding.active, #screen-coach-auth.active { display: flex; align-items: center; justify-content: center; padding: 24px; overflow-y: auto; }
+/* ===== IN-APP ANIMATIONS ===== */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: block; animation: fadeInUp 0.4s ease; }
+#screen-landing.active { display: flex; flex-direction: column; }
+#screen-auth.active, #screen-forgot.active, #screen-onboarding.active, #screen-coach-auth.active { display: flex; align-items: center; justify-content: center; padding: 24px; }
 
 .tab { display: none; }
-.tab.active { display: block; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.tab.active { display: block; animation: tabSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes tabSlideIn { from { opacity: 0; transform: translateY(15px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-.panel { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--line); padding: 24px; margin-top: 18px; transition: border-color 0.2s ease; animation: slideUp 0.4s ease both; }
-@keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+.panel { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--line); padding: 24px; margin-top: 18px; transition: border-color 0.2s ease; animation: panelSlideIn 0.4s ease both; }
+@keyframes panelSlideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 .panel h3 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 .panel ul { margin: 0 0 12px 20px; line-height: 1.9; font-size: .92rem; }
 .hidden { display: none; }
 
 .cards-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-top: 20px; align-items: stretch; }
-.stat-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--line); padding: 18px; display: flex; gap: 14px; align-items: center; height: 100%; transition: transform 0.2s ease; animation: popIn 0.4s ease both; }
+.stat-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--line); padding: 18px; display: flex; gap: 14px; align-items: center; height: 100%; transition: transform 0.2s ease; animation: cardStaggerIn 0.5s ease both; }
 .stat-card:nth-child(1) { animation-delay: 0.05s; }
 .stat-card:nth-child(2) { animation-delay: 0.1s; }
 .stat-card:nth-child(3) { animation-delay: 0.15s; }
 .stat-card:nth-child(4) { animation-delay: 0.2s; }
-@keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes cardStaggerIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 15px rgba(100,149,237,0.15); }
 .stat-icon { width: 42px; height: 42px; border-radius: 11px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .stat-card b { font-size: 1.2rem; display: block; letter-spacing: -.02em; margin-bottom: 2px; }
@@ -126,12 +78,12 @@ body.dark-mode .splash-loader { background: #2a303d; }
 .landing-nav { display: flex; justify-content: space-between; align-items: center; padding: 24px clamp(20px, 5vw, 60px); }
 .landing-nav .brand { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
 .landing-nav .brand i { color: var(--accent); }
-.landing-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 24px; max-width: 800px; margin: 0 auto; animation: fadeIn 0.6s ease; }
+.landing-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 24px; max-width: 800px; margin: 0 auto; animation: fadeInUp 0.6s ease; }
 .landing-hero h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.1; }
 .landing-hero h1 span { color: var(--accent); }
 .landing-hero p { font-size: 1.1rem; color: var(--muted); margin-bottom: 32px; max-width: 600px; line-height: 1.6; }
 .landing-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 1000px; margin: 40px auto; padding: 0 24px 60px; }
-.landing-feature { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); animation: slideUp 0.5s ease both; transition: transform 0.2s; }
+.landing-feature { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); animation: cardStaggerIn 0.5s ease both; transition: transform 0.2s; }
 .landing-feature:hover { transform: translateY(-5px); }
 .landing-feature:nth-child(1) { animation-delay: 0.1s; }
 .landing-feature:nth-child(2) { animation-delay: 0.2s; }
@@ -143,7 +95,8 @@ body.dark-mode .splash-loader { background: #2a303d; }
 .landing-feature h3 { font-size: 1.1rem; margin-bottom: 8px; }
 .landing-feature p { font-size: .9rem; color: var(--muted); line-height: 1.5; }
 
-.auth-shell { display: flex; width: 100%; max-width: 880px; background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--line); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.auth-shell { display: flex; width: 100%; max-width: 880px; background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--line); animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 .auth-side { flex: 1.05; background: linear-gradient(150deg, #4a7bd9, #7fabf3); color: #fff; padding: 48px 40px; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
 .auth-side .brand { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; }
 .auth-side .brand i { font-size: 26px; }
@@ -152,7 +105,7 @@ body.dark-mode .splash-loader { background: #2a303d; }
 .auth-side li { display: flex; align-items: center; gap: 10px; opacity: .95; }
 .auth-main { flex: 1; padding: 48px 40px; position: relative; }
 .back-to-home { position: absolute; top: 20px; left: 20px; background: transparent; border: none; color: var(--muted); font-weight: 600; font-size: .85rem; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-.auth-card { background: var(--white); border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--line); padding: 40px; width: 100%; max-width: 420px; position: relative; animation: popIn 0.4s ease; }
+.auth-card { background: var(--white); border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--line); padding: 40px; width: 100%; max-width: 420px; position: relative; animation: scaleIn 0.4s ease; }
 .auth-card.wide { max-width: 680px; }
 .card-title { font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
 .card-title i { color: var(--accent); font-size: 22px; }
@@ -192,9 +145,9 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .demo-inbox { background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; font-size: .84rem; text-align: left; }
 .code-preview { font-size: 1.5rem; font-weight: 800; letter-spacing: 6px; color: var(--accent); margin-top: 10px; }
 
-#screen-app.active { display: flex; min-height: 0; }
-.sidebar { width: 234px; flex-shrink: 0; background: var(--sidebar-bg); border-right: 1px solid var(--line); padding: 22px 14px; display: flex; flex-direction: column; gap: 3px; position: sticky; top: 0; height: 100vh; align-self: flex-start; transition: width 0.25s ease, padding 0.25s ease, background 0.2s; overflow-y: auto; overflow-x: hidden; white-space: nowrap; animation: slideRight 0.4s ease; }
-@keyframes slideRight { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+#screen-app.active { display: flex; min-height: 100vh; }
+.sidebar { width: 234px; flex-shrink: 0; background: var(--sidebar-bg); border-right: 1px solid var(--line); padding: 22px 14px; display: flex; flex-direction: column; gap: 3px; position: sticky; top: 0; height: 100vh; align-self: flex-start; transition: width 0.25s ease, padding 0.25s ease, background 0.2s; overflow-y: auto; overflow-x: hidden; white-space: nowrap; animation: slideInLeft 0.4s ease; }
+@keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 .sidebar .brand { display: flex; align-items: center; padding: 4px 12px 20px; overflow: hidden; white-space: nowrap; }
 .sidebar .brand i { color: var(--accent); font-size: 21px; flex-shrink: 0; }
 .sidebar .brand span { font-weight: 800; font-size: 1.1rem; margin-left: 9px; }
@@ -203,7 +156,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .side-btn { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border: none; background: transparent; border-radius: 10px; cursor: pointer; font-weight: 500; font-size: .9rem; color: var(--muted); text-align: left; font-family: inherit; transition: all 0.2s ease; }
 .side-btn:hover { background: var(--bg); color: var(--text); transform: translateX(4px); }
 .side-btn.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
-.main { flex: 1 1 0%; min-width: 0; padding: 34px clamp(18px, 4vw, 52px); width: 100%; overflow-x: hidden; overflow-y: auto; height: 100vh; height: -webkit-fill-available; -webkit-overflow-scrolling: touch; position: relative; z-index: 1; }
+.main { flex: 1 1 0%; min-width: 0; padding: 34px clamp(18px, 4vw, 52px); width: 100%; overflow-x: hidden; }
 
 .collapse-btn { position: absolute; right: -12px; top: 40px; width: 24px; height: 24px; background: var(--white); border: 1px solid var(--line); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; opacity: 0; transition: opacity 0.2s; color: var(--muted); font-size: 10px; }
 .sidebar:hover .collapse-btn { opacity: 1; }
@@ -217,7 +170,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .goal-progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 5px; transition: width 0.5s ease; }
 
 .banner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 18px; }
-.banner-card { border-radius: var(--radius); overflow: hidden; position: relative; height: 160px; cursor: pointer; box-shadow: var(--shadow); border: 1px solid var(--line); transition: transform 0.3s ease, box-shadow 0.3s ease; animation: popIn 0.5s ease both; }
+.banner-card { border-radius: var(--radius); overflow: hidden; position: relative; height: 160px; cursor: pointer; box-shadow: var(--shadow); border: 1px solid var(--line); transition: transform 0.3s ease, box-shadow 0.3s ease; animation: cardStaggerIn 0.6s ease both; }
 .banner-card:nth-child(1) { animation-delay: 0.1s; }
 .banner-card:nth-child(2) { animation-delay: 0.2s; }
 .banner-card:nth-child(3) { animation-delay: 0.3s; }
@@ -231,7 +184,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .banner-overlay p { font-size: .8rem; opacity: .9; }
 
 .sports-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 14px; margin-top: 18px; }
-.sport-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px 14px; text-align: center; cursor: pointer; border: 1px solid var(--line); transition: all 0.2s ease; position: relative; animation: popIn 0.4s ease both; }
+.sport-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px 14px; text-align: center; cursor: pointer; border: 1px solid var(--line); transition: all 0.2s ease; position: relative; animation: cardStaggerIn 0.4s ease both; }
 .sport-card:nth-child(1) { animation-delay: 0.05s; }
 .sport-card:nth-child(2) { animation-delay: 0.1s; }
 .sport-card:nth-child(3) { animation-delay: 0.15s; }
@@ -250,7 +203,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .rec-sport-card i { display: block; font-size: 1.5rem; margin-bottom: 8px; }
 
 .safety-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 18px; }
-.safety-item { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; box-shadow: var(--shadow); transition: transform 0.2s; animation: popIn 0.4s ease both; }
+.safety-item { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; box-shadow: var(--shadow); transition: transform 0.2s; animation: cardStaggerIn 0.4s ease both; }
 .safety-item:hover { transform: translateY(-3px); }
 .safety-item .s-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; }
 .safety-item b { font-size: .85rem; }
@@ -259,12 +212,14 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .inline-logger { margin-top: 16px; padding: 16px; background: var(--bg); border-radius: 12px; border: 1px solid var(--line); }
 .inline-logger input, .inline-logger select { margin-bottom: 10px; }
 
-#session-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; overflow-y: auto; }
-#session-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+#session-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; animation: fadeIn 0.3s ease; overflow-y: auto; }
+#session-overlay.active { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .session-exit-btn { position: absolute; top: 24px; right: 24px; background: transparent; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; }
 .session-content { text-align: center; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 400px; }
 .session-content h2 { font-size: 1.8rem; margin-bottom: 30px; color: var(--text); }
-.session-timer { font-size: 5rem; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; margin-bottom: 15px; }
+.session-timer { font-size: 5rem; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; margin-bottom: 15px; animation: pulseGlow 2s infinite; }
+@keyframes pulseGlow { 0% { text-shadow: 0 0 10px rgba(100,149,237, 0.2); } 50% { text-shadow: 0 0 25px rgba(100,149,237, 0.5); } 100% { text-shadow: 0 0 10px rgba(100,149,237, 0.2); } }
 .session-calories { font-size: 2rem; font-weight: 600; color: var(--green); margin-bottom: 40px; }
 .session-actions { display: flex; gap: 15px; justify-content: center; width: 100%; flex-wrap: wrap; }
 .session-actions .btn { width: auto; margin: 0; padding: 12px 24px; font-size: 1rem; }
@@ -281,7 +236,7 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance
 input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 3px solid var(--white); }
 
 .diet-grid, .task-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 18px; }
-.diet-card, .task-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--line); padding: 18px; box-shadow: var(--shadow); transition: transform 0.2s ease, border-color 0.2s ease; position: relative; display: flex; flex-direction: column; justify-content: space-between; animation: popIn 0.4s ease both; }
+.diet-card, .task-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--line); padding: 18px; box-shadow: var(--shadow); transition: transform 0.2s ease, border-color 0.2s ease; position: relative; display: flex; flex-direction: column; justify-content: space-between; animation: cardStaggerIn 0.4s ease both; }
 .diet-card:hover, .task-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 6px 15px rgba(100,149,237,0.15); }
 .diet-card h4, .task-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; padding-right: 24px; }
 .diet-card .diet-desc, .task-card .task-desc { font-size: .85rem; color: var(--muted); margin-bottom: 12px; line-height: 1.4; }
@@ -298,7 +253,7 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .task-done { opacity: 0.6; }
 .task-done h4 { text-decoration: line-through; }
 
-.reminder-item { background: var(--bg); border: 1px solid var(--line); padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; animation: slideUp 0.3s ease; }
+.reminder-item { background: var(--bg); border: 1px solid var(--line); padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; animation: fadeInUp 0.3s ease; }
 .reminder-item .r-details b { display: block; font-size: 1rem; }
 .reminder-item .r-details small { color: var(--muted); font-size: .8rem; }
 
@@ -329,28 +284,29 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .breath-circle.grow { transform: scale(1.5); }
 .meditation-close { position: absolute; top: 30px; right: 30px; background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer; }
 
-.welcome-feature { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; animation: slideUp 0.4s ease both; }
+.welcome-feature { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; animation: fadeInUp 0.4s ease both; }
 .welcome-feature i { width: 40px; height: 40px; background: var(--accent-soft); color: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
 .welcome-feature b { display: block; font-size: .95rem; margin-bottom: 2px; }
 .welcome-feature small { color: var(--muted); font-size: .82rem; }
 
 .onboard-step { animation: fadeIn .3s ease; }
-.meal-card { background:var(--white); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; transition:.2s; cursor:pointer; animation: popIn 0.4s ease both; }
+.meal-card { background:var(--white); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; transition:.2s; cursor:pointer; animation: cardStaggerIn 0.4s ease both; }
 .meal-card:hover { border-color:var(--accent); transform:translateY(-5px); box-shadow:var(--shadow); }
 .meal-img { height:120px; background-size:cover; background-position:center; }
 .meal-body { padding:14px; }
 .meal-body b { display:block; font-size:.95rem; margin-bottom:4px; }
 .meal-body small { display:block; font-size:.82rem; }
 
-#screen-coach-app.active { display: flex; min-height: 0; }
-#screen-coach-app .sidebar { width: 234px !important; padding: 22px 14px !important; border-right: 1px solid var(--line) !important; }
+/* ===== COACH APP STYLES ===== */
+#screen-coach-app.active { display: flex; min-height: 100vh; }
+#screen-coach-app .sidebar { width: 234px !important; padding: 22px 14px !important; border-right: 1px solid var(--line) !important; animation: slideInLeft 0.4s ease; }
 #screen-coach-app .expand-btn, #screen-coach-app .collapse-btn { display: none !important; }
 .page-title { font-size: 1.45rem; font-weight: 700; }
 .page-sub { color: var(--muted); margin-bottom: 8px; font-size: .92rem; }
 #screen-coach-app .main { max-width: 1000px; }
 #coachSessionsChart-container { max-height: 250px; }
 
-.athlete-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; gap: 14px; align-items: flex-start; box-shadow: var(--shadow); transition: transform 0.2s, border-color 0.2s; animation: popIn 0.4s ease both; }
+.athlete-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; gap: 14px; align-items: flex-start; box-shadow: var(--shadow); transition: transform 0.2s, border-color 0.2s; animation: cardStaggerIn 0.4s ease both; }
 .athlete-card:hover { transform: translateY(-3px); border-color: var(--accent); }
 .athlete-card .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; flex-shrink: 0; }
 .athlete-card .a-body { flex: 1; min-width: 0; }
@@ -379,7 +335,7 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .load-high { background: var(--red-bg); color: var(--red); }
 
 .plans-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
-.plan-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; transition: transform 0.2s, border-color 0.2s; animation: popIn 0.4s ease both; }
+.plan-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; transition: transform 0.2s, border-color 0.2s; animation: cardStaggerIn 0.4s ease both; }
 .plan-card:hover { transform: translateY(-3px); border-color: var(--accent); }
 .plan-card.new { border: 2px dashed var(--accent-border); display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; color: var(--accent); font-weight: 600; }
 .plan-icon { width: 40px; height: 40px; background: var(--accent-soft); color: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
@@ -392,34 +348,37 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .footnote { font-size: .85rem; color: var(--muted); margin-top: 16px; text-align: center; }
 .footnote .inline { display: inline; font-weight: 600; }
 
+/* ===== FANCY SURVEY ===== */
 .survey-progress-fancy { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
 .survey-progress-fancy-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-dark)); border-radius: 4px; transition: width 0.4s ease; }
 .survey-counter { text-align: center; font-size: .82rem; color: var(--muted); margin-bottom: 24px; font-weight: 500; }
 .survey-icon-wrapper { width: 72px; height: 72px; margin: 0 auto 20px; background: var(--accent-soft); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 1.8rem; transition: transform 0.3s; animation: popIn 0.4s ease; }
-.survey-question-text { font-size: 1.25rem; font-weight: 700; text-align: center; margin-bottom: 24px; line-height: 1.4; animation: slideUp 0.4s ease; }
+@keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+.survey-question-text { font-size: 1.25rem; font-weight: 700; text-align: center; margin-bottom: 24px; line-height: 1.4; animation: fadeInUp 0.4s ease; }
 .survey-options-fancy { display: grid; gap: 10px; }
-.survey-option-fancy { padding: 14px 20px; border: 2px solid var(--line); border-radius: 12px; background: var(--white); cursor: pointer; font-size: .92rem; font-weight: 600; transition: all 0.2s; text-align: center; font-family: inherit; color: var(--text); animation: slideUp 0.4s ease; }
+.survey-option-fancy { padding: 14px 20px; border: 2px solid var(--line); border-radius: 12px; background: var(--white); cursor: pointer; font-size: .92rem; font-weight: 600; transition: all 0.2s; text-align: center; font-family: inherit; color: var(--text); animation: fadeInUp 0.4s ease; }
 .survey-option-fancy:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(100,149,237,0.15); }
 .survey-option-fancy.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
 .survey-nav-fancy { display: flex; justify-content: space-between; margin-top: 24px; gap: 12px; }
 .survey-nav-fancy .btn { margin-top: 0; width: auto; padding: 10px 24px; }
-.survey-text-input { width: 100%; padding: 14px 18px; border: 2px solid var(--line); border-radius: 12px; font-size: 1.1rem; text-align: center; background: var(--white); color: var(--text); transition: border-color 0.2s; animation: slideUp 0.4s ease; }
+.survey-text-input { width: 100%; padding: 14px 18px; border: 2px solid var(--line); border-radius: 12px; font-size: 1.1rem; text-align: center; background: var(--white); color: var(--text); transition: border-color 0.2s; animation: fadeInUp 0.4s ease; }
 .survey-text-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
 
+/* ===== DAILY EXERCISE ENHANCED ===== */
 .daily-exercise-container { max-width: 700px; margin: 0 auto; }
-.de-step-title { font-size: 1.3rem; font-weight: 700; text-align: center; margin-bottom: 8px; animation: slideUp 0.4s ease; }
-.de-step-desc { color: var(--muted); text-align: center; font-size: .9rem; margin-bottom: 24px; animation: slideUp 0.5s ease; }
+.de-step-title { font-size: 1.3rem; font-weight: 700; text-align: center; margin-bottom: 8px; animation: fadeInUp 0.4s ease; }
+.de-step-desc { color: var(--muted); text-align: center; font-size: .9rem; margin-bottom: 24px; animation: fadeInUp 0.5s ease; }
 .muscle-view-toggle { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
 .muscle-view-btn { padding: 8px 16px; border: 1px solid var(--line); background: var(--white); border-radius: 20px; cursor: pointer; font-weight: 600; font-size: .85rem; transition: 0.2s; }
 .muscle-view-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 .muscle-selector-layout { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; justify-content: center; }
-.body-figure { width: 180px; flex-shrink: 0; position: relative; animation: slideUp 0.6s ease; }
+.body-figure { width: 180px; flex-shrink: 0; position: relative; animation: fadeInUp 0.6s ease; }
 .body-figure svg { width: 100%; height: auto; }
 .muscle-dot-svg { fill: rgba(100,149,237,0.15); stroke: var(--accent); stroke-width: 2; cursor: pointer; transition: all 0.25s; }
 .muscle-dot-svg:hover { fill: rgba(100,149,237,0.35); }
 .muscle-dot-svg.selected { fill: var(--accent); }
 .muscle-buttons-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; max-width: 350px; }
-.muscle-select-btn { padding: 14px 12px; border: 2px solid var(--line); border-radius: 12px; background: var(--white); cursor: pointer; font-size: .88rem; font-weight: 600; transition: all 0.2s; text-align: center; font-family: inherit; color: var(--text); display: flex; flex-direction: column; align-items: center; gap: 6px; animation: popIn 0.4s ease both; }
+.muscle-select-btn { padding: 14px 12px; border: 2px solid var(--line); border-radius: 12px; background: var(--white); cursor: pointer; font-size: .88rem; font-weight: 600; transition: all 0.2s; text-align: center; font-family: inherit; color: var(--text); display: flex; flex-direction: column; align-items: center; gap: 6px; animation: cardStaggerIn 0.4s ease both; }
 .muscle-select-btn:nth-child(1) { animation-delay: 0.1s; }
 .muscle-select-btn:nth-child(2) { animation-delay: 0.15s; }
 .muscle-select-btn:nth-child(3) { animation-delay: 0.2s; }
@@ -430,7 +389,7 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .muscle-select-btn:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-3px); }
 .muscle-select-btn.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
 .muscle-select-btn.selected i { color: #fff; }
-.de-days-slider { width: 100%; max-width: 400px; margin: 20px auto; animation: slideUp 0.4s ease; }
+.de-days-slider { width: 100%; max-width: 400px; margin: 20px auto; animation: fadeInUp 0.4s ease; }
 .de-days-display { font-size: 3.5rem; font-weight: 800; color: var(--accent); text-align: center; margin: 10px 0; }
 .de-day-buttons { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .de-day-btn { width: 70px; height: 70px; border: 2px solid var(--line); border-radius: 14px; background: var(--white); cursor: pointer; font-size: .82rem; font-weight: 600; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-family: inherit; color: var(--text); animation: popIn 0.3s ease both; }
@@ -438,8 +397,8 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .de-day-btn.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
 .de-day-btn.selected i { color: #fff; }
 .workout-list-container { display: flex; flex-direction: column; gap: 12px; max-width: 500px; margin: 0 auto; }
-.workout-block { background: var(--white); border: 2px solid var(--line); border-radius: 12px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; transition: all 0.25s; position: relative; animation: slideRight 0.3s ease both; }
-@keyframes slideRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+.workout-block { background: var(--white); border: 2px solid var(--line); border-radius: 12px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; transition: all 0.25s; position: relative; animation: slideInRight 0.3s ease both; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
 .workout-block.locked { opacity: 0.45; cursor: not-allowed; }
 .workout-block.active { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); cursor: pointer; }
 .workout-block.active:hover { transform: translateY(-3px); }
@@ -457,8 +416,9 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .de-day-header h2 { font-size: 1.5rem; font-weight: 700; }
 .de-day-header small { color: var(--muted); }
 
+/* ===== FANCY FITNESS CALCULATOR ===== */
 .calc-fancy-container { max-width: 600px; margin: 20px auto; }
-.calc-input-card { background: var(--white); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); border: 1px solid var(--line); display: flex; align-items: center; gap: 20px; flex-wrap: wrap; animation: popIn 0.4s ease; }
+.calc-input-card { background: var(--white); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); border: 1px solid var(--line); display: flex; align-items: center; gap: 20px; flex-wrap: wrap; animation: cardStaggerIn 0.4s ease; }
 .calc-current-display { flex: 1; text-align: center; min-width: 120px; }
 .calc-current-display small { color: var(--muted); font-size: .82rem; display: block; margin-bottom: 4px; }
 .calc-big-number { font-size: 2.2rem; font-weight: 800; color: var(--accent); }
@@ -467,13 +427,278 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .calc-target-input label { text-align: center; }
 .calc-target-input input { font-size: 1.4rem; text-align: center; font-weight: 700; padding: 14px; }
 .calc-go-btn { width: 100%; padding: 14px; font-size: 1rem; }
-.calc-result-card { background: linear-gradient(135deg, var(--accent-soft), var(--white)); border-radius: var(--radius); padding: 28px; margin-top: 20px; border: 1px solid var(--accent-border); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.calc-result-card { background: linear-gradient(135deg, var(--accent-soft), var(--white)); border-radius: var(--radius); padding: 28px; margin-top: 20px; border: 1px solid var(--accent-border); animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .calc-result-days { font-size: 3rem; font-weight: 800; color: var(--accent); text-align: center; line-height: 1.2; }
 .calc-result-label { text-align: center; color: var(--muted); font-size: .9rem; margin-bottom: 16px; }
 .calc-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
 .calc-result-item { background: var(--white); padding: 14px; border-radius: 10px; text-align: center; border: 1px solid var(--line); }
 .calc-result-item b { font-size: 1.2rem; color: var(--accent); display: block; }
 .calc-result-item small { color: var(--muted); font-size: .78rem; }
+
+html { scroll-behavior: smooth; }
+
+/* ===== MOBILE RESPONSIVE FIXES ===== */
+#mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 10001;
+  width: 40px;
+  height: 40px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  transition: background .15s;
+}
+#mobile-menu-btn:hover { background: var(--accent-soft); }
+#mobile-sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+}
+#mobile-sidebar-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  /* Hamburger button visible on mobile */
+  #mobile-menu-btn { display: flex; }
+
+  /* Sidebar becomes off-canvas drawer on mobile */
+  .sidebar {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    height: 100vh !important;
+    width: 260px !important;
+    z-index: 10000 !important;
+    transform: translateX(-100%);
+    transition: transform .3s ease !important;
+    padding: 22px 14px !important;
+    overflow-y: auto !important;
+    align-self: auto !important;
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  #mobile-sidebar-overlay.active {
+    display: block;
+  }
+
+  /* Hide collapse/expand buttons on mobile */
+  .collapse-btn, .expand-btn { display: none !important; }
+
+  /* Main content takes full width */
+  .main {
+    padding: 70px 16px 24px 16px !important;
+    width: 100% !important;
+  }
+
+  /* Auth shell responsive */
+  .auth-shell { flex-direction: column; max-width: 100%; border-radius: 0; }
+  .auth-side { display: none; }
+  .auth-main { padding: 32px 20px; }
+
+  /* Cards row - 2 columns on mobile */
+  .cards-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+  /* Banner grid */
+  .banner-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Sports grid */
+  .sports-grid { grid-template-columns: repeat(3, 1fr); }
+  .sport-card { padding: 14px 10px; }
+  .sport-card .s-icon { width: 36px; height: 36px; }
+  .sport-card .s-icon i { font-size: 18px; }
+
+  /* Diet/task grid */
+  .diet-grid, .task-grid { grid-template-columns: 1fr; }
+
+  /* Safety grid */
+  .safety-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* Landing features */
+  .landing-features { grid-template-columns: 1fr 1fr; }
+
+  /* Survey search grid */
+  #sport-search-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Session overlay */
+  #session-overlay { padding: 16px; }
+  .session-timer { font-size: 3rem; }
+  .session-calories { font-size: 1.5rem; }
+  .session-actions .btn { padding: 10px 16px; font-size: .9rem; }
+
+  /* Map */
+  #map-container { height: 250px; }
+  .map-info { flex-direction: column; }
+
+  /* Panels */
+  .panel { padding: 16px; margin-top: 12px; }
+
+  /* Stat cards smaller */
+  .stat-card { padding: 12px; gap: 10px; }
+  .stat-icon { width: 36px; height: 36px; }
+  .stat-card b { font-size: 1rem; }
+
+  /* Modal */
+  .modal-content { padding: 20px; max-height: 90vh; }
+  .modal-overlay { padding: 12px; }
+
+  /* Auth card */
+  .auth-card { padding: 24px 16px; border-radius: 0; }
+
+  /* Muscle selector layout */
+  .muscle-selector-layout { flex-direction: column; }
+  .body-figure { width: 140px; }
+  .muscle-buttons-grid { max-width: 100%; }
+
+  /* Mood row */
+  .mood-row { gap: 6px; }
+  .mood-btn { padding: 7px 12px; font-size: .82rem; }
+
+  /* Meditation */
+  .breath-circle { width: 150px; height: 150px; font-size: 1.2rem; }
+
+  /* Calculator */
+  .calc-input-card { padding: 20px; }
+  .calc-big-number { font-size: 1.8rem; }
+
+  /* Coach sidebar */
+  #screen-coach-app .sidebar {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    height: 100vh !important;
+    width: 260px !important;
+    z-index: 10000 !important;
+    transform: translateX(-100%);
+    transition: transform .3s ease !important;
+  }
+  #screen-coach-app .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Athletes grid */
+  .athletes-grid { grid-template-columns: 1fr; }
+
+  /* Plans grid */
+  .plans-grid { grid-template-columns: 1fr; }
+
+  /* Tables scroll */
+  .sessions-table { font-size: .82rem; }
+  .sessions-table th, .sessions-table td { padding: 8px 6px; }
+
+  /* Landing hero smaller */
+  .landing-hero h1 { font-size: 1.8rem; }
+  .landing-hero p { font-size: .95rem; }
+
+  /* Day buttons */
+  .de-day-btn { width: 56px; height: 56px; }
+
+  /* Workout timer */
+  .workout-timer-display { font-size: 2rem; }
+
+  /* Session overlay scroll fix */
+  #session-overlay.active { overflow-y: auto; align-items: flex-start; justify-content: flex-start; padding-top: 40px; }
+  .session-content { max-width: 100%; }
+
+  /* Prevent body scroll when sidebar open */
+  body.sidebar-mobile-open { overflow: hidden; }
+
+  /* Daily exercise container */
+  .daily-exercise-container { max-width: 100%; }
+
+  /* Banner cards smaller */
+  .banner-card { height: 120px; }
+
+  /* Rec sports grid */
+  .rec-sports-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Meal cards */
+  .meal-card { border-radius: var(--radius); }
+
+  /* Footnote */
+  .footnote { font-size: .82rem; }
+
+  /* Prevent horizontal overflow */
+  .main, body { overflow-x: hidden; }
+
+  /* Ensure content is visible immediately */
+  #screen-app.active { min-height: auto; }
+
+  /* Spotify iframe mobile */
+  #session-playlist-container iframe { height: 152px; max-width: 100%; }
+
+  /* Landing nav mobile */
+  .landing-nav { padding: 16px 12px; }
+  .landing-nav .brand { font-size: 1.2rem; }
+
+  /* Inline logger */
+  .inline-logger { padding: 12px; }
+
+  /* Prevent iOS bounce scroll issues */
+  html { height: 100%; overflow: hidden; }
+  body { height: 100%; overflow: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Touch-friendly buttons */
+  .side-btn, .btn { min-height: 44px; }
+
+  /* Coach top bar on mobile */
+  #screen-coach-app .main { padding-top: 70px !important; }
+}
+
+@media (max-width: 400px) {
+  /* Very small screens */
+  .cards-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .banner-grid { grid-template-columns: 1fr; }
+  .landing-features { grid-template-columns: 1fr; }
+  .sports-grid { grid-template-columns: repeat(2, 1fr); }
+  .safety-grid { grid-template-columns: repeat(2, 1fr); }
+  .landing-hero h1 { font-size: 1.5rem; }
+}
+
+/* ===== PERFORMANCE: Reduce animation overhead ===== */
+@media (max-width: 768px) {
+  .stat-card, .sport-card, .diet-card, .task-card, .banner-card, .safety-item, .panel {
+    animation: none !important;
+  }
+  .tab.active { animation: none !important; }
+  .screen.active { animation: none !important; }
+  .splash-brand i { transition-duration: 0.3s; }
+  .splash-brand span { transition-duration: 0.3s; }
+  .splash-loader-bar { transition-duration: 0.6s; }
+}
+
+/* ===== PREVENT REFRESH LOOP ===== */
+/* Disable viewport resize that triggers re-render on mobile address bar show/hide */
+
+
+/* ===== PERFORMANCE HINTS (desktop only) ===== */
+@media (min-width: 769px) {
+  .stat-card { will-change: transform; }
+  .sport-card { will-change: transform; }
+  .banner-card { will-change: transform; }
+  .panel { will-change: auto; }
+}
+
+
+/* Prevent double-tap zoom delay on buttons */
+button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn, .survey-option-fancy { touch-action: manipulation; }
+
 </style>
 </head>
 <body>
@@ -613,8 +838,10 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 </section>
 
 <section id="screen-app" class="screen">
-<button class="mobile-menu-btn" onclick="toggleMobileSidebar('screen-app')"><i class="fa-solid fa-bars"></i></button>
-<div class="sidebar-backdrop" onclick="toggleMobileSidebar('screen-app')"></div>
+  
+<button id="mobile-menu-btn" onclick="toggleMobileSidebar()"><i class="fa-solid fa-bars"></i></button>
+<div id="mobile-sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
   <button class="expand-btn" onclick="toggleSidebar()"><i class="fa-solid fa-chevron-right"></i></button>
   <aside class="sidebar" id="sidebar">
     <button class="collapse-btn" onclick="toggleSidebar()"><i class="fa-solid fa-chevron-left"></i></button>
@@ -634,7 +861,7 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
     <button class="side-btn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i><span>Log out</span></button>
   </aside>
 
-  <main class="main" id="main-content">
+  <main class="main">
     <div id="tab-home" class="tab active">
       <h1 id="greeting" style="font-size:1.45rem;font-weight:700;">Welcome</h1>
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;">Here's your snapshot for today.</p>
@@ -865,9 +1092,11 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 </section>
 
 <section id="screen-coach-app" class="screen">
-<button class="mobile-menu-btn" onclick="toggleMobileSidebar('screen-coach-app')"><i class="fa-solid fa-bars"></i></button>
-<div class="sidebar-backdrop" onclick="toggleMobileSidebar('screen-coach-app')"></div>
-  <aside class="sidebar">
+  
+<button id="mobile-menu-btn-coach" onclick="toggleMobileSidebarCoach()" style="display:none;position:fixed;top:10px;left:10px;z-index:10001;width:40px;height:40px;background:var(--white);border:1px solid var(--line);border-radius:10px;cursor:pointer;align-items:center;justify-content:center;color:var(--text);font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.12);"><i class="fa-solid fa-bars"></i></button>
+<div id="mobile-sidebar-overlay-coach" onclick="closeMobileSidebarCoach()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;opacity:0;transition:opacity .25s ease;pointer-events:none;"></div>
+
+  <aside class="sidebar"
     <div class="brand"><i class="fa-solid fa-bolt"></i><span>Volta</span><em>Coach</em></div>
     <button class="side-btn active" data-tab="coach-home" onclick="showCoachTab('coach-home')"><i class="fa-solid fa-table-cells-large"></i><span>Dashboard</span></button>
     <button class="side-btn" data-tab="coach-athletes" onclick="showCoachTab('coach-athletes')"><i class="fa-solid fa-users"></i><span>Athletes</span></button>
@@ -879,7 +1108,7 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
     <button class="side-btn" onclick="logoutCoach()"><i class="fa-solid fa-right-from-bracket"></i><span>Log out</span></button>
   </aside>
 
-  <main class="main" id="coach-main-content">
+  <main class="main">
     <div id="tab-coach-home" class="tab active">
       <h1 class="page-title">Welcome back, <span id="coach-first">Coach</span></h1>
       <p class="page-sub">Here's what's happening across your roster today.</p>
@@ -1140,12 +1369,96 @@ function setTheme(mode) { store.theme = mode; applySettings(); }
 function setLang(lang) { store.lang = lang; applySettings(); }
 function setLoc(enabled) { store.locationEnabled = enabled; applySettings(); if (enabled) loadWeather(true); }
 function toggleSidebar() { document.getElementById('screen-app').classList.toggle('sidebar-collapsed'); }
-function toggleMobileSidebar(id) {
-  const screen = document.getElementById(id);
-  if (screen) {
-    screen.classList.toggle('mobile-sidebar-open');
+
+// ===== MOBILE SIDEBAR FUNCTIONS =====
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mobile-sidebar-overlay');
+  const isOpen = sidebar.classList.contains('mobile-open');
+  if (isOpen) {
+    closeMobileSidebar();
+  } else {
+    sidebar.classList.add('mobile-open');
+    overlay.classList.add('active');
+    document.body.classList.add('sidebar-mobile-open');
   }
 }
+function closeMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mobile-sidebar-overlay');
+  sidebar.classList.remove('mobile-open');
+  overlay.classList.remove('active');
+  document.body.classList.remove('sidebar-mobile-open');
+}
+
+function toggleMobileSidebarCoach() {
+  const sidebar = document.querySelector('#screen-coach-app .sidebar');
+  const overlay = document.getElementById('mobile-sidebar-overlay-coach');
+  const btn = document.getElementById('mobile-menu-btn-coach');
+  const isOpen = sidebar.classList.contains('mobile-open');
+  if (isOpen) {
+    sidebar.classList.remove('mobile-open');
+    overlay.style.opacity = '0';
+    overlay.style.pointerEvents = 'none';
+    document.body.classList.remove('sidebar-mobile-open');
+  } else {
+    sidebar.classList.add('mobile-open');
+    overlay.style.opacity = '1';
+    overlay.style.pointerEvents = 'auto';
+    document.body.classList.add('sidebar-mobile-open');
+  }
+}
+function closeMobileSidebarCoach() {
+  const sidebar = document.querySelector('#screen-coach-app .sidebar');
+  const overlay = document.getElementById('mobile-sidebar-overlay-coach');
+  sidebar.classList.remove('mobile-open');
+  overlay.style.opacity = '0';
+  overlay.style.pointerEvents = 'none';
+  document.body.classList.remove('sidebar-mobile-open');
+}
+
+// ===== MOBILE MENU BUTTON VISIBILITY =====
+function updateMobileMenuBtn() {
+  const isMobile = window.innerWidth <= 768;
+  const appBtn = document.getElementById('mobile-menu-btn');
+  const coachBtn = document.getElementById('mobile-menu-btn-coach');
+  const coachOverlay = document.getElementById('mobile-sidebar-overlay-coach');
+
+  if (isMobile) {
+    if (appBtn) appBtn.style.display = 'flex';
+    const coachAppActive = document.getElementById('screen-coach-app').classList.contains('active');
+    if (coachBtn) coachBtn.style.display = coachAppActive ? 'flex' : 'none';
+    if (coachOverlay) coachOverlay.style.display = coachAppActive ? 'block' : 'none';
+  } else {
+    if (appBtn) appBtn.style.display = 'none';
+    if (coachBtn) coachBtn.style.display = 'none';
+    if (coachOverlay) coachOverlay.style.display = 'none';
+    // Close any open mobile sidebar
+    closeMobileSidebar();
+    closeMobileSidebarCoach();
+  }
+}
+
+// Close mobile sidebar when a tab is clicked (so user sees content immediately)
+const origShowTab = showTab;
+showTab = function(name) {
+  closeMobileSidebar();
+  origShowTab(name);
+};
+
+const origShowCoachTab = showCoachTab;
+showCoachTab = function(t) {
+  closeMobileSidebarCoach();
+  origShowCoachTab(t);
+};
+
+// Run on load and resize (debounced)
+let resizeTimer = null;
+window.addEventListener('resize', function() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(updateMobileMenuBtn, 150);
+});
+
 
 function applySettings() {
   if (store.theme === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('theme-light-btn')?.classList.remove('active'); document.getElementById('theme-dark-btn')?.classList.add('active'); document.getElementById('coach-theme-light-btn')?.classList.remove('active'); document.getElementById('coach-theme-dark-btn')?.classList.add('active'); }
@@ -1228,6 +1541,7 @@ function loginSuccess(email) {
 }
 function logout() { store.session = null; showScreen('screen-landing'); }
 
+// ===== 35-Question Survey =====
 const surveyQuestions = [
   {key:'name', q:'What is your full name?', icon:'fa-user', type:'text', placeholder:'e.g. Alex Johnson'},
   {key:'gender', q:'What is your gender?', icon:'fa-venus-mars', type:'select', options:['Male', 'Female']},
@@ -1295,7 +1609,7 @@ function renderSurveyQuestion() {
   }
   
   document.getElementById('survey-question-content').innerHTML = `
-    <div style="max-width: 580px; margin: 0 auto;">
+    <div style="max-width: 580px; margin: 0 auto; animation: fadeIn .3s ease;">
       <div class="survey-icon-wrapper"><i class="fa-solid ${q.icon}"></i></div>
       <div class="survey-question-text">${q.q}</div>
       ${inputHtml}
@@ -1405,35 +1719,15 @@ function closeGoalModal() {
   enterApp();
 }
 
-function currentUser() { return store.users[store.session] || null; }
-function showScreen(id) { 
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-  document.getElementById(id).classList.add('active'); 
-  window.scrollTo(0, 0);
-  applySettings(); updateChatbaseVisibility(); 
-}
-function showTab(name) { 
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); 
-  document.querySelectorAll('.side-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name)); 
-  document.getElementById('tab-' + name).classList.add('active'); 
-  if (name === 'marathon') setTimeout(() => initMap(), 100); 
-  if (name === 'daily') renderDailyExercise(); 
-  if (name === 'calc') renderCalc(); 
-  if (name === 'reminders') renderReminders(); 
-  if (name === 'diet') renderDiet(); 
-  if (name === 'sports') renderSports(); 
-  if (name === 'home') renderHome(); 
-  if (name === 'profile') renderProfile(); 
-  if (name === 'weather') loadWeather(); 
-  if (window.innerWidth <= 768) {
-    document.getElementById('screen-app').classList.remove('mobile-sidebar-open');
-  }
-}
+function currentUser() { return store.users[store.session]; }
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); applySettings(); updateChatbaseVisibility(); window.scrollTo(0, 0); updateMobileMenuBtn(); }
+function showTab(name) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.side-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name)); document.getElementById('tab-' + name).classList.add('active'); if (name === 'marathon') setTimeout(() => initMap(), 100); if (name === 'daily') renderDailyExercise(); if (name === 'calc') renderCalc(); if (name === 'reminders') renderReminders(); if (name === 'diet') renderDiet(); if (name === 'sports') renderSports(); if (name === 'home') { renderHome(); renderTracker(); } if (name === 'profile') renderProfile(); if (name === 'weather') { if (!lastWeather) loadWeather(); else renderWeather(); } }
 function enterApp() { 
   showScreen('screen-app'); 
   showTab('home'); 
-  try { renderAllDynamic(); } catch(e) { console.error(e); }
-  try { if (store.locationEnabled) loadWeather(); } catch(e) { console.error(e); }
+  renderAllDynamic(); 
+  window.scrollTo(0, 0); 
+  if (store.locationEnabled) loadWeather(); 
   if(!store.welcomed){ openModal('welcome-modal'); store.welcomed = true; } 
   updateChatbaseVisibility();
   
@@ -1451,7 +1745,8 @@ function enterApp() {
     }
   } catch(e) {}
 }
-function renderAllDynamic() { renderHome(); renderSports(); renderTracker(); renderProfile(); renderDailyExercise(); renderDiet(); renderCoachMealsForUser(); }
+function renderAllDynamic() { renderHome(); renderTracker(); }
+function renderAllDynamicFull() { renderHome(); renderSports(); renderTracker(); renderProfile(); renderDailyExercise(); renderDiet(); renderCoachMealsForUser(); }
 
 const SPORTS = [
   {name:'Football',icon:'fa-futbol',outdoor:true,equip:['Cleats','Ball'],workout:['Dribbling through cones (5 min)', 'Wall passes with both feet (5 min)', 'Shooting practice - aim for corners (5 min)']},
@@ -1584,9 +1879,8 @@ function getDailyItems(arr, count) { const seed = new Date().getDate(); let shuf
 function animateCount(el, target, decimals = 0, suffix = '') { const duration = 800; let start = 0; let startTime = null; function step(timestamp) { if (!startTime) startTime = timestamp; const progress = Math.min((timestamp - startTime) / duration, 1); const current = progress * target; el.textContent = current.toFixed(decimals) + suffix; if (progress < 1) requestAnimationFrame(step); } requestAnimationFrame(step); }
 
 function renderHome() {
-  const u = currentUser();
-  if (!u || !u.profile) return;
-  const p = u.profile;
+  const u = currentUser(), p = u.profile;
+  if (!p) return;
   document.getElementById('greeting').textContent = `Welcome ${p.name.split(' ')[0]}`;
   const bmi = p.weight / Math.pow(p.height / 100, 2);
   animateCount(document.getElementById('stat-bmi'), parseFloat(bmi.toFixed(1)), 1);
@@ -1610,9 +1904,8 @@ function renderHome() {
 }
 
 function renderCoachRecommendation() {
-  const u = currentUser();
-  if (!u || !u.profile) return;
-  const p = u.profile;
+  const u = currentUser(), p = u.profile;
+  if (!p) return;
   
   const sportMap = {
     'Lose weight': ['Running', 'Cycling', 'Boxing', 'HIIT'],
@@ -1660,8 +1953,6 @@ function renderChart() {
 }
 
 function renderSports() {
-  const u = currentUser();
-  if (!u || !u.profile) return;
   const limit = store.sportsShown;
   const sortedSports = [...SPORTS].sort((a, b) => {
     const aRec = store.recommendedSports.includes(a.name) ? 0 : 1;
@@ -1697,7 +1988,7 @@ function showSportInfo(name) {
   const s = SPORTS.find(x=>x.name===name);
   document.getElementById('sport-modal-title').textContent = getSportName(s);
   document.getElementById('sport-modal-equip').innerHTML = s.equip.map(e=>`<li>${e}</li>`).join('');
-  document.getElementById('sport-modal-map-btn').onclick = () => window.open(`https://www.google.com/maps/search/?api=1&query=${name}+near+me`, '_blank');
+  document.getElementById('sport-modal-map-btn').onclick = () => { const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}+near+me`; const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); document.body.removeChild(a); };
   openModal('sport-modal');
 }
 function showWorkout(name) {
@@ -1739,47 +2030,19 @@ function startLiveSession(name) {
   sessionTimerInt = setInterval(updateSessionTime, 1000);
 }
 function updateSessionTime() { if (isPaused) return; const elapsed = Math.floor((Date.now() - sessionStart) / 1000); const mins = Math.floor(elapsed / 60).toString().padStart(2, '0'); const secs = (elapsed % 60).toString().padStart(2, '0'); document.getElementById('session-timer').textContent = `${mins}:${secs}`; const cals = Math.round((elapsed / 60) * 8); document.getElementById('session-calories').innerHTML = `<i class="fa-solid fa-fire"></i> ${cals} kcal`; }
-
-function pauseLiveSession() { 
-  if (isPaused) return; 
-  isPaused = true; 
-  const iframe = document.querySelector('#session-playlist-container iframe');
-  if (iframe) {
-    iframe.dataset.src = iframe.src;
-    iframe.src = 'about:blank'; 
-  }
-  document.getElementById('session-pause-btn').classList.add('hidden'); 
-  document.getElementById('session-pause-timer').classList.remove('hidden'); 
-  let timeLeft = 60; 
-  document.getElementById('pause-countdown').textContent = timeLeft; 
-  pauseCountdownInt = setInterval(() => { 
-    timeLeft--; 
-    document.getElementById('pause-countdown').textContent = timeLeft; 
-    if (timeLeft <= 0) { clearInterval(pauseCountdownInt); resumeLiveSession(); } 
-  }, 1000); 
-}
-function resumeLiveSession() { 
-  isPaused = false; 
-  sessionStart += 60000; 
-  const iframe = document.querySelector('#session-playlist-container iframe');
-  if (iframe && iframe.dataset.src) {
-    iframe.src = iframe.dataset.src;
-    delete iframe.dataset.src;
-  }
-  document.getElementById('session-pause-btn').classList.remove('hidden'); 
-  document.getElementById('session-pause-timer').classList.add('hidden'); 
-}
-function exitSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; document.getElementById('session-overlay').classList.remove('active'); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--muted); font-weight:600;">Session exited without logging.</p>`; }
-function stopLiveSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; document.getElementById('session-overlay').classList.remove('active'); const elapsedMins = Math.max(1, Math.round((Date.now() - sessionStart) / 60000)); const cals = Math.round(elapsedMins * 8); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--green); font-weight:600;">Session stopped! Duration: ${elapsedMins}m, Calories: ${cals}kcal</p>`; const logger = document.getElementById('inline-logger'); logger.classList.remove('hidden'); logger.innerHTML = `<h4 style="margin-bottom:10px;">Log Session: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}</h4><input type="date" id="log-date" required value="${new Date().toISOString().slice(0, 10)}"><input type="number" id="log-duration" min="1" max="600" value="${elapsedMins}" required><select id="log-intensity" required><option value="Light" ${currentLogIntensity === 'Light' ? 'selected' : ''}>Light</option><option value="Moderate" ${currentLogIntensity === 'Moderate' ? 'selected' : ''}>Moderate</option><option value="Intense" ${currentLogIntensity === 'Intense' ? 'selected' : ''}>Intense</option></select><input type="text" id="log-note" placeholder="Notes (optional)"><button class="btn primary small" onclick="saveInlineSession()"><i class="fa-solid fa-check"></i> Save Session</button>`; }
+function pauseLiveSession() { if (isPaused) return; isPaused = true; pauseSpotifyEmbed(); document.getElementById('session-pause-btn').classList.add('hidden'); document.getElementById('session-pause-timer').classList.remove('hidden'); let timeLeft = 60; document.getElementById('pause-countdown').textContent = timeLeft; pauseCountdownInt = setInterval(() => { timeLeft--; document.getElementById('pause-countdown').textContent = timeLeft; if (timeLeft <= 0) { clearInterval(pauseCountdownInt); resumeLiveSession(); } }, 1000); }
+function pauseSpotifyEmbed() { const iframe = document.querySelector('#session-playlist-container iframe'); if (iframe) { try { iframe.contentWindow.postMessage({ type: 'pause' }, '*'); } catch(e) {} } }
+function resumeSpotifyEmbed() { const iframe = document.querySelector('#session-playlist-container iframe'); if (iframe) { try { iframe.contentWindow.postMessage({ type: 'play' }, '*'); } catch(e) {} } }
+function resumeLiveSession() { isPaused = false; sessionStart += 60000; resumeSpotifyEmbed(); document.getElementById('session-pause-btn').classList.remove('hidden'); document.getElementById('session-pause-timer').classList.remove('hidden'); }
+function exitSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--muted); font-weight:600;">Session exited without logging.</p>`; }
+function stopLiveSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); const elapsedMins = Math.max(1, Math.round((Date.now() - sessionStart) / 60000)); const cals = Math.round(elapsedMins * 8); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--green); font-weight:600;">Session stopped! Duration: ${elapsedMins}m, Calories: ${cals}kcal</p>`; const logger = document.getElementById('inline-logger'); logger.classList.remove('hidden'); logger.innerHTML = `<h4 style="margin-bottom:10px;">Log Session: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}</h4><input type="date" id="log-date" required value="${new Date().toISOString().slice(0, 10)}"><input type="number" id="log-duration" min="1" max="600" value="${elapsedMins}" required><select id="log-intensity" required><option value="Light" ${currentLogIntensity === 'Light' ? 'selected' : ''}>Light</option><option value="Moderate" ${currentLogIntensity === 'Moderate' ? 'selected' : ''}>Moderate</option><option value="Intense" ${currentLogIntensity === 'Intense' ? 'selected' : ''}>Intense</option></select><input type="text" id="log-note" placeholder="Notes (optional)"><button class="btn primary small" onclick="saveInlineSession()"><i class="fa-solid fa-check"></i> Save Session</button>`; }
 function getSessionStats() { const sessions = currentUser().sessions || []; const totalMin = sessions.reduce((a, s) => a + s.duration, 0); const weekAgo = Date.now() - 7 * 864e5; const weekMin = sessions.filter(s => new Date(s.date).getTime() >= weekAgo).reduce((a, s) => a + s.duration, 0); const perSport = {}; sessions.forEach(s => { perSport[s.sport] = (perSport[s.sport] || 0) + s.duration; }); const top = Object.entries(perSport).sort((a, b) => b[1] - a[1])[0]; return { total: sessions.length, totalMin, weekMin, top }; }
 function renderTracker() { const stats = getSessionStats(); document.getElementById('tr-total').textContent = stats.total; document.getElementById('tr-minutes').textContent = stats.totalMin; document.getElementById('tr-week').textContent = stats.weekMin; document.getElementById('tr-top').textContent = stats.top ? getSportName(SPORTS.find(x=>x.name===stats.top[0])) : '--'; }
 function saveInlineSession() { const date = document.getElementById('log-date').value, duration = document.getElementById('log-duration').value, intensity = document.getElementById('log-intensity').value, note = document.getElementById('log-note').value.trim(); if(!date || !duration || !intensity) { alert('Please fill in date, duration, and intensity.'); return; } const u = currentUser(); if (!u.sessions) u.sessions = []; u.sessions.push({ sport: currentLogSport, date, duration: +duration, intensity, note }); saveUser(store.session, u); document.getElementById('inline-logger').innerHTML = `<p style="color:var(--green);font-weight:600;"><i class="fa-solid fa-check-circle"></i> Session logged successfully!</p>`; renderTracker(); bumpStreak(); renderHome(); }
 function bumpStreak() { const u = currentUser(); const today = new Date().toDateString(); if (u.lastDone === today) return u.streak; const yesterday = new Date(Date.now() - 864e5).toDateString(); u.streak = (u.lastDone === yesterday) ? (u.streak || 0) + 1 : 1; u.lastDone = today; saveUser(store.session, u); return u.streak; }
 
 function renderDiet() {
-  const u = currentUser();
-  if (!u || !u.profile) return;
-  const p = u.profile, s = u.survey;
+  const u = currentUser(), p = u.profile, s = u.survey;
   let bmr = p.gender === 'Female' ? 447.6 + (9.25 * p.weight) + (3.1 * p.height) - (4.33 * p.age) : 88.36 + (13.4 * p.weight) + (4.8 * p.height) - (5.68 * p.age);
   let days = s?.schedule || '3-4'; let af = days === '1-2' ? 1.375 : days === '3-4' ? 1.55 : days === '5+' ? 1.725 : 1.9;
   let tdee = bmr * af; let target = tdee;
@@ -1797,15 +2060,11 @@ function renderDiet() {
 function showMealInfo(name) { const m = MEALS.find(x=>x.name===name); document.getElementById('modal-title').textContent = getMealName(m); document.getElementById('modal-desc').textContent = getMealDesc(m); document.getElementById('modal-macros').innerHTML = `<span class="macro-pill macro-kcal">${m.kcal} kcal</span><span class="macro-pill macro-p">P: ${m.p}g</span><span class="macro-pill macro-c">C: ${m.c}g</span><span class="macro-pill macro-f">F: ${m.f}g</span>`; document.getElementById('modal-ing-title').textContent = 'Nutrition & Ingredients'; document.getElementById('modal-ingredients').innerHTML = m.ingredients.map(i => `<li>${i}</li>`).join(''); document.getElementById('modal-rec-title').textContent = 'Recipe Steps'; document.getElementById('modal-recipe').innerHTML = m.recipe.map(r => `<li>${r}</li>`).join(''); openModal('meal-modal'); }
 
 function renderCalc() {
-  const u = currentUser();
-  if (!u || !u.profile) return;
-  const p = u.profile;
+  const u = currentUser(), p = u.profile;
   document.getElementById('calc-current-display').textContent = p.weight + ' kg';
 }
 function calculateGoalFancy() {
-  const u = currentUser();
-  if (!u || !u.profile) return;
-  const p = u.profile, s = u.survey;
+  const u = currentUser(), p = u.profile, s = u.survey;
   const current = p.weight;
   const target = parseFloat(document.getElementById('calc-target-only').value);
   if (!target) { alert("Please enter a target weight."); return; }
@@ -1838,6 +2097,7 @@ function calculateGoalFancy() {
   `;
 }
 
+// ===== DAILY EXERCISE ENHANCED =====
 let deState = { step: 1, view: 'front', muscles: [], numDays: 7, daysOfWeek: [], workouts: [], currentWorkout: 0 };
 const WORKOUT_DB = {
   'Chest': ['Push-ups', 'Incline Push-ups', 'Chest Dips', 'Pec Flyes'],
@@ -1858,7 +2118,7 @@ const WORKOUT_INFO = {
 
 function renderDailyExercise() {
   const u = currentUser();
-  if (!u || !u.profile) return;
+  if (!u.profile) return;
   const container = document.getElementById('daily-exercise-content');
   
   if (deState.step === 1) {
@@ -2091,19 +2351,21 @@ function generateMoodWorkout() {
   const todaysPlaylists = getDailyItems(VIBE_PLAYLISTS.upbeat, 2);
   document.getElementById('playlist-container').innerHTML = todaysPlaylists.map(id => `<iframe style="border-radius:12px; margin-bottom:10px;" src="https://open.spotify.com/embed/playlist/${id}" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`).join('');
 }
+let meditationBreathInt = null;
 function startMeditation() {
   document.getElementById('meditation-overlay').classList.add('active');
   const todaysTracks = getDailyItems(VIBE_PLAYLISTS.calm, 2);
   document.getElementById('meditation-audio').innerHTML = todaysTracks.map(id => `<iframe style="border-radius:12px;" src="https://open.spotify.com/embed/playlist/${id}" width="300" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`).join('');
   const circle = document.getElementById('breath-circle');
   let isGrowing = true;
-  setInterval(() => {
+  if (meditationBreathInt) clearInterval(meditationBreathInt);
+  meditationBreathInt = setInterval(() => {
     if (isGrowing) { circle.classList.add('grow'); circle.textContent = 'Breathe In'; }
     else { circle.classList.remove('grow'); circle.textContent = 'Breathe Out'; }
     isGrowing = !isGrowing;
   }, 4000);
 }
-function stopMeditation() { document.getElementById('meditation-overlay').classList.remove('active'); }
+function stopMeditation() { if (meditationBreathInt) clearInterval(meditationBreathInt); meditationBreathInt = null; document.getElementById('meditation-audio').innerHTML = ''; document.getElementById('meditation-overlay').classList.remove('active'); }
 
 function initMap() {
   if (map) { map.invalidateSize(); return; }
@@ -2117,7 +2379,10 @@ function initMap() {
       store.locCache = { lat, lon, time: Date.now() };
       map.setView([lat, lon], 13);
       mapMarkerA = L.marker([lat, lon]).addTo(map).bindPopup('Point A (You)').openPopup();
-    }, () => { map.setView([0,0], 2); }, { enableHighAccuracy: true, timeout: 10000 });
+    }, (err) => {
+      console.warn('Map geolocation error:', err.message);
+      map.setView([0,0], 2);
+    }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
   }
   map.on('click', function(e) {
     if (mapMarkerB) map.removeLayer(mapMarkerB);
@@ -2167,6 +2432,7 @@ function stopMarathon() {
 
 function loadWeather(force) {
   const el = document.getElementById('weather-current');
+  if (!el) return;
   if (!store.locationEnabled && !force) { el.textContent = 'Weather location is disabled in settings.'; document.getElementById('safety-grid').innerHTML = '<i>Enable location in settings to get outdoor safety alerts.</i>'; return; }
   const wCache = store.weatherCache;
   if (!force && wCache && (Date.now() - wCache.time < 3600000)) { lastWeather = wCache.data; renderWeather(); return; }
@@ -2178,12 +2444,19 @@ function loadWeather(force) {
     const lat = pos.coords.latitude, lon = pos.coords.longitude;
     store.locCache = { lat, lon, time: Date.now() };
     fetchWeather(lat, lon);
-  }, (err) => { 
-    let msg = 'Location permission denied.';
-    if (err.code === 2) msg = 'Location unavailable.';
-    if (err.code === 3) msg = 'Location request timed out.';
-    el.textContent = msg; 
-  }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+  }, (err) => {
+    console.warn('Weather geolocation error:', err.message);
+    if (err.code === 1) {
+      el.innerHTML = '<div style="padding:16px;text-align:center;"><i class="fa-solid fa-location-crosshairs" style="font-size:24px;color:var(--muted);display:block;margin-bottom:8px;"></i><b>Location access denied</b><br><small style="color:var(--muted);">Please enable location in your browser settings to get weather data. On iOS: Settings > Safari > Location. On Android: Settings > Site settings > Location.</small></div>';
+      document.getElementById('safety-grid').innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">Enable location in browser settings to get outdoor safety alerts.</div>';
+    } else if (err.code === 2) {
+      el.textContent = 'Location unavailable. Try again later.';
+    } else if (err.code === 3) {
+      el.textContent = 'Location request timed out. Tap Refresh to try again.';
+    } else {
+      el.textContent = 'Could not get location.';
+    }
+  }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 });
 }
 async function fetchWeather(lat, lon) {
   const el = document.getElementById('weather-current');
@@ -2208,9 +2481,7 @@ function renderWeather() {
 }
 
 function renderProfile() {
-  const u = currentUser();
-  if (!u || !u.profile) return;
-  const p = u.profile, s = u.survey;
+  const u = currentUser(), p = u.profile, s = u.survey;
   document.getElementById('profile-view').innerHTML = `
     <ul style="margin:0 0 12px 20px;line-height:1.9;font-size:.92rem;">
       <li><b>Name:</b> ${p.name}</li><li><b>Email:</b> ${store.session}</li>
@@ -2224,7 +2495,6 @@ function renderProfile() {
 
 function renderReminders() {
   const u = currentUser();
-  if (!u) return;
   const reminders = u.reminders || [];
   const list = document.getElementById('reminders-list');
   if (reminders.length === 0) { list.innerHTML = `<p style="color:var(--muted); text-align:center; padding: 20px 0;">No reminders yet. Create one above!</p>`; return; }
@@ -2263,6 +2533,9 @@ function exportToCalendar(index) {
 function checkReminders() { const u = currentUser(); if (!u || !u.reminders || u.reminders.length === 0) return; const now = new Date(); u.reminders.forEach((r, i) => { const rDate = new Date(`${r.date}T${r.time || '09:00'}`); const diff = (rDate - now) / 1000; if (diff <= 0 && diff > -30 && !r.triggered) { playReminderSound(); alert(`⏰ Reminder: ${r.title}\n${r.note || ''}`); r.triggered = true; saveUser(store.session, u); } }); }
 function playReminderSound() { try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const oscillator = ctx.createOscillator(); const gainNode = ctx.createGain(); oscillator.connect(gainNode); gainNode.connect(ctx.destination); oscillator.type = 'sine'; oscillator.frequency.value = 800; gainNode.gain.setValueAtTime(0.3, ctx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1); oscillator.start(ctx.currentTime); oscillator.stop(ctx.currentTime + 1); } catch(e) {} }
 
+// ==========================================
+// COACH ATHLETE MANAGEMENT
+// ==========================================
 const COACH_ATHLETES_KEY = 'volta_coach_athletes';
 const COACH_USERS_KEY = 'volta_coach_users';
 const COACH_SESSION_KEY = 'volta_coach_session';
@@ -2332,6 +2605,7 @@ function enterCoachApp(user) {
   setTimeout(() => renderCoachSessionsChart(), 200);
   window.scrollTo(0,0);
   updateChatbaseVisibility();
+  updateMobileMenuBtn();
 }
 function showCoachTab(t) {
   document.querySelectorAll('#screen-coach-app .tab').forEach(el => el.classList.remove('active'));
@@ -2448,6 +2722,9 @@ function renderCoachSessionsChart() {
   });
 }
 
+// ==========================================
+// COACH MEALS FOR USER
+// ==========================================
 const COACH_MEALS_KEY = 'volta_coach_meals';
 function renderCoachMealsForUser() {
   const container = document.getElementById('diet-coach-meals');
@@ -2480,19 +2757,12 @@ function autofillFromInBody() {
   }).catch(err => { setMsg('inbody-status', 'Could not read image. Please enter manually.', 'error'); });
 }
 
-// FIX: App disappears when entering Google Maps and coming back
-document.addEventListener('visibilitychange', function() {
-  if (!document.hidden) {
-    const splash = document.getElementById('splash-screen');
-    if (splash && !splash.classList.contains('hidden')) {
-      splash.classList.add('hidden');
-    }
-  }
-});
-
+// ===== INITIALIZATION WITH INSTANT LOGIN =====
 (function init() {
   applySettings(); 
+  updateMobileMenuBtn();
   const splash = document.getElementById('splash-screen');
+  const isMobileDevice = window.innerWidth <= 768;
   
   const coachEmail = localStorage.getItem(COACH_SESSION_KEY);
   const coachUsers = getCoachUsers();
@@ -2502,7 +2772,9 @@ document.addEventListener('visibilitychange', function() {
   const isUser = email && store.users[email];
   
   if (isCoach || isUser) {
+    // Returning user: Quick splash -> Instant Login (200ms on mobile, 500ms desktop)
     splash.classList.add('animate');
+    const splashDelay = isMobileDevice ? 200 : 500;
     setTimeout(() => {
       splash.classList.add('hidden');
       if (isCoach) {
@@ -2514,15 +2786,19 @@ document.addEventListener('visibilitychange', function() {
         else { enterApp(); }
       }
       updateChatbaseVisibility();
-    }, 500);
+      updateMobileMenuBtn();
+    }, splashDelay);
   } else {
+    // First time: Splash animation -> Landing (1.5s mobile, 2.5s desktop)
+    const splashDelay2 = isMobileDevice ? 800 : 2500;
     setTimeout(() => { 
       splash.classList.add('animate'); 
       setTimeout(() => { 
         splash.classList.add('hidden'); 
         showScreen('screen-landing');
         updateChatbaseVisibility();
-      }, 2500); 
+        updateMobileMenuBtn();
+      }, splashDelay2); 
     }, 100);
   }
   
