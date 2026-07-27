@@ -28,7 +28,9 @@ body.dark-mode {
 body { background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background .2s, color .2s; }
 i.fa-solid, i.fa-regular { font-size: 18px; }
 
-body:not(.app-active) #chatbase-bubble-button, body:not(.app-active) #chatbase-bubble-window, body:not(.app-active) .chatbase-launcher, body:not(.app-active) iframe[src*="chatbase.co"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+body:not(.app-active) #chatbase-bubble-button, body:not(.app-active) #chatbase-bubble-window, body:not(.app-active) #chatbase-message-bubbles, body:not(.app-active) .chatbase-launcher, body:not(.app-active) iframe[src*="chatbase.co"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+/* Hide chatbase widget whenever ANY full-screen overlay (OCR scan, etc.) is active so it can't leak through the high z-index chatbase uses */
+body.ocr-active #chatbase-bubble-button, body.ocr-active #chatbase-bubble-window, body.ocr-active #chatbase-message-bubbles, body.ocr-active .chatbase-launcher, body.ocr-active iframe[src*="chatbase.co"], body.ocr-active #chatbase-bubble-button + *, body.ocr-active #chatbase-bubble-window + * { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -1 !important; }
 
 /* ===== ENHANCED ORIGINAL SPLASH SCREEN ===== */
 #splash-screen { position: fixed; inset: 0; background: #fff; z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; transition: opacity 0.5s ease, visibility 0.5s ease; }
@@ -119,6 +121,36 @@ form label { display: block; text-align: left; font-size: .8rem; font-weight: 60
 input, select { width: 100%; padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px; font-size: .92rem; background: var(--white); color: var(--text); transition: border-color .15s, box-shadow .15s; }
 input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 
+/* Reminder date/time fields — keep them visible & well-formed on mobile */
+.rem-datetime-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0 4px; }
+.rem-field-wrap { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.rem-field-label { display: flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; color: var(--muted); margin: 0; }
+.rem-field-label i { color: var(--accent); font-size: .8rem; }
+.rem-field-wrap input[type="date"],
+.rem-field-wrap input[type="time"] {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--text);
+  font-size: .92rem;
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+}
+.rem-field-wrap input[type="date"]::-webkit-datetime-edit,
+.rem-field-wrap input[type="time"]::-webkit-datetime-edit { color: var(--text); }
+.rem-field-wrap input[type="date"]::-webkit-calendar-picker-indicator,
+.rem-field-wrap input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: opacity(0.55);
+  min-width: 18px;
+  min-height: 18px;
+}
+
 .pwd-wrapper { position: relative; width: 100%; }
 .pwd-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--muted); display: flex; align-items: center; }
 
@@ -153,6 +185,11 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .sidebar .brand span { font-weight: 800; font-size: 1.1rem; margin-left: 9px; }
 .sidebar .brand em { font-style: normal; font-size: .65rem; background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 10px; margin-left: 6px; font-weight: 600; }
 
+/* Coach sidebar brand — matches the coach login page logo exactly (card-title style) */
+.sidebar .brand.brand-coach { gap: 10px; padding: 4px 12px 22px; }
+.sidebar .brand.brand-coach i { color: var(--accent); font-size: 22px; flex-shrink: 0; }
+.sidebar .brand.brand-coach span { font-weight: 700; font-size: 1.25rem; margin-left: 0; letter-spacing: -.01em; }
+.sidebar .brand.brand-coach em { font-style: normal; font-size: .7rem; background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 10px; margin-left: 4px; font-weight: 600; }
 .side-btn { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border: none; background: transparent; border-radius: 10px; cursor: pointer; font-weight: 500; font-size: .9rem; color: var(--muted); text-align: left; font-family: inherit; transition: all 0.2s ease; }
 .side-btn:hover { background: var(--bg); color: var(--text); transform: translateX(4px); }
 .side-btn.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
@@ -234,6 +271,91 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: var(--line); border-radius: 4px; outline: none; margin: 10px 0; }
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 3px solid var(--white); box-shadow: 0 2px 6px rgba(100,149,237,.4); }
 input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 3px solid var(--white); }
+
+/* ===== InBody Scan Card (Profile tab) ===== */
+.inbody-card { background: linear-gradient(135deg, var(--accent-soft) 0%, var(--white) 100%); border: 1px solid var(--accent-border); }
+.inbody-card .inbody-head { display:flex; align-items:center; gap:12px; margin-bottom: 10px; }
+.inbody-card .inbody-head .inbody-icon { width:44px; height:44px; border-radius:12px; background: var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size: 20px; box-shadow: 0 4px 12px rgba(100,149,237,.3); flex-shrink:0; }
+.inbody-card .inbody-head h3 { margin: 0; font-size: 1rem; font-weight: 700; }
+.inbody-card .inbody-head small { color: var(--muted); font-size: .82rem; }
+.inbody-upload-area { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border: 2px dashed var(--accent-border); border-radius: 12px; padding: 24px 16px; text-align: center; background: var(--white); transition: border-color .2s, background .2s; cursor: pointer; margin: 12px 0; }
+.inbody-upload-area:hover, .inbody-upload-area.dragover { border-color: var(--accent); background: var(--accent-soft); }
+.inbody-upload-area i { font-size: 32px; color: var(--accent); display: block; margin: 0 0 4px 0; }
+.inbody-upload-area b { display: block; font-size: .92rem; }
+.inbody-upload-area small { display: block; color: var(--muted); font-size: .8rem; }
+.inbody-upload-area input[type="file"] { display: none; }
+.inbody-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+.inbody-stat { background: var(--white); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display:flex; flex-direction:column; gap: 2px; }
+.inbody-stat .label { font-size: .75rem; color: var(--muted); font-weight: 500; display:flex; align-items:center; gap:5px; }
+.inbody-stat .label i { font-size: 11px; color: var(--accent); }
+.inbody-stat .value { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+.inbody-stat .value .unit { font-size: .75rem; font-weight: 500; color: var(--muted); margin-left: 2px; }
+.inbody-last-scan { display:flex; align-items:center; gap:8px; font-size: .78rem; color: var(--muted); margin-top: 8px; }
+.inbody-last-scan i { color: var(--green); }
+.inbody-actions { display:flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.inbody-empty { text-align: center; padding: 14px 8px; color: var(--muted); font-size: .85rem; }
+
+/* ===== OCR Scanning Overlay (cool animations) ===== */
+#ocr-overlay { position: fixed; inset: 0; background: rgba(16, 22, 38, 0.78); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 10050; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; }
+#ocr-overlay.active { opacity: 1; visibility: visible; }
+.ocr-panel { background: var(--white); border-radius: 20px; padding: 36px 28px; width: min(420px, 88vw); box-shadow: 0 20px 60px rgba(0,0,0,.4); display:flex; flex-direction:column; align-items:center; gap: 18px; transform: scale(.85); transition: transform .4s cubic-bezier(.175,.885,.32,1.275); }
+#ocr-overlay.active .ocr-panel { transform: scale(1); }
+
+/* Animated scanner frame */
+.ocr-scanner-frame { position: relative; width: 140px; height: 140px; border-radius: 16px; overflow: hidden; background: linear-gradient(135deg, #eaf1fd, #d5e3fa); display:flex; align-items:center; justify-content:center; box-shadow: inset 0 0 0 3px var(--accent-border); }
+.ocr-scanner-frame::before, .ocr-scanner-frame::after { content: ''; position: absolute; width: 24px; height: 24px; border: 3px solid var(--accent); }
+.ocr-scanner-frame::before { top: 8px; left: 8px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
+.ocr-scanner-frame::after { bottom: 8px; right: 8px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
+.ocr-scanner-frame .doc-icon { font-size: 56px; color: var(--accent); opacity: .35; animation: ocrDocPulse 1.6s ease-in-out infinite; }
+@keyframes ocrDocPulse { 0%, 100% { transform: scale(1); opacity: .35; } 50% { transform: scale(1.08); opacity: .55; } }
+
+/* Scanning laser line */
+.ocr-scanner-frame .scan-laser { position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--accent), transparent); box-shadow: 0 0 12px var(--accent), 0 0 24px rgba(100,149,237,.6); animation: ocrLaser 1.8s ease-in-out infinite; }
+@keyframes ocrLaser { 0% { top: 5%; } 50% { top: 92%; } 100% { top: 5%; } }
+
+/* Orbiting dots */
+.ocr-orbit { position: absolute; inset: -8px; border-radius: 50%; animation: ocrSpin 3s linear infinite; }
+.ocr-orbit::before, .ocr-orbit::after { content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+.ocr-orbit::before { top: -4px; left: 50%; transform: translateX(-50%); }
+.ocr-orbit::after { bottom: -4px; left: 50%; transform: translateX(-50%); background: var(--accent-dark); box-shadow: 0 0 10px var(--accent-dark); }
+@keyframes ocrSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.ocr-title { font-size: 1.15rem; font-weight: 700; color: var(--text); text-align: center; }
+.ocr-subtitle { font-size: .85rem; color: var(--muted); text-align: center; margin-top: -8px; }
+
+/* Progress bar with shimmer */
+.ocr-progress-wrap { width: 100%; height: 10px; background: var(--line); border-radius: 6px; overflow: hidden; position: relative; }
+.ocr-progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent) 0%, var(--accent-dark) 50%, var(--accent) 100%); background-size: 200% 100%; border-radius: 6px; transition: width .35s ease; animation: ocrShimmer 1.6s linear infinite; }
+@keyframes ocrShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.ocr-progress-pct { font-size: .9rem; font-weight: 700; color: var(--accent); }
+.ocr-phase-text { font-size: .82rem; color: var(--muted); text-align: center; min-height: 1.2em; }
+
+/* Typing dots animation */
+.ocr-typing { display: inline-flex; gap: 4px; margin-left: 4px; }
+.ocr-typing span { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; animation: ocrTyping 1.4s ease-in-out infinite; }
+.ocr-typing span:nth-child(2) { animation-delay: .2s; }
+.ocr-typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes ocrTyping { 0%, 60%, 100% { transform: translateY(0); opacity: .4; } 30% { transform: translateY(-6px); opacity: 1; } }
+
+/* Success check animation */
+.ocr-success-check { width: 70px; height: 70px; border-radius: 50%; background: var(--green); display:flex; align-items:center; justify-content:center; animation: ocrSuccessPop .5s cubic-bezier(.175,.885,.32,1.275); box-shadow: 0 8px 20px rgba(29,157,107,.4); }
+.ocr-success-check i { color: #fff; font-size: 32px; animation: ocrCheckDraw .4s ease .2s both; }
+@keyframes ocrSuccessPop { 0% { transform: scale(0); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@keyframes ocrCheckDraw { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: scale(1); } }
+
+/* Error animation */
+.ocr-error-icon { width: 70px; height: 70px; border-radius: 50%; background: var(--red); display:flex; align-items:center; justify-content:center; animation: ocrSuccessPop .5s cubic-bezier(.175,.885,.32,1.275); box-shadow: 0 8px 20px rgba(201,68,68,.4); }
+.ocr-error-icon i { color: #fff; font-size: 32px; }
+
+@media (max-width: 768px) {
+  .ocr-panel { padding: 28px 20px; gap: 14px; }
+  .ocr-scanner-frame { width: 120px; height: 120px; }
+  .ocr-scanner-frame .doc-icon { font-size: 48px; }
+  .ocr-title { font-size: 1.05rem; }
+  .inbody-stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .inbody-stat { padding: 9px 10px; }
+  .inbody-stat .value { font-size: .98rem; }
+}
 
 .diet-grid, .task-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 18px; }
 .diet-card, .task-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--line); padding: 18px; box-shadow: var(--shadow); transition: transform 0.2s ease, border-color 0.2s ease; position: relative; display: flex; flex-direction: column; justify-content: space-between; animation: cardStaggerIn 0.4s ease both; }
@@ -564,6 +686,8 @@ html { scroll-behavior: smooth; }
   /* Modal */
   .modal-content { padding: 20px; max-height: 90vh; }
   .modal-overlay { padding: 12px; }
+  /* Sports search modal: force 2 columns on mobile so cards don't overflow horizontally */
+  #sport-search-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
   /* Center the "Explore All 100 Sports" modal heading on mobile so it balances with the top-right close button */
   #sport-search-modal .modal-content > h3 { text-align: center; }
 
@@ -600,6 +724,8 @@ html { scroll-behavior: smooth; }
   #screen-coach-app .sidebar.mobile-open {
     transform: translateX(0);
   }
+  /* Keep the coach brand logo visible (not covered by hamburger) on mobile while matching login page style */
+  #screen-coach-app .sidebar .brand.brand-coach { padding-left: 50px; }
 
   /* Athletes grid */
   .athletes-grid { grid-template-columns: 1fr; }
@@ -723,6 +849,28 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
   <div class="splash-loader"><div class="splash-loader-bar"></div></div>
 </div>
 
+<!-- OCR Scanning Overlay with cool animations -->
+<div id="ocr-overlay">
+  <div class="ocr-panel" id="ocr-panel">
+    <div class="ocr-scanner-frame" id="ocr-scanner-frame">
+      <i class="fa-solid fa-file-lines doc-icon"></i>
+      <div class="scan-laser"></div>
+      <div class="ocr-orbit"></div>
+    </div>
+    <div>
+      <div class="ocr-title" id="ocr-title">Scanning your InBody…</div>
+      <div class="ocr-subtitle" id="ocr-subtitle">Reading body composition data</div>
+    </div>
+    <div class="ocr-progress-wrap">
+      <div class="ocr-progress-bar" id="ocr-progress-bar"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="ocr-progress-pct" id="ocr-progress-pct">0%</span>
+      <span class="ocr-phase-text" id="ocr-phase-text">Initializing<span class="ocr-typing"><span></span><span></span><span></span></span></span>
+    </div>
+  </div>
+</div>
+
 <section id="screen-landing" class="screen active">
   <nav class="landing-nav">
     <div class="brand"><i class="fa-solid fa-bolt"></i> Volta</div>
@@ -831,6 +979,13 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <small>Upload a PNG/JPG photo of your InBody result sheet.</small>
         <input type="file" id="inbody-file" accept="image/png,image/jpeg" />
         <button type="button" class="btn ghost small" onclick="autofillFromInBody()"><i class="fa-solid fa-magnifying-glass"></i> Read my InBody</button>
+        <div id="inbody-progress-wrap" style="display:none;margin-top:12px;">
+          <div style="height:8px;background:var(--line);border-radius:6px;overflow:hidden;">
+            <div id="inbody-progress-bar" style="width:0%;height:100%;background:var(--accent);transition:width .25s ease;"></div>
+          </div>
+          <small id="inbody-progress-text" style="color:var(--muted);display:block;margin-top:6px;">Preparing scanner…</small>
+        </div>
+        <div id="inbody-results" style="display:none;margin-top:12px;background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:10px;padding:12px 14px;"></div>
         <p id="inbody-status" class="msg"></p>
       </div>
       <button class="btn primary" onclick="startSurvey()" style="width:100%;"><i class="fa-solid fa-arrow-right"></i> Start Survey</button>
@@ -1007,9 +1162,15 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <div class="panel">
         <h3><i class="fa-solid fa-bell"></i> Create New Reminder</h3>
         <input type="text" id="rem-title" placeholder="Title (e.g. Morning Run)" />
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <input type="date" id="rem-date" />
-          <input type="time" id="rem-time" value="09:00" />
+        <div class="rem-datetime-grid">
+          <div class="rem-field-wrap">
+            <label for="rem-date" class="rem-field-label"><i class="fa-solid fa-calendar"></i> Date</label>
+            <input type="date" id="rem-date" />
+          </div>
+          <div class="rem-field-wrap">
+            <label for="rem-time" class="rem-field-label"><i class="fa-solid fa-clock"></i> Time</label>
+            <input type="time" id="rem-time" value="09:00" />
+          </div>
         </div>
         <input type="text" id="rem-note" placeholder="Notes (optional)" />
         <button class="btn primary fit" onclick="saveReminder()"><i class="fa-solid fa-plus"></i> Add Reminder</button>
@@ -1025,6 +1186,30 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;">Personal information and lifetime stats.</p>
       <div class="panel" id="profile-view"></div>
       <button class="btn ghost fit" onclick="editProfile()" style="margin-bottom: 12px;"><i class="fa-solid fa-pencil"></i> Edit info</button>
+
+      <!-- InBody Scan Card -->
+      <div class="panel inbody-card">
+        <div class="inbody-head">
+          <div class="inbody-icon"><i class="fa-solid fa-barcode"></i></div>
+          <div>
+            <h3>InBody Scan</h3>
+            <small>Upload your InBody result sheet — we'll read it automatically.</small>
+          </div>
+        </div>
+        <label class="inbody-upload-area" id="inbody-profile-upload">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <b>Tap to upload InBody sheet</b>
+          <small>PNG or JPG photo of your result sheet</small>
+          <input type="file" id="inbody-profile-file" accept="image/png,image/jpeg" onchange="scanInBodyFromProfile(this)" />
+        </label>
+        <div id="inbody-profile-stats"></div>
+        <div id="inbody-profile-last"></div>
+        <div class="inbody-actions" id="inbody-profile-actions" style="display:none;">
+          <button class="btn ghost small fit" onclick="document.getElementById('inbody-profile-file').click()"><i class="fa-solid fa-rotate-right"></i> Re-scan</button>
+          <button class="btn primary small fit" onclick="applyInBodyToProfile()"><i class="fa-solid fa-check"></i> Apply to Profile</button>
+        </div>
+      </div>
+
       <div class="panel">
         <h3><i class="fa-solid fa-bullseye"></i> Fitness Goal Plan</h3>
         <div id="profile-goal-plan"></div>
@@ -1108,8 +1293,8 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 <button id="mobile-menu-btn-coach" onclick="toggleMobileSidebarCoach()" style="display:none;position:fixed;top:10px;left:10px;z-index:10001;width:40px;height:40px;background:var(--white);border:1px solid var(--line);border-radius:10px;cursor:pointer;align-items:center;justify-content:center;color:var(--text);font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.12);"><i class="fa-solid fa-bars"></i></button>
 <div id="mobile-sidebar-overlay-coach" onclick="closeMobileSidebarCoach()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;opacity:0;transition:opacity .25s ease;pointer-events:none;"></div>
 
-  <aside class="sidebar"
-    <div class="brand"><i class="fa-solid fa-bolt"></i><span>Volta</span><em>Coach</em></div>
+  <aside class="sidebar">
+    <div class="brand brand-coach"><i class="fa-solid fa-bolt"></i><span>Volta</span><em>Coach</em></div>
     <button class="side-btn active" data-tab="coach-home" onclick="showCoachTab('coach-home')"><i class="fa-solid fa-table-cells-large"></i><span>Dashboard</span></button>
     <button class="side-btn" data-tab="coach-athletes" onclick="showCoachTab('coach-athletes')"><i class="fa-solid fa-users"></i><span>Athletes</span></button>
     <button class="side-btn" data-tab="coach-sessions" onclick="showCoachTab('coach-sessions')"><i class="fa-solid fa-stopwatch"></i><span>Live Sessions</span></button>
@@ -1178,12 +1363,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <div id="tab-coach-plans" class="tab">
       <h1 class="page-title">Training plans</h1>
       <p class="page-sub">Reusable plans you've built for your roster.</p>
-      <div class="plans-grid">
-        <div class="plan-card"><div class="plan-icon"><i class="fa-solid fa-clipboard-list"></i></div><b>Base Building — 4 weeks</b><small>Running</small><div class="plan-foot"><span>12 athletes</span><button class="btn ghost small">Edit</button></div></div>
-        <div class="plan-card"><div class="plan-icon"><i class="fa-solid fa-clipboard-list"></i></div><b>Push / Pull / Legs</b><small>Strength</small><div class="plan-foot"><span>8 athletes</span><button class="btn ghost small">Edit</button></div></div>
-        <div class="plan-card"><div class="plan-icon"><i class="fa-solid fa-clipboard-list"></i></div><b>Zone 2 Ride Block</b><small>Cycling</small><div class="plan-foot"><span>5 athletes</span><button class="btn ghost small">Edit</button></div></div>
-        <button class="plan-card new"><i class="fa-solid fa-plus"></i><span>New plan</span></button>
-      </div>
+      <div class="plans-grid" id="coach-plans-grid"></div>
     </div>
 
     <div id="tab-coach-profile" class="tab">
@@ -1251,6 +1431,114 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <p id="add-athlete-msg" class="msg"></p>
   </div>
 </div>
+
+<!-- New Plan Modal — rich variety of options for coaches -->
+<div id="new-plan-modal" class="modal-overlay" style="z-index:10002;">
+  <div class="modal-content" style="max-width:560px;">
+    <button class="modal-close" onclick="closeModal('new-plan-modal')">&times;</button>
+    <h3><i class="fa-solid fa-clipboard-list"></i> Create New Training Plan</h3>
+    <p style="margin-bottom:16px;">Build a reusable plan template you can assign to any of your athletes.</p>
+    <form onsubmit="return createPlan(event)" style="margin-top:8px;">
+      <label>Plan Name <span style="color:var(--red);">*</span></label>
+      <input type="text" id="np-name" placeholder="e.g. Off-Season Strength Block" required />
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+        <div>
+          <label>Category <span style="color:var(--red);">*</span></label>
+          <select id="np-category" required onchange="updatePlanGoalOptions()">
+            <option value="">Select…</option>
+            <option>Running</option><option>Cycling</option><option>Swimming</option>
+            <option>Strength</option><option>HIIT</option><option>CrossFit</option>
+            <option>Yoga</option><option>Pilates</option><option>Boxing</option>
+            <option>Martial Arts</option><option>Football</option><option>Basketball</option>
+            <option>Tennis</option><option>Rowing</option><option>Triathlon</option>
+            <option>Rehabilitation</option><option>General Fitness</option>
+          </select>
+        </div>
+        <div>
+          <label>Difficulty <span style="color:var(--red);">*</span></label>
+          <select id="np-difficulty" required>
+            <option value="">Select…</option>
+            <option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>Elite</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+        <div>
+          <label>Duration (weeks) <span style="color:var(--red);">*</span></label>
+          <select id="np-duration" required>
+            <option value="">Select…</option>
+            <option>2 weeks</option><option>4 weeks</option><option>6 weeks</option>
+            <option>8 weeks</option><option>12 weeks</option><option>16 weeks</option>
+          </select>
+        </div>
+        <div>
+          <label>Sessions / week <span style="color:var(--red);">*</span></label>
+          <select id="np-sessions" required>
+            <option value="">Select…</option>
+            <option>1 session</option><option>2 sessions</option><option>3 sessions</option>
+            <option>4 sessions</option><option>5 sessions</option><option>6 sessions</option><option>7 sessions</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+        <div>
+          <label>Primary Goal <span style="color:var(--red);">*</span></label>
+          <select id="np-goal" required>
+            <option value="">Select…</option>
+            <option>Build Muscle</option><option>Lose Weight</option><option>Increase Strength</option>
+            <option>Improve Endurance</option><option>Boost Speed</option><option>Enhance Mobility</option>
+            <option>Sports Performance</option><option>Rehabilitation</option><option>Maintain Fitness</option>
+          </select>
+        </div>
+        <div>
+          <label>Equipment</label>
+          <select id="np-equipment">
+            <option>Bodyweight Only</option><option>Dumbbells</option><option>Barbell</option>
+            <option>Kettlebells</option><option>Resistance Bands</option><option>Machines</option>
+            <option>Full Gym</option><option>Outdoor</option><option>Mixed</option>
+          </select>
+        </div>
+      </div>
+
+      <label style="margin-top:14px;">Target Focus (select one or more)</label>
+      <div id="np-focus-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')">Full Body</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')">Upper Body</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')">Lower Body</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')">Core</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')">Cardio</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')">Mobility</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')">Power</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')">Plyometrics</button>
+      </div>
+
+      <label style="margin-top:14px;">Description / Notes</label>
+      <textarea id="np-desc" rows="3" placeholder="Briefly describe the plan's purpose, who it suits, key milestones…" style="resize:vertical;"></textarea>
+
+      <label style="display:flex;align-items:center;gap:8px;margin-top:14px;cursor:pointer;font-weight:500;">
+        <input type="checkbox" id="np-autogen" checked style="width:auto;" />
+        Auto-generate sample weekly workouts based on selections
+      </label>
+
+      <div id="np-preview" style="display:none;margin-top:14px;background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:10px;padding:12px 14px;"></div>
+
+      <div style="display:flex;gap:10px;margin-top:18px;">
+        <button type="button" class="btn ghost" onclick="closeModal('new-plan-modal')" style="flex:1;">Cancel</button>
+        <button type="submit" class="btn primary" style="flex:2;"><i class="fa-solid fa-plus"></i> Create Plan</button>
+      </div>
+    </form>
+    <p id="new-plan-msg" class="msg"></p>
+  </div>
+</div>
+
+<style>
+.focus-chip { padding: 7px 14px; border-radius: 20px; border: 1px solid var(--line); background: var(--white); color: var(--muted); font-size: .82rem; font-weight: 500; cursor: pointer; transition: all .15s ease; font-family: inherit; }
+.focus-chip:hover { border-color: var(--accent-border); color: var(--accent); }
+.focus-chip.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+</style>
 
 <div id="meal-modal" class="modal-overlay">
   <div class="modal-content">
@@ -2214,17 +2502,15 @@ function getFrontSVG() {
     <rect x="53" y="95" width="12" height="50" rx="6" fill="#eaf1fd" stroke="#6495ED" stroke-width="1" />
     <circle cx="43" cy="55" r="5" class="muscle-dot-svg ${deState.muscles.includes('Chest') ? 'selected' : ''}" onclick="toggleMuscle('Chest')"></circle>
     <circle cx="57" cy="55" r="5" class="muscle-dot-svg ${deState.muscles.includes('Chest') ? 'selected' : ''}" onclick="toggleMuscle('Chest')"></circle>
-    <circle cx="28" cy="65" r="4" class="muscle-dot-svg ${deState.muscles.includes('Shoulders') ? 'selected' : ''}" onclick="toggleMuscle('Shoulders')"></circle>
-    <circle cx="72" cy="65" r="4" class="muscle-dot-svg ${deState.muscles.includes('Shoulders') ? 'selected' : ''}" onclick="toggleMuscle('Shoulders')"></circle>
+    <circle cx="28" cy="48" r="4" class="muscle-dot-svg ${deState.muscles.includes('Shoulders') ? 'selected' : ''}" onclick="toggleMuscle('Shoulders')"></circle>
+    <circle cx="72" cy="48" r="4" class="muscle-dot-svg ${deState.muscles.includes('Shoulders') ? 'selected' : ''}" onclick="toggleMuscle('Shoulders')"></circle>
     <circle cx="25" cy="75" r="4" class="muscle-dot-svg ${deState.muscles.includes('Arms') ? 'selected' : ''}" onclick="toggleMuscle('Arms')"></circle>
     <circle cx="75" cy="75" r="4" class="muscle-dot-svg ${deState.muscles.includes('Arms') ? 'selected' : ''}" onclick="toggleMuscle('Arms')"></circle>
-    <circle cx="50" cy="75" r="4" class="muscle-dot-svg ${deState.muscles.includes('Core') ? 'selected' : ''}" onclick="toggleMuscle('Core')"></circle>
-    <circle cx="50" cy="85" r="4" class="muscle-dot-svg ${deState.muscles.includes('Core') ? 'selected' : ''}" onclick="toggleMuscle('Core')"></circle>
+    <circle cx="50" cy="72" r="4" class="muscle-dot-svg ${deState.muscles.includes('Core') ? 'selected' : ''}" onclick="toggleMuscle('Core')"></circle>
     <circle cx="42" cy="110" r="4" class="muscle-dot-svg ${deState.muscles.includes('Legs') ? 'selected' : ''}" onclick="toggleMuscle('Legs')"></circle>
     <circle cx="58" cy="110" r="4" class="muscle-dot-svg ${deState.muscles.includes('Legs') ? 'selected' : ''}" onclick="toggleMuscle('Legs')"></circle>
   </svg>`;
 }
-
 function getBackSVG() {
   return `<svg viewBox="0 0 100 200">
     <circle cx="50" cy="20" r="15" fill="#eaf1fd" stroke="#6495ED" stroke-width="1" />
@@ -2236,8 +2522,8 @@ function getBackSVG() {
     <circle cx="50" cy="55" r="5" class="muscle-dot-svg ${deState.muscles.includes('Back') ? 'selected' : ''}" onclick="toggleMuscle('Back')"></circle>
     <circle cx="40" cy="65" r="4" class="muscle-dot-svg ${deState.muscles.includes('Back') ? 'selected' : ''}" onclick="toggleMuscle('Back')"></circle>
     <circle cx="60" cy="65" r="4" class="muscle-dot-svg ${deState.muscles.includes('Back') ? 'selected' : ''}" onclick="toggleMuscle('Back')"></circle>
-    <circle cx="28" cy="65" r="4" class="muscle-dot-svg ${deState.muscles.includes('Shoulders') ? 'selected' : ''}" onclick="toggleMuscle('Shoulders')"></circle>
-    <circle cx="72" cy="65" r="4" class="muscle-dot-svg ${deState.muscles.includes('Shoulders') ? 'selected' : ''}" onclick="toggleMuscle('Shoulders')"></circle>
+    <circle cx="28" cy="48" r="4" class="muscle-dot-svg ${deState.muscles.includes('Shoulders') ? 'selected' : ''}" onclick="toggleMuscle('Shoulders')"></circle>
+    <circle cx="72" cy="48" r="4" class="muscle-dot-svg ${deState.muscles.includes('Shoulders') ? 'selected' : ''}" onclick="toggleMuscle('Shoulders')"></circle>
     <circle cx="25" cy="75" r="4" class="muscle-dot-svg ${deState.muscles.includes('Arms') ? 'selected' : ''}" onclick="toggleMuscle('Arms')"></circle>
     <circle cx="75" cy="75" r="4" class="muscle-dot-svg ${deState.muscles.includes('Arms') ? 'selected' : ''}" onclick="toggleMuscle('Arms')"></circle>
     <circle cx="42" cy="110" r="4" class="muscle-dot-svg ${deState.muscles.includes('Legs') ? 'selected' : ''}" onclick="toggleMuscle('Legs')"></circle>
@@ -2504,12 +2790,653 @@ function renderProfile() {
   if (u.goalPlan) {
     document.getElementById('profile-goal-plan').innerHTML = `<ul style="margin:0 0 12px 20px;line-height:1.9;font-size:.92rem;"><li><b>Target Weight:</b> ${u.goalPlan.targetWeight} kg</li><li><b>Target Calories:</b> ${u.goalPlan.targetCals} kcal</li><li><b>Maintenance (TDEE):</b> ${u.goalPlan.tdee} kcal</li></ul>`;
   } else { document.getElementById('profile-goal-plan').innerHTML = `<p style="color:var(--muted);">No goal plan set yet.</p>`; }
+  renderInBodyProfileCard();
+}
+
+/* ===== InBody Scan from Profile tab ===== */
+let pendingInBodyScan = null; // holds the most recent scan result (not yet applied)
+
+function renderInBodyProfileCard() {
+  const u = currentUser();
+  const scan = u.inbodyScan || null;
+  const statsBox = document.getElementById('inbody-profile-stats');
+  const lastBox = document.getElementById('inbody-profile-last');
+  const actionsBox = document.getElementById('inbody-profile-actions');
+
+  if (!scan) {
+    statsBox.innerHTML = '<div class="inbody-empty"><i class="fa-solid fa-circle-info" style="margin-right:6px;color:var(--accent);"></i>No InBody scan yet. Upload your sheet above to get started.</div>';
+    lastBox.innerHTML = '';
+    actionsBox.style.display = 'none';
+    return;
+  }
+
+  // Render stats grid
+  const rows = [
+    { label: 'Weight', icon: 'fa-weight-scale', val: scan.weight, unit: 'kg' },
+    { label: 'Height', icon: 'fa-ruler-vertical', val: scan.height, unit: 'cm' },
+    { label: 'BMI', icon: 'fa-chart-pie', val: scan.bmi, unit: '' },
+    { label: 'Body Fat', icon: 'fa-droplet', val: scan.bodyFat, unit: '%' },
+    { label: 'Muscle Mass', icon: 'fa-dumbbell', val: scan.muscle, unit: 'kg' },
+    { label: 'BMR', icon: 'fa-fire', val: scan.bmr, unit: 'kcal' }
+  ].filter(r => r.val !== undefined && r.val !== null && r.val !== '');
+
+  statsBox.innerHTML = '<div class="inbody-stats-grid">' +
+    rows.map(r => `<div class="inbody-stat"><div class="label"><i class="fa-solid ${r.icon}"></i> ${r.label}</div><div class="value">${r.val}${r.unit ? '<span class="unit">' + r.unit + '</span>' : ''}</div></div>`).join('') +
+    '</div>';
+
+  // Last scan info
+  const scanDate = scan.scannedAt ? new Date(scan.scannedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'Previously';
+  lastBox.innerHTML = `<div class="inbody-last-scan"><i class="fa-solid fa-circle-check"></i> Last scan: ${scanDate}</div>`;
+  actionsBox.style.display = 'flex';
+}
+
+/* ===== Shared InBody OCR parser =====
+   Handles multiple InBody sheet layouts including:
+   - Metric:   "Weight: 75.2 kg", "Height: 180 cm"
+   - Imperial: "Weight (lbs) 130.3", "Height 5ft.0.1in."
+   - Descriptive labels: "BMI Body Mass Index (kg/m²) 24.0",
+                         "PBF Percent Body Fat (%) 37.5",
+                         "SMM Skeletal Muscle Mass (lbs) 42.6",
+                         "Basal Metabolic Rate 1168 kcal"
+   All imperial values are converted to metric (lbs→kg, ft.in→cm).
+   Returns { weight, height, age, gender, bmi, bodyFat, muscle, bmr } with only the
+   fields that were successfully extracted. */
+function parseInBodyText(text) {
+  if (!text || typeof text !== 'string') return {};
+  const found = {};
+  // Normalize curly quotes, double spaces, etc.
+  // Also normalize common OCR mistakes: "30,3" → "30.3" (comma decimal),
+  // "1303" → keep as-is for now (handled in weight logic below)
+  const t = text
+    .replace(/[\u2018\u2019\u201C\u201D]/g, "'")
+    .replace(/[ \t]+/g, ' ')
+    .replace(/(\d),(\d)/g, '$1.$2');  // comma decimal → dot decimal (European format)
+
+  // ---- WEIGHT ---- (kg or lbs)
+  // Match either "Weight: 75 kg" or "Weight (lbs) 130.3" or "Weight (kg) 75.0"
+  // Allow up to 4 digits to handle OCR losing the decimal (e.g., "1303" from "130.3")
+  let m = t.match(/\bWeight\b[^\d]{0,20}?\(?\s*(lbs?|pounds?|kg|kilograms?)?\s*\)?\s*[:\-]?\s*(\d{2,4}(?:\.\d{1,2})?)/i);
+  if (m) {
+    const unit = (m[1] || '').toLowerCase();
+    let val = parseFloat(m[2]);
+    // If 4-digit number, OCR probably lost the decimal (1303 → 130.3)
+    if (m[2].length >= 4 && !m[2].includes('.')) val = val / 10;
+    if (unit.startsWith('lb') || unit.startsWith('pound')) {
+      found.weight = Math.round(val * 0.453592 * 10) / 10;
+      found.weightUnit = 'kg (from ' + val + ' lbs)';
+    } else if (unit.startsWith('kg') || unit.startsWith('kilogram')) {
+      found.weight = val;
+      found.weightUnit = 'kg';
+    } else {
+      // Unknown unit — guess based on value
+      if (val > 200) {
+        // Almost certainly lbs (200+ kg is extreme)
+        found.weight = Math.round(val * 0.453592 * 10) / 10;
+        found.weightUnit = 'kg (from ' + val + ' lbs — value > 200 without kg unit)';
+      } else if (val > 100) {
+        // Could be either — assume lbs if conversion gives a sane kg (30-200)
+        const kg = Math.round(val * 0.453592 * 10) / 10;
+        if (kg > 30 && kg < 200) {
+          found.weight = kg;
+          found.weightUnit = 'kg (from ' + val + ' lbs — value > 100 without kg unit)';
+        } else {
+          found.weight = val;
+          found.weightUnit = 'kg';
+        }
+      } else {
+        found.weight = val;
+        found.weightUnit = 'kg';
+      }
+    }
+  }
+
+  // ---- HEIGHT ---- (cm or ft.in.)
+  // Try metric first: "Height 180 cm" / "Height: 180cm"
+  m = t.match(/\bHeight\b[^\d]{0,20}?\(?\s*(cm|in(?:ch(?:es)?)?|ft|feet|meters?)?\s*\)?\s*[:\-]?\s*(\d{2,3}(?:\.\d{1,2})?)\s*(cm|in(?:ch(?:es)?)?|m\b)?/i);
+  if (m) {
+    const unit = (m[1] || m[3] || '').toLowerCase();
+    const val = parseFloat(m[2]);
+    if (unit.startsWith('cm') || (val > 100 && val < 250 && !unit)) {
+      found.height = val;
+      found.heightUnit = 'cm';
+    } else if (unit.startsWith('m') && !unit.startsWith('cm') && val < 3) {
+      found.height = Math.round(val * 100);
+      found.heightUnit = 'cm (from ' + val + ' m)';
+    } else if (unit.startsWith('in')) {
+      found.height = Math.round(val * 2.54);
+      found.heightUnit = 'cm (from ' + val + ' in)';
+    }
+  }
+  // Try imperial "5ft.0.1in." or "5'0\"" or "5 ft 0 in"
+  if (found.height === undefined) {
+    m = t.match(/\bHeight\b[^\d]{0,20}?(\d{1})\s*(?:ft|ft\.|'|feet)\s*\.?\s*(\d{1,2}(?:\.\d{1,2})?)?\s*(?:in|in\.|"|inches)?/i);
+    if (m) {
+      const feet = parseInt(m[1], 10);
+      const inches = m[2] ? parseFloat(m[2]) : 0;
+      const totalCm = Math.round((feet * 12 + inches) * 2.54);
+      if (totalCm > 100 && totalCm < 250) {
+        found.height = totalCm;
+        found.heightUnit = 'cm (from ' + feet + 'ft ' + inches + 'in)';
+      }
+    }
+  }
+
+  // ---- AGE ----
+  m = t.match(/\bAge\b\s*[:\-]?\s*(\d{1,3})\s*(?:yrs?|years|yo)?/i);
+  if (m) {
+    const age = parseInt(m[1], 10);
+    if (age > 0 && age < 120) found.age = age;
+  }
+
+  // ---- GENDER ----
+  m = t.match(/\b(?:Gender|Sex)\b\s*[:\-]?\s*(Male|Female|M|F)\b/i);
+  if (m) {
+    const g = m[1].toLowerCase();
+    found.gender = (g === 'm') ? 'Male' : (g === 'f') ? 'Female' : m[1];
+  }
+
+  // ---- BMI ---- (matches "BMI: 24.0" or "BMI Body Mass Index (kg/m²) 24.0")
+  m = t.match(/\bBMI\b[^\d]{0,40}?(\d{1,2}(?:\.\d{1,2})?)/i);
+  if (m) {
+    const bmi = parseFloat(m[1]);
+    if (bmi > 8 && bmi < 80) found.bmi = bmi;  // sanity check
+  }
+
+  // ---- BODY FAT % ---- (prefers PBF/Percent Body Fat over Body Fat Mass which is in lbs)
+  // Strategy: For each PBF occurrence, scan the same LINE for plausible body fat values.
+  // Take the LAST plausible value found (InBody history rows list oldest→newest).
+  // We DON'T require "%" on the line because OCR often loses it, but we DO require the
+  // value to be in a tight 5-65% range AND we skip values from description text lines
+  // (which contain phrases like "PBF is the percentage of body fat" — these have no
+  // digits after PBF except maybe "1" from "1s", which fails the sanity check).
+  const pbfMatches = [];
+  // Find each PBF occurrence, then scan its line for ALL plausible body fat values
+  const pbfOccurrences = [];
+  let pIdx = 0;
+  while ((pIdx = t.toLowerCase().indexOf('pbf', pIdx)) !== -1) {
+    pbfOccurrences.push(pIdx);
+    pIdx += 3;
+  }
+  for (const startIdx of pbfOccurrences) {
+    // Get the rest of the line (up to next newline)
+    const lineEnd = t.indexOf('\n', startIdx);
+    const line = t.slice(startIdx, lineEnd === -1 ? t.length : lineEnd);
+    // ONLY trust lines that contain "%" or "Percent Body Fat" — this filters out garbled
+    // lines like "PBF Ca . . 32 30 Jo WO 3TR" which have stray digits but no % symbol.
+    // Real PBF values always appear on lines labeled with "%" or "Percent Body Fat".
+    if (!line.includes('%') && !/Percent\s*Body\s*Fat/i.test(line)) continue;
+    // Find ALL 1-2 digit numbers on this line, optionally followed by a SEPARATOR (". " or space)
+    // and 1 decimal digit. The separator is REQUIRED for the decimal — this prevents "230" from
+    // being parsed as 23.0 (3-digit integers are NOT body fat values).
+    const lineMatches = line.matchAll(/(\d{1,2})(?:(?:\.|\s)(\d))?(?!\d)/g);
+    for (const lm of lineMatches) {
+      let bf = parseFloat(lm[1]);
+      if (lm[2]) bf = parseFloat(lm[1] + '.' + lm[2]);
+      if (bf > 5 && bf < 65) pbfMatches.push(bf);
+    }
+  }
+  if (pbfMatches.length > 0) {
+    // Take the LAST value (most recent in the history row)
+    found.bodyFat = pbfMatches[pbfMatches.length - 1];
+  }
+  if (found.bodyFat === undefined) {
+    // Fallback: "Body Fat: 15.3%" (requires "%" nearby to avoid matching Body Fat Mass in lbs)
+    m = t.match(/\b(?:Body\s*Fat|BF)\b(?!\s*Mass)[^\n]{0,30}?(\d{1,2}(?:\.\d{1,2})?)\s*%?[^\n]*?%/i);
+    if (m) {
+      const bf = parseFloat(m[1]);
+      if (bf > 5 && bf < 65) found.bodyFat = bf;
+    }
+  }
+
+  // ---- MUSCLE MASS ---- (matches "Skeletal Muscle Mass (lbs) 42.6" or "SMM: 30 kg")
+  // Allow up to 4 digits to handle OCR losing the decimal (e.g., "443" from "44.3")
+  m = t.match(/\b(?:Skeletal\s*Muscle\s*Mass|SMM|Muscle\s*Mass)\b[^\d]{0,40}?\(?\s*(lbs?|pounds?|kg|kilograms?)?\s*\)?\s*[:\-]?\s*(\d{1,4}(?:\.\d{1,2})?)/i);
+  if (m) {
+    const unit = (m[1] || '').toLowerCase();
+    let val = parseFloat(m[2]);
+    // If 4-digit integer, OCR probably lost the decimal (4430 → 44.3)
+    if (m[2].length >= 4 && !m[2].includes('.')) val = val / 10;
+    // If 3-digit integer > 100, also likely lost decimal (443 → 44.3)
+    if (m[2].length === 3 && !m[2].includes('.') && val > 100) val = val / 10;
+    if (unit.startsWith('lb') || unit.startsWith('pound')) {
+      const kg = Math.round(val * 0.453592 * 10) / 10;
+      // Sanity check: muscle mass should be 15-80 kg for adults
+      if (kg >= 15 && kg <= 80) {
+        found.muscle = kg;
+        found.muscleUnit = 'kg (from ' + val + ' lbs)';
+      }
+    } else {
+      // Sanity check for kg too — reject single-digit values from garbled OCR
+      if (val >= 15 && val <= 80) {
+        found.muscle = val;
+        found.muscleUnit = 'kg';
+      }
+    }
+  }
+
+  // ---- BMR ---- (matches "BMR: 1500 kcal" or "Basal Metabolic Rate 1168 kcal")
+  m = t.match(/\b(?:BMR|Basal\s*Metabolic\s*Rate)\b[^\d]{0,40}?(\d{3,5})\s*(?:kcal|cal|cals)?/i);
+  if (m) {
+    const bmr = parseInt(m[1], 10);
+    if (bmr > 800 && bmr < 5000) found.bmr = bmr;
+  }
+
+  // ===== FALLBACK PATTERNS for InBody 270 sheets =====
+  // The 270 layout puts labels in a header row and values in a row below, so OCR
+  // often loses the keyword. These patterns look for the value patterns directly.
+
+  // Height fallback: "5ft.0.1in." or "5ft01.8in." anywhere in text
+  if (found.height === undefined) {
+    m = t.match(/(\d{1})\s*(?:ft|ft\.|'|feet)\s*\.?\s*(\d{1,2}(?:\.\d{1,2})?)\s*(?:in|in\.|"|inches)?/i);
+    if (m) {
+      const feet = parseInt(m[1], 10);
+      const inches = m[2] ? parseFloat(m[2]) : 0;
+      const totalCm = Math.round((feet * 12 + inches) * 2.54);
+      if (totalCm > 100 && totalCm < 250) {
+        found.height = totalCm;
+        found.heightUnit = 'cm (from ' + feet + 'ft ' + inches + 'in)';
+      }
+    }
+  }
+  // Height fallback 2: bare "XXX cm" anywhere (3 digits + cm)
+  if (found.height === undefined) {
+    m = t.match(/(\d{3}(?:\.\d{1,2})?)\s*cm/i);
+    if (m) {
+      const val = parseFloat(m[1]);
+      if (val > 100 && val < 250) {
+        found.height = val;
+        found.heightUnit = 'cm';
+      }
+    }
+  }
+
+  // Gender fallback: bare "Male" or "Female" anywhere in text
+  if (found.gender === undefined) {
+    m = t.match(/\b(Female|Male)\b/i);
+    if (m) found.gender = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
+  }
+
+  // Age fallback: 2-digit number near "Age" OR a 2-digit number on the same line
+  // as a height pattern (the InBody 270 header row has them together)
+  if (found.age === undefined) {
+    // Look for the header row pattern: "Name ... HeightFtPattern AGE Gender"
+    m = t.match(/(\d{1})\s*(?:ft|ft\.|'|feet)\s*\.?\s*(\d{1,2}(?:\.\d{1,2})?)?\s*(?:in|in\.|"|inches)?[^\d]{0,15}?(\d{2})\s*(?:Female|Male)/i);
+    if (m) {
+      const age = parseInt(m[3], 10);
+      if (age > 0 && age < 120) found.age = age;
+    }
+  }
+
+  // Weight fallback: if we got a weight but it's > 200, it's probably in lbs
+  if (found.weight !== undefined && found.weight > 200) {
+    const lbs = found.weight;
+    found.weight = Math.round(lbs * 0.453592 * 10) / 10;
+    found.weightUnit = 'kg (auto-converted from ' + lbs + ' lbs — value was > 200)';
+  }
+  // Weight fallback: if no weight found, look for "Weight" followed by anything then a number
+  if (found.weight === undefined) {
+    m = t.match(/\bWeight\b[^\d]{0,30}?(\d{2,3}(?:\.\d{1,2})?)/i);
+    if (m) {
+      let val = parseFloat(m[1]);
+      // If value looks like lbs (>200) or "1303" (lost decimal), try to fix
+      if (val > 200) {
+        // probably "130.3" lost its decimal -> "1303"
+        if (val > 300) val = val / 10;
+        const kg = Math.round(val * 0.453592 * 10) / 10;
+        found.weight = kg;
+        found.weightUnit = 'kg (from ' + val + ' lbs)';
+      } else if (val > 100) {
+        // Could be kg or lbs — assume lbs if > 100 and value * 0.45 gives a sane kg
+        const kg = Math.round(val * 0.453592 * 10) / 10;
+        if (kg > 30 && kg < 200) {
+          found.weight = kg;
+          found.weightUnit = 'kg (from ' + val + ' lbs)';
+        } else {
+          found.weight = val;
+          found.weightUnit = 'kg';
+        }
+      } else {
+        found.weight = val;
+        found.weightUnit = 'kg';
+      }
+    }
+  }
+
+  // BMI fallback: scan ALL "BMI" occurrences and grab the first plausible number.
+  // For each BMI occurrence, scan up to 150 chars forward and try EVERY digit sequence
+  // until we find one that looks like a valid BMI (12-60). This handles garbled OCR
+  // where the BMI keyword is on one line and the value is on the next, with stray
+  // digits like "10" (from "10 determine") in between.
+  if (found.bmi === undefined) {
+    const bmiOccurrences = [];
+    let idx = 0;
+    while ((idx = t.indexOf('BMI', idx)) !== -1) {
+      bmiOccurrences.push(idx);
+      idx += 3;
+    }
+    for (const startIdx of bmiOccurrences) {
+      // Scan the next 200 chars after "BMI" for ALL digit sequences
+      const chunk = t.slice(startIdx + 3, startIdx + 203);
+      // Require a separator (". " or space) before the optional decimal digit.
+      // This prevents "240" from being parsed as 24.0 (3-digit integers aren't BMI values).
+      const digitSeqs = chunk.matchAll(/(\d{1,2})(?:(?:\.|\s)(\d))?(?!\d)/g);
+      for (const dm of digitSeqs) {
+        let bmi = parseFloat(dm[1]);
+        if (dm[2]) bmi = parseFloat(dm[1] + '.' + dm[2]);
+        if (bmi >= 12 && bmi <= 60) {
+          found.bmi = bmi;
+          break;
+        }
+      }
+      if (found.bmi !== undefined) break;
+    }
+  }
+
+  // Body Fat fallback: just look for "PBF" anywhere
+  if (found.bodyFat === undefined) {
+    m = t.match(/\bPBF\b[^\d]{0,80}?(\d{1,2}(?:\.\d{1,2})?)/i);
+    if (m) {
+      const bf = parseFloat(m[1]);
+      if (bf > 2 && bf < 70) found.bodyFat = bf;
+    }
+  }
+
+  // Muscle fallback: look for "SMM" or "Skeletal" anywhere
+  if (found.muscle === undefined) {
+    m = t.match(/\b(?:SMM|Skeletal)\b[^\d]{0,80}?\(?\s*(lbs?|pounds?|kg|kilograms?)?\s*\)?\s*[:\-]?\s*(\d{1,4}(?:\.\d{1,2})?)/i);
+    if (m) {
+      const unit = (m[1] || '').toLowerCase();
+      let val = parseFloat(m[2]);
+      // Handle 3-4 digit integers from lost decimals
+      if (m[2].length >= 4 && !m[2].includes('.')) val = val / 10;
+      if (m[2].length === 3 && !m[2].includes('.') && val > 100) val = val / 10;
+      if (unit.startsWith('lb') || unit.startsWith('pound') || val > 80) {
+        const kg = Math.round(val * 0.453592 * 10) / 10;
+        // Strict sanity: 15-80 kg for adult muscle mass
+        if (kg >= 15 && kg <= 80) {
+          found.muscle = kg;
+          found.muscleUnit = 'kg (from ' + val + ' lbs)';
+        }
+      } else {
+        // Same strict sanity for kg values
+        if (val >= 15 && val <= 80) {
+          found.muscle = val;
+          found.muscleUnit = 'kg';
+        }
+      }
+    }
+  }
+
+  // BMR fallback: look for "Basal" anywhere
+  if (found.bmr === undefined) {
+    m = t.match(/\bBasal\b[^\d]{0,80}?(\d{3,5})/i);
+    if (m) {
+      const bmr = parseInt(m[1], 10);
+      if (bmr > 800 && bmr < 5000) found.bmr = bmr;
+    }
+  }
+
+  return found;
+}
+
+/* ===== Image preprocessing for better OCR accuracy =====
+   Tesseract.js works much better on:
+   - Larger images (we scale up 2x)
+   - Grayscale (eliminates color noise)
+   - High contrast (threshold to pure black/white)
+   Returns a Promise<Blob> with the enhanced image. */
+function preprocessImageForOCR(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = e => { img.src = e.target.result; };
+    reader.onerror = reject;
+    img.onload = () => {
+      try {
+        // Scale up 2x for better OCR (Tesseract prefers larger images)
+        const scale = 2;
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Get pixel data for grayscale + contrast
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        const contrast = 1.5;  // boost contrast
+        const intercept = 128 * (1 - contrast);
+        for (let i = 0; i < data.length; i += 4) {
+          // Convert to grayscale
+          let gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+          // Apply contrast
+          gray = gray * contrast + intercept;
+          // Threshold to pure black/white for cleaner text
+          gray = gray > 140 ? 255 : (gray < 100 ? 0 : gray);
+          data[i] = data[i + 1] = data[i + 2] = gray;
+        }
+        ctx.putImageData(imageData, 0, 0);
+        canvas.toBlob(blob => {
+          if (blob) resolve(blob);
+          else reject(new Error('Canvas toBlob failed'));
+        }, 'image/png');
+      } catch (err) {
+        reject(err);
+      }
+    };
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function scanInBodyFromProfile(inputEl) {
+  const file = inputEl.files && inputEl.files[0];
+  if (!file) return;
+
+  // Guard: Tesseract.js must be loaded
+  if (typeof Tesseract === 'undefined') {
+    alert('OCR engine failed to load. Check your connection and refresh.');
+    return;
+  }
+
+  // Show animated overlay
+  showOcrOverlay('Scanning your InBody…', 'Reading body composition data');
+  setOcrPhase('Enhancing image');
+
+  const phaseWeights = {
+    'loading tesseract core': 0.10,
+    'initializing tesseract': 0.18,
+    'loading language traineddata': 0.32,
+    'initializing api': 0.40,
+    'recognizing text': 0.40
+  };
+
+  // Strategy: run OCR TWICE — once on the original image (better for header rows
+  // with mixed text like "Jane Doe 5ft.0.1in. 51 Female"), and once on a preprocessed
+  // high-contrast version (better for the data table values). Merge the results so we
+  // get the best of both. This takes ~2x longer but dramatically improves accuracy on
+  // complex InBody result sheets.
+  const logger = m => {
+    const base = phaseWeights[m.status] !== undefined ? phaseWeights[m.status] : 0;
+    let pct;
+    let phaseText;
+    if (m.status === 'recognizing text') {
+      pct = Math.round((base + (1 - base) * (m.progress || 0)) * 50);  // first pass = up to 50%
+      phaseText = 'Recognizing text';
+    } else {
+      pct = Math.round((base + (m.progress || 0) * 0.1) * 50);
+      phaseText = m.status.charAt(0).toUpperCase() + m.status.slice(1);
+    }
+    updateOcrProgress(pct, phaseText);
+  };
+
+  const logger2 = m => {
+    const base = phaseWeights[m.status] !== undefined ? phaseWeights[m.status] : 0;
+    let pct;
+    let phaseText;
+    if (m.status === 'recognizing text') {
+      pct = 50 + Math.round((base + (1 - base) * (m.progress || 0)) * 50);  // second pass = 50% to 100%
+      phaseText = 'Enhancing recognition';
+    } else {
+      pct = 50 + Math.round((base + (m.progress || 0) * 0.1) * 50);
+      phaseText = m.status.charAt(0).toUpperCase() + m.status.slice(1);
+    }
+    updateOcrProgress(pct, phaseText);
+  };
+
+  // Pass 1: original image
+  const pass1 = Tesseract.recognize(file, 'eng', { logger });
+  // Pass 2: preprocessed image (in parallel)
+  const pass2 = preprocessImageForOCR(file).then(enhancedBlob =>
+    Tesseract.recognize(enhancedBlob, 'eng', { logger: logger2 })
+  );
+
+  Promise.all([pass1, pass2]).then(([r1, r2]) => {
+    updateOcrProgress(100, 'Parsing results');
+    const text1 = r1.data.text || '';
+    const text2 = r2.data.text || '';
+    // Concatenate both OCR outputs so the parser can find fields from either pass
+    const combinedText = text1 + '\n---\n' + text2;
+    const found = parseInBodyText(combinedText);
+
+    const foundKeys = Object.keys(found).filter(k => !k.endsWith('Unit'));
+    if (foundKeys.length === 0) {
+      showOcrError('Could not read any fields from this image. Make sure the photo is clear, well-lit, and shows the InBody labels (Weight, Height, BMI, Body Fat, etc.), then try again.');
+      return;
+    }
+
+    found.scannedAt = Date.now();
+    found.fieldsCount = foundKeys.length;
+    pendingInBodyScan = found;
+
+    // Auto-save the scan to the user record immediately
+    const u = currentUser();
+    u.inbodyScan = found;
+    saveUser(store.session, u);
+
+    // Show success state, then close overlay and re-render
+    showOcrSuccess(foundKeys.length + ' field' + (foundKeys.length === 1 ? '' : 's') + ' read successfully');
+    setTimeout(() => {
+      hideOcrOverlay();
+      renderInBodyProfileCard();
+      // Reset file input so the same file can be re-selected later
+      inputEl.value = '';
+    }, 1500);
+  }).catch(err => {
+    console.error('InBody OCR error (profile):', err);
+    showOcrError('Could not read image. Please try a clearer photo.');
+  });
+}
+
+function applyInBodyToProfile() {
+  const u = currentUser();
+  const scan = u.inbodyScan || pendingInBodyScan;
+  if (!scan) { alert('No scan to apply. Upload an InBody sheet first.'); return; }
+
+  let changes = [];
+  if (scan.weight !== undefined) { u.profile.weight = scan.weight; changes.push('weight'); }
+  if (scan.height !== undefined) { u.profile.height = scan.height; changes.push('height'); }
+  if (scan.age !== undefined) { u.profile.age = scan.age; changes.push('age'); }
+  if (scan.gender !== undefined) { u.profile.gender = scan.gender.toLowerCase(); changes.push('gender'); }
+
+  saveUser(store.session, u);
+  pendingInBodyScan = null;
+  renderProfile();
+
+  // Friendly confirmation
+  const msg = changes.length
+    ? 'InBody data applied to your profile! Updated: ' + changes.join(', ') + '.'
+    : 'No basic profile fields (weight, height, age, gender) were found in the scan, but body composition metrics (BMI, body fat, muscle mass, BMR) are saved above.';
+  alert(msg);
+}
+
+/* ===== OCR Overlay helpers ===== */
+function showOcrOverlay(title, subtitle) {
+  const overlay = document.getElementById('ocr-overlay');
+  document.getElementById('ocr-title').textContent = title || 'Scanning…';
+  document.getElementById('ocr-subtitle').textContent = subtitle || '';
+  document.getElementById('ocr-progress-bar').style.width = '0%';
+  document.getElementById('ocr-progress-pct').textContent = '0%';
+  setOcrPhase('Initializing');
+  // Reset to scanning frame (in case it was previously success/error)
+  document.getElementById('ocr-scanner-frame').style.display = '';
+  // Remove any success/error elements
+  document.querySelectorAll('.ocr-success-check, .ocr-error-icon').forEach(el => el.remove());
+  overlay.classList.add('active');
+  document.body.classList.add('ocr-active');
+  if (window.chatbase) { try { window.chatbase('hide'); } catch(e) {} }
+}
+
+function hideOcrOverlay() {
+  document.getElementById('ocr-overlay').classList.remove('active');
+  document.body.classList.remove('ocr-active');
+  if (window.chatbase) { try { window.chatbase('show'); } catch(e) {} }
+}
+
+function updateOcrProgress(pct, phaseText) {
+  pct = Math.max(0, Math.min(100, pct));
+  document.getElementById('ocr-progress-bar').style.width = pct + '%';
+  document.getElementById('ocr-progress-pct').textContent = pct + '%';
+  if (phaseText) setOcrPhase(phaseText);
+}
+
+function setOcrPhase(text) {
+  document.getElementById('ocr-phase-text').innerHTML = text + '<span class="ocr-typing"><span></span><span></span><span></span></span>';
+}
+
+function showOcrSuccess(message) {
+  const frame = document.getElementById('ocr-scanner-frame');
+  frame.style.display = 'none';
+  const panel = document.getElementById('ocr-panel');
+  // Insert success icon before title
+  const successEl = document.createElement('div');
+  successEl.className = 'ocr-success-check';
+  successEl.innerHTML = '<i class="fa-solid fa-check"></i>';
+  panel.insertBefore(successEl, panel.firstChild);
+  document.getElementById('ocr-title').textContent = message || 'Scan complete!';
+  document.getElementById('ocr-subtitle').textContent = 'Updating your profile…';
+  document.getElementById('ocr-progress-bar').style.width = '100%';
+  document.getElementById('ocr-progress-pct').textContent = '100%';
+  document.getElementById('ocr-phase-text').textContent = 'Done';
+}
+
+function showOcrError(message) {
+  const frame = document.getElementById('ocr-scanner-frame');
+  frame.style.display = 'none';
+  const panel = document.getElementById('ocr-panel');
+  const errEl = document.createElement('div');
+  errEl.className = 'ocr-error-icon';
+  errEl.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+  panel.insertBefore(errEl, panel.firstChild);
+  document.getElementById('ocr-title').textContent = 'Scan failed';
+  document.getElementById('ocr-subtitle').textContent = message || 'Could not read the image.';
+  document.getElementById('ocr-progress-bar').style.width = '100%';
+  document.getElementById('ocr-progress-bar').style.background = 'var(--red)';
+  document.getElementById('ocr-progress-pct').textContent = '!';
+  document.getElementById('ocr-progress-pct').style.color = 'var(--red)';
+  document.getElementById('ocr-phase-text').textContent = 'Try again with a clearer photo';
+  // Auto-close after 3 seconds
+  setTimeout(() => {
+    hideOcrOverlay();
+    // Reset bar color for next time
+    document.getElementById('ocr-progress-bar').style.background = '';
+    document.getElementById('ocr-progress-pct').style.color = '';
+  }, 3000);
 }
 
 function renderReminders() {
   const u = currentUser();
   const reminders = u.reminders || [];
   const list = document.getElementById('reminders-list');
+  /* Always pre-fill the date field with today's date so the picker is never an
+     empty/invisible slot on mobile (iOS Safari renders empty date inputs as a
+     thin blank line until tapped). */
+  const dateInput = document.getElementById('rem-date');
+  if (dateInput && !dateInput.value) {
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    dateInput.value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  }
   if (reminders.length === 0) { list.innerHTML = `<p style="color:var(--muted); text-align:center; padding: 20px 0;">No reminders yet. Create one above!</p>`; return; }
   list.innerHTML = reminders.map((r, i) => `
     <div class="reminder-item">
@@ -2529,7 +3456,13 @@ function saveReminder() {
   const title = document.getElementById('rem-title').value.trim(); const date = document.getElementById('rem-date').value; const time = document.getElementById('rem-time').value; const note = document.getElementById('rem-note').value.trim();
   if (!title || !date) { alert('Please enter at least a title and date.'); return; }
   const u = currentUser(); if (!u.reminders) u.reminders = []; u.reminders.push({ title, date, time: time || '09:00', note }); saveUser(store.session, u);
-  document.getElementById('rem-title').value = ''; document.getElementById('rem-date').value = ''; document.getElementById('rem-time').value = '09:00'; document.getElementById('rem-note').value = '';
+  document.getElementById('rem-title').value = '';
+  /* Reset date to today (instead of empty) so the field stays visible on mobile */
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  document.getElementById('rem-date').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  document.getElementById('rem-time').value = '09:00';
+  document.getElementById('rem-note').value = '';
   renderReminders();
 }
 function deleteReminder(index) { const u = currentUser(); u.reminders.splice(index, 1); saveUser(store.session, u); renderReminders(); }
@@ -2614,7 +3547,7 @@ function enterCoachApp(user) {
   document.getElementById('coach-email-1').textContent = user.email;
   document.getElementById('coach-email-2').textContent = user.email;
   document.getElementById('coach-initial').textContent = (first[0]||'C').toUpperCase();
-  renderCoachAthletes(); updateCoachStats(); renderCoachSessionsTable();
+  renderCoachAthletes(); updateCoachStats(); renderCoachSessionsTable(); renderCoachPlans();
   setTimeout(() => renderCoachSessionsChart(), 200);
   window.scrollTo(0,0);
   updateChatbaseVisibility();
@@ -2627,6 +3560,247 @@ function showCoachTab(t) {
   if (t === 'coach-home') { renderCoachAthletes(); updateCoachStats(); renderCoachSessionsTable(); setTimeout(() => renderCoachSessionsChart(), 100); }
   if (t === 'coach-athletes') { renderCoachAthletes(); }
   if (t === 'coach-sessions') { renderCoachSessionsTable(); }
+  if (t === 'coach-plans') { renderCoachPlans(); }
+}
+
+// ===== COACH TRAINING PLANS =====
+const COACH_PLANS_KEY = 'fb_coach_plans';
+const DEFAULT_COACH_PLANS = [
+  { name: 'Base Building — 4 weeks', category: 'Running', difficulty: 'Beginner', duration: '4 weeks', sessions: '4 sessions', goal: 'Improve Endurance', equipment: 'Outdoor', focus: ['Cardio','Lower Body'], desc: 'Progressive mileage build-up for new runners.', workouts: ['Easy Zone 2 run (30 min)','Interval 400m x 8','Tempo run (25 min)','Long slow run (45 min)'], athletes: 12, isDefault: true },
+  { name: 'Push / Pull / Legs', category: 'Strength', difficulty: 'Intermediate', duration: '8 weeks', sessions: '6 sessions', goal: 'Increase Strength', equipment: 'Full Gym', focus: ['Upper Body','Lower Body','Power'], desc: 'Classic 6-day split for hypertrophy and strength.', workouts: ['Push: Bench, OHP, Triceps','Pull: Deadlift, Rows, Biceps','Legs: Squat, RDL, Calves','Push: Incline Bench, Lateral Raises','Pull: Pull-ups, Face Pulls','Legs: Front Squat, Lunges'], athletes: 8, isDefault: true },
+  { name: 'Zone 2 Ride Block', category: 'Cycling', difficulty: 'Intermediate', duration: '6 weeks', sessions: '5 sessions', goal: 'Improve Endurance', equipment: 'Outdoor', focus: ['Cardio','Lower Body'], desc: 'Aerobic base building for cyclists.', workouts: ['Zone 2 steady (60 min)','Zone 2 steady (90 min)','Hill repeats (45 min)','Zone 2 recovery (45 min)','Long Zone 2 (120 min)'], athletes: 5, isDefault: true }
+];
+function getCoachPlans() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(COACH_PLANS_KEY) || 'null');
+    if (saved && Array.isArray(saved)) return saved;
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_COACH_PLANS));
+}
+function saveCoachPlans(plans) { localStorage.setItem(COACH_PLANS_KEY, JSON.stringify(plans)); }
+function renderCoachPlans() {
+  const grid = document.getElementById('coach-plans-grid');
+  if (!grid) return;
+  const plans = getCoachPlans();
+  grid.innerHTML = plans.map((p, i) => `
+    <div class="plan-card">
+      <div class="plan-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+      <b>${p.name}</b>
+      <small>${p.category}</small>
+      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;">
+        <span style="font-size:.7rem;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:8px;">${p.difficulty}</span>
+        <span style="font-size:.7rem;background:var(--bg);color:var(--muted);padding:2px 8px;border-radius:8px;">${p.duration}</span>
+        <span style="font-size:.7rem;background:var(--bg);color:var(--muted);padding:2px 8px;border-radius:8px;">${p.sessions}</span>
+      </div>
+      <div class="plan-foot">
+        <span>${p.athletes || 0} athlete${(p.athletes||0)===1?'':'s'}</span>
+        <button class="btn ghost small" onclick="viewPlanDetails(${i})">View</button>
+        ${p.isDefault ? '' : `<button class="btn ghost small" onclick="deletePlan(${i})" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>`}
+      </div>
+    </div>
+  `).join('') + `<button class="plan-card new" onclick="openNewPlanModal()"><i class="fa-solid fa-plus"></i><span>New plan</span></button>`;
+}
+function openNewPlanModal() {
+  document.getElementById('np-name').value = '';
+  document.getElementById('np-category').value = '';
+  document.getElementById('np-difficulty').value = '';
+  document.getElementById('np-duration').value = '';
+  document.getElementById('np-sessions').value = '';
+  document.getElementById('np-goal').value = '';
+  document.getElementById('np-equipment').value = 'Bodyweight Only';
+  document.getElementById('np-desc').value = '';
+  document.getElementById('np-autogen').checked = true;
+  document.getElementById('np-preview').style.display = 'none';
+  document.getElementById('np-preview').innerHTML = '';
+  document.querySelectorAll('#np-focus-chips .focus-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('new-plan-msg').textContent = '';
+  // Reset to "create" mode
+  const form = document.querySelector('#new-plan-modal form');
+  if (form) form.removeAttribute('data-edit-idx');
+  const modalH3 = document.querySelector('#new-plan-modal h3');
+  if (modalH3) modalH3.innerHTML = '<i class="fa-solid fa-clipboard-list"></i> Create New Training Plan';
+  const submitBtn = document.querySelector('#new-plan-modal form button[type="submit"]');
+  if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Create Plan';
+  openModal('new-plan-modal');
+}
+function updatePlanGoalOptions() {
+  // Goal options stay the same for all categories — kept for future per-category filtering
+  const cat = document.getElementById('np-category').value;
+  const goalSel = document.getElementById('np-goal');
+  if (!cat) return;
+  // Light-touch: auto-suggest a sensible default goal based on category
+  const suggestions = {
+    'Running': 'Improve Endurance', 'Cycling': 'Improve Endurance', 'Swimming': 'Improve Endurance',
+    'Triathlon': 'Improve Endurance', 'Rowing': 'Improve Endurance',
+    'Strength': 'Increase Strength', 'CrossFit': 'Sports Performance',
+    'HIIT': 'Lose Weight', 'Boxing': 'Sports Performance', 'Martial Arts': 'Sports Performance',
+    'Football': 'Sports Performance', 'Basketball': 'Sports Performance', 'Tennis': 'Sports Performance',
+    'Yoga': 'Enhance Mobility', 'Pilates': 'Enhance Mobility',
+    'Rehabilitation': 'Rehabilitation', 'General Fitness': 'Maintain Fitness'
+  };
+  if (suggestions[cat] && !goalSel.value) goalSel.value = suggestions[cat];
+}
+function generatePlanWorkouts(category, goal, focus, sessions, equipment) {
+  const sessCount = parseInt(sessions) || 4;
+  const library = {
+    'Running': ['Easy Zone 2 run','Tempo run','Interval 400m repeats','Hill sprints','Long slow distance','Fartlek','Recovery jog','Stride-outs'],
+    'Cycling': ['Zone 2 steady ride','Threshold intervals','Hill repeats','Recovery spin','Long endurance ride','Sprint intervals','Sweet spot','Cadena drills'],
+    'Swimming': ['Freestyle drills','Interval 100m repeats','Kick set','Pull set','Easy cooldown swim','Pace 50m sprints','Distance swim','Technique work'],
+    'Strength': ['Squat 5x5','Bench Press 4x6','Deadlift 3x5','Overhead Press','Barbell Rows','Pull-ups','Romanian Deadlift','Accessory circuit'],
+    'HIIT': ['Tabata (20/10)','EMOM 12 min','AMRAP 15 min','Sprint intervals','Circuit 5 rounds','Battle ropes','Box jumps','Burpees'],
+    'CrossFit': ['WOD Cindy','Deadlift 5-3-1','Kipping pull-ups','Thrusters','Wall balls','Row intervals','Double-unders','Muscle-up drills'],
+    'Yoga': ['Sun salutations','Vinyasa flow','Hip openers','Balance poses','Restorative','Inversion practice','Pranayama','Cool-down stretch'],
+    'Pilates': ['Hundred','Roll-up','Leg circles','Swan dive','Side kicks','Plank series','Bridge','Cool-down'],
+    'Boxing': ['Shadow boxing','Heavy bag rounds','Mitt work','Footwork drills','Conditioning','Jump rope','Defense drills','Sparring'],
+    'Martial Arts': ['Shadow rounds','Pad work','Grappling drills','Cardio conditioning','Technique sparring','Mobility','Bag work','Recovery'],
+    'Football': ['Sprint drills','Agility ladder','Passing drills','Conditioning','Plyometrics','Strength upper','Strength lower','Recovery'],
+    'Basketball': ['Court sprints','Vertical jumps','Shooting drills','Defensive slides','Plyometrics','Strength upper','Conditioning','Recovery'],
+    'Tennis': ['Court sprints','Serve practice','Groundstroke drills','Volley drills','Footwork ladder','Core circuit','Mobility','Recovery'],
+    'Rowing': ['Steady state 6km','Interval 500m','Tech drills','UT2 10km','Race pace 2km','Core circuit','Mobility','Recovery'],
+    'Triathlon': ['Brick session','Swim intervals','Zone 2 ride','Easy run','Open water swim','Long ride','Transition practice','Recovery'],
+    'Rehabilitation': ['Mobility flow','Light resistance band','Stability work','Range of motion','Glute activation','Core stability','Foam rolling','Easy walk'],
+    'General Fitness': ['Full-body strength','Cardio intervals','Mobility flow','Core circuit','Active recovery','Plyometrics','Flexibility','Conditioning']
+  };
+  const pool = library[category] || library['General Fitness'];
+  // Shuffle pool deterministically-ish using goal + focus
+  const out = [];
+  const used = new Set();
+  for (let i = 0; i < Math.max(sessCount, 1); i++) {
+    let pick = pool[i % pool.length];
+    if (used.has(pick)) pick = pool[(i + 3) % pool.length];
+    used.add(pick);
+    out.push(pick);
+  }
+  return out;
+}
+function createPlan(e) {
+  e.preventDefault();
+  const name = document.getElementById('np-name').value.trim();
+  const category = document.getElementById('np-category').value;
+  const difficulty = document.getElementById('np-difficulty').value;
+  const duration = document.getElementById('np-duration').value;
+  const sessions = document.getElementById('np-sessions').value;
+  const goal = document.getElementById('np-goal').value;
+  const equipment = document.getElementById('np-equipment').value;
+  const desc = document.getElementById('np-desc').value.trim();
+  const focus = Array.from(document.querySelectorAll('#np-focus-chips .focus-chip.selected')).map(c => c.textContent.trim());
+  const autogen = document.getElementById('np-autogen').checked;
+  const form = document.querySelector('#new-plan-modal form');
+  const editIdx = form && form.hasAttribute('data-edit-idx') ? parseInt(form.getAttribute('data-edit-idx')) : null;
+
+  if (!name || !category || !difficulty || !duration || !sessions || !goal) {
+    const msg = document.getElementById('new-plan-msg');
+    msg.style.color = 'var(--red)';
+    msg.textContent = 'Please fill in all required fields.';
+    return false;
+  }
+
+  const workouts = autogen ? generatePlanWorkouts(category, goal, focus, sessions, equipment) : [];
+  const plans = getCoachPlans();
+
+  if (editIdx !== null && !isNaN(editIdx) && plans[editIdx]) {
+    // Edit mode: preserve athlete count + createdAt
+    const existing = plans[editIdx];
+    plans[editIdx] = Object.assign({}, existing, {
+      name, category, difficulty, duration, sessions, goal, equipment, focus, desc, workouts
+    });
+    saveCoachPlans(plans);
+    renderCoachPlans();
+    closeModal('new-plan-modal');
+    const pageSub = document.querySelector('#tab-coach-plans .page-sub');
+    if (pageSub) {
+      const original = 'Reusable plans you\'ve built for your roster.';
+      pageSub.style.color = 'var(--green)';
+      pageSub.innerHTML = '<i class="fa-solid fa-circle-check"></i> "' + name + '" updated successfully.';
+      setTimeout(() => { pageSub.style.color = ''; pageSub.textContent = original; }, 4000);
+    }
+  } else {
+    // Create mode
+    const plan = {
+      name, category, difficulty, duration, sessions, goal, equipment, focus, desc,
+      workouts, athletes: 0, createdAt: Date.now()
+    };
+    plans.push(plan);
+    saveCoachPlans(plans);
+    renderCoachPlans();
+    closeModal('new-plan-modal');
+    const pageSub = document.querySelector('#tab-coach-plans .page-sub');
+    if (pageSub) {
+      const original = 'Reusable plans you\'ve built for your roster.';
+      pageSub.style.color = 'var(--green)';
+      pageSub.innerHTML = '<i class="fa-solid fa-circle-check"></i> "' + name + '" created successfully and added to your plans.';
+      setTimeout(() => { pageSub.style.color = ''; pageSub.textContent = original; }, 4000);
+    }
+  }
+  return false;
+}
+function deletePlan(idx) {
+  const plans = getCoachPlans();
+  if (idx < 0 || idx >= plans.length) return;
+  if (plans[idx].isDefault) return;
+  if (!confirm('Delete "' + plans[idx].name + '"? This cannot be undone.')) return;
+  plans.splice(idx, 1);
+  saveCoachPlans(plans);
+  renderCoachPlans();
+}
+function viewPlanDetails(idx) {
+  const plans = getCoachPlans();
+  if (idx < 0 || idx >= plans.length) return;
+  const p = plans[idx];
+  const modal = document.getElementById('goal-modal') || null;
+  // Reuse a generic modal approach: build a temporary overlay
+  let detail = document.getElementById('plan-detail-modal');
+  if (!detail) {
+    detail = document.createElement('div');
+    detail.id = 'plan-detail-modal';
+    detail.className = 'modal-overlay';
+    detail.style.zIndex = '10003';
+    detail.innerHTML = '<div class="modal-content" style="max-width:520px;"><button class="modal-close" onclick="closeModal(\'plan-detail-modal\')">&times;</button><div id="plan-detail-body"></div></div>';
+    document.body.appendChild(detail);
+  }
+  document.getElementById('plan-detail-body').innerHTML = `
+    <h3><i class="fa-solid fa-clipboard-list"></i> ${p.name}</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px;">
+      <span style="font-size:.75rem;background:var(--accent-soft);color:var(--accent);padding:3px 10px;border-radius:10px;">${p.category}</span>
+      <span style="font-size:.75rem;background:var(--bg);color:var(--muted);padding:3px 10px;border-radius:10px;">${p.difficulty}</span>
+      <span style="font-size:.75rem;background:var(--bg);color:var(--muted);padding:3px 10px;border-radius:10px;">${p.duration}</span>
+      <span style="font-size:.75rem;background:var(--bg);color:var(--muted);padding:3px 10px;border-radius:10px;">${p.sessions}</span>
+      <span style="font-size:.75rem;background:var(--bg);color:var(--muted);padding:3px 10px;border-radius:10px;">${p.goal}</span>
+    </div>
+    ${p.equipment ? `<p style="font-size:.88rem;color:var(--muted);margin-bottom:6px;"><b style="color:var(--text);">Equipment:</b> ${p.equipment}</p>` : ''}
+    ${p.focus && p.focus.length ? `<p style="font-size:.88rem;color:var(--muted);margin-bottom:6px;"><b style="color:var(--text);">Focus:</b> ${p.focus.join(', ')}</p>` : ''}
+    ${p.desc ? `<p style="font-size:.88rem;color:var(--muted);margin-bottom:14px;line-height:1.55;">${p.desc}</p>` : ''}
+    <h4><i class="fa-solid fa-list-check"></i> Weekly Workouts</h4>
+    ${p.workouts && p.workouts.length ? '<ol style="margin-left:20px;line-height:1.9;font-size:.9rem;">' + p.workouts.map(w => '<li>' + w + '</li>').join('') + '</ol>' : '<p style="font-size:.88rem;color:var(--muted);">No workouts generated. Edit the plan to add sessions.</p>'}
+    <div style="margin-top:16px;display:flex;gap:10px;">
+      <button class="btn ghost" onclick="closeModal('plan-detail-modal')" style="flex:1;">Close</button>
+      ${p.isDefault ? '' : '<button class="btn primary" onclick="closeModal(\'plan-detail-modal\'); openEditPlanModal(' + idx + ')" style="flex:1;"><i class="fa-solid fa-pen"></i> Edit</button>'}
+    </div>
+  `;
+  openModal('plan-detail-modal');
+}
+function openEditPlanModal(idx) {
+  // Lightweight: reuse the new plan modal pre-filled
+  const plans = getCoachPlans();
+  const p = plans[idx];
+  if (!p || p.isDefault) return;
+  openNewPlanModal();
+  document.getElementById('np-name').value = p.name || '';
+  document.getElementById('np-category').value = p.category || '';
+  document.getElementById('np-difficulty').value = p.difficulty || '';
+  document.getElementById('np-duration').value = p.duration || '';
+  document.getElementById('np-sessions').value = p.sessions || '';
+  document.getElementById('np-goal').value = p.goal || '';
+  document.getElementById('np-equipment').value = p.equipment || 'Bodyweight Only';
+  document.getElementById('np-desc').value = p.desc || '';
+  document.querySelectorAll('#np-focus-chips .focus-chip').forEach(c => {
+    if (p.focus && p.focus.includes(c.textContent.trim())) c.classList.add('selected');
+  });
+  // Change form mode: mark as editing
+  const form = document.querySelector('#new-plan-modal form');
+  form.setAttribute('data-edit-idx', idx);
+  form.querySelector('button[type="submit"]').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+  document.querySelector('#new-plan-modal h3').innerHTML = '<i class="fa-solid fa-pen"></i> Edit Training Plan';
 }
 function logoutCoach() {
   localStorage.removeItem(COACH_SESSION_KEY);
@@ -2753,21 +3927,85 @@ function renderCoachMealsForUser() {
   } catch(e) { container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">Unable to load coach meals.</div>'; }
 }
 
-function autofillFromInBody() { 
+function autofillFromInBody() {
   const file = document.getElementById('inbody-file').files[0];
   if (!file) { setMsg('inbody-status', 'Please select an InBody result sheet image.', 'error'); return; }
-  setMsg('inbody-status', 'Reading InBody scan... (This may take a moment)', '');
-  Tesseract.recognize(file, 'eng', { logger: m => console.log(m) }).then(({ data: { text } }) => {
-    const weightMatch = text.match(/Weight\s*[:\-]?\s*(\d+\.?\d*)\s*kg/i);
-    const heightMatch = text.match(/Height\s*[:\-]?\s*(\d+\.?\d*)\s*cm/i);
-    const ageMatch = text.match(/Age\s*[:\-]?\s*(\d+)/i);
-    const genderMatch = text.match(/Gender\s*[:\-]?\s*(Male|Female)/i);
-    if (weightMatch) surveyAnswers.weight = parseFloat(weightMatch[1]);
-    if (heightMatch) surveyAnswers.height = parseFloat(heightMatch[1]);
-    if (ageMatch) surveyAnswers.age = parseInt(ageMatch[1]);
-    if (genderMatch) surveyAnswers.gender = genderMatch[1];
-    setMsg('inbody-status', 'InBody scan read successfully! Please continue to the survey.', 'ok');
-  }).catch(err => { setMsg('inbody-status', 'Could not read image. Please enter manually.', 'error'); });
+
+  // Reset UI
+  setMsg('inbody-status', '', '');
+  const progressWrap = document.getElementById('inbody-progress-wrap');
+  const progressBar = document.getElementById('inbody-progress-bar');
+  const progressText = document.getElementById('inbody-progress-text');
+  const resultsBox = document.getElementById('inbody-results');
+  progressWrap.style.display = 'block';
+  resultsBox.style.display = 'none';
+  progressBar.style.width = '0%';
+  progressText.textContent = 'Loading OCR engine…';
+
+  // Guard: Tesseract.js should be loaded via <script> in the page.
+  if (typeof Tesseract === 'undefined') {
+    setMsg('inbody-status', 'OCR engine failed to load. Check your connection and refresh.', 'error');
+    progressWrap.style.display = 'none';
+    return;
+  }
+
+  const phaseWeights = { 'loading tesseract core': 0.15, 'initializing tesseract': 0.25, 'loading language traineddata': 0.45, 'initializing api': 0.55, 'recognizing text': 0.55 };
+
+  Tesseract.recognize(file, 'eng', {
+    logger: m => {
+      const base = phaseWeights[m.status] !== undefined ? phaseWeights[m.status] : 0;
+      let pct;
+      if (m.status === 'recognizing text') {
+        pct = Math.round((base + (1 - base) * (m.progress || 0)) * 100);
+        progressText.textContent = 'Scanning text… ' + pct + '%';
+      } else {
+        pct = Math.round((base + (m.progress || 0) * 0.1) * 100);
+        progressText.textContent = (m.status.charAt(0).toUpperCase() + m.status.slice(1)) + '…';
+      }
+      progressBar.style.width = pct + '%';
+    }
+  }).then(({ data: { text } }) => {
+    progressBar.style.width = '100%';
+    progressText.textContent = 'Parsing results…';
+
+    // Use the shared parser (handles metric + imperial formats)
+    const found = parseInBodyText(text);
+    if (found.weight !== undefined) surveyAnswers.weight = found.weight;
+    if (found.height !== undefined) surveyAnswers.height = found.height;
+    if (found.age !== undefined) surveyAnswers.age = found.age;
+    if (found.gender !== undefined) surveyAnswers.gender = found.gender;
+
+    const foundKeys = Object.keys(found).filter(k => !k.endsWith('Unit'));
+    if (foundKeys.length === 0) {
+      progressWrap.style.display = 'none';
+      setMsg('inbody-status', 'Could not read any fields from this image. Please enter your details manually in the survey.', 'error');
+      return;
+    }
+
+    // Show extracted results
+    const rows = [
+      ['Weight', found.weight, 'kg'],
+      ['Height', found.height, 'cm'],
+      ['Age', found.age, 'yrs'],
+      ['Gender', found.gender, ''],
+      ['BMI', found.bmi, ''],
+      ['Body Fat', found.bodyFat, '%'],
+      ['Muscle Mass', found.muscle, 'kg'],
+      ['BMR', found.bmr, 'kcal']
+    ].filter(r => r[1] !== undefined && r[1] !== null && r[1] !== '');
+
+    resultsBox.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;color:var(--green);font-weight:700;font-size:.92rem;"><i class="fa-solid fa-circle-check"></i> ' + foundKeys.length + ' field' + (foundKeys.length === 1 ? '' : 's') + ' auto-filled</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:.85rem;">' +
+        rows.map(r => '<div style="display:flex;justify-content:space-between;gap:8px;"><span style="color:var(--muted);">' + r[0] + ':</span><b>' + r[1] + (r[2] ? ' ' + r[2] : '') + '</b></div>').join('') +
+      '</div>';
+    resultsBox.style.display = 'block';
+    progressText.textContent = 'Done! Review extracted values, then start the survey.';
+    setMsg('inbody-status', 'InBody scan read successfully! Values are pre-filled — tap "Start Survey" to continue.', 'ok');
+  }).catch(err => {
+    console.error('InBody OCR error:', err);
+    progressWrap.style.display = 'none';
+    setMsg('inbody-status', 'Could not read image. Please enter your details manually in the survey.', 'error');
+  });
 }
 
 // ===== INITIALIZATION WITH INSTANT LOGIN =====
