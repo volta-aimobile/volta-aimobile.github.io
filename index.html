@@ -106,7 +106,10 @@ body.dark-mode .splash-loader { background: #2a303d; }
 .auth-side ul { list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: .9rem; font-weight: 500; }
 .auth-side li { display: flex; align-items: center; gap: 10px; opacity: .95; }
 .auth-main { flex: 1; padding: 48px 40px; position: relative; }
-.back-to-home { position: absolute; top: 20px; left: 20px; background: transparent; border: none; color: var(--muted); font-weight: 600; font-size: .85rem; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.back-to-home { display: inline-flex; align-items: center; gap: 6px; background: transparent; border: none; color: var(--muted); font-weight: 600; font-size: .85rem; cursor: pointer; padding: 0; margin-bottom: 18px; align-self: flex-start; transition: color .15s ease, transform .15s ease; }
+.back-to-home:hover { color: var(--accent); transform: translateX(-3px); }
+/* Arabic RTL: back arrow flips to point right */
+body.lang-ar .back-to-home:hover { transform: translateX(3px); }
 .auth-card { background: var(--white); border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--line); padding: 40px; width: 100%; max-width: 420px; position: relative; animation: scaleIn 0.4s ease; }
 .auth-card.wide { max-width: 680px; }
 .card-title { font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
@@ -180,16 +183,16 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 #screen-app.active { display: flex; min-height: 100vh; }
 .sidebar { width: 234px; flex-shrink: 0; background: var(--sidebar-bg); border-right: 1px solid var(--line); padding: 22px 14px; display: flex; flex-direction: column; gap: 3px; position: sticky; top: 0; height: 100vh; align-self: flex-start; transition: width 0.25s ease, padding 0.25s ease, background 0.2s; overflow-y: auto; overflow-x: hidden; white-space: nowrap; animation: slideInLeft 0.4s ease; }
 @keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-.sidebar .brand { display: flex; align-items: center; padding: 4px 12px 20px; overflow: hidden; white-space: nowrap; }
-.sidebar .brand i { color: var(--accent); font-size: 21px; flex-shrink: 0; }
-.sidebar .brand span { font-weight: 800; font-size: 1.1rem; margin-left: 9px; }
-.sidebar .brand em { font-style: normal; font-size: .65rem; background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 10px; margin-left: 6px; font-weight: 600; }
+.sidebar .brand { display: flex; align-items: center; justify-content: center; gap: 9px; padding: 6px 10px 22px; margin: 0 auto 6px; overflow: hidden; white-space: nowrap; border-bottom: 1px solid var(--line); width: calc(100% - 4px); }
+.sidebar .brand i { color: var(--accent); font-size: 22px; flex-shrink: 0; filter: drop-shadow(0 0 6px rgba(100,149,237,.25)); }
+.sidebar .brand span { font-weight: 800; font-size: 1.15rem; margin-left: 0; letter-spacing: -.01em; }
+.sidebar .brand em { font-style: normal; font-size: .65rem; background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 10px; margin-left: 0; font-weight: 600; }
 
 /* Coach sidebar brand — matches the coach login page logo exactly (card-title style) */
-.sidebar .brand.brand-coach { gap: 10px; padding: 4px 12px 22px; }
-.sidebar .brand.brand-coach i { color: var(--accent); font-size: 22px; flex-shrink: 0; }
+.sidebar .brand.brand-coach { gap: 10px; padding: 8px 10px 22px; justify-content: center; }
+.sidebar .brand.brand-coach i { color: var(--accent); font-size: 24px; flex-shrink: 0; filter: drop-shadow(0 0 8px rgba(100,149,237,.3)); }
 .sidebar .brand.brand-coach span { font-weight: 700; font-size: 1.25rem; margin-left: 0; letter-spacing: -.01em; }
-.sidebar .brand.brand-coach em { font-style: normal; font-size: .7rem; background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 10px; margin-left: 4px; font-weight: 600; }
+.sidebar .brand.brand-coach em { font-style: normal; font-size: .7rem; background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 10px; margin-left: 0; font-weight: 600; }
 .side-btn { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border: none; background: transparent; border-radius: 10px; cursor: pointer; font-weight: 500; font-size: .9rem; color: var(--muted); text-align: left; font-family: inherit; transition: all 0.2s ease; }
 .side-btn:hover { background: var(--bg); color: var(--text); transform: translateX(4px); }
 .side-btn.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
@@ -245,6 +248,30 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .safety-item .s-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; }
 .safety-item b { font-size: .85rem; }
 .safety-item .macro-pill { margin-top: 4px; }
+.weather-search-wrap { position: relative; display: flex; align-items: center; margin: 14px 0 4px; max-width: 460px; }
+.weather-search-wrap > i.fa-magnifying-glass { position: absolute; left: 14px; color: var(--muted); font-size: .9rem; pointer-events: none; }
+.weather-search-wrap input { width: 100%; padding: 11px 38px 11px 38px; border: 1px solid var(--line); border-radius: 24px; font-size: .92rem; background: var(--white); color: var(--text); transition: border-color .15s, box-shadow .15s; }
+.weather-search-wrap input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.weather-search-clear { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%; border: none; background: var(--line); color: var(--muted); cursor: pointer; font-size: .75rem; display: none; align-items: center; justify-content: center; padding: 0; transition: background .15s, color .15s; }
+.weather-search-clear.visible { display: flex; }
+.weather-search-clear:hover { background: var(--accent); color: #fff; }
+.safety-empty { grid-column: 1 / -1; text-align: center; padding: 32px 16px; color: var(--muted); font-size: .9rem; }
+
+/* ===== InBody Follow-up Form ===== */
+.followup-form { display: flex; flex-direction: column; gap: 16px; }
+.followup-field label { display: flex; align-items: center; gap: 8px; font-size: .82rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.followup-field label i { color: var(--accent); font-size: .85rem; }
+.followup-field input { width: 100%; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; font-size: .95rem; background: var(--white); color: var(--text); }
+.followup-field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.followup-opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.followup-opt { padding: 9px 12px; border: 2px solid var(--line); border-radius: 10px; background: var(--white); cursor: pointer; font-size: .85rem; font-weight: 600; color: var(--text); transition: .15s; display: flex; align-items: center; gap: 6px; justify-content: center; font-family: inherit; }
+.followup-opt i { font-size: .7rem; opacity: 0; transition: opacity .15s; color: var(--accent); }
+.followup-opt:hover { border-color: var(--accent); background: var(--accent-soft); }
+.followup-opt.selected { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.followup-opt.selected i { opacity: 1; }
+@media (max-width: 480px) {
+  .followup-opts { grid-template-columns: 1fr 1fr; }
+}
 
 .inline-logger { margin-top: 16px; padding: 16px; background: var(--bg); border-radius: 12px; border: 1px solid var(--line); }
 .inline-logger input, .inline-logger select { margin-bottom: 10px; }
@@ -268,6 +295,43 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .mood-btn i { font-size: 15px; }
 .mood-btn:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-2px); }
 .mood-btn.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* ===== MoodMorph enhanced UI ===== */
+.moodmorph-panel { background: linear-gradient(160deg, var(--accent-soft) 0%, var(--white) 60%); border: 1px solid var(--accent-border); }
+.moodmorph-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+.moodmorph-header-icon { width: 48px; height: 48px; border-radius: 14px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 6px 16px rgba(100,149,237,.32); flex-shrink: 0; }
+.mood-cards-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 22px; }
+.mood-card { background: var(--white); border: 2px solid var(--line); border-radius: 14px; padding: 14px 8px; cursor: pointer; font-family: inherit; color: var(--text); display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; transition: all 0.2s ease; animation: cardStaggerIn 0.4s ease both; }
+.mood-card:nth-child(1) { animation-delay: 0.05s; }
+.mood-card:nth-child(2) { animation-delay: 0.1s; }
+.mood-card:nth-child(3) { animation-delay: 0.15s; }
+.mood-card:nth-child(4) { animation-delay: 0.2s; }
+.mood-card:nth-child(5) { animation-delay: 0.25s; }
+.mood-card b { font-size: .85rem; font-weight: 700; }
+.mood-card small { font-size: .7rem; color: var(--muted); line-height: 1.2; }
+.mood-card-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 4px; transition: transform 0.25s ease; }
+.mood-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(100,149,237,.15); }
+.mood-card:hover .mood-card-icon { transform: scale(1.08); }
+.mood-card.selected { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 8px 22px rgba(100,149,237,.25); }
+.mood-card.selected .mood-card-icon { transform: scale(1.15); }
+.mood-icon-stressed { background: #fdeaea; color: #c94444; }
+.mood-icon-sad { background: #fdf3e2; color: #b97b16; }
+.mood-icon-neutral { background: var(--accent-soft); color: var(--accent); }
+.mood-icon-happy { background: #e7f7ef; color: #1d9d6b; }
+.mood-icon-pumped { background: #f3e8ff; color: #8b5cf6; }
+.moodmorph-energy { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; }
+.moodmorph-energy-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.moodmorph-energy input[type="range"] { width: 100%; height: 6px; -webkit-appearance: none; appearance: none; background: var(--line); border-radius: 3px; outline: none; }
+.moodmorph-energy input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 6px rgba(100,149,237,.4); border: 3px solid #fff; }
+.moodmorph-energy input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 6px rgba(100,149,237,.4); border: 3px solid #fff; }
+.moodmorph-energy-ticks { display: flex; justify-content: space-between; margin-top: 6px; font-size: .72rem; color: var(--muted); font-weight: 500; }
+.moodmorph-go { width: 100%; padding: 14px; font-size: 1rem; font-weight: 700; }
+.mood-workout-card { padding: 14px 16px !important; }
+.mood-workout-num { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; flex-shrink: 0; box-shadow: 0 3px 8px rgba(100,149,237,.3); }
+@media (max-width: 540px) {
+  .mood-cards-grid { grid-template-columns: repeat(3, 1fr); }
+  .mood-card small { display: none; }
+}
 input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: var(--line); border-radius: 4px; outline: none; margin: 10px 0; }
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 3px solid var(--white); box-shadow: 0 2px 6px rgba(100,149,237,.4); }
 input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 3px solid var(--white); }
@@ -1129,26 +1193,69 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <h1 style="font-size:1.45rem;font-weight:700;">Weather &amp; Outdoor Sport Safety</h1>
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;">Live conditions and per-sport recommendations for training outside.</p>
       <div class="panel"><div id="weather-current">--</div><button class="btn ghost small" onclick="loadWeather(true)"><i class="fa-solid fa-rotate-right"></i> Refresh</button></div>
-      <div class="panel"><h3><i class="fa-solid fa-shield-halved"></i> Outdoor sport safety right now</h3><div id="safety-grid" class="safety-grid"><i>...</i></div></div>
+      <div class="panel">
+        <h3><i class="fa-solid fa-shield-halved"></i> Outdoor sport safety right now</h3>
+        <div class="weather-search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="weather-search" placeholder="Search sports (e.g. Running, Cycling, Yoga...)" oninput="filterSafetyGrid(this.value)" autocomplete="off" />
+          <button class="weather-search-clear" id="weather-search-clear" onclick="document.getElementById('weather-search').value=''; filterSafetyGrid('');" title="Clear search"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="safety-grid" class="safety-grid"><i>...</i></div>
+      </div>
     </div>
 
     <div id="tab-moodmorph" class="tab">
       <h1 style="font-size:1.45rem;font-weight:700;">MoodMorph</h1>
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;">Your workout morphs to match your mood, energy, and the live weather outside.</p>
-      <div class="panel">
-        <label>How do you feel right now?</label>
-        <div class="mood-row" id="mood-row">
-          <button class="mood-btn" data-mood="stressed" onclick="pickMood(this)"><i class="fa-solid fa-bolt"></i> Stressed</button>
-          <button class="mood-btn" data-mood="sad" onclick="pickMood(this)"><i class="fa-solid fa-face-frown"></i> Low</button>
-          <button class="mood-btn" data-mood="neutral" onclick="pickMood(this)"><i class="fa-solid fa-face-meh"></i> Neutral</button>
-          <button class="mood-btn" data-mood="happy" onclick="pickMood(this)"><i class="fa-solid fa-face-smile"></i> Happy</button>
-          <button class="mood-btn" data-mood="pumped" onclick="pickMood(this)"><i class="fa-solid fa-rocket"></i> Pumped</button>
+      <div class="panel moodmorph-panel">
+        <div class="moodmorph-header">
+          <div class="moodmorph-header-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <div>
+            <h3 style="margin:0;font-size:1.05rem;">How do you feel right now?</h3>
+            <small style="color:var(--muted);font-size:.82rem;">Pick the mood that fits you best.</small>
+          </div>
         </div>
-        <label>Energy level: <b id="energy-label">5</b>/10</label>
-        <input type="range" id="energy" min="1" max="10" value="5" oninput="document.getElementById('energy-label').textContent=this.value" />
-        <button class="btn primary fit" onclick="generateMoodWorkout()"><i class="fa-solid fa-wand-magic-sparkles"></i> Morph my workout</button>
-        <div style="margin-top:24px; border-top:1px solid var(--line); padding-top:16px;">
-          <h3 style="margin-bottom:8px;"><i class="fa-solid fa-spa"></i> Need to relax instead?</h3>
+        <div class="mood-cards-grid" id="mood-row">
+          <button class="mood-card" data-mood="stressed" onclick="pickMood(this)">
+            <div class="mood-card-icon mood-icon-stressed"><i class="fa-solid fa-bolt"></i></div>
+            <b>Stressed</b>
+            <small>Tense &amp; overwhelmed</small>
+          </button>
+          <button class="mood-card" data-mood="sad" onclick="pickMood(this)">
+            <div class="mood-card-icon mood-icon-sad"><i class="fa-solid fa-face-frown"></i></div>
+            <b>Low</b>
+            <small>Down or unmotivated</small>
+          </button>
+          <button class="mood-card" data-mood="neutral" onclick="pickMood(this)">
+            <div class="mood-card-icon mood-icon-neutral"><i class="fa-solid fa-face-meh"></i></div>
+            <b>Neutral</b>
+            <small>Steady &amp; ready</small>
+          </button>
+          <button class="mood-card" data-mood="happy" onclick="pickMood(this)">
+            <div class="mood-card-icon mood-icon-happy"><i class="fa-solid fa-face-smile"></i></div>
+            <b>Happy</b>
+            <small>Upbeat &amp; positive</small>
+          </button>
+          <button class="mood-card" data-mood="pumped" onclick="pickMood(this)">
+            <div class="mood-card-icon mood-icon-pumped"><i class="fa-solid fa-rocket"></i></div>
+            <b>Pumped</b>
+            <small>Fully energized</small>
+          </button>
+        </div>
+
+        <div class="moodmorph-energy">
+          <div class="moodmorph-energy-head">
+            <span style="font-size:.88rem;font-weight:600;color:var(--muted);"><i class="fa-solid fa-battery-half" style="color:var(--accent);margin-right:6px;"></i>Energy level</span>
+            <b id="energy-label" style="font-size:1.4rem;color:var(--accent);">5<span style="font-size:.85rem;color:var(--muted);font-weight:500;">/10</span></b>
+          </div>
+          <input type="range" id="energy" min="1" max="10" value="5" oninput="document.getElementById('energy-label').innerHTML=this.value+'<span style=\'font-size:.85rem;color:var(--muted);font-weight:500;\'>/10</span>'" />
+          <div class="moodmorph-energy-ticks"><span>Low</span><span>Medium</span><span>High</span></div>
+        </div>
+
+        <button class="btn primary fit moodmorph-go" onclick="generateMoodWorkout()"><i class="fa-solid fa-wand-magic-sparkles"></i> Morph my workout</button>
+
+        <div style="margin-top:24px; border-top:1px solid var(--line); padding-top:18px;">
+          <h3 style="margin-bottom:10px;font-size:1rem;"><i class="fa-solid fa-spa" style="color:var(--accent);margin-right:6px;"></i> Need to relax instead?</h3>
           <button class="btn ghost" onclick="startMeditation()"><i class="fa-solid fa-lungs"></i> Start Meditation Session</button>
         </div>
       </div>
@@ -1623,6 +1730,15 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
   </div>
 </div>
 
+<!-- InBody Follow-up Form: asks for fields the OCR couldn't read, using the same
+     survey question definitions as the main onboarding survey. -->
+<div id="inbody-followup-modal" class="modal-overlay" style="z-index:10050;">
+  <div class="modal-content" style="max-width:520px;max-height:90vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeInBodyFollowup()">&times;</button>
+    <div id="inbody-followup-body"></div>
+  </div>
+</div>
+
 <script>
 (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="ndl_6Z-6DcDLM9g7DY-XD";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
 </script>
@@ -1763,6 +1879,29 @@ window.addEventListener('resize', function() {
 function applySettings() {
   if (store.theme === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('theme-light-btn')?.classList.remove('active'); document.getElementById('theme-dark-btn')?.classList.add('active'); document.getElementById('coach-theme-light-btn')?.classList.remove('active'); document.getElementById('coach-theme-dark-btn')?.classList.add('active'); }
   else { document.body.classList.remove('dark-mode'); document.getElementById('theme-light-btn')?.classList.add('active'); document.getElementById('theme-dark-btn')?.classList.remove('active'); document.getElementById('coach-theme-light-btn')?.classList.add('active'); document.getElementById('coach-theme-dark-btn')?.classList.remove('active'); }
+
+  // Language: English (default LTR) or Arabic (RTL)
+  const lang = store.lang || 'en';
+  const isArabic = (lang === 'ar');
+  document.documentElement.lang = lang;
+  document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
+  document.body.classList.toggle('lang-ar', isArabic);
+  document.body.classList.toggle('lang-en', !isArabic);
+  const enBtn = document.getElementById('lang-en-btn');
+  const arBtn = document.getElementById('lang-ar-btn');
+  if (enBtn && arBtn) {
+    enBtn.classList.toggle('active', !isArabic);
+    arBtn.classList.toggle('active', isArabic);
+  }
+
+  // Weather location toggle
+  const locOn = store.locationEnabled;
+  const locOnBtn = document.getElementById('loc-on-btn');
+  const locOffBtn = document.getElementById('loc-off-btn');
+  if (locOnBtn && locOffBtn) {
+    locOnBtn.classList.toggle('active', !!locOn);
+    locOffBtn.classList.toggle('active', !locOn);
+  }
 }
 
 function ensureUserRecord(email, opts = {}) {
@@ -2034,13 +2173,67 @@ function enterApp() {
   try {
     const u = currentUser();
     if (u && u.profile && window.chatbase) {
+      // Build a rich context string the chatbot can read so its answers are
+      // tailored to this specific user. Includes everything we know: profile,
+      // survey, InBody scan, goal plan, sessions history, streak, reminders.
+      const s = u.survey || {};
+      const scan = u.inbodyScan || {};
+      const sessions = u.sessions || [];
+      const totalMinutes = sessions.reduce((a, x) => a + (x.duration || 0), 0);
+      const topSport = (() => {
+        const counts = {};
+        sessions.forEach(x => { counts[x.sport] = (counts[x.sport] || 0) + 1; });
+        const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+        return top ? top[0] : 'None yet';
+      })();
+      const contextSummary = [
+        `User: ${u.profile.name} (${u.profile.gender}, ${u.profile.age}y, ${u.profile.height}cm, ${u.profile.weight}kg)`,
+        `Goal: ${u.profile.goal} | Favorite sport: ${u.profile.sport} | Level: ${u.profile.level} | Injury: ${u.profile.injury || 'None'}`,
+        `Schedule: ${s.schedule || 'unknown'} | Session time: ${s.time || 'unknown'} | Environment: ${s.environment || 'unknown'}`,
+        `Diet pref: ${s.diet_pref || 'none'} | Meals/day: ${s.meals || 'unknown'} | Hydration: ${s.hydration || 'unknown'}`,
+        `Medical: ${s.medical || 'none'} | Sleep: ${s.sleep || 'unknown'} | Stress: ${s.stress || 'unknown'}`,
+        `Equipment: ${s.equipment || 'none'} | Mobility: ${s.mobility || 'unknown'} | Balance: ${s.balance || 'unknown'}`,
+        `Pushups: ${s.pushups || 'unknown'} | Plank: ${s.plank || 'unknown'}s | Mile time: ${s.mile_time || 'unknown'}min`,
+        `InBody scan: BMI=${scan.bmi ?? 'n/a'}, BodyFat=${scan.bodyFat ?? 'n/a'}%, Muscle=${scan.muscle ?? 'n/a'}kg, BMR=${scan.bmr ?? 'n/a'}kcal`,
+        `Goal plan: target=${u.goalPlan?.targetWeight ?? 'n/a'}kg, targetCals=${u.goalPlan?.targetCals ?? 'n/a'}kcal, TDEE=${u.goalPlan?.tdee ?? 'n/a'}kcal`,
+        `Activity: ${sessions.length} sessions, ${totalMinutes} total minutes, top sport: ${topSport}, streak: ${u.streak || 0} days`,
+        `Reminders: ${(u.reminders || []).length}`
+      ].join(' || ');
       window.chatbase('update', { 
         userId: store.session, 
         name: u.profile.name, 
         email: store.session,
+        // Pass each field as a separate custom variable so the chatbot can
+        // reference any of them by name when answering questions.
         goals: u.profile.goal,
         fav_sport: u.profile.sport,
-        health: JSON.stringify({ profile: u.profile, survey: u.survey, goalPlan: u.goalPlan, sessions: u.sessions })
+        fitness_level: u.profile.level,
+        injury: u.profile.injury || 'None',
+        age: String(u.profile.age),
+        gender: u.profile.gender,
+        height_cm: String(u.profile.height),
+        weight_kg: String(u.profile.weight),
+        bmi: scan.bmi ? String(scan.bmi) : (u.profile.weight && u.profile.height ? (u.profile.weight / Math.pow(u.profile.height / 100, 2)).toFixed(1) : ''),
+        body_fat_pct: scan.bodyFat ? String(scan.bodyFat) : '',
+        muscle_mass_kg: scan.muscle ? String(scan.muscle) : '',
+        bmr: scan.bmr ? String(scan.bmr) : '',
+        target_weight: u.goalPlan?.targetWeight ? String(u.goalPlan.targetWeight) : '',
+        target_calories: u.goalPlan?.targetCals ? String(u.goalPlan.targetCals) : '',
+        tdee: u.goalPlan?.tdee ? String(u.goalPlan.tdee) : '',
+        streak_days: String(u.streak || 0),
+        total_sessions: String(sessions.length),
+        total_minutes: String(totalMinutes),
+        top_sport: topSport,
+        schedule: s.schedule || '',
+        session_time: s.time || '',
+        environment: s.environment || '',
+        diet_pref: s.diet_pref || '',
+        medical: s.medical || '',
+        sleep: s.sleep || '',
+        stress: s.stress || '',
+        equipment: s.equipment || '',
+        // A single rolled-up context string the chatbot can scan in one go
+        health: contextSummary
       });
     }
   } catch(e) {}
@@ -2422,16 +2615,10 @@ function renderDailyExercise() {
   const container = document.getElementById('daily-exercise-content');
   
   if (deState.step === 1) {
-    // Only apply sport-based focus ONCE on first init so the user can freely toggle any muscle (incl. Legs/Core) afterwards
-    if (!deState.initialized) {
-      const favSport = u.profile.sport;
-      let sportFocus = [];
-      if (['Running', 'Cycling', 'Football', 'Basketball'].includes(favSport)) sportFocus = ['Legs', 'Core'];
-      if (['Swimming', 'Boxing', 'Tennis', 'Martial Arts'].includes(favSport)) sportFocus = ['Back', 'Shoulders', 'Arms'];
-      if (['Weightlifting', 'Calisthenics'].includes(favSport)) sportFocus = ['Chest', 'Back', 'Legs'];
-      deState.muscles = [...new Set([...deState.muscles, ...sportFocus])];
-      deState.initialized = true;
-    }
+    // Per user request: NEVER pre-select any muscle (incl. Legs/Core).
+    // The user must explicitly pick the muscles they want to train each time.
+    deState.muscles = [];
+    deState.initialized = true;
     
     container.innerHTML = `
       <div class="panel daily-exercise-container">
@@ -2632,7 +2819,11 @@ function finishDailyWorkout() {
   renderHome();
 }
 
-function pickMood(btn) { selectedMood = btn.dataset.mood; document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); }
+function pickMood(btn) {
+  selectedMood = btn.dataset.mood;
+  document.querySelectorAll('.mood-card, .mood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
 function generateMoodWorkout() {
   if (!selectedMood) { alert('Pick a mood first.'); return; }
   const pools = {
@@ -2643,9 +2834,11 @@ function generateMoodWorkout() {
     pumped: ['5x10 burpees', '4x15 jump squats', '4x30s sprint in place', '4x10 plyo push-ups', '4x20 mountain climbers', '5x10 tuck jumps', '4x15 kettlebell swings', '4x20 battle ropes']
   };
   const workout = getDailyItems(pools[selectedMood], 3);
-  const workoutCards = workout.map(w => `<div class="task-card" style="cursor:default;"><div><h4>${w}</h4><p class="task-desc">Mood Exercise</p></div></div>`).join('');
+  const moodEmoji = { stressed: 'fa-bolt', sad: 'fa-face-frown', neutral: 'fa-face-meh', happy: 'fa-face-smile', pumped: 'fa-rocket' }[selectedMood];
+  const moodLabel = selectedMood.charAt(0).toUpperCase() + selectedMood.slice(1);
+  const workoutCards = workout.map((w, i) => `<div class="task-card mood-workout-card" style="cursor:default;animation-delay:${0.05 * i}s;"><div style="display:flex;gap:12px;align-items:center;"><div class="mood-workout-num">${i+1}</div><div><h4 style="margin:0 0 4px;font-size:.95rem;">${w}</h4><p class="task-desc" style="margin:0;">Mood Exercise</p></div></div></div>`).join('');
   document.getElementById('mood-result').classList.remove('hidden');
-  document.getElementById('mood-result').innerHTML = `<h3><i class="fa-solid fa-wand-magic-sparkles"></i> ${selectedMood} Workout</h3><div class="task-grid" style="margin-top: 16px;">${workoutCards}</div>`;
+  document.getElementById('mood-result').innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><i class="fa-solid ${moodEmoji}" style="font-size:1.4rem;color:var(--accent);"></i><h3 style="margin:0;font-size:1.1rem;">${moodLabel} Workout</h3></div><div class="task-grid" style="margin-top: 8px;">${workoutCards}</div>`;
   document.getElementById('mood-music').classList.remove('hidden');
   const todaysPlaylists = getDailyItems(VIBE_PLAYLISTS.upbeat, 2);
   document.getElementById('playlist-container').innerHTML = todaysPlaylists.map(id => `<iframe style="border-radius:12px; margin-bottom:10px;" src="https://open.spotify.com/embed/playlist/${id}" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`).join('');
@@ -2771,12 +2964,39 @@ function renderWeather() {
   const w = lastWeather;
   document.getElementById('weather-current').innerHTML = `<h3>${w.temperature_2m}°C</h3><p>Precip ${w.precipitation} mm</p>`;
   const risks = w.precipitation > 0;
-  document.getElementById('safety-grid').innerHTML = SPORTS.map(s => `
+  // Persist the current safety list so the search box can filter it without re-fetching weather
+  window._lastSafetySports = SPORTS.slice();
+  renderSafetyGrid(window._lastSafetySports, risks);
+}
+
+function renderSafetyGrid(list, risks) {
+  const grid = document.getElementById('safety-grid');
+  if (!list || list.length === 0) {
+    grid.innerHTML = '<div class="safety-empty"><i class="fa-solid fa-magnifying-glass" style="font-size:22px;display:block;margin-bottom:8px;opacity:.4;"></i>No sports match your search.</div>';
+    return;
+  }
+  grid.innerHTML = list.map(s => `
     <div class="safety-item">
       <span class="s-icon"><i class="fa-solid ${s.icon}"></i></span>
       <b>${getSportName(s)}</b>
       <span class="macro-pill ${!s.outdoor ? 'macro-p' : risks ? 'macro-f' : 'macro-p'}">${!s.outdoor ? 'Indoor OK' : risks ? 'Unsafe' : 'Safe outside'}</span>
     </div>`).join('');
+}
+
+function filterSafetyGrid(query) {
+  const clearBtn = document.getElementById('weather-search-clear');
+  const q = (query || '').trim().toLowerCase();
+  if (clearBtn) clearBtn.classList.toggle('visible', q.length > 0);
+  if (!window._lastSafetySports) return;
+  const w = lastWeather;
+  const risks = w && w.precipitation > 0;
+  if (!q) { renderSafetyGrid(window._lastSafetySports, risks); return; }
+  const filtered = window._lastSafetySports.filter(s => {
+    const name = (s.name || '').toLowerCase();
+    const displayName = getSportName(s).toLowerCase();
+    return name.includes(q) || displayName.includes(q);
+  });
+  renderSafetyGrid(filtered, risks);
 }
 
 function renderProfile() {
@@ -3321,6 +3541,10 @@ function scanInBodyFromProfile(inputEl) {
       renderInBodyProfileCard();
       // Reset file input so the same file can be re-selected later
       inputEl.value = '';
+      // Trigger follow-up form for any missing fields the OCR couldn't read.
+      // This asks the user the same questions as the main onboarding survey
+      // so we end up with 100% of the data filled in.
+      promptForMissingInBodyFields(found);
     }, 1500);
   }).catch(err => {
     console.error('InBody OCR error (profile):', err);
@@ -3348,6 +3572,181 @@ function applyInBodyToProfile() {
     ? 'InBody data applied to your profile! Updated: ' + changes.join(', ') + '.'
     : 'No basic profile fields (weight, height, age, gender) were found in the scan, but body composition metrics (BMI, body fat, muscle mass, BMR) are saved above.';
   alert(msg);
+}
+
+/* ===== InBody Follow-up Form =====
+   After an InBody scan completes, the OCR may have missed some fields.
+   This builds a small form using the SAME survey question definitions
+   (surveyQuestions array) that drive the main onboarding survey, so the
+   user is asked only about fields the scan couldn't read.
+   The user's answers are merged into their survey + profile so the rest
+   of the app (diet, workouts, calculator) gets 100% accurate inputs. */
+const INBODY_FIELD_TO_SURVEY_KEY = {
+  weight: 'weight',
+  height: 'height',
+  age: 'age',
+  gender: 'gender'
+};
+// Body composition fields that aren't in the survey but are part of an InBody scan.
+// We add custom questions for those so the user can fill them in too.
+const INBODY_EXTRA_FIELDS = [
+  { key: 'bmi', label: 'BMI (Body Mass Index)', icon: 'fa-chart-pie', placeholder: 'e.g. 24.0', type: 'number', min: 8, max: 80 },
+  { key: 'bodyFat', label: 'Body Fat %', icon: 'fa-droplet', placeholder: 'e.g. 18.5', type: 'number', min: 1, max: 70 },
+  { key: 'muscle', label: 'Skeletal Muscle Mass (kg)', icon: 'fa-dumbbell', placeholder: 'e.g. 35.0', type: 'number', min: 10, max: 100 },
+  { key: 'bmr', label: 'Basal Metabolic Rate (kcal)', icon: 'fa-fire', placeholder: 'e.g. 1650', type: 'number', min: 800, max: 5000 }
+];
+
+function promptForMissingInBodyFields(scan) {
+  try {
+    if (typeof surveyQuestions === 'undefined') return;
+    const u = currentUser();
+    if (!u) return;
+    const survey = u.survey || {};
+    const profile = u.profile || {};
+
+    // Step 1: figure out which of the InBody's "core 4" fields are missing
+    // (these are also in the main survey, so we can reuse the survey question).
+    const missingSurveyKeys = [];
+    ['weight', 'height', 'age', 'gender'].forEach(k => {
+      const scanVal = scan[k];
+      const surveyVal = survey[k];
+      const profileVal = profile[k];
+      const hasVal = (scanVal !== undefined && scanVal !== null && scanVal !== '')
+                  || (surveyVal !== undefined && surveyVal !== null && surveyVal !== '')
+                  || (profileVal !== undefined && profileVal !== null && profileVal !== '');
+      if (!hasVal) missingSurveyKeys.push(k);
+    });
+
+    // Step 2: figure out which body-composition extras are missing
+    const missingExtras = INBODY_EXTRA_FIELDS.filter(f => scan[f.key] === undefined || scan[f.key] === null || scan[f.key] === '');
+
+    const totalMissing = missingSurveyKeys.length + missingExtras.length;
+    if (totalMissing === 0) return; // nothing missing — don't bother the user
+
+    // Build the form HTML
+    const surveyQuestionMap = {};
+    surveyQuestions.forEach(q => { surveyQuestionMap[q.key] = q; });
+
+    let fieldsHtml = '';
+
+    // Render survey questions for the missing core fields
+    missingSurveyKeys.forEach(key => {
+      const q = surveyQuestionMap[key];
+      if (!q) return;
+      fieldsHtml += renderFollowupField(q);
+    });
+
+    // Render custom questions for the missing extras
+    missingExtras.forEach(f => {
+      fieldsHtml += `
+        <div class="followup-field" data-extra-key="${f.key}">
+          <label><i class="fa-solid ${f.icon}"></i> ${f.label}</label>
+          <input type="${f.type}" id="followup-${f.key}" placeholder="${f.placeholder || ''}" min="${f.min || ''}" max="${f.max || ''}" step="0.1" />
+        </div>
+      `;
+    });
+
+    const body = document.getElementById('inbody-followup-body');
+    body.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+        <div style="width:42px;height:42px;border-radius:12px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;"><i class="fa-solid fa-clipboard-check"></i></div>
+        <h2 style="margin:0;font-size:1.2rem;">Just a few more details</h2>
+      </div>
+      <p style="color:var(--muted);font-size:.88rem;margin-bottom:18px;">We couldn't read ${totalMissing} field${totalMissing === 1 ? '' : 's'} from your InBody sheet. Please fill them in below so we can give you the most accurate plan.</p>
+      <div class="followup-form">${fieldsHtml}</div>
+      <button class="btn primary" style="width:100%;margin-top:18px;" onclick="saveInBodyFollowup()"><i class="fa-solid fa-check"></i> Save & Apply</button>
+      <button class="btn ghost" style="width:100%;margin-top:8px;" onclick="closeInBodyFollowup()">Skip for now</button>
+    `;
+    openModal('inbody-followup-modal');
+  } catch (e) {
+    console.warn('promptForMissingInBodyFields error:', e);
+  }
+}
+
+function renderFollowupField(q) {
+  const u = currentUser();
+  const currentVal = (u.survey && u.survey[q.key]) || (u.profile && u.profile[q.key]) || '';
+  if (q.type === 'text' || q.type === 'number') {
+    return `
+      <div class="followup-field" data-survey-key="${q.key}">
+        <label><i class="fa-solid ${q.icon}"></i> ${q.q}</label>
+        <input type="${q.type}" id="followup-${q.key}" placeholder="${q.placeholder || ''}" value="${currentVal}" />
+      </div>
+    `;
+  } else if (q.type === 'select') {
+    const opts = q.options.map(opt => {
+      const sel = (currentVal === opt) ? 'selected' : '';
+      return `<button type="button" class="followup-opt ${sel}" data-value="${opt}" onclick="this.parentElement.querySelectorAll('.followup-opt').forEach(b=>b.classList.remove('selected'));this.classList.add('selected');"><i class="fa-solid fa-check"></i> ${opt}</button>`;
+    }).join('');
+    return `
+      <div class="followup-field" data-survey-key="${q.key}" data-select-key="${q.key}">
+        <label><i class="fa-solid ${q.icon}"></i> ${q.q}</label>
+        <div class="followup-opts">${opts}</div>
+      </div>
+    `;
+  }
+  return '';
+}
+
+function closeInBodyFollowup() {
+  closeModal('inbody-followup-modal');
+}
+
+function saveInBodyFollowup() {
+  const u = currentUser();
+  if (!u) { closeInBodyFollowup(); return; }
+  if (!u.survey) u.survey = {};
+  if (!u.profile) u.profile = {};
+  if (!u.inbodyScan) u.inbodyScan = {};
+
+  // Collect survey-style answers
+  document.querySelectorAll('.followup-field[data-survey-key]').forEach(wrap => {
+    const key = wrap.dataset.surveyKey;
+    const q = surveyQuestions.find(x => x.key === key);
+    if (!q) return;
+    let val;
+    if (q.type === 'select') {
+      const selBtn = wrap.querySelector('.followup-opt.selected');
+      val = selBtn ? selBtn.dataset.value : null;
+    } else {
+      const inp = wrap.querySelector('input');
+      val = inp ? inp.value.trim() : '';
+      if (q.type === 'number' && val) val = parseFloat(val);
+    }
+    if (val !== null && val !== '' && val !== undefined) {
+      u.survey[key] = val;
+      // Mirror into profile for the keys the profile cares about
+      if (['name', 'gender', 'age', 'height', 'weight', 'goal', 'sport', 'level', 'injury'].includes(key)) {
+        u.profile[key] = (key === 'gender') ? String(val).toLowerCase() : val;
+      }
+      // Also store into the inbodyScan if it's one of the InBody core fields
+      if (['weight', 'height', 'age', 'gender'].includes(key)) {
+        if (key === 'gender') u.inbodyScan[key] = String(val).charAt(0).toUpperCase() + String(val).slice(1).toLowerCase();
+        else u.inbodyScan[key] = (key === 'age') ? parseInt(val, 10) : parseFloat(val);
+      }
+    }
+  });
+
+  // Collect body-composition extras
+  document.querySelectorAll('.followup-field[data-extra-key]').forEach(wrap => {
+    const key = wrap.dataset.extraKey;
+    const inp = wrap.querySelector('input');
+    const val = inp ? inp.value.trim() : '';
+    if (val) {
+      const num = parseFloat(val);
+      if (!isNaN(num)) u.inbodyScan[key] = num;
+    }
+  });
+
+  // Recompute goal plan if weight/height changed so the calculator & diet tabs
+  // pick up the new numbers immediately.
+  try { calculateGoalPlan(); } catch(e) {}
+  saveUser(store.session, u);
+  closeInBodyFollowup();
+  renderProfile();
+  // Refresh home stats too (BMI / water target depend on weight & height).
+  if (typeof renderHome === 'function') renderHome();
+  if (typeof renderTracker === 'function') renderTracker();
 }
 
 /* ===== OCR Overlay helpers ===== */
@@ -4022,36 +4421,29 @@ function autofillFromInBody() {
   const email = store.session;
   const isUser = email && store.users[email];
   
-  if (isCoach || isUser) {
-    // Returning user: Quick splash -> Instant Login (200ms on mobile, 500ms desktop)
+  // ALWAYS play the full opening animation first, regardless of login state.
+  // The splash is the brand moment of the app — every launch (cold or returning)
+  // should see it animate in, then transition to the appropriate screen.
+  const splashAnimIn = 100;                       // brief delay so the .animate class triggers the CSS transition
+  const splashFullDuration = isMobileDevice ? 1700 : 2500;  // full brand animation length
+  setTimeout(() => {
     splash.classList.add('animate');
-    const splashDelay = isMobileDevice ? 200 : 500;
     setTimeout(() => {
       splash.classList.add('hidden');
       if (isCoach) {
         enterCoachApp(coachUsers[coachEmail]);
-      } else {
+      } else if (isUser) {
         const u = store.users[email];
         if (!u.verified) { u.verified = true; saveUser(email, u); }
         if (!u.profile) { showScreen('screen-onboarding'); }
         else { enterApp(); }
+      } else {
+        showScreen('screen-landing');
       }
       updateChatbaseVisibility();
       updateMobileMenuBtn();
-    }, splashDelay);
-  } else {
-    // First time: Splash animation -> Landing (1.5s mobile, 2.5s desktop)
-    const splashDelay2 = isMobileDevice ? 800 : 2500;
-    setTimeout(() => { 
-      splash.classList.add('animate'); 
-      setTimeout(() => { 
-        splash.classList.add('hidden'); 
-        showScreen('screen-landing');
-        updateChatbaseVisibility();
-        updateMobileMenuBtn();
-      }, splashDelay2); 
-    }, 100);
-  }
+    }, splashFullDuration);
+  }, splashAnimIn);
   
   setInterval(checkReminders, 30000);
 })();
