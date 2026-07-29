@@ -1406,7 +1406,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="لا تفوّت أي تمرين. أنشئ تذكيرات وصدّرها مباشرة إلى تقويم جهازك.">Never miss a workout. Create reminders and export them directly to your device's calendar.</p>
       <div class="panel">
         <h3><i class="fa-solid fa-bell"></i> <span data-ar="إنشاء تذكير جديد">Create New Reminder</span></h3>
-        <input type="text" id="rem-title" placeholder="العنوان (مثل: جري الصباح)" />
+        <input type="text" id="rem-title" placeholder="Title (e.g. Morning Run)" data-ar-ph="العنوان (مثل: جري الصباح)" />
         <div class="rem-datetime-grid">
           <div class="rem-field-wrap">
             <label for="rem-date" class="rem-field-label"><i class="fa-solid fa-calendar"></i> <span data-ar="التاريخ">Date</span></label>
@@ -1417,7 +1417,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
             <input type="time" id="rem-time" value="09:00" />
           </div>
         </div>
-        <input type="text" id="rem-note" placeholder="ملاحظات (اختياري)" />
+        <input type="text" id="rem-note" placeholder="Notes (optional)" data-ar-ph="ملاحظات (اختياري)" />
         <button class="btn primary fit" onclick="saveReminder()"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة تذكير">Add Reminder</span></button>
       </div>
       <div class="panel">
@@ -3142,7 +3142,58 @@ function calculateGoalFancy() {
 }
 
 // ===== DAILY EXERCISE ENHANCED =====
-let deState = { step: 1, view: 'front', muscles: [], numDays: 7, daysOfWeek: [], workouts: [], currentWorkout: 0, initialized: false };
+let deState = { step: 1, view: 'front', muscles: [], numDays: 7, daysOfWeek: [], workouts: [], currentWorkout: 0, initialized: false, dailyPlan: null, currentDay: 0 };
+
+// ===== DAILY PLAN PERSISTENCE =====
+// The plan is stored on the user object so it survives page refreshes
+// and is per-user. Each day in the plan has its own list of workouts so
+// finishing today advances to tomorrow instead of starting over.
+function saveDailyPlan() {
+  try {
+    const u = currentUser();
+    if (!u) return;
+    u.dailyPlan = {
+      muscles: deState.muscles,
+      numDays: deState.numDays,
+      daysOfWeek: deState.daysOfWeek,
+      dailyPlan: deState.dailyPlan,
+      currentDay: deState.currentDay,
+      view: deState.view,
+      savedAt: Date.now()
+    };
+    saveUser(store.session, u);
+  } catch(e) { console.warn('saveDailyPlan error:', e); }
+}
+function loadDailyPlan() {
+  try {
+    const u = currentUser();
+    if (!u || !u.dailyPlan) return false;
+    const p = u.dailyPlan;
+    if (!p.dailyPlan || !p.dailyPlan.length) return false;
+    deState.muscles = p.muscles || [];
+    deState.numDays = p.numDays || 7;
+    deState.daysOfWeek = p.daysOfWeek || [];
+    deState.dailyPlan = p.dailyPlan;
+    deState.currentDay = Math.min(p.currentDay || 0, p.dailyPlan.length - 1);
+    deState.view = p.view || 'front';
+    deState.workouts = deState.dailyPlan[deState.currentDay].workouts || [];
+    // Resume at the first not-yet-done workout (or end if all done)
+    let cw = 0;
+    for (let i = 0; i < deState.workouts.length; i++) { if (!deState.workouts[i].done) { cw = i; break; } cw = i + 1; }
+    deState.currentWorkout = Math.min(cw, deState.workouts.length);
+    deState.step = 4;
+    deState.initialized = true;
+    return true;
+  } catch(e) { console.warn('loadDailyPlan error:', e); return false; }
+}
+function clearDailyPlan() {
+  try {
+    const u = currentUser();
+    if (!u) return;
+    delete u.dailyPlan;
+    saveUser(store.session, u);
+  } catch(e) { console.warn('clearDailyPlan error:', e); }
+}
 const WORKOUT_DB = {
   'Chest': ['Push-ups', 'Incline Push-ups', 'Chest Dips', 'Pec Flyes'],
   'Back': ['Pull-ups', 'Bent-over Rows', 'Superman Hold', 'Lat Pulldowns'],
@@ -3163,6 +3214,10 @@ const WORKOUT_INFO = {
 function renderDailyExercise() {
   const u = currentUser();
   if (!u.profile) return;
+  // If we have a saved multi-day plan in localStorage but nothing in memory
+  // (e.g. page just loaded), hydrate from it so the user resumes on Day N
+  // instead of being kicked back to step 1.
+  if (!deState.dailyPlan && deState.step === 1) { loadDailyPlan(); }
   const container = document.getElementById('daily-exercise-content');
   const ar = (store.lang === 'ar');
   // Helper: localize a muscle name
@@ -3234,11 +3289,20 @@ function renderDailyExercise() {
       </div>
     `;
   } else if (deState.step === 4) {
-    const todayHeader = ar ? 'تمرين اليوم' : "Today's Workout";
+    const totalDays = (deState.dailyPlan && deState.dailyPlan.length) ? deState.dailyPlan.length : 1;
+    const dayNum = deState.currentDay + 1;
+    const todayHeader = ar ? `اليوم ${dayNum} من ${totalDays}` : `Day ${dayNum} of ${totalDays}`;
     const todaySub = ar ? 'أكمل كل تمرين لفتح التالي' : 'Complete each exercise to unlock the next';
+    const newPlanLabel = ar ? 'خطة جديدة' : 'New Plan';
     container.innerHTML = `
       <div class="panel daily-exercise-container">
-        <div class="de-day-header"><h2>${todayHeader}</h2><small>${todaySub}</small></div>
+        <div class="de-day-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div>
+            <h2 style="margin:0;">${todayHeader}</h2>
+            <small>${todaySub}</small>
+          </div>
+          <button class="btn ghost small" style="flex-shrink:0;" onclick="resetDailyPlan()"><i class="fa-solid fa-rotate-right"></i> <span data-ar="خطة جديدة">${newPlanLabel}</span></button>
+        </div>
         <div class="workout-list-container" id="workout-list-container"></div>
         <button class="btn primary" style="width:100%;margin-top:24px;" onclick="finishDailyWorkout()"><i class="fa-solid fa-check"></i> ${finishLabel}</button>
       </div>
@@ -3300,16 +3364,41 @@ function toggleDayOfWeek(i, el) {
   el.classList.toggle('selected');
 }
 function generateWorkoutList() {
-  if (deState.daysOfWeek.length === 0) { alert('Please select at least one day.'); return; }
-  deState.workouts = [];
-  // Respect the user's explicit muscle selections (do not re-add sport focus here)
-  const targetMuscles = [...deState.muscles];
-  targetMuscles.forEach(m => {
-    (WORKOUT_DB[m] || []).forEach(w => deState.workouts.push({ name: w, done: false, info: WORKOUT_INFO[w] || {muscle: m} }));
+  const ar = (store.lang === 'ar');
+  if (deState.daysOfWeek.length === 0) { alert(ar ? 'يرجى اختيار يوم واحد على الأقل.' : 'Please select at least one day.'); return; }
+  if (deState.muscles.length === 0) { alert(ar ? 'يرجى اختيار عضلة واحدة على الأقل.' : 'Please select at least one muscle.'); return; }
+  // Build pool of all exercises for the selected muscles
+  const pool = [];
+  [...deState.muscles].forEach(m => {
+    (WORKOUT_DB[m] || []).forEach(w => pool.push({ name: w, info: WORKOUT_INFO[w] || {muscle: m} }));
   });
-  if (deState.workouts.length === 0) deState.workouts = [{ name: 'Full Body Circuit', done: false, info: {muscle: 'Full Body'} }];
+  if (pool.length === 0) pool.push({ name: 'Full Body Circuit', info: {muscle: 'Full Body'} });
+  // Distribute across the requested number of days. Each day gets ~4-5
+  // exercises, cycling through the pool so consecutive days feel fresh
+  // (e.g. day 2 starts where day 1 left off rather than repeating).
+  const perDay = Math.min(5, pool.length);
+  deState.dailyPlan = [];
+  for (let d = 0; d < deState.numDays; d++) {
+    const dayWorkouts = [];
+    for (let i = 0; i < perDay; i++) {
+      const idx = (d * perDay + i) % pool.length;
+      dayWorkouts.push({ name: pool[idx].name, info: pool[idx].info, done: false });
+    }
+    deState.dailyPlan.push({ dayIndex: d, workouts: dayWorkouts, completed: false, completedAt: null });
+  }
+  deState.currentDay = 0;
+  deState.workouts = deState.dailyPlan[0].workouts;
   deState.currentWorkout = 0;
   deState.step = 4;
+  saveDailyPlan();
+  renderDailyExercise();
+}
+function resetDailyPlan() {
+  const ar = (store.lang === 'ar');
+  if (!confirm(ar ? 'هل تريد إلغاء الخطة الحالية والبدء من جديد؟' : 'Discard the current plan and start over?')) return;
+  deState.step = 1; deState.muscles = []; deState.daysOfWeek = []; deState.workouts = [];
+  deState.dailyPlan = null; deState.currentDay = 0; deState.initialized = false;
+  clearDailyPlan();
   renderDailyExercise();
 }
 function renderWorkoutList() {
@@ -3382,6 +3471,11 @@ function completeWorkout(index) {
   if (workoutTimerInt) clearInterval(workoutTimerInt);
   deState.workouts[index].done = true;
   deState.currentWorkout++;
+  // Persist the per-workout 'done' flag so a page refresh doesn't lose progress
+  if (deState.dailyPlan && deState.dailyPlan[deState.currentDay]) {
+    deState.dailyPlan[deState.currentDay].workouts = deState.workouts;
+    saveDailyPlan();
+  }
   closeWorkoutDetail();
   renderWorkoutList();
 
@@ -3421,9 +3515,29 @@ function finishDailyWorkout() {
   if (deState.workouts.some(w => !w.done)) {
     if (!confirm(ar ? 'لديك تمارين غير مكتملة. هل أنت متأكد من إنهاء اليوم؟' : 'You have incomplete workouts. Are you sure you want to finish today?')) return;
   }
+  // Mark today as completed
+  if (deState.dailyPlan && deState.dailyPlan[deState.currentDay]) {
+    deState.dailyPlan[deState.currentDay].completed = true;
+    deState.dailyPlan[deState.currentDay].completedAt = Date.now();
+  }
   bumpStreak();
-  alert(ar ? 'تم إنهاء تمرين اليوم! ازدادت سلسلة أيامك المتتالية.' : 'Daily workout finished! Streak increased.');
-  deState.step = 1; deState.muscles = []; deState.daysOfWeek = []; deState.workouts = []; deState.initialized = false;
+  // Advance to next day (or end the plan if this was the last day)
+  const nextDay = deState.currentDay + 1;
+  const totalDays = (deState.dailyPlan && deState.dailyPlan.length) ? deState.dailyPlan.length : 0;
+  if (!deState.dailyPlan || nextDay >= totalDays) {
+    // Plan complete — start fresh
+    alert(ar ? '🎉 لقد أكملت جميع أيام خطتك! ستبدأ خطة جديدة.' : '🎉 You\'ve completed all days of your plan! You can generate a new one.');
+    deState.step = 1; deState.muscles = []; deState.daysOfWeek = []; deState.workouts = [];
+    deState.dailyPlan = null; deState.currentDay = 0; deState.initialized = false;
+    clearDailyPlan();
+  } else {
+    // Advance to the next day
+    deState.currentDay = nextDay;
+    deState.workouts = (deState.dailyPlan[nextDay].workouts || []).map(w => ({ name: w.name, info: w.info, done: false }));
+    deState.currentWorkout = 0;
+    saveDailyPlan();
+    alert(ar ? `أحسنت! انتقلت إلى اليوم ${nextDay + 1} من ${totalDays}.` : `Great job! You're now on Day ${nextDay + 1} of ${totalDays}.`);
+  }
   renderDailyExercise();
   renderHome();
 }
