@@ -554,6 +554,111 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 .chip { font-size: .78rem; font-weight: 500; padding: 4px 12px; background: var(--accent-soft); color: var(--accent); border-radius: 20px; }
 
+/* ===== ENHANCED PROFILE INFO CARD ===== */
+.profile-info-card { padding: 0; overflow: hidden; }
+.profile-hero {
+  display: flex; align-items: center; gap: 18px;
+  padding: 22px 24px;
+  background: linear-gradient(135deg, var(--accent-soft) 0%, var(--white) 100%);
+  border-bottom: 1px solid var(--line);
+}
+.profile-avatar {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.85rem; font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(100,149,237,0.32);
+  position: relative;
+}
+.profile-avatar::after {
+  content: '';
+  position: absolute; inset: -3px;
+  border-radius: 50%;
+  border: 2px solid var(--white);
+  pointer-events: none;
+}
+.profile-hero-text { flex: 1; min-width: 0; }
+.profile-hero-name {
+  font-size: 1.3rem; font-weight: 800; color: var(--text);
+  margin: 0 0 4px 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.profile-hero-email {
+  font-size: .82rem; color: var(--muted); font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.profile-hero-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.profile-hero-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: .72rem; font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+}
+.profile-hero-badge i { font-size: 9px; }
+.profile-hero-badge.goal { background: var(--accent); color: #fff; border-color: var(--accent-dark); }
+.profile-hero-badge.sport { background: var(--green-bg); color: var(--green); border-color: transparent; }
+
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line);
+  margin: 0;
+}
+.profile-info-item {
+  background: var(--white);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  transition: background 0.15s ease;
+}
+.profile-info-item:hover { background: var(--accent-soft); }
+.profile-info-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.profile-info-body { min-width: 0; flex: 1; }
+.profile-info-label {
+  font-size: .68rem;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 2px;
+}
+.profile-info-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.profile-info-value .unit {
+  font-size: .72rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 3px;
+}
+.profile-info-item.full-width { grid-column: span 2; }
+
+@media (max-width: 480px) {
+  .profile-hero { padding: 18px 16px; gap: 14px; }
+  .profile-avatar { width: 60px; height: 60px; font-size: 1.5rem; }
+  .profile-hero-name { font-size: 1.12rem; }
+  .profile-info-item { padding: 12px 14px; }
+  .profile-info-icon { width: 32px; height: 32px; font-size: 13px; }
+  .profile-info-value { font-size: .92rem; }
+}
+
 .footnote { font-size: .85rem; color: var(--muted); margin-top: 16px; text-align: center; }
 .footnote .inline { display: inline; font-weight: 600; }
 
@@ -1117,7 +1222,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 
   <main class="main">
     <div id="tab-home" class="tab active">
-      <h1 id="greeting" style="font-size:1.45rem;font-weight:700;" data-ar="أهلاً">Welcome</h1>
+      <h1 id="greeting" style="font-size:1.45rem;font-weight:700;">Welcome</h1>
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="لمحة عن يومك اليوم.">Here's your snapshot for today.</p>
       <div class="cards-row">
         <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-weight-scale"></i></span><div><b id="stat-bmi">--</b><small><span data-ar="مؤشر كتلة الجسم">BMI</span> (<span id="stat-bmi-cat">--</span>)</small></div></div>
@@ -1137,7 +1242,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       </div>
       <div class="panel goal-progress-panel hidden" id="goal-progress-panel">
         <div class="goal-progress-header">
-          <span>Goal Progress: <b id="goal-current">--</b>kg -> <b id="goal-target">--</b>kg</span>
+          <span><span data-ar="تقدم الهدف: ">Goal Progress: </span><b id="goal-current">--</b><span data-ar=" كجم ← ">kg -> </span><b id="goal-target">--</b><span data-ar=" كجم">kg</span></span>
           <span id="goal-percent">0%</span>
         </div>
         <div class="goal-progress-bar-bg">
@@ -1150,7 +1255,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       </div>
       <div class="panel" id="coach-recommendation-panel">
         <h3><i class="fa-solid fa-brain"></i> <span data-ar="توصية المدرب">Coach's Recommendation</span></h3>
-        <div id="recommendation-content">Analyzing your profile...</div>
+        <div id="recommendation-content" data-ar="جارٍ تحليل ملفك...">Analyzing your profile...</div>
       </div>
       <div class="banner-grid">
         <div class="banner-card" onclick="showTab('diet')"><img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Diet"><div class="banner-overlay"><h4 data-ar="النظام الغذائي">Diet System</h4><p data-ar="احصل على خطط وجبات مخصصة.">Get personalized meal plans.</p></div></div>
@@ -1230,7 +1335,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <h3><i class="fa-solid fa-shield-halved"></i> <span data-ar="سلامة الرياضة الخارجية الآن">Outdoor sport safety right now</span></h3>
         <div class="weather-search-wrap">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="weather-search" placeholder="ابحث عن رياضات (مثل: الجري، الدراجة، اليوغا...)" oninput="filterSafetyGrid(this.value)" autocomplete="off" />
+          <input type="text" id="weather-search" placeholder="Search sports (e.g. Running, Cycling, Yoga...)" data-ar-ph="ابحث عن رياضات (مثل: الجري، الدراجة، اليوغا...)" oninput="filterSafetyGrid(this.value)" autocomplete="off" />
           <button class="weather-search-clear" id="weather-search-clear" onclick="document.getElementById('weather-search').value=''; filterSafetyGrid('');" title="Clear search"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div id="safety-grid" class="safety-grid"><i>...</i></div>
@@ -2732,12 +2837,17 @@ function animateCount(el, target, decimals = 0, suffix = '') { const duration = 
 function renderHome() {
   const u = currentUser(), p = u.profile;
   if (!p) return;
-  document.getElementById('greeting').textContent = `Welcome ${p.name.split(' ')[0]}`;
+  const ar = (store.lang === 'ar');
+  const greetingPrefix = ar ? 'مرحباً' : 'Welcome';
+  document.getElementById('greeting').textContent = `${greetingPrefix} ${p.name.split(' ')[0]}`;
   const bmi = p.weight / Math.pow(p.height / 100, 2);
   animateCount(document.getElementById('stat-bmi'), parseFloat(bmi.toFixed(1)), 1);
-  document.getElementById('stat-bmi-cat').textContent = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Healthy' : bmi < 30 ? 'Overweight' : 'Obese';
+  const bmiCatEn = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Healthy' : bmi < 30 ? 'Overweight' : 'Obese';
+  const bmiCatAr = bmi < 18.5 ? 'نحيف' : bmi < 25 ? 'صحي' : bmi < 30 ? 'زيادة وزن' : 'سمنة';
+  document.getElementById('stat-bmi-cat').textContent = ar ? bmiCatAr : bmiCatEn;
+  document.getElementById('stat-bmi-cat').setAttribute('data-ar', bmiCatAr);
   let waterTarget = parseFloat((p.weight * 0.033).toFixed(1));
-  document.getElementById('stat-water').textContent = waterTarget.toFixed(1) + ' L';
+  document.getElementById('stat-water').textContent = waterTarget.toFixed(1) + (ar ? ' لتر' : ' L');
   animateCount(document.getElementById('stat-streak'), u.streak || 0);
   animateCount(document.getElementById('stat-week-mins'), getSessionStats().weekMin);
 
@@ -2776,7 +2886,9 @@ function renderHome() {
 function renderCoachRecommendation() {
   const u = currentUser(), p = u.profile;
   if (!p) return;
-  
+  const ar = (store.lang === 'ar');
+  const goalAr = GOAL_AR_NAMES[p.goal] || p.goal;
+
   const sportMap = {
     'Lose weight': ['Running', 'Cycling', 'Boxing', 'HIIT'],
     'Build muscle': ['Weightlifting', 'Calisthenics', 'Crossfit'],
@@ -2792,7 +2904,7 @@ function renderCoachRecommendation() {
   store.defaultSport = store.recommendedSports[0];
   
   document.getElementById('recommendation-content').innerHTML = `
-    <p data-ar="بناءً على هدفك ورياضتك المفضلة، نوصي بهذه الرياضات:">Based on your goal (<b>${p.goal}</b>) and favorite sport, we recommend these sports:</p>
+    <p><span data-ar="بناءً على هدفك (">Based on your goal (</span><b>${ar ? goalAr : p.goal}</b><span data-ar=") ورياضتك المفضلة، نوصي بهذه الرياضات:">) and favorite sport, we recommend these sports:</span></p>
     <div class="rec-sports-grid">
       ${store.recommendedSports.map(name => { 
         const sp = SPORTS.find(x=>x.name===name) || {name: name, icon:'fa-dumbbell'}; 
@@ -2800,6 +2912,7 @@ function renderCoachRecommendation() {
       }).join('')}
     </div>
   `;
+  setTimeout(applyTranslations, 0);
 }
 
 function setDefaultSport(name) {
@@ -2812,14 +2925,16 @@ function setDefaultSport(name) {
 
 function renderChart() {
   const ctx = document.getElementById('weekChart').getContext('2d');
+  const ar = (store.lang === 'ar');
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const labels = days.map(d => ar ? (DAY_AR_NAMES[d] || d) : d);
   const data = [0,0,0,0,0,0,0];
   const sessions = currentUser().sessions || [];
   const today = new Date();
   const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1));
   sessions.forEach(s => { const sDate = new Date(s.date); const diff = Math.floor((sDate - startOfWeek) / 86400000); if (diff >= 0 && diff < 7) data[diff] += s.duration; });
   if (weekChart) weekChart.destroy();
-  weekChart = new Chart(ctx, { type: 'bar', data: { labels: days, datasets: [{ label: 'Minutes Active', data: data, backgroundColor: '#6495ED', borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+  weekChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: ar ? 'دقائق النشاط' : 'Minutes Active', data: data, backgroundColor: '#6495ED', borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
 }
 
 function renderSports() {
@@ -3420,13 +3535,19 @@ function stopMarathon() {
 function loadWeather(force) {
   const el = document.getElementById('weather-current');
   if (!el) return;
-  if (!store.locationEnabled && !force) { el.textContent = 'Weather location is disabled in settings.'; document.getElementById('safety-grid').innerHTML = '<i>Enable location in settings to get outdoor safety alerts.</i>'; return; }
+  const ar = (store.lang === 'ar');
+  if (!store.locationEnabled && !force) {
+    el.innerHTML = '<i class="fa-solid fa-location-dot" style="color:var(--muted);margin-right:6px;"></i>' + (ar ? 'موقع الطقس معطّل في الإعدادات.' : 'Weather location is disabled in settings.');
+    document.getElementById('safety-grid').innerHTML = '<i>' + (ar ? 'فعّل الموقع في الإعدادات للحصول على تنبيهات السلامة الخارجية.' : 'Enable location in settings to get outdoor safety alerts.') + '</i>';
+    setTimeout(applyTranslations, 0);
+    return;
+  }
   const wCache = store.weatherCache;
   if (!force && wCache && (Date.now() - wCache.time < 3600000)) { lastWeather = wCache.data; renderWeather(); return; }
   const locCache = store.locCache;
   if (locCache && (Date.now() - locCache.time < 86400000)) { fetchWeather(locCache.lat, locCache.lon); return; }
-  if (!navigator.geolocation) { el.textContent = 'Geolocation not supported.'; return; }
-  el.textContent = 'Requesting your location...';
+  if (!navigator.geolocation) { el.textContent = ar ? 'الخدمات الجغرافية غير مدعومة.' : 'Geolocation not supported.'; return; }
+  el.textContent = ar ? 'جارٍ طلب موقعك...' : 'Requesting your location...';
   navigator.geolocation.getCurrentPosition(pos => {
     const lat = pos.coords.latitude, lon = pos.coords.longitude;
     store.locCache = { lat, lon, time: Date.now() };
@@ -3434,34 +3555,39 @@ function loadWeather(force) {
   }, (err) => {
     console.warn('Weather geolocation error:', err.message);
     if (err.code === 1) {
-      el.innerHTML = '<div style="padding:16px;text-align:center;"><i class="fa-solid fa-location-crosshairs" style="font-size:24px;color:var(--muted);display:block;margin-bottom:8px;"></i><b>Location access denied</b><br><small style="color:var(--muted);">Please enable location in your browser settings to get weather data. On iOS: Settings > Safari > Location. On Android: Settings > Site settings > Location.</small></div>';
-      document.getElementById('safety-grid').innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">Enable location in browser settings to get outdoor safety alerts.</div>';
+      el.innerHTML = '<div style="padding:16px;text-align:center;"><i class="fa-solid fa-location-crosshairs" style="font-size:24px;color:var(--muted);display:block;margin-bottom:8px;"></i><b data-ar="تم رفض الوصول للموقع">Location access denied</b><br><small style="color:var(--muted);" data-ar="يرجى تفعيل الموقع في إعدادات المتصفح للحصول على بيانات الطقس. على iOS: الإعدادات > سفاري > الموقع. على أندرويد: الإعدادات > إعدادات الموقع > الموقع.">Please enable location in your browser settings to get weather data. On iOS: Settings > Safari > Location. On Android: Settings > Site settings > Location.</small></div>';
+      document.getElementById('safety-grid').innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);" data-ar="فعّل الموقع في إعدادات المتصفح للحصول على تنبيهات السلامة الخارجية.">Enable location in browser settings to get outdoor safety alerts.</div>';
     } else if (err.code === 2) {
-      el.textContent = 'Location unavailable. Try again later.';
+      el.textContent = ar ? 'الموقع غير متاح. حاول لاحقاً.' : 'Location unavailable. Try again later.';
     } else if (err.code === 3) {
-      el.textContent = 'Location request timed out. Tap Refresh to try again.';
+      el.textContent = ar ? 'انتهت مهلة طلب الموقع. اضغط تحديث للمحاولة مرة أخرى.' : 'Location request timed out. Tap Refresh to try again.';
     } else {
-      el.textContent = 'Could not get location.';
+      el.textContent = ar ? 'تعذّر الحصول على الموقع.' : 'Could not get location.';
     }
+    setTimeout(applyTranslations, 0);
   }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 });
 }
 async function fetchWeather(lat, lon) {
   const el = document.getElementById('weather-current');
+  const ar = (store.lang === 'ar');
   try {
     const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,precipitation,weather_code`);
     const data = await res.json(); 
     lastWeather = data.current; 
     store.weatherCache = { data: lastWeather, time: Date.now() };
     renderWeather();
-  } catch (err) { el.textContent = 'Could not load weather.'; }
+  } catch (err) { el.textContent = ar ? 'تعذّر تحميل الطقس.' : 'Could not load weather.'; }
 }
 function renderWeather() {
   const w = lastWeather;
-  document.getElementById('weather-current').innerHTML = `<h3>${w.temperature_2m}°C</h3><p data-ar="هطول الأمطار ${w.precipitation} ملم">Precip ${w.precipitation} mm</p>`;
+  const ar = (store.lang === 'ar');
+  const tempUnit = ar ? '°م' : '°C';
+  document.getElementById('weather-current').innerHTML = `<h3>${w.temperature_2m}${tempUnit}</h3><p><i class="fa-solid fa-cloud-rain" style="margin-right:6px;color:var(--accent);"></i><span data-ar="هطول الأمطار">Precip</span>: ${w.precipitation} <span data-ar="ملم">mm</span></p>`;
   const risks = w.precipitation > 0;
   // Persist the current safety list so the search box can filter it without re-fetching weather
   window._lastSafetySports = SPORTS.slice();
   renderSafetyGrid(window._lastSafetySports, risks);
+  setTimeout(applyTranslations, 0);
 }
 
 function renderSafetyGrid(list, risks) {
@@ -3503,16 +3629,99 @@ function renderProfile() {
   const ar = (store.lang === 'ar');
   const goalAr = ar ? (GOAL_AR_NAMES[p.goal] || p.goal) : p.goal;
   const sportAr = ar ? (SPORT_AR_NAMES[p.sport] || p.sport) : p.sport;
+
+  // Build avatar initials (first letter of first 2 words)
+  const initials = (p.name || '?').split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
+
+  // Get sport icon
+  const sportObj = SPORTS.find(x => x.name === p.sport);
+  const sportIcon = sportObj ? sportObj.icon : 'fa-trophy';
+
+  // Goal icon
+  const goalIconMap = {
+    'Lose weight': 'fa-arrow-trend-down',
+    'Build muscle': 'fa-dumbbell',
+    'Improve endurance': 'fa-heart-pulse',
+    'Stay healthy': 'fa-heart',
+    'Improve flexibility': 'fa-person-rays',
+    'Sports performance': 'fa-medal'
+  };
+  const goalIcon = goalIconMap[p.goal] || 'fa-bullseye';
+
+  // Localized labels
+  const labels = ar ? {
+    age: 'العمر', ageUnit: 'سنة',
+    height: 'الطول', heightUnit: 'سم',
+    weight: 'الوزن', weightUnit: 'كجم',
+    goal: 'الهدف',
+    favSport: 'الرياضة المفضلة',
+    email: 'البريد'
+  } : {
+    age: 'Age', ageUnit: 'yrs',
+    height: 'Height', heightUnit: 'cm',
+    weight: 'Weight', weightUnit: 'kg',
+    goal: 'Goal',
+    favSport: 'Favorite Sport',
+    email: 'Email'
+  };
+
   document.getElementById('profile-view').innerHTML = `
-    <ul style="margin:0 0 12px 20px;line-height:1.9;font-size:.92rem;">
-      <li><b data-ar="الاسم:">Name:</b> ${p.name}</li><li><b data-ar="البريد:">Email:</b> ${store.session}</li>
-      <li><b data-ar="العمر:">Age:</b> ${p.age}</li><li><b data-ar="الطول:">Height:</b> ${p.height} <span data-ar="سم">cm</span></li><li><b data-ar="الوزن:">Weight:</b> ${p.weight} <span data-ar="كجم">kg</span></li>
-      <li><b data-ar="الهدف:">Goal:</b> ${goalAr}</li><li><b data-ar="الرياضة المفضلة:">Favorite Sport:</b> ${sportAr}</li>
-    </ul>`;
+    <div class="profile-info-card">
+      <div class="profile-hero">
+        <div class="profile-avatar">${initials}</div>
+        <div class="profile-hero-text">
+          <div class="profile-hero-name">${p.name}</div>
+          <div class="profile-hero-email"><i class="fa-solid fa-envelope" style="font-size:10px;margin-right:5px;opacity:.7;"></i>${store.session}</div>
+          <div class="profile-hero-badges">
+            <span class="profile-hero-badge goal"><i class="fa-solid ${goalIcon}"></i> ${goalAr}</span>
+            <span class="profile-hero-badge sport"><i class="fa-solid ${sportIcon}"></i> ${sportAr}</span>
+          </div>
+        </div>
+      </div>
+      <div class="profile-info-grid">
+        <div class="profile-info-item">
+          <div class="profile-info-icon"><i class="fa-solid fa-cake-candles"></i></div>
+          <div class="profile-info-body">
+            <div class="profile-info-label" data-ar="العمر">${labels.age}</div>
+            <div class="profile-info-value">${p.age}<span class="unit" data-ar="سنة">${labels.ageUnit}</span></div>
+          </div>
+        </div>
+        <div class="profile-info-item">
+          <div class="profile-info-icon"><i class="fa-solid fa-ruler-vertical"></i></div>
+          <div class="profile-info-body">
+            <div class="profile-info-label" data-ar="الطول">${labels.height}</div>
+            <div class="profile-info-value">${p.height}<span class="unit" data-ar="سم">${labels.heightUnit}</span></div>
+          </div>
+        </div>
+        <div class="profile-info-item">
+          <div class="profile-info-icon"><i class="fa-solid fa-weight-scale"></i></div>
+          <div class="profile-info-body">
+            <div class="profile-info-label" data-ar="الوزن">${labels.weight}</div>
+            <div class="profile-info-value">${p.weight}<span class="unit" data-ar="كجم">${labels.weightUnit}</span></div>
+          </div>
+        </div>
+        <div class="profile-info-item">
+          <div class="profile-info-icon"><i class="fa-solid fa-bullseye"></i></div>
+          <div class="profile-info-body">
+            <div class="profile-info-label" data-ar="الهدف">${labels.goal}</div>
+            <div class="profile-info-value">${goalAr}</div>
+          </div>
+        </div>
+        <div class="profile-info-item full-width">
+          <div class="profile-info-icon"><i class="fa-solid ${sportIcon}"></i></div>
+          <div class="profile-info-body">
+            <div class="profile-info-label" data-ar="الرياضة المفضلة">${labels.favSport}</div>
+            <div class="profile-info-value">${sportAr}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
   if (u.goalPlan) {
     document.getElementById('profile-goal-plan').innerHTML = `<ul style="margin:0 0 12px 20px;line-height:1.9;font-size:.92rem;"><li><b data-ar="الوزن المستهدف:">Target Weight:</b> ${u.goalPlan.targetWeight} <span data-ar="كجم">kg</span></li><li><b data-ar="السعرات المستهدفة:">Target Calories:</b> ${u.goalPlan.targetCals} <span data-ar="سعرة">kcal</span></li><li><b data-ar="الصيانة (TDEE):">Maintenance (TDEE):</b> ${u.goalPlan.tdee} <span data-ar="سعرة">kcal</span></li></ul>`;
   } else { document.getElementById('profile-goal-plan').innerHTML = `<p style="color:var(--muted);" data-ar="لا توجد خطة هدف بعد.">No goal plan set yet.</p>`; }
   renderInBodyProfileCard();
+  setTimeout(applyTranslations, 0);
 }
 
 /* ===== InBody Scan from Profile tab ===== */
