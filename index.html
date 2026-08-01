@@ -8,6 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<meta name="theme-color" content="#6495ED" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Volta" />
+<link rel="manifest" href="/manifest.json" />
 <style>
 :root {
   --accent: #6495ED; --accent-dark: #4a7bd9; --accent-soft: #eaf1fd; --accent-border: #d5e3fa;
@@ -31,6 +36,25 @@ i.fa-solid, i.fa-regular { font-size: 18px; }
 body:not(.app-active) #chatbase-bubble-button, body:not(.app-active) #chatbase-bubble-window, body:not(.app-active) #chatbase-message-bubbles, body:not(.app-active) .chatbase-launcher, body:not(.app-active) iframe[src*="chatbase.co"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
 /* Hide chatbase widget whenever ANY full-screen overlay (OCR scan, etc.) is active so it can't leak through the high z-index chatbase uses */
 body.ocr-active #chatbase-bubble-button, body.ocr-active #chatbase-bubble-window, body.ocr-active #chatbase-message-bubbles, body.ocr-active .chatbase-launcher, body.ocr-active iframe[src*="chatbase.co"], body.ocr-active #chatbase-bubble-button + *, body.ocr-active #chatbase-bubble-window + * { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -1 !important; }
+
+
+/* ===== BOTTOM NAVIGATION BAR (Mobile) ===== */
+.bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000; background: var(--white); border-top: 1px solid var(--line); padding: 6px 0 env(safe-area-inset-bottom, 8px); box-shadow: 0 -2px 12px rgba(0,0,0,.06); }
+.bottom-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; background: none; border: none; cursor: pointer; padding: 6px 0; color: var(--muted); font-size: .65rem; font-weight: 600; font-family: inherit; transition: color .15s; min-height: 44px; }
+.bottom-nav-item i { font-size: 18px; transition: transform .15s; }
+.bottom-nav-item.active { color: var(--accent); }
+.bottom-nav-item.active i { transform: scale(1.1); }
+.bottom-nav-more { display: none; position: fixed; bottom: 70px; left: 8px; right: 8px; z-index: 9001; background: var(--white); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,.15); border: 1px solid var(--line); padding: 16px; animation: fadeInUp .2s ease; }
+.bottom-nav-more.active { display: block; }
+.bottom-nav-more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.bottom-nav-more-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 4px; background: var(--bg); border: none; border-radius: 12px; cursor: pointer; color: var(--text); font-size: .7rem; font-weight: 600; font-family: inherit; transition: background .15s, transform .15s; min-height: 60px; }
+.bottom-nav-more-item i { font-size: 18px; color: var(--accent); }
+.bottom-nav-more-item:active { transform: scale(.95); background: var(--accent-soft); }
+.bottom-nav-more-overlay { display: none; position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,.2); }
+.bottom-nav-more-overlay.active { display: block; }
+body.dark-mode .bottom-nav { background: var(--white); border-top-color: var(--line); }
+body.dark-mode .bottom-nav-more { background: var(--white); border-color: var(--line); }
+body.dark-mode .bottom-nav-more-item { background: var(--bg); color: var(--text); }
 
 /* ===== ENHANCED ORIGINAL SPLASH SCREEN ===== */
 #splash-screen { position: fixed; inset: 0; background: #fff; z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; transition: opacity 0.5s ease, visibility 0.5s ease; }
@@ -206,14 +230,15 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 #screen-app.active { display: flex; min-height: 100vh; }
 .sidebar { width: 234px; flex-shrink: 0; background: var(--sidebar-bg); border-right: 1px solid var(--line); padding: 22px 14px; display: flex; flex-direction: column; gap: 3px; position: sticky; top: 0; height: 100vh; align-self: flex-start; transition: width 0.25s ease, padding 0.25s ease, background 0.2s; overflow-y: auto; overflow-x: hidden; white-space: nowrap; animation: slideInLeft 0.4s ease; }
 @keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-.sidebar .brand { display: flex; align-items: center; padding: 4px 12px 20px; overflow: hidden; white-space: nowrap; }
-.sidebar .brand i { color: var(--accent); font-size: 21px; flex-shrink: 0; }
+.sidebar .brand { display: flex; align-items: center; padding: 4px 12px 20px; overflow: hidden; white-space: nowrap; gap: 8px; font-size: 1.3rem; font-weight: 800; } .sidebar .brand i { color: var(--accent); font-size: 1.4rem; flex-shrink: 0; }
+.sidebar .brand i { color: var(--accent); font-size: 21px; flex-shrink: 0; min-width: 21px; text-align: center; }
 .sidebar .brand span { font-weight: 800; font-size: 1.1rem; margin-left: 9px; }
+.sidebar .brand .brand-icon-fallback { width: 24px; height: 24px; background: var(--accent); color: #fff; border-radius: 6px; display: none; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
 .sidebar .brand em { font-style: normal; font-size: .65rem; background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 10px; margin-left: 6px; font-weight: 600; }
 
 /* Coach sidebar brand */
 .sidebar .brand.brand-coach { gap: 10px; padding: 4px 12px 22px; }
-.sidebar .brand.brand-coach i { color: var(--accent); font-size: 22px; flex-shrink: 0; }
+.sidebar .brand.brand-coach i { color: var(--accent); font-size: 22px; flex-shrink: 0; min-width: 22px; text-align: center; }
 .sidebar .brand.brand-coach span { font-weight: 700; font-size: 1.25rem; margin-left: 0; letter-spacing: -.01em; }
 .sidebar .brand.brand-coach em { font-style: normal; font-size: .7rem; background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 10px; margin-left: 4px; font-weight: 600; }
 .side-btn { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border: none; background: transparent; border-radius: 10px; cursor: pointer; font-weight: 500; font-size: .9rem; color: var(--muted); text-align: left; font-family: inherit; transition: all 0.2s ease; }
@@ -307,7 +332,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .session-content h2 { font-size: 1.8rem; margin-bottom: 30px; color: var(--text); }
 .session-timer { font-size: 5rem; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; margin-bottom: 15px; animation: pulseGlow 2s infinite; }
 @keyframes pulseGlow { 0% { text-shadow: 0 0 10px rgba(100,149,237, 0.2); } 50% { text-shadow: 0 0 25px rgba(100,149,237, 0.5); } 100% { text-shadow: 0 0 10px rgba(100,149,237, 0.2); } }
-.session-calories { font-size: 2rem; font-weight: 600; color: var(--green); margin-bottom: 40px; }
+.session-calories { font-size: 2rem; font-weight: 600; color: var(--green); margin-bottom: 40px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .session-actions { display: flex; gap: 15px; justify-content: center; width: 100%; flex-wrap: wrap; }
 .session-actions .btn { width: auto; margin: 0; padding: 12px 24px; font-size: 1rem; }
 .session-playlist-container { margin-top: 30px; width: 100%; }
@@ -434,6 +459,10 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .ocr-error-icon { width: 70px; height: 70px; border-radius: 50%; background: var(--red); display:flex; align-items:center; justify-content:center; animation: ocrSuccessPop .5s cubic-bezier(.175,.885,.32,1.275); box-shadow: 0 8px 20px rgba(201,68,68,.4); }
 .ocr-error-icon i { color: #fff; font-size: 32px; }
 
+
+/* RTL support for bottom nav */
+body.lang-ar .bottom-nav-more-grid { direction: rtl; }
+
 @media (max-width: 768px) {
   .ocr-panel { padding: 28px 20px; gap: 14px; }
   .ocr-scanner-frame { width: 120px; height: 120px; }
@@ -507,6 +536,62 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .meal-body small { display:block; font-size:.82rem; }
 
 /* ===== COACH APP STYLES ===== */
+#screen-coach-app.active { display: flex; min-height: 100vh; }
+#screen-coach-app .sidebar { width: 234px !important; padding: 22px 14px !important; border-right: 1px solid var(--line) !important; animation: slideInLeft 0.4s ease; }
+#screen-coach-app .expand-btn, #screen-coach-app .collapse-btn { display: none !important; }
+#screen-coach-app .main { max-width: 1000px; }
+#coachSessionsChart-container { max-height: 250px; }
+.coach-quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 18px; }
+.coach-quick-action { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s ease; text-align: center; }
+.coach-quick-action:hover { transform: translateY(-3px); box-shadow: 0 4px 15px rgba(100,149,237,0.15); border-color: var(--accent); }
+.coach-quick-action i { font-size: 20px; color: var(--accent); }
+.coach-quick-action span { font-size: .82rem; font-weight: 600; color: var(--text); }
+.coach-search-bar { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
+.coach-search-bar input { max-width: 280px; }
+.coach-filter-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.coach-filter-chip { padding: 5px 14px; border-radius: 20px; font-size: .78rem; font-weight: 600; cursor: pointer; border: 1px solid var(--line); background: var(--white); color: var(--muted); transition: all 0.15s; }
+.coach-filter-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.coach-filter-chip:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+.athlete-detail-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 10004; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeInUp 0.3s ease; }
+.athlete-detail-panel { background: var(--white); border-radius: 20px; max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.2); padding: 28px; }
+.athlete-detail-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+.athlete-detail-header .avatar { width: 56px; height: 56px; font-size: 1.2rem; }
+.athlete-detail-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+.athlete-detail-stat { background: var(--bg); border-radius: 10px; padding: 12px; text-align: center; }
+.athlete-detail-stat b { font-size: 1.1rem; display: block; }
+.athlete-detail-stat small { color: var(--muted); font-size: .72rem; }
+.athlete-session-entry { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 8px; background: var(--bg); margin-bottom: 6px; font-size: .85rem; }
+.athlete-session-entry .date { color: var(--muted); font-size: .78rem; }
+.coach-announcement { background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.coach-announcement b { font-size: .88rem; }
+.coach-announcement p { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+.coach-announcement .ann-actions { display: flex; gap: 4px; }
+.coach-weekly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 12px; }
+.coach-weekly-day { background: var(--bg); border-radius: 8px; padding: 10px 6px; text-align: center; font-size: .75rem; }
+.coach-weekly-day b { display: block; font-size: 1rem; margin-top: 2px; }
+.coach-weekly-day.today { background: var(--accent-soft); border: 1px solid var(--accent-border); }
+.plan-assign-select { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: .85rem; margin-top: 6px; background: var(--white); color: var(--text); }
+.coach-export-btn { background: var(--white); border: 1px solid var(--line); border-radius: 8px; padding: 6px 14px; font-size: .82rem; font-weight: 600; cursor: pointer; color: var(--text); display: inline-flex; align-items: center; gap: 6px; transition: all .15s; }
+.coach-export-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Coach Session Tracker Overlay (like athlete version) */
+.coach-session-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 10005; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; animation: fadeIn 0.3s ease; overflow-y: auto; }
+.coach-session-overlay.active { display: flex; }
+.coach-session-exit { position: absolute; top: 16px; right: 20px; background: var(--white); border: 1px solid var(--line); border-radius: 10px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; color: var(--muted); transition: .15s; z-index: 10; }
+.coach-session-exit:hover { color: var(--red); border-color: var(--red); }
+.coach-session-content { text-align: center; max-width: 400px; width: 100%; }
+.coach-session-athlete-name { font-size: 1.1rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+.coach-session-sport { font-size: .9rem; color: var(--muted); margin-bottom: 20px; }
+.coach-session-timer { font-size: 3.5rem; font-weight: 800; color: var(--text); letter-spacing: -.02em; margin-bottom: 8px; }
+.coach-session-calories { font-size: 1.1rem; color: var(--amber); font-weight: 600; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.coach-session-stats-row { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; }
+.coach-session-stat-pill { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 10px 18px; text-align: center; }
+.coach-session-stat-pill b { display: block; font-size: 1.1rem; }
+.coach-session-stat-pill small { color: var(--muted); font-size: .72rem; }
+.coach-session-actions { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+.coach-session-log-form { background: var(--white); border-radius: 14px; border: 1px solid var(--line); padding: 20px; text-align: left; margin-top: 16px; display: none; }
+.coach-session-log-form.visible { display: block; }
+.coach-session-log-form h4 { margin-bottom: 12px; }
 #screen-coach-app.active { display: flex; min-height: 100vh; }
 #screen-coach-app .sidebar { width: 234px !important; padding: 22px 14px !important; border-right: 1px solid var(--line) !important; animation: slideInLeft 0.4s ease; }
 #screen-coach-app .expand-btn, #screen-coach-app .collapse-btn { display: none !important; }
@@ -788,38 +873,21 @@ html { scroll-behavior: smooth; }
 }
 
 @media (max-width: 768px) {
-  /* Hamburger button visible on mobile */
-  #mobile-menu-btn { display: flex; }
+  /* Show bottom navigation bar on mobile */
+  .bottom-nav { display: flex; }
 
-  /* Sidebar becomes off-canvas drawer on mobile */
-  .sidebar {
-    position: fixed !important;
-    left: 0;
-    top: 0;
-    height: 100vh !important;
-    width: 260px !important;
-    z-index: 10000 !important;
-    transform: translateX(-100%);
-    transition: transform .3s ease !important;
-    padding: 22px 14px !important;
-    overflow-y: auto !important;
-    align-self: auto !important;
-  }
-  .sidebar.mobile-open {
-    transform: translateX(0);
-  }
-  /* Shift the brand/logo right so it isn't covered by the hamburger (show sidebar) button on mobile */
-  .sidebar .brand { padding-left: 50px; }
-  #mobile-sidebar-overlay.active {
-    display: block;
-  }
+  /* Hide hamburger button and sidebar on mobile */
+  #mobile-menu-btn { display: none !important; }
+  .sidebar { display: none !important; }
+  #mobile-sidebar-overlay { display: none !important; }
+  .expand-btn { display: none !important; }
+  .collapse-btn { display: none !important; }
 
-  /* Hide collapse/expand buttons on mobile */
-  .collapse-btn, .expand-btn { display: none !important; }
 
-  /* Main content takes full width */
+
+  /* Main content takes full width with bottom nav padding */
   .main {
-    padding: 70px 16px 24px 16px !important;
+    padding: 16px 16px 80px 16px !important;
     width: 100% !important;
   }
 
@@ -902,7 +970,7 @@ html { scroll-behavior: smooth; }
   .calc-input-card { padding: 20px; }
   .calc-big-number { font-size: 1.8rem; }
 
-  /* Coach sidebar */
+  /* Coach sidebar - keep hamburger on mobile for coach */
   #screen-coach-app .sidebar {
     position: fixed !important;
     left: 0;
@@ -912,12 +980,13 @@ html { scroll-behavior: smooth; }
     z-index: 10000 !important;
     transform: translateX(-100%);
     transition: transform .3s ease !important;
+    display: flex !important;
   }
   #screen-coach-app .sidebar.mobile-open {
     transform: translateX(0);
   }
-  /* Keep the coach brand logo visible (not covered by hamburger) on mobile while matching login page style */
-  #screen-coach-app .sidebar .brand.brand-coach { padding-left: 50px; }
+  #mobile-menu-btn-coach { display: flex !important; }
+  #screen-coach-app .main { padding-top: 70px !important; padding-bottom: 80px !important; }
 
   /* Athletes grid */
   .athletes-grid { grid-template-columns: 1fr; }
@@ -999,15 +1068,13 @@ html { scroll-behavior: smooth; }
   .sports-grid { grid-template-columns: repeat(2, 1fr); }
   .safety-grid { grid-template-columns: repeat(2, 1fr); }
   .landing-hero h1 { font-size: 1.5rem; }
+  .bottom-nav-more-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .bottom-nav-more-item { padding: 8px 2px; font-size: .65rem; min-height: 54px; }
+  .bottom-nav-more-item i { font-size: 16px; }
 }
 
-/* ===== PERFORMANCE: Reduce animation overhead ===== */
+/* ===== PERFORMANCE: Keep animations smooth on mobile ===== */
 @media (max-width: 768px) {
-  .stat-card, .sport-card, .diet-card, .task-card, .banner-card, .safety-item, .panel {
-    animation: none !important;
-  }
-  .tab.active { animation: none !important; }
-  .screen.active { animation: none !important; }
   .splash-brand i { transition-duration: 0.3s; }
   .splash-brand span { transition-duration: 0.3s; }
   .splash-loader-bar { transition-duration: 0.6s; }
@@ -1032,6 +1099,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 </style>
 </head>
 <body>
+<div class="offline-banner" id="offline-banner"><i class="fa-solid fa-wifi" style="margin-right:6px;"></i> <span data-ar="أنت غير متصل — البيانات محفوظة محلياً">You're offline — data saved locally</span></div>
 
 <div id="splash-screen" dir="ltr" style="direction:ltr;">
   <div class="splash-brand">
@@ -1075,7 +1143,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <h1><span data-ar="رفيقك المتكامل لـ">Your All-in-One</span> <span data-ar="اللياقة الذكية">Smart Fitness</span> <span data-ar="رفيقك">Companion</span></h1>
     <p data-ar="فولتا يتكيّف مع مزاجك وأهدافك وبيئتك. احصل على تمارين مخصصة وتنبيهات سلامة الطقس اللحظية وخطط وجبات مدعومة بالذكاء الاصطناعي في مكان واحد.">Volta adapts to your mood, your goals, and your environment. Get personalized workouts, real-time weather safety alerts, and AI-driven diet plans all in one place.</p>
     <button class="btn primary" style="width: auto; padding: 14px 32px; font-size: 1rem;" onclick="showScreen('screen-auth'); switchAuthTab('signup')" data-ar="ابدأ مجاناً">Get Started for Free</button>
-    <button class="btn ghost" style="width: auto; padding: 14px 32px; font-size: 1rem; margin-top: 12px;" onclick="showScreen('screen-coach-auth'); switchCoachAuthTab('login')"><i class="fa-solid fa-stopwatch"></i> <span data-ar="دخول المدرب">Coach Login</span></button>
+
   </div>
   <div class="landing-features">
     <div class="landing-feature"><i class="fa-solid fa-cloud-sun"></i><h3 data-ar="تنبيهات سلامة الطقس">Weather Safety Alerts</h3><p data-ar="فحوصات سلامة لحظية للرياضة الخارجية. اعرف بالضبط متى يكون التدريب خارجاً آمناً بناءً على الظروف الفعلية.">Live outdoor-sport safety checks. Know exactly when it's safe to train outside based on real-time conditions.</p></div>
@@ -1106,6 +1174,19 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <div class="auth-tabs">
         <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')" data-ar="تسجيل الدخول">Log in</button>
         <button id="tab-signup" class="auth-tab" onclick="switchAuthTab('signup')" data-ar="إنشاء حساب">Sign up</button>
+      </div>
+      <div class="auth-tabs" style="margin-bottom:14px;" id="role-tabs">
+        <button id="role-tab-athlete" class="auth-tab active" onclick="setRoleTab('athlete')" data-ar="رياضي">Athlete</button>
+        <button id="role-tab-coach" class="auth-tab" onclick="setRoleTab('coach')" data-ar="مدرب">Coach</button>
+      </div>
+      <input type="checkbox" id="auth-coach-toggle" style="display:none;" />
+      <div id="auth-coach-fields" style="display:none;">
+        <div class="grid-form" style="gap:0 16px;">
+          <div><label for="auth-coach-fn" data-ar="الاسم الكامل">Full name</label><input id="auth-coach-fn" placeholder="Alex Rivera" data-ar-ph="أليكس ريڤيرا" /></div>
+          <div><label for="auth-coach-cert" data-ar="الشهادة">Certification</label><select id="auth-coach-cert"><option value="" data-ar="اختر واحدة">Choose one</option><option>NASM</option><option>ACE</option><option>NSCA</option><option>ISSA</option><option data-ar="أخرى">Other</option></select></div>
+        </div>
+        <label for="auth-coach-spec" data-ar="التخصص الأساسي">Primary specialty</label>
+        <select id="auth-coach-spec"><option data-ar="القوة والتأهيل">Strength &amp; Conditioning</option><option data-ar="التحمل / الجري">Endurance / Running</option><option data-ar="اليوغا والمرونة">Yoga &amp; Mobility</option><option data-ar="فقدان الوزن">Weight loss</option><option data-ar="إعادة التأهيل">Rehabilitation</option></select>
       </div>
       <form id="auth-form" onsubmit="return handleAuth(event)">
         <label data-ar="البريد الإلكتروني">Email</label>
@@ -1209,7 +1290,9 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <button class="side-btn" data-tab="sports" onclick="showTab('sports')"><i class="fa-solid fa-dumbbell"></i><span data-ar="الرياضة والتتبع">Sports &amp; Tracker</span></button>
     <button class="side-btn" data-tab="daily" onclick="showTab('daily')"><i class="fa-solid fa-list-check"></i><span data-ar="التمارين اليومية">Daily Exercise</span></button>
     <button class="side-btn" data-tab="marathon" onclick="showTab('marathon')"><i class="fa-solid fa-map-location-dot"></i><span data-ar="الماراثون">Marathon</span></button>
+    
     <button class="side-btn" data-tab="diet" onclick="showTab('diet')"><i class="fa-solid fa-utensils"></i><span data-ar="النظام الغذائي">Diet System</span></button>
+    
     <button class="side-btn" data-tab="calc" onclick="showTab('calc')"><i class="fa-solid fa-calculator"></i><span data-ar="حاسبة اللياقة">Fitness Calculator</span></button>
     <button class="side-btn" data-tab="weather" onclick="showTab('weather')"><i class="fa-solid fa-cloud-sun"></i><span data-ar="سلامة الطقس">Weather Safety</span></button>
     <button class="side-btn" data-tab="moodmorph" onclick="showTab('moodmorph')"><i class="fa-solid fa-wand-magic-sparkles"></i><span data-ar="تحول المزاج">MoodMorph</span></button>
@@ -1305,7 +1388,38 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <div class="panel"><h3><i class="fa-solid fa-apple-whole"></i> <span data-ar="أهدافك اليومية">Your Daily Targets</span></h3><div id="diet-targets">Calculating...</div></div>
       <div class="panel" style="border-left:3px solid var(--accent);"><h3><i class="fa-solid fa-utensils"></i> <span data-ar="وجبات موصى بها من المدرب">Coach-Recommended Meals</span></h3><p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="وجبات يقترحها مدربك خصيصاً لأهدافك.">Meals specifically suggested by your coach for your goals.</p><div id="diet-coach-meals" class="diet-grid"><div style="text-align:center;padding:20px;color:var(--muted);"><i class="fa-solid fa-utensils" style="font-size:24px;opacity:.4;display:block;margin-bottom:8px;"></i><span data-ar="لا توجد وجبات مخصصة بعد.">No coach meals assigned yet.</span></div></div></div>
       <div class="panel"><h3><i class="fa-solid fa-robot"></i> <span data-ar="وجبات مولّدة بالذكاء الاصطناعي">AI-Generated Meals</span></h3><div id="diet-meals" class="diet-grid">Loading meals...</div></div>
+      <div class="panel"><h3><i class="fa-solid fa-barcode"></i> <span data-ar="ماسح الباركود">Barcode Scanner</span></h3><p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="امسح باركود أي منتج غذائي لمعرفة محتواه من السعرات والمغذيات.">Scan any food product barcode to instantly see its nutritional info.</p>
+        <div id="scanner-camera-container" style="position:relative;width:100%;max-width:400px;margin:0 auto 16px;border-radius:14px;overflow:hidden;background:#000;aspect-ratio:4/3;display:none;min-height:200px;">
+          <video id="scanner-video" autoplay playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+          <div id="scanner-crosshair" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70%;height:2px;background:var(--accent);box-shadow:0 0 12px var(--accent);"></div>
+          <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.5);color:#fff;padding:4px 10px;border-radius:8px;font-size:.75rem;" id="scanner-status" data-ar="جاهز للمسح">Ready to scan</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+          <button class="btn primary small" id="scanner-start-btn" onclick="startBarcodeScanner()"><i class="fa-solid fa-camera"></i> <span data-ar="بدء المسح">Start Scanner</span></button>
+          <button class="btn ghost small" id="scanner-stop-btn" onclick="stopBarcodeScanner()" style="display:none;"><i class="fa-solid fa-stop"></i> <span data-ar="إيقاف المسح">Stop Scanner</span></button>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
+          <input type="text" id="scanner-manual-input" placeholder="e.g. 3017620422003" style="flex:1;padding:10px 14px;border:1px solid var(--line);border-radius:10px;font-size:1rem;min-width:0;" data-ar-ph="مثال: 3017620422003" />
+          <button class="btn ghost small" onclick="lookupBarcode(document.getElementById('scanner-manual-input').value)" style="white-space:nowrap;"><i class="fa-solid fa-search"></i></button>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px;background:var(--accent-soft);border-radius:10px;border:1px solid var(--accent-border);justify-content:center;font-size:.85rem;margin-bottom:12px;">
+          <i class="fa-solid fa-camera" style="color:var(--accent);"></i>
+          <span data-ar="التقط صورة للباركود">Take a photo of barcode</span>
+          <input type="file" id="scanner-file-input" accept="image/*" capture="environment" style="display:none;" onchange="scanBarcodeFromFile(this)" />
+        </label>
+        <div class="hidden" id="scanner-result-panel" style="background:var(--accent-soft);border-radius:10px;padding:12px;margin-bottom:12px;">
+          <h4 style="font-size:.9rem;font-weight:700;margin-bottom:8px;"><i class="fa-solid fa-circle-info"></i> <span data-ar="معلومات المنتج">Product Info</span></h4>
+          <div id="scanner-result-content" style="text-align:left;"></div>
+          <button class="btn primary small" id="scanner-log-meal-btn" onclick="logScannedProduct()" style="margin-top:10px;display:none;"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة إلى سجل الوجبات">Add to Meal Log</span></button>
+        </div>
+        <div id="scanner-history" style="text-align:left;"></div>
+      </div>
+      <div class="panel"><h3><i class="fa-solid fa-list-check"></i> <span data-ar="سجل الوجبات اليومي">Today's Meal Log</span></h3><div id="diet-log-list"><p style="color:var(--muted);text-align:center;padding:12px;" data-ar="لم تسجل أي وجبات بعد. استخدم ماسح الباركود أو أضف يدوياً.">No meals logged yet. Use the barcode scanner or add manually.</p></div><div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;"><button class="btn ghost small" onclick="addManualMealLog()"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة يدوية">Add Manual</span></button></div></div>
     </div>
+
+    <div id="tab-timer" class="tab" style="display:none;"></div>
+
+    <div id="tab-scanner" class="tab" style="display:none;"></div>
 
     <div id="tab-calc" class="tab">
       <h1 style="font-size:1.45rem;font-weight:700;" data-ar="حاسبة اللياقة">Fitness Calculator</h1>
@@ -1483,6 +1597,66 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
   </main>
 </section>
 
+
+    <nav id="bottom-nav" class="bottom-nav">
+      <button class="bottom-nav-item active" data-btab="home" onclick="showTab('home')">
+        <i class="fa-solid fa-table-cells-large"></i>
+        <span data-ar="الرئيسية">Home</span>
+      </button>
+      <button class="bottom-nav-item" data-btab="sports" onclick="showTab('sports')">
+        <i class="fa-solid fa-dumbbell"></i>
+        <span data-ar="الرياضة">Sports</span>
+      </button>
+      <button class="bottom-nav-item" data-btab="daily" onclick="showTab('daily')">
+        <i class="fa-solid fa-list-check"></i>
+        <span data-ar="التمارين">Exercise</span>
+      </button>
+      <button class="bottom-nav-item" data-btab="diet" onclick="showTab('diet')">
+        <i class="fa-solid fa-utensils"></i>
+        <span data-ar="الغذاء">Diet</span>
+      </button>
+      <button class="bottom-nav-item" data-btab="more" onclick="toggleBottomNavMore()">
+        <i class="fa-solid fa-ellipsis"></i>
+        <span data-ar="المزيد">More</span>
+      </button>
+    </nav>
+    <div id="bottom-nav-more" class="bottom-nav-more">
+      <div class="bottom-nav-more-grid">
+        <button class="bottom-nav-more-item" onclick="showTab('marathon');closeBottomNavMore()">
+          <i class="fa-solid fa-map-location-dot"></i>
+          <span data-ar="الماراثون">Marathon</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('calc');closeBottomNavMore()">
+          <i class="fa-solid fa-calculator"></i>
+          <span data-ar="الحاسبة">Calc</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('weather');closeBottomNavMore()">
+          <i class="fa-solid fa-cloud-sun"></i>
+          <span data-ar="الطقس">Weather</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('moodmorph');closeBottomNavMore()">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span data-ar="المزاج">Mood</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('reminders');closeBottomNavMore()">
+          <i class="fa-solid fa-bell"></i>
+          <span data-ar="التذكيرات">Reminders</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('profile');closeBottomNavMore()">
+          <i class="fa-solid fa-user"></i>
+          <span data-ar="الملف">Profile</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('settings');closeBottomNavMore()">
+          <i class="fa-solid fa-gear"></i>
+          <span data-ar="الإعدادات">Settings</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="logout();closeBottomNavMore()">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span data-ar="خروج">Logout</span>
+        </button>
+      </div>
+    </div>
+
 <div id="session-overlay">
   <button class="session-exit-btn" onclick="exitSession()">&times;</button>
   <div class="session-content">
@@ -1498,7 +1672,54 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
   </div>
 </div>
 
-<section id="screen-coach-auth" class="screen">
+
+<!-- Coach Session Tracker Overlay -->
+<div id="coach-session-overlay" class="coach-session-overlay">
+  <button class="coach-session-exit" onclick="exitCoachSession()">&times;</button>
+  <div class="coach-session-content">
+    <div class="coach-session-athlete-name" id="coach-ses-athlete-name"></div>
+    <div class="coach-session-sport" id="coach-ses-sport"></div>
+    <div class="coach-session-timer" id="coach-ses-timer">00:00</div>
+    <div class="coach-session-calories" id="coach-ses-calories"><i class="fa-solid fa-fire"></i> 0 kcal</div>
+    <div class="coach-session-stats-row">
+      <div class="coach-session-stat-pill"><b id="coach-ses-intensity">--</b><small data-ar="الشدة">Intensity</small></div>
+      <div class="coach-session-stat-pill"><b id="coach-ses-pace">--</b><small data-ar="السرعة">Pace</small></div>
+      <div class="coach-session-stat-pill"><b id="coach-ses-heart">--</b><small data-ar="نبض">HR</small></div>
+      <div class="coach-session-stat-pill"><b id="coach-ses-distance">0.0</b><small data-ar="كم">km</small></div>
+      <div class="coach-session-stat-pill"><b id="coach-ses-sets">0</b><small data-ar="مجموعات">Sets</small></div>
+    </div>
+    <div class="coach-session-actions" id="coach-ses-live-actions">
+      <button class="btn primary" onclick="stopCoachSession()"><i class="fa-solid fa-stop"></i> <span data-ar="إيقاف وتسجيل">Stop & Log</span></button>
+      <button class="btn ghost" id="coach-ses-pause-btn" onclick="pauseCoachSession()"><i class="fa-solid fa-pause"></i> <span data-ar="إيقاف مؤقت">Pause</span></button>
+      <button class="btn ghost" onclick="incrementCoachSets()" style="padding:8px 16px;"><i class="fa-solid fa-plus"></i> <span data-ar="مجموعة">Set</span></button>
+    </div>
+    <div class="coach-session-log-form" id="coach-ses-log-form">
+      <h4 data-ar="تسجيل الجلسة">Log Session</h4>
+      <label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="المدة (دقائق)">Duration (minutes)</label>
+      <input type="number" id="coach-ses-log-duration" min="1" max="600" value="1" style="margin-bottom:10px;" />
+      <label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="الشدة">Intensity</label>
+      <select id="coach-ses-log-intensity" style="margin-bottom:10px;">
+        <option value="Light" data-ar="خفيف">Light</option>
+        <option value="Moderate" data-ar="معتدل">Moderate</option>
+        <option value="High" data-ar="شديد">High</option>
+      </select>
+      <label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="السعرات المحروقة">Calories Burned</label>
+      <input type="number" id="coach-ses-log-calories" min="0" max="9999" value="0" style="margin-bottom:10px;" />
+      <label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="المسافة (كم)">Distance (km)</label>
+      <input type="number" id="coach-ses-log-distance" min="0" max="999" step="0.1" value="0" style="margin-bottom:10px;" />
+      <label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="المجموعات">Sets Completed</label>
+      <input type="number" id="coach-ses-log-sets" min="0" max="999" value="0" style="margin-bottom:10px;" />
+      <label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="ملاحظات">Notes</label>
+      <textarea id="coach-ses-log-notes" rows="2" style="resize:vertical;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:.88rem;background:var(--white);color:var(--text);" placeholder="Optional notes..." data-ar-ph="ملاحظات اختيارية..."></textarea>
+      <button class="btn primary" onclick="saveCoachSessionLog()" style="margin-top:12px;width:100%;"><i class="fa-solid fa-check"></i> <span data-ar="حفظ الجلسة">Save Session</span></button>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+<section id="screen-coach-auth" class="screen" style="display:none !important;">
   <div class="auth-card">
     <button class="back-to-home" onclick="showScreen('screen-landing')"><i class="fa-solid fa-arrow-left"></i> <span data-ar="العودة للرئيسية">Back to Home</span></button>
     <div class="card-title"><i class="fa-solid fa-bolt"></i> Volta <span style="font-size:.7rem;background:var(--accent);color:#fff;padding:2px 8px;border-radius:10px;font-weight:600;" data-ar="كوتش">Coach</span></div>
@@ -1560,11 +1781,33 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-chart-line"></i></span><div><b id="coach-stat-adherence">--</b><small data-ar="معدل الالتزام">Adherence rate</small></div></div>
         <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></span><div><b id="coach-stat-attention">0</b><small data-ar="بحاجة إلى اهتمام">Need attention</small></div></div>
       </div>
+      <div class="cards-row">
+        <div class="stat-card"><span class="stat-icon" style="background:var(--green-bg);color:var(--green);"><i class="fa-solid fa-clipboard-list"></i></span><div><b id="coach-stat-plans">0</b><small data-ar="خطط التدريب">Training Plans</small></div></div>
+        <div class="stat-card"><span class="stat-icon" style="background:var(--amber-bg);color:var(--amber);"><i class="fa-solid fa-fire-flame-curved"></i></span><div><b id="coach-stat-avg-streak">0</b><small data-ar="متوسط السلسلة">Avg Streak</small></div></div>
+        <div class="stat-card"><span class="stat-icon" style="background:var(--accent-soft);color:var(--accent);"><i class="fa-solid fa-calendar-check"></i></span><div><b id="coach-stat-today-sessions">0</b><small data-ar="جلسات اليوم">Today's Sessions</small></div></div>
+        <div class="stat-card"><span class="stat-icon" style="background:var(--green-bg);color:var(--green);"><i class="fa-solid fa-circle-check"></i></span><div><b id="coach-stat-on-track">0</b><small data-ar="على المسار">On Track</small></div></div>
+      </div>
+      <div class="panel">
+        <h3><i class="fa-solid fa-bolt"></i> <span data-ar="إجراءات سريعة">Quick Actions</span></h3>
+        <div class="coach-quick-actions">
+          <div class="coach-quick-action" onclick="openAddAthleteModal()"><i class="fa-solid fa-user-plus"></i><span data-ar="إضافة رياضي">Add Athlete</span></div>
+          <div class="coach-quick-action" onclick="openNewPlanModal()"><i class="fa-solid fa-clipboard-list"></i><span data-ar="خطة جديدة">New Plan</span></div>
+          <div class="coach-quick-action" onclick="openAnnouncementModal()"><i class="fa-solid fa-bullhorn"></i><span data-ar="إعلان">Announce</span></div>
+          <div class="coach-quick-action" onclick="exportAthletesCSV()"><i class="fa-solid fa-file-export"></i><span data-ar="تصدير">Export CSV</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3><i class="fa-solid fa-calendar-week"></i> <span data-ar="النظرة الأسبوعية">Weekly Overview</span></h3>
+        <div class="coach-weekly-grid" id="coach-weekly-grid"></div>
+      </div>
       <div class="panel">
         <h3><i class="fa-solid fa-chart-bar"></i> <span data-ar="جلسات الرياضي هذا الأسبوع">Athlete Sessions This Week</span></h3>
-        <div id="coachSessionsChart-container" style="max-height:250px;">
-          <canvas id="coachSessionsChart"></canvas>
-        </div>
+        <div id="coachSessionsChart-container" style="max-height:250px;"><canvas id="coachSessionsChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <h3><i class="fa-solid fa-bullhorn"></i> <span data-ar="الإعلانات">Announcements</span></h3>
+        <div id="coach-announcements-list"></div>
+        <p id="coach-no-announcements" style="color:var(--muted);font-size:.85rem;text-align:center;padding:10px;" data-ar="لا توجد إعلانات بعد.">No announcements yet.</p>
       </div>
       <div class="panel">
         <h3><i class="fa-solid fa-brain"></i> <span data-ar="توصيات المدرب">Coach's Recommendations</span></h3>
@@ -1582,10 +1825,18 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <div id="tab-coach-athletes" class="tab">
       <h1 class="page-title" data-ar="الرياضيون">Athletes</h1>
       <p class="page-sub" data-ar="قائمتك النشطة عبر جميع التخصصات.">Your active roster across all disciplines.</p>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <span id="coach-athlete-count" style="color:var(--muted);font-size:.9rem;">0 athletes</span>
+      <div class="coach-search-bar">
+        <input type="text" id="coach-athlete-search" placeholder="Search athletes..." oninput="filterCoachAthletes()" data-ar-ph="ابحث عن رياضيين..." style="flex:1;max-width:320px;" />
+        <button class="coach-export-btn" onclick="exportAthletesCSV()"><i class="fa-solid fa-file-export"></i> <span data-ar="تصدير">Export</span></button>
         <button class="btn primary" onclick="openAddAthleteModal()" style="padding:10px 20px;"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة رياضي">Add Athlete</span></button>
       </div>
+      <div class="coach-filter-chips">
+        <span class="coach-filter-chip active" onclick="setCoachFilter('all')" data-filter="all" data-ar="الكل">All</span>
+        <span class="coach-filter-chip" onclick="setCoachFilter('on-track')" data-filter="on-track" data-ar="على المسار">On Track</span>
+        <span class="coach-filter-chip" onclick="setCoachFilter('needs-attention')" data-filter="needs-attention" data-ar="بحاجة لاهتمام">Needs Attention</span>
+        <span class="coach-filter-chip" onclick="setCoachFilter('new')" data-filter="new" data-ar="جديد">New</span>
+      </div>
+      <span id="coach-athlete-count" style="color:var(--muted);font-size:.9rem;display:block;margin-bottom:8px;">0 athletes</span>
       <div class="athletes-grid" id="coach-athletes-grid"></div>
       <div id="coach-no-athletes" style="text-align:center;padding:60px 20px;color:var(--muted);display:none;">
         <i class="fa-solid fa-users" style="font-size:48px;opacity:.3;margin-bottom:16px;display:block;"></i>
@@ -1619,7 +1870,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div style="flex:1;">
           <h3 id="coach-name" style="margin-bottom:4px;">Coach</h3>
           <p style="color:var(--muted); font-size:.9rem;" id="coach-email-1">—</p>
-          <div class="chips"><span class="chip" data-ar="مدرب معتمد">Certified Coach</span><span class="chip" data-ar="القوة والتأهيل">Strength &amp; Conditioning</span><span class="chip" data-ar="24 رياضياً">24 athletes</span></div>
+          <div class="chips"><span class="chip" data-ar="مدرب معتمد">Certified Coach</span><span class="chip" data-ar="القوة والتأهيل">Strength &amp; Conditioning</span><span class="chip" id="coach-profile-athlete-count" data-ar="0 رياضياً">0 athletes</span></div>
         </div>
       </div>
       <div class="panel">
@@ -1783,6 +2034,141 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 .focus-chip { padding: 7px 14px; border-radius: 20px; border: 1px solid var(--line); background: var(--white); color: var(--muted); font-size: .82rem; font-weight: 500; cursor: pointer; transition: all .15s ease; font-family: inherit; }
 .focus-chip:hover { border-color: var(--accent-border); color: var(--accent); }
 .focus-chip.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* Coach session log form styling */
+.coach-session-log-form input,
+.coach-session-log-form select,
+.coach-session-log-form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: .88rem;
+  background: var(--white);
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.coach-session-log-form label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 4px;
+  display: block;
+}
+
+
+/* Coach session log form styling */
+.coach-session-log-form input,
+.coach-session-log-form select,
+.coach-session-log-form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: .88rem;
+  background: var(--white);
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.coach-session-log-form label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 4px;
+  display: block;
+}
+
+
+/* ===== BARCODE SCANNER ===== */
+.scanner-product-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin-top: 12px; }
+.scanner-product-card h4 { font-size: 1.1rem; margin-bottom: 4px; }
+.scanner-product-card .brand { color: var(--muted); font-size: .85rem; margin-bottom: 8px; }
+.scanner-product-card .nutri-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 10px; }
+.scanner-nutri-item { background: var(--accent-soft); border-radius: 10px; padding: 8px; text-align: center; }
+.scanner-nutri-item b { display: block; font-size: 1rem; color: var(--accent); }
+.scanner-nutri-item small { color: var(--muted); font-size: .7rem; }
+.scanner-history-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.scanner-history-item:last-child { border-bottom: none; }
+.scanner-history-item .sh-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.scanner-history-item .sh-body { flex: 1; min-width: 0; }
+.scanner-history-item .sh-body b { display: block; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scanner-history-item .sh-body small { color: var(--muted); font-size: .78rem; }
+.scanner-history-item .sh-kcal { font-weight: 700; color: var(--amber); font-size: .9rem; white-space: nowrap; }
+
+/* ===== REST TIMER ===== */
+.timer-phase-work { background: var(--green-bg); color: var(--green); }
+.timer-phase-rest { background: var(--accent-soft); color: var(--accent); }
+.timer-phase-done { background: var(--amber-bg); color: var(--amber); }
+.timer-lap-item { display: flex; justify-content: space-between; padding: 6px 12px; border-bottom: 1px solid var(--line); font-size: .88rem; }
+.timer-lap-item:last-child { border-bottom: none; }
+#timer-mode-tabs .btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; background: var(--line); border-radius: 3px; outline: none; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 6px rgba(100,149,237,.4); border: 3px solid #fff; }
+input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 6px rgba(100,149,237,.4); border: 3px solid #fff; }
+
+/* ===== DIET LOG ENHANCEMENT ===== */
+.diet-log-entry { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.diet-log-entry:last-child { border-bottom: none; }
+.diet-log-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--green-bg); color: var(--green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.diet-log-body { flex: 1; min-width: 0; }
+.diet-log-body b { display: block; font-size: .9rem; }
+.diet-log-body small { color: var(--muted); font-size: .78rem; }
+.diet-log-kcal { font-weight: 700; color: var(--amber); font-size: .9rem; }
+.diet-log-del { background: none; border: none; color: var(--red); cursor: pointer; font-size: .85rem; padding: 4px 8px; opacity: .6; transition: opacity .15s; }
+.diet-log-del:hover { opacity: 1; }
+
+/* ===== PWA OFFLINE BANNER ===== */
+.offline-banner { position: fixed; bottom: 0; left: 0; right: 0; background: var(--amber); color: #fff; text-align: center; padding: 10px; font-size: .85rem; font-weight: 600; z-index: 20000; transform: translateY(100%); transition: transform .3s ease; }
+.offline-banner.visible { transform: translateY(0); }
+
+
+/* Coach Mode Toggle Switch */
+.coach-toggle-switch { width: 44px; height: 24px; background: var(--line); border-radius: 12px; position: relative; cursor: pointer; transition: background .2s ease; flex-shrink: 0; }
+.coach-toggle-switch.active { background: var(--accent); }
+.coach-toggle-knob { width: 20px; height: 20px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform .2s ease; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.coach-toggle-switch.active .coach-toggle-knob { transform: translateX(20px); }
+
+
+/* Sessions table improvements */
+.sessions-table { width: 100%; border-collapse: collapse; }
+.sessions-table th, .sessions-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); font-size: .88rem; }
+.sessions-table th { font-weight: 600; color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .02em; }
+.sessions-table td { vertical-align: middle; }
+.sessions-table b { font-weight: 600; }
+
+
+
+/* Daily Exercise Rest Timer Between Sets */
+.de-rest-timer { margin: 4px 0; padding: 6px 14px; background: var(--accent-soft); border-radius: 12px; border: 1px solid var(--accent-border); opacity: 0.5; transition: opacity .3s, border-color .3s; }
+.de-rest-timer.active { opacity: 1; border-color: var(--accent); background: var(--white); box-shadow: 0 2px 8px rgba(100,149,237,.12); }
+.de-rest-timer-inner { display: flex; align-items: center; gap: 10px; font-size: .85rem; }
+.de-rest-label { font-weight: 600; color: var(--muted); }
+.de-rest-display { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 30px; text-align: center; }
+.de-rest-timer .btn { margin-top: 0 !important; padding: 4px 10px !important; font-size: .75rem !important; min-height: 28px !important; }
+
+/* Mobile fixes for new features */
+@media (max-width: 768px) {
+  #tab-timer .panel { padding: 16px; }
+  #timer-display { font-size: 3.5rem !important; }
+  #tab-scanner .panel { padding: 16px; }
+  .scanner-nutri-item { padding: 6px; }
+  .scanner-nutri-item b { font-size: .9rem; }
+  .coach-toggle-switch { width: 40px; height: 22px; }
+  .coach-toggle-knob { width: 18px; height: 18px; }
+  .coach-toggle-switch.active .coach-toggle-knob { transform: translateX(18px); }
+  .sessions-table { font-size: .82rem; }
+  .sessions-table th, .sessions-table td { padding: 8px 6px; }
+  #offline-banner { font-size: .78rem; padding: 8px; }
+}
+@media (max-width: 480px) {
+  #timer-display { font-size: 3rem !important; }
+  .sessions-table { display: block; overflow-x: auto; }
+}
+
+/* Fix auth coach fields not showing on mobile */
+#auth-coach-fields { overflow: hidden; }
+#auth-coach-fields .grid-form { gap: 0 12px !important; }
+
 </style>
 
 <div id="meal-modal" class="modal-overlay">
@@ -2220,12 +2606,58 @@ const origShowTab = showTab;
 showTab = function(name) {
   closeMobileSidebar();
   origShowTab(name);
+  if (name === 'diet') { renderDietLog(); renderScannerHistory(); }
+};
+
+
+// ===== BOTTOM NAVIGATION BAR (Mobile) =====
+function toggleBottomNavMore() {
+  const more = document.getElementById('bottom-nav-more');
+  let overlay = document.getElementById('bottom-nav-more-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'bottom-nav-more-overlay';
+    overlay.className = 'bottom-nav-more-overlay';
+    overlay.onclick = closeBottomNavMore;
+    document.getElementById('screen-app').appendChild(overlay);
+  }
+  const isActive = more.classList.contains('active');
+  if (isActive) {
+    closeBottomNavMore();
+  } else {
+    more.classList.add('active');
+    overlay.classList.add('active');
+  }
+}
+function closeBottomNavMore() {
+  const more = document.getElementById('bottom-nav-more');
+  const overlay = document.getElementById('bottom-nav-more-overlay');
+  if (more) more.classList.remove('active');
+  if (overlay) overlay.classList.remove('active');
+}
+
+// Update bottom nav active state when tab changes
+const origShowTabForBottomNav = showTab;
+showTab = function(name) {
+  closeBottomNavMore();
+  origShowTabForBottomNav(name);
+  // Update bottom nav active state
+  const bottomNavItems = document.querySelectorAll('#bottom-nav .bottom-nav-item');
+  const tabToBtab = { home: 'home', sports: 'sports', daily: 'daily', diet: 'diet',
+    marathon: 'more', calc: 'more', weather: 'more', moodmorph: 'more',
+    reminders: 'more', profile: 'more', settings: 'more' };
+  const activeBtab = tabToBtab[name] || 'home';
+  bottomNavItems.forEach(item => {
+    item.classList.toggle('active', item.dataset.btab === activeBtab);
+  });
 };
 
 const origShowCoachTab = showCoachTab;
 showCoachTab = function(t) {
   closeMobileSidebarCoach();
   origShowCoachTab(t);
+  if (t === 'coach-home') { renderCoachAnnouncements(); renderCoachWeeklyOverview(); }
+  if (t === 'coach-athletes') { renderCoachAthletes(); filterCoachAthletes(); }
 };
 
 // Run on load and resize (debounced)
@@ -2292,7 +2724,7 @@ function updateChatbaseVisibility() {
   else { document.body.classList.remove('app-active'); if (window.chatbase) { try { window.chatbase('hide'); } catch(e) {} } }
 }
 
-function switchAuthTab(mode) { authMode = mode; document.getElementById('tab-login').classList.toggle('active', mode === 'login'); document.getElementById('tab-signup').classList.toggle('active', mode === 'signup'); document.getElementById('auth-submit').textContent = mode === 'login' ? 'Log in' : 'Sign up'; setMsg('auth-msg', ''); }
+function switchAuthTab(mode) { authMode = mode; document.getElementById('tab-login').classList.toggle('active', mode === 'login'); document.getElementById('tab-signup').classList.toggle('active', mode === 'signup'); const isCoach = document.getElementById('auth-coach-toggle') && document.getElementById('auth-coach-toggle').checked; if (isCoach) { document.getElementById('auth-submit').textContent = mode === 'login' ? 'Log in as Coach' : 'Sign up as Coach'; document.getElementById('auth-coach-fields').style.display = (mode === 'signup') ? 'block' : 'none'; } else { document.getElementById('auth-submit').textContent = mode === 'login' ? 'Log in' : 'Sign up'; } setMsg('auth-msg', ''); }
 function handleAuth(e) {
   e.preventDefault();
   const email = document.getElementById('auth-email').value.trim().toLowerCase();
@@ -2328,21 +2760,35 @@ function confirmReset(e) {
   setMsg('auth-msg', 'Password reset! Please log in.', 'ok'); showScreen('screen-auth'); return false;
 }
 function openGooglePicker() {
-  let email = localStorage.getItem('fb_last_google');
-  if (!email || !store.users[email]) {
-    const demoEmails = ['alex.g@gmail.com','sam.runner@gmail.com','jordan.fit@gmail.com','taylor.sport@gmail.com','casey.athlete@gmail.com'];
-    email = demoEmails[Math.floor(Math.random() * demoEmails.length)];
-    let counter = 1;
-    while (store.users[email] && store.users[email].profile) {
-      email = email.replace('@', counter + '@');
-      counter++;
-      if (counter > 20) break;
+  const isCoach = document.getElementById('auth-coach-toggle') && document.getElementById('auth-coach-toggle').checked;
+  let email = localStorage.getItem(isCoach ? 'fb_last_coach_google' : 'fb_last_google');
+  if (!email) {
+    if (isCoach) {
+      const coachDemoEmails = ['coach.alex@gmail.com','coach.sam@gmail.com','coach.jordan@gmail.com'];
+      email = coachDemoEmails[Math.floor(Math.random() * coachDemoEmails.length)];
+      localStorage.setItem('fb_last_coach_google', email);
+    } else {
+      const demoEmails = ['alex.g@gmail.com','sam.runner@gmail.com','jordan.fit@gmail.com','taylor.sport@gmail.com','casey.athlete@gmail.com'];
+      email = demoEmails[Math.floor(Math.random() * demoEmails.length)];
+      localStorage.setItem('fb_last_google', email);
     }
-    localStorage.setItem('fb_last_google', email);
   }
-  ensureUserRecord(email, { password: null, verified: true, google: true });
-  store.session = email;
-  loginSuccess(email);
+  if (isCoach) {
+    // Coach Google login
+    const coachUsers = getCoachUsers();
+    if (!coachUsers[email]) {
+      const fullName = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      coachUsers[email] = { fullName, email, cert: 'ACE', specialty: 'Strength & Conditioning', pwdHash: hashPassword('google_' + email), google: true };
+      saveCoachUsers(coachUsers);
+    }
+    localStorage.setItem(COACH_SESSION_KEY, email);
+    setMsg('auth-msg', 'Welcome, Coach!', 'ok');
+    setTimeout(() => enterCoachApp(coachUsers[email]), 500);
+  } else {
+    ensureUserRecord(email, { password: null, verified: true, google: true });
+    store.session = email;
+    loginSuccess(email);
+  }
 }
 function loginSuccess(email) {
   store.session = email; const u = store.users[email];
@@ -3028,7 +3474,7 @@ function pauseSpotifyEmbed() { const iframe = document.querySelector('#session-p
 function resumeSpotifyEmbed() { const iframe = document.querySelector('#session-playlist-container iframe'); if (iframe) { try { iframe.contentWindow.postMessage({ type: 'play' }, '*'); } catch(e) {} } }
 function resumeLiveSession() { isPaused = false; sessionStart += 60000; resumeSpotifyEmbed(); document.getElementById('session-pause-btn').classList.remove('hidden'); document.getElementById('session-pause-timer').classList.remove('hidden'); }
 function exitSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--muted); font-weight:600;" data-ar="تم إنهاء الجلسة دون تسجيل.">Session exited without logging.</p>`; }
-function stopLiveSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); const elapsedMins = Math.max(1, Math.round((Date.now() - sessionStart) / 60000)); const cals = Math.round(elapsedMins * 8); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--green); font-weight:600;" data-ar="تم إيقاف الجلسة! المدة: ${elapsedMins} دقيقة، السعرات: ${cals} سعرة">Session stopped! Duration: ${elapsedMins}m, Calories: ${cals}kcal</p>`; const logger = document.getElementById('inline-logger'); logger.classList.remove('hidden'); logger.innerHTML = `<h4 style="margin-bottom:10px;" data-ar="تسجيل الجلسة: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}">Log Session: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}</h4><input type="date" id="log-date" required value="${new Date().toISOString().slice(0, 10)}"><input type="number" id="log-duration" min="1" max="600" value="${elapsedMins}" required><select id="log-intensity" required><option value="Light" ${currentLogIntensity === 'Light' ? 'selected' : ''} data-ar="خفيف">Light</option><option value="Moderate" ${currentLogIntensity === 'Moderate' ? 'selected' : ''} data-ar="معتدل">Moderate</option><option value="Intense" ${currentLogIntensity === 'Intense' ? 'selected' : ''} data-ar="شديد">Intense</option></select><input type="text" id="log-note" placeholder="Notes (optional)" data-ar-ph="ملاحظات (اختياري)"><button class="btn primary small" onclick="saveInlineSession()"><i class="fa-solid fa-check"></i> <span data-ar="حفظ الجلسة">Save Session</span></button>`; setTimeout(applyTranslations, 0); }
+function stopLiveSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); const elapsedMins = Math.max(1, Math.round((Date.now() - sessionStart) / 60000)); const cals = Math.round(elapsedMins * 8); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--green); font-weight:600;" data-ar="تم إيقاف الجلسة! المدة: ${elapsedMins} دقيقة، السعرات: ${cals} سعرة">Session stopped! Duration: ${elapsedMins}m, Calories: ${cals}kcal</p>`; const logger = document.getElementById('inline-logger'); logger.classList.remove('hidden'); logger.innerHTML = `<h4 style="margin-bottom:10px;" data-ar="تسجيل الجلسة: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}">Log Session: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}</h4><input type="date" id="log-date" required value="${new Date().toISOString().slice(0, 10)}"><input type="number" id="log-duration" min="1" max="600" value="${elapsedMins}" required><select id="log-intensity" required><option value="Light" ${currentLogIntensity === 'Light' ? 'selected' : ''} data-ar="خفيف">Light</option><option value="Moderate" ${currentLogIntensity === 'Moderate' ? 'selected' : ''} data-ar="معتدل">Moderate</option><option value="Intense" ${currentLogIntensity === 'Intense' ? 'selected' : ''} data-ar="شديد">Intense</option></select><label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="ملاحظات">Notes</label><input type="text" id="log-note" placeholder="Notes (optional)" data-ar-ph="ملاحظات (اختياري)" style="width:100%;padding:10px 13px;border:1px solid var(--line);border-radius:10px;font-size:.92rem;"><button class="btn primary small" onclick="saveInlineSession()"><i class="fa-solid fa-check"></i> <span data-ar="حفظ الجلسة">Save Session</span></button>`; setTimeout(applyTranslations, 0); }
 function getSessionStats() { const sessions = currentUser().sessions || []; const totalMin = sessions.reduce((a, s) => a + s.duration, 0); const weekAgo = Date.now() - 7 * 864e5; const weekMin = sessions.filter(s => new Date(s.date).getTime() >= weekAgo).reduce((a, s) => a + s.duration, 0); const perSport = {}; sessions.forEach(s => { perSport[s.sport] = (perSport[s.sport] || 0) + s.duration; }); const top = Object.entries(perSport).sort((a, b) => b[1] - a[1])[0]; return { total: sessions.length, totalMin, weekMin, top }; }
 // Sum of durations of all sessions logged TODAY (matches by date string YYYY-MM-DD)
 function getTodayMinutes() {
@@ -3304,7 +3750,8 @@ function renderDailyExercise() {
           <button class="btn ghost small" style="flex-shrink:0;" onclick="resetDailyPlan()"><i class="fa-solid fa-rotate-right"></i> <span data-ar="خطة جديدة">${newPlanLabel}</span></button>
         </div>
         <div class="workout-list-container" id="workout-list-container"></div>
-        <button class="btn primary" style="width:100%;margin-top:24px;" onclick="finishDailyWorkout()"><i class="fa-solid fa-check"></i> ${finishLabel}</button>
+        <button class="btn primary" style="width:100%;margin-top:24px;${deState.workouts.every(w => w.done) ? '' : 'opacity:.5;pointer-events:none;'}" onclick="finishDailyWorkout()"><i class="fa-solid fa-check"></i> ${finishLabel}</button>
+        ${!deState.workouts.every(w => w.done) ? `<p style="text-align:center;color:var(--muted);font-size:.82rem;margin-top:8px;">${ar ? 'أكمل جميع التمارين أولاً لإنهاء اليوم' : 'Complete all exercises to finish the day'}</p>` : ''}
       </div>
     `;
     renderWorkoutList();
@@ -3407,11 +3854,15 @@ function renderWorkoutList() {
   const ar = (store.lang === 'ar');
   const wName = (w) => ar ? (WORKOUT_AR_NAMES[w] || w) : w;
   const mName = (m) => ar ? (MUSCLE_AR_NAMES[m] || m) : m;
-  container.innerHTML = deState.workouts.map((w, i) => {
+  const restLabel = ar ? 'راحة' : 'Rest';
+  const skipLabel = ar ? 'تخطي' : 'Skip';
+  const restSecsLabel = ar ? 'ثانية' : 's';
+  let html = '';
+  deState.workouts.forEach((w, i) => {
     let cls = 'locked';
     if (i === deState.currentWorkout) cls = 'active';
     if (w.done) cls = 'done';
-    return `
+    html += `
       <div class="workout-block ${cls}" onclick="${i === deState.currentWorkout ? `openWorkoutDetail(${i})` : ''}">
         <div class="workout-item-icon">
           <i class="fa-solid ${w.done ? 'fa-check' : i === deState.currentWorkout ? 'fa-play' : 'fa-lock'}"></i>
@@ -3423,7 +3874,66 @@ function renderWorkoutList() {
         ${i === deState.currentWorkout ? '<i class="fa-solid fa-chevron-right"></i>' : ''}
       </div>
     `;
-  }).join('');
+    // Add rest timer between exercises (not after the last one)
+    if (i < deState.workouts.length - 1 && w.done) {
+      const nextIdx = i + 1;
+      const isNext = (nextIdx === deState.currentWorkout);
+      html += `
+        <div class="de-rest-timer ${isNext ? 'active' : ''}" id="de-rest-${nextIdx}">
+          <div class="de-rest-timer-inner">
+            <i class="fa-solid fa-hourglass-half" style="color:var(--accent);font-size:.9rem;"></i>
+            <span class="de-rest-label">${restLabel}</span>
+            <span class="de-rest-display" id="de-rest-display-${nextIdx}">60${restSecsLabel}</span>
+            <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
+              <button class="btn ghost small" style="padding:3px 10px;font-size:.75rem;min-height:28px;" onclick="skipDeRest(${nextIdx})">${skipLabel}</button>
+              <button class="btn ghost small" style="padding:3px 10px;font-size:.75rem;min-height:28px;" onclick="startDeRest(${nextIdx})"><i class="fa-solid fa-play"></i></button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  });
+  container.innerHTML = html;
+}
+
+// Mini rest timer for daily exercise
+let deRestTimers = {};
+function startDeRest(idx) {
+  if (deRestTimers[idx]) clearInterval(deRestTimers[idx]);
+  const ar = (store.lang === 'ar');
+  const restSecsLabel = ar ? 'ثانية' : 's';
+  let secs = 60;
+  const display = document.getElementById('de-rest-display-' + idx);
+  if (!display) return;
+  display.textContent = secs + restSecsLabel;
+  // Play start beep
+  if (typeof playBeep === 'function') playBeep(800, 0.15);
+  if (typeof vibrateDevice === 'function') vibrateDevice(100);
+  deRestTimers[idx] = setInterval(() => {
+    secs--;
+    display.textContent = secs + restSecsLabel;
+    // Countdown beep at 3, 2, 1
+    if (secs <= 3 && secs > 0 && typeof playCountdownBeep === 'function') playCountdownBeep();
+    if (secs <= 0) {
+      clearInterval(deRestTimers[idx]);
+      delete deRestTimers[idx];
+      display.textContent = '0' + restSecsLabel;
+      // Done beep
+      if (typeof playDoneBeep === 'function') playDoneBeep();
+      if (typeof vibrateDevice === 'function') vibrateDevice([200, 100, 200]);
+      // Auto-skip after timer ends
+      const restEl = document.getElementById('de-rest-' + idx);
+      if (restEl) restEl.style.opacity = '0.5';
+    }
+  }, 1000);
+}
+
+function skipDeRest(idx) {
+  if (deRestTimers[idx]) { clearInterval(deRestTimers[idx]); delete deRestTimers[idx]; }
+  const restEl = document.getElementById('de-rest-' + idx);
+  if (restEl) restEl.style.opacity = '0.4';
+  const display = document.getElementById('de-rest-display-' + idx);
+  if (display) display.textContent = '0s';
 }
 let workoutTimerInt = null;
 let workoutTimerStart = null;  // tracks wall-clock start time so we can compute actual elapsed minutes
@@ -3513,7 +4023,8 @@ function closeWorkoutDetail() { closeModal('workout-detail-modal'); if (workoutT
 function finishDailyWorkout() {
   const ar = (store.lang === 'ar');
   if (deState.workouts.some(w => !w.done)) {
-    if (!confirm(ar ? 'لديك تمارين غير مكتملة. هل أنت متأكد من إنهاء اليوم؟' : 'You have incomplete workouts. Are you sure you want to finish today?')) return;
+    alert(ar ? 'أكمل جميع التمارين أولاً قبل إنهاء اليوم.' : 'Please complete all exercises before finishing the day.');
+    return;
   }
   // Mark today as completed
   if (deState.dailyPlan && deState.dailyPlan[deState.currentDay]) {
@@ -5092,7 +5603,7 @@ function addAthlete(e) {
   if (!name || !sport || !level) { document.getElementById('add-athlete-msg').textContent = 'Please fill in all required fields.'; document.getElementById('add-athlete-msg').className = 'msg error'; return false; }
   const athletes = getCoachAthletes();
   const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
-  athletes.push({ id: Date.now(), name, sport, level, email, notes, initials, streak: Math.floor(Math.random() * 10), sessions: Math.floor(Math.random() * 20) + 1, status: 'on-track', addedAt: new Date().toISOString() });
+  athletes.push({ id: Date.now(), name, sport, level, email, notes, initials, streak: 0, sessions: 0, status: 'new', addedAt: new Date().toISOString(), sessionLog: [], assignedPlan: null, lastSessionDate: null, goals: '', injuryNotes: '', phone: '' });
   saveCoachAthletes(athletes);
   closeModal('add-athlete-modal');
   renderCoachAthletes(); updateCoachStats(); renderCoachSessionsTable();
@@ -5104,22 +5615,25 @@ function renderCoachAthletes() {
   const grid = document.getElementById('coach-athletes-grid');
   const noEl = document.getElementById('coach-no-athletes');
   const countEl = document.getElementById('coach-athlete-count');
+  const profileCountEl = document.getElementById('coach-profile-athlete-count');
   const isAr = (store.lang === 'ar');
   const athleteWord = isAr ? 'رياضي' : 'athlete';
   const athleteWordPlural = isAr ? 'رياضيون' : 'athletes';
   if (countEl) countEl.textContent = athletes.length + ' ' + (athletes.length === 1 ? athleteWord : athleteWordPlural);
+  if (profileCountEl) { profileCountEl.textContent = athletes.length + ' ' + (athletes.length === 1 ? athleteWord : athleteWordPlural); profileCountEl.setAttribute('data-ar', athletes.length + ' رياضياً'); }
   if (athletes.length === 0) { grid.innerHTML = ''; noEl.style.display = 'block'; return; }
   noEl.style.display = 'none';
-  const statusLabels = isAr
-    ? { 'on-track': 'على المسار', 'needs-attention': 'بحاجة لاهتمام', 'new': 'جديد' }
-    : { 'on-track': 'On track', 'needs-attention': 'Needs attention', 'new': 'New' };
+  const statusLabels = isAr ? { 'on-track': 'على المسار', 'needs-attention': 'بحاجة لاهتمام', 'new': 'جديد' } : { 'on-track': 'On track', 'needs-attention': 'Needs attention', 'new': 'New' };
   const streakLabel = isAr ? 'يوم في السلسلة' : '-day streak';
   const sessionsLabel = isAr ? 'جلسة' : 'sessions';
+  const logLabel = isAr ? 'تسجيل جلسة' : 'Log Session';
+  const statusLabel = isAr ? 'تغيير الحالة' : 'Change Status';
   grid.innerHTML = athletes.map(a => {
     const bc = a.status === 'on-track' ? 'badge-on-track' : a.status === 'needs-attention' ? 'badge-needs-attention' : 'badge-new';
     const statusKey = a.status || 'new';
     const bt = statusLabels[statusKey];
-    return `<div class="athlete-card"><div class="avatar">${a.initials}</div><div class="a-body"><div class="a-top"><b>${a.name}</b><span class="badge ${bc}">${bt}</span></div><small>${a.sport} · ${a.streak} ${streakLabel} · ${a.level}</small><p class="a-last">${a.sessions} ${sessionsLabel}${a.notes ? ' · ' + a.notes : ''}</p></div><button onclick="removeAthlete(${a.id})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:.85rem;padding:4px 8px;align-self:flex-start;" title="Remove"><i class="fa-solid fa-xmark"></i></button></div>`;
+    const planBadge = a.assignedPlan ? `<span style="font-size:.7rem;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:8px;margin-left:4px;"><i class="fa-solid fa-clipboard-list" style="font-size:.6rem;"></i> ${a.assignedPlan}</span>` : '';
+    return `<div class="athlete-card" style="cursor:pointer;" onclick="openAthleteDetail(${a.id})"><div class="avatar">${a.initials}</div><div class="a-body"><div class="a-top"><b>${a.name}</b><span class="badge ${bc}">${bt}</span></div><small>${a.sport} · ${a.streak} ${streakLabel} · ${a.level}${planBadge}</small><p class="a-last">${a.sessions} ${sessionsLabel}${a.notes ? ' · ' + a.notes : ''}</p><div class="athlete-quick-actions" style="display:flex;gap:6px;margin-top:8px;"><button class="btn ghost small" onclick="event.stopPropagation();openLogSessionModal(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-stopwatch"></i> ${logLabel}</button><button class="btn ghost small" onclick="event.stopPropagation();cycleAthleteStatus(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-arrows-rotate"></i> ${statusLabel}</button></div></div><button onclick="event.stopPropagation();removeAthlete(${a.id})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:.85rem;padding:4px 8px;align-self:flex-start;" title="Remove"><i class="fa-solid fa-xmark"></i></button></div>`;
   }).join('');
 }
 function updateCoachStats() {
@@ -5137,29 +5651,42 @@ function renderCoachSessionsTable() {
   const isAr = (store.lang === 'ar');
   if (athletes.length === 0) {
     const emptyMsg = isAr ? 'لا يوجد رياضيون مسجلون بعد. أضف رياضيين لرؤية جلساتهم.' : 'No athletes logged yet. Add athletes to see their sessions.';
-    const html = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted);">${emptyMsg}</td></tr>`;
-    if(tbody1) tbody1.innerHTML = html;
-    if(tbody2) tbody2.innerHTML = html;
+    const emptyHtml = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted);">${emptyMsg}</td></tr>`;
+    if(tbody1) tbody1.innerHTML = emptyHtml;
+    if(tbody2) tbody2.innerHTML = emptyHtml;
     if(recList) recList.innerHTML = `<li>${isAr ? 'أضف رياضيين لتلقي توصيات مخصصة حولهم.' : 'Add athletes to receive personalized recommendations about them.'}</li>`;
     return;
   }
   const drillLabel = isAr ? 'تمرين' : 'drill';
-  const todayLabel = isAr ? 'اليوم' : 'Today';
   const loadLabels = isAr ? { Low: 'منخفض', Moderate: 'معتدل', High: 'عالٍ' } : { Low: 'Low', Moderate: 'Moderate', High: 'High' };
-  const html = athletes.map(a => {
-    const dur = Math.floor(Math.random() * 60) + 20;
-    const loadKey = ['Low', 'Moderate', 'High'][Math.floor(Math.random()*3)];
-    const load = loadLabels[loadKey];
-    return `<tr><td><b>${a.name}</b></td><td>${a.sport} ${drillLabel}</td><td>${todayLabel}</td><td>${dur}m</td><td><span class="load load-${loadKey.toLowerCase()}">${load}</span></td></tr>`;
-  }).join('');
-  if(tbody1) tbody1.innerHTML = html;
-  if(tbody2) tbody2.innerHTML = html;
-  
+  const allLogs = [];
+  athletes.forEach(a => {
+    if (a.sessionLog && a.sessionLog.length > 0) {
+      a.sessionLog.forEach(s => { allLogs.push({ athleteName: a.name, sport: a.sport, ...s }); });
+    }
+  });
+  allLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+  if (allLogs.length === 0) {
+    const noSessionMsg = isAr ? 'لا توجد جلسات مسجلة بعد.' : 'No sessions logged yet.';
+    const noSessionHtml = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted);">${noSessionMsg}</td></tr>`;
+    if(tbody1) tbody1.innerHTML = noSessionHtml;
+    if(tbody2) tbody2.innerHTML = noSessionHtml;
+  } else {
+    const rows = allLogs.slice(0, 20).map(s => {
+      const dateStr = new Date(s.date).toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { month: 'short', day: 'numeric' });
+      const intensityKey = s.intensity || 'Moderate';
+      const load = loadLabels[intensityKey] || intensityKey;
+      let durHtml = `${s.duration || '--'}m`; if (s.calories) durHtml += ` &nbsp;<i class="fa-solid fa-fire" style="font-size:.65rem;color:var(--amber);"></i> ${s.calories}kcal`; if (s.sets) durHtml += ` &middot; ${s.sets}×`; if (s.distance) durHtml += ` &middot; ${s.distance}km`; return `<tr><td><b>${s.athleteName}</b></td><td>${s.sport} ${drillLabel}</td><td>${dateStr}</td><td style="white-space:nowrap;">${durHtml}</td><td><span class="load load-${intensityKey.toLowerCase()}">${load}</span></td></tr>`;
+    }).join('');
+    if(tbody1) tbody1.innerHTML = rows;
+    if(tbody2) tbody2.innerHTML = rows;
+  }
   if(recList) {
-    recList.innerHTML = athletes.slice(0, 3).map(a => isAr
-      ? `<li>${a.name} في سلسلة من ${a.streak} يوم. حافظ على الزخم مع الحمل التدريجي في ${a.sport}.</li>`
-      : `<li>${a.name} is on a ${a.streak}-day streak. Keep up the momentum with progressive overload in ${a.sport}.</li>`
-    ).join('');
+    recList.innerHTML = athletes.slice(0, 3).map(a => {
+      const streak = a.streak || 0;
+      if (streak === 0) return isAr ? `<li>${a.name} لم يبدأ بعد. شجّعه على تسجيل أول جلسة!</li>` : `<li>${a.name} hasn't started yet. Encourage them to log their first session!</li>`;
+      return isAr ? `<li>${a.name} في سلسلة من ${streak} يوم. حافظ على الزخم مع الحمل التدريجي في ${a.sport}.</li>` : `<li>${a.name} is on a ${streak}-day streak. Keep up the momentum with progressive overload in ${a.sport}.</li>`;
+    }).join('');
   }
 }
 function renderCoachSessionsChart() {
@@ -5323,6 +5850,1001 @@ function autofillFromInBody() {
   
   setInterval(checkReminders, 30000);
 })();
+
+
+// ===== ENHANCED COACH FUNCTIONS =====
+
+// Coach Session Tracker (like athlete version)
+let coachSessionTimerInt = null;
+let coachSessionStart = null;
+let coachSessionIsPaused = false;
+let coachSessionAthleteId = null;
+let coachSessionSets = 0;
+
+function incrementCoachSets() {
+  coachSessionSets++;
+  document.getElementById('coach-ses-sets').textContent = coachSessionSets;
+}
+
+function openLogSessionModal(athleteId) {
+  const athletes = getCoachAthletes();
+  const a = athletes.find(x => x.id === athleteId);
+  if (!a) return;
+  coachSessionAthleteId = athleteId;
+  coachSessionSets = 0;
+  document.getElementById('coach-ses-athlete-name').textContent = a.name;
+  document.getElementById('coach-ses-sport').textContent = a.sport + ' · ' + a.level;
+  document.getElementById('coach-ses-timer').textContent = '00:00';
+  document.getElementById('coach-ses-calories').innerHTML = '<i class="fa-solid fa-fire"></i> 0 kcal';
+  document.getElementById('coach-ses-intensity').textContent = '--';
+  document.getElementById('coach-ses-pace').textContent = '--';
+  document.getElementById('coach-ses-heart').textContent = '--';
+  document.getElementById('coach-ses-distance').textContent = '0.0';
+  document.getElementById('coach-ses-sets').textContent = '0';
+  document.getElementById('coach-ses-live-actions').style.display = 'flex';
+  document.getElementById('coach-ses-log-form').classList.remove('visible');
+  document.getElementById('coach-ses-pause-btn').style.display = '';
+  document.getElementById('coach-ses-pause-btn').innerHTML = '<i class="fa-solid fa-pause"></i> <span data-ar="إيقاف مؤقت">Pause</span>';
+  document.getElementById('coach-ses-pause-btn').onclick = pauseCoachSession;
+  document.getElementById('coach-session-overlay').classList.add('active');
+  coachSessionStart = Date.now();
+  coachSessionIsPaused = false;
+  if (coachSessionTimerInt) clearInterval(coachSessionTimerInt);
+  coachSessionTimerInt = setInterval(updateCoachSessionTime, 1000);
+}
+
+function updateCoachSessionTime() {
+  if (coachSessionIsPaused) return;
+  const elapsed = Math.floor((Date.now() - coachSessionStart) / 1000);
+  const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+  const secs = (elapsed % 60).toString().padStart(2, '0');
+  document.getElementById('coach-ses-timer').textContent = `${mins}:${secs}`;
+  const cals = Math.round((elapsed / 60) * 8);
+  document.getElementById('coach-ses-calories').innerHTML = `<i class="fa-solid fa-fire"></i> ${cals} kcal`;
+  const intensityMap = elapsed < 600 ? 'Low' : elapsed < 1800 ? 'Moderate' : 'High';
+  document.getElementById('coach-ses-intensity').textContent = intensityMap;
+  const paceMin = elapsed > 0 ? (elapsed / 60 / Math.max(1, (elapsed / 60) * 0.15)).toFixed(1) : '--';
+  document.getElementById('coach-ses-pace').textContent = paceMin;
+  const hr = Math.round(120 + (elapsed / 60) * 0.5 + Math.random() * 3);
+  document.getElementById('coach-ses-heart').textContent = Math.min(hr, 185);
+  const distKm = (elapsed / 60 * 0.15).toFixed(1);
+  document.getElementById('coach-ses-distance').textContent = distKm;
+  document.getElementById('coach-ses-sets').textContent = coachSessionSets;
+}
+
+function pauseCoachSession() {
+  if (coachSessionIsPaused) return;
+  coachSessionIsPaused = true;
+  document.getElementById('coach-ses-pause-btn').innerHTML = '<i class="fa-solid fa-play"></i> Resume';
+  document.getElementById('coach-ses-pause-btn').onclick = resumeCoachSession;
+}
+
+function resumeCoachSession() {
+  coachSessionIsPaused = false;
+  coachSessionStart += 500;
+  document.getElementById('coach-ses-pause-btn').innerHTML = '<i class="fa-solid fa-pause"></i> <span data-ar="إيقاف مؤقت">Pause</span>';
+  document.getElementById('coach-ses-pause-btn').onclick = pauseCoachSession;
+}
+
+function exitCoachSession() {
+  if (coachSessionTimerInt) clearInterval(coachSessionTimerInt);
+  coachSessionIsPaused = false;
+  document.getElementById('coach-session-overlay').classList.remove('active');
+}
+
+function stopCoachSession() {
+  if (coachSessionTimerInt) clearInterval(coachSessionTimerInt);
+  coachSessionIsPaused = false;
+  const elapsedMins = Math.max(1, Math.round((Date.now() - coachSessionStart) / 60000));
+  const cals = Math.round(elapsedMins * 8);
+  const distKm = (elapsedMins * 0.15).toFixed(1);
+  document.getElementById('coach-ses-live-actions').style.display = 'none';
+  document.getElementById('coach-ses-log-form').classList.add('visible');
+  document.getElementById('coach-ses-log-duration').value = elapsedMins;
+  const intensityMap = elapsedMins < 10 ? 'Low' : elapsedMins < 30 ? 'Moderate' : 'High';
+  document.getElementById('coach-ses-log-intensity').value = intensityMap;
+  document.getElementById('coach-ses-log-calories').value = cals;
+  document.getElementById('coach-ses-log-distance').value = distKm;
+  document.getElementById('coach-ses-log-sets').value = coachSessionSets;
+  document.getElementById('coach-ses-log-notes').value = '';
+}
+
+function saveCoachSessionLog() {
+  const duration = parseInt(document.getElementById('coach-ses-log-duration').value);
+  const intensity = document.getElementById('coach-ses-log-intensity').value;
+  const calories = parseInt(document.getElementById('coach-ses-log-calories').value) || 0;
+  const distance = parseFloat(document.getElementById('coach-ses-log-distance').value) || 0;
+  const sets = parseInt(document.getElementById('coach-ses-log-sets').value) || 0;
+  const notes = document.getElementById('coach-ses-log-notes').value.trim();
+  if (!duration || duration < 1) { alert('Please enter a valid duration.'); return; }
+  const athletes = getCoachAthletes();
+  const a = athletes.find(x => x.id === coachSessionAthleteId);
+  if (!a) return;
+  if (!a.sessionLog) a.sessionLog = [];
+  const today = new Date().toISOString().split('T')[0];
+  a.sessionLog.push({ date: today, duration, intensity, calories, distance, sets, notes, loggedAt: new Date().toISOString() });
+  a.sessions = (a.sessions || 0) + 1;
+  const todayStr = new Date().toDateString();
+  const yesterdayStr = new Date(Date.now() - 864e5).toDateString();
+  if (a.lastSessionDate === todayStr) { /* already logged today */ }
+  else if (a.lastSessionDate === yesterdayStr) { a.streak = (a.streak || 0) + 1; }
+  else { a.streak = 1; }
+  a.lastSessionDate = todayStr;
+  saveCoachAthletes(athletes);
+  document.getElementById('coach-session-overlay').classList.remove('active');
+  renderCoachAthletes(); updateCoachStats(); renderCoachSessionsTable(); renderCoachSessionsChart(); renderCoachWeeklyOverview();
+}
+
+// Announcements
+const COACH_ANNOUNCEMENTS_KEY = 'volta_coach_announcements';
+function getCoachAnnouncements() { const e = localStorage.getItem(COACH_SESSION_KEY); try { const a = JSON.parse(localStorage.getItem(COACH_ANNOUNCEMENTS_KEY) || '{}'); return a[e] || []; } catch(e) { return []; } }
+function saveCoachAnnouncements(anns) { const e = localStorage.getItem(COACH_SESSION_KEY); const a = JSON.parse(localStorage.getItem(COACH_ANNOUNCEMENTS_KEY) || '{}'); a[e] = anns; localStorage.setItem(COACH_ANNOUNCEMENTS_KEY, JSON.stringify(a)); }
+function openAnnouncementModal() { document.getElementById('announcement-title').value = ''; document.getElementById('announcement-message').value = ''; openModal('announcement-modal'); }
+function saveAnnouncement() { const t = document.getElementById('announcement-title').value.trim(); const m = document.getElementById('announcement-message').value.trim(); if (!t || !m) { alert('Please fill in title and message.'); return; } const a = getCoachAnnouncements(); a.unshift({ id: Date.now(), title: t, message: m, date: new Date().toISOString() }); saveCoachAnnouncements(a); closeModal('announcement-modal'); renderCoachAnnouncements(); }
+function deleteAnnouncement(id) { let a = getCoachAnnouncements(); a = a.filter(x => x.id !== id); saveCoachAnnouncements(a); renderCoachAnnouncements(); }
+function renderCoachAnnouncements() { const l = document.getElementById('coach-announcements-list'); const n = document.getElementById('coach-no-announcements'); if (!l) return; const a = getCoachAnnouncements(); if (a.length === 0) { l.innerHTML = ''; if(n) n.style.display = 'block'; return; } if(n) n.style.display = 'none'; const isAr = (store.lang === 'ar'); l.innerHTML = a.map(x => { const d = new Date(x.date).toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { month: 'short', day: 'numeric' }); return `<div class="coach-announcement"><div><b>${x.title}</b><p>${x.message}</p><small style="color:var(--muted);font-size:.72rem;">${d}</small></div><div class="ann-actions"><button onclick="deleteAnnouncement(${x.id})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:.8rem;padding:2px 6px;"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join(''); }
+
+// Weekly Overview
+function renderCoachWeeklyOverview() { const g = document.getElementById('coach-weekly-grid'); if (!g) return; const athletes = getCoachAthletes(); const isAr = (store.lang === 'ar'); const dn = isAr ? ['أحد','إثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'] : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; const t = new Date(); const s = new Date(t); s.setDate(t.getDate() - t.getDay()); let h = ''; for (let i = 0; i < 7; i++) { const d = new Date(s); d.setDate(s.getDate() + i); const ds = d.toDateString(); const isT = ds === t.toDateString(); let c = 0; athletes.forEach(a => { if (a.sessionLog && a.sessionLog.length > 0) { a.sessionLog.forEach(sl => { if (new Date(sl.date).toDateString() === ds) c++; }); } }); h += `<div class="coach-weekly-day${isT ? ' today' : ''}"><small>${dn[i]}</small><b>${c}</b></div>`; } g.innerHTML = h; }
+
+// Athlete Detail
+function openAthleteDetail(id) { const athletes = getCoachAthletes(); const a = athletes.find(x => x.id === id); if (!a) return; const isAr = (store.lang === 'ar'); const plans = getCoachPlans(); const po = plans.map((p) => `<option value="${p.name}" ${a.assignedPlan === p.name ? 'selected' : ''}>${p.name}</option>`).join(''); const body = document.getElementById('athlete-detail-body'); body.innerHTML = `<div class="athlete-detail-header"><div class="avatar" style="background:var(--accent-soft);color:var(--accent);">${a.initials}</div><div style="flex:1;"><h3 style="margin-bottom:2px;">${a.name}</h3><p style="color:var(--muted);font-size:.88rem;">${a.sport} · ${a.level}</p></div><span class="badge ${a.status === 'on-track' ? 'badge-on-track' : a.status === 'needs-attention' ? 'badge-needs-attention' : 'badge-new'}">${a.status || 'new'}</span></div><div class="athlete-detail-stats"><div class="athlete-detail-stat"><b>${a.streak || 0}</b><small>${isAr ? 'سلسلة' : 'Streak'}</small></div><div class="athlete-detail-stat"><b>${a.sessions || 0}</b><small>${isAr ? 'جلسات' : 'Sessions'}</small></div><div class="athlete-detail-stat"><b>${a.assignedPlan || '—'}</b><small>${isAr ? 'الخطة' : 'Plan'}</small></div><div class="athlete-detail-stat"><b>${a.sessionLog ? a.sessionLog.length : 0}</b><small>${isAr ? 'سجلات' : 'Logs'}</small></div></div><div style="margin-bottom:16px;"><label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:6px;display:block;">${isAr ? 'تعيين خطة' : 'Assign Plan'}</label><select class="plan-assign-select" onchange="assignPlanToAthlete(${a.id}, this.value)"><option value="">${isAr ? '— لا خطة —' : '— No plan —'}</option>${po}</select></div>${a.goals ? `<div style="margin-bottom:12px;"><b style="font-size:.85rem;">${isAr ? 'الأهداف' : 'Goals'}</b><p style="font-size:.88rem;color:var(--muted);margin-top:2px;">${a.goals}</p></div>` : ''}${a.injuryNotes ? `<div style="margin-bottom:12px;"><b style="font-size:.85rem;color:var(--red);">${isAr ? 'إصابات' : 'Injury Notes'}</b><p style="font-size:.88rem;color:var(--muted);margin-top:2px;">${a.injuryNotes}</p></div>` : ''}${a.email ? `<div style="margin-bottom:12px;"><b style="font-size:.85rem;">${isAr ? 'البريد' : 'Email'}</b><p style="font-size:.88rem;color:var(--muted);margin-top:2px;">${a.email}</p></div>` : ''}<div style="margin-bottom:12px;"><b style="font-size:.85rem;">${isAr ? 'ملاحظات' : 'Notes'}</b><textarea id="athlete-detail-notes" rows="2" style="resize:vertical;margin-top:4px;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:.88rem;background:var(--white);color:var(--text);" placeholder="${isAr ? 'ملاحظات...' : 'Add notes...'}">${a.notes || ''}</textarea><button class="btn ghost small" onclick="saveAthleteNotes(${a.id})" style="margin-top:6px;"><i class="fa-solid fa-floppy-disk"></i> ${isAr ? 'حفظ' : 'Save'}</button></div><div><b style="font-size:.85rem;">${isAr ? 'سجل الجلسات' : 'Session Log'}</b><div style="margin-top:8px;">${a.sessionLog && a.sessionLog.length > 0 ? a.sessionLog.slice().reverse().map(s => { const d = new Date(s.date).toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { month: 'short', day: 'numeric' }); let metrics = `<b>${s.duration || '--'}m</b>`; if (s.calories) metrics += ` · <span style="color:var(--amber);"><i class="fa-solid fa-fire" style="font-size:.65rem;"></i> ${s.calories}kcal</span>`; if (s.distance) metrics += ` · ${s.distance}km`; if (s.sets) metrics += ` · ${s.sets} sets`; metrics += ` · ${s.intensity || '--'}`; if (s.notes) metrics += ` · ${s.notes}`; return `<div class="athlete-session-entry"><div>${metrics}</div><span class="date">${d}</span></div>`; }).join('') : `<p style="color:var(--muted);font-size:.85rem;text-align:center;padding:12px;">${isAr ? 'لا توجد جلسات.' : 'No sessions yet.'}</p>`}</div></div><div style="display:flex;gap:10px;margin-top:16px;"><button class="btn ghost" onclick="closeModal('athlete-detail-modal')" style="flex:1;">${isAr ? 'إغلاق' : 'Close'}</button><button class="btn primary" onclick="closeModal('athlete-detail-modal');openLogSessionModal(${a.id})" style="flex:1;"><i class="fa-solid fa-stopwatch"></i> ${isAr ? 'تسجيل جلسة' : 'Log Session'}</button></div>`; openModal('athlete-detail-modal'); }
+
+function assignPlanToAthlete(athleteId, planName) { const athletes = getCoachAthletes(); const a = athletes.find(x => x.id === athleteId); if (!a) return; a.assignedPlan = planName || null; saveCoachAthletes(athletes); renderCoachAthletes(); updateCoachStats(); }
+function saveAthleteNotes(athleteId) { const notes = document.getElementById('athlete-detail-notes').value.trim(); const athletes = getCoachAthletes(); const a = athletes.find(x => x.id === athleteId); if (!a) return; a.notes = notes; saveCoachAthletes(athletes); renderCoachAthletes(); }
+
+function cycleAthleteStatus(id) { const athletes = getCoachAthletes(); const a = athletes.find(x => x.id === id); if (!a) return; const c = ['new', 'on-track', 'needs-attention']; const i = c.indexOf(a.status || 'new'); a.status = c[(i + 1) % c.length]; saveCoachAthletes(athletes); renderCoachAthletes(); updateCoachStats(); }
+
+function exportAthletesCSV() { const athletes = getCoachAthletes(); if (athletes.length === 0) { alert('No athletes to export.'); return; } const h = ['Name','Sport','Level','Status','Streak','Sessions','Email','Notes','Assigned Plan','Last Session Date']; const r = athletes.map(a => [a.name, a.sport, a.level, a.status, a.streak, a.sessions, a.email || '', a.notes || '', a.assignedPlan || '', a.lastSessionDate || '']); const csv = [h, ...r].map(row => row.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n'); const blob = new Blob([csv], { type: 'text/csv' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'athletes_export.csv'; link.click(); URL.revokeObjectURL(url); }
+
+let coachAthleteFilter = 'all';
+function setCoachFilter(filter) { coachAthleteFilter = filter; document.querySelectorAll('.coach-filter-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === filter)); filterCoachAthletes(); }
+function filterCoachAthletes() { const search = (document.getElementById('coach-athlete-search')?.value || '').toLowerCase(); const athletes = getCoachAthletes(); const filtered = athletes.filter(a => { const ms = !search || a.name.toLowerCase().includes(search) || a.sport.toLowerCase().includes(search) || (a.email || '').toLowerCase().includes(search); const mf = coachAthleteFilter === 'all' || (a.status || 'new') === coachAthleteFilter; return ms && mf; }); const grid = document.getElementById('coach-athletes-grid'); const noEl = document.getElementById('coach-no-athletes'); const countEl = document.getElementById('coach-athlete-count'); const isAr = (store.lang === 'ar'); const aw = isAr ? 'رياضي' : 'athlete'; const awp = isAr ? 'رياضيون' : 'athletes'; if (countEl) countEl.textContent = filtered.length + ' ' + (filtered.length === 1 ? aw : awp); if (filtered.length === 0) { grid.innerHTML = ''; noEl.style.display = 'block'; return; } noEl.style.display = 'none'; const sl = isAr ? { 'on-track': 'على المسار', 'needs-attention': 'بحاجة لاهتمام', 'new': 'جديد' } : { 'on-track': 'On track', 'needs-attention': 'Needs attention', 'new': 'New' }; const stkL = isAr ? 'يوم في السلسلة' : '-day streak'; const sesL = isAr ? 'جلسة' : 'sessions'; const logL = isAr ? 'تسجيل جلسة' : 'Log Session'; const chgL = isAr ? 'تغيير الحالة' : 'Change Status'; grid.innerHTML = filtered.map(a => { const bc = a.status === 'on-track' ? 'badge-on-track' : a.status === 'needs-attention' ? 'badge-needs-attention' : 'badge-new'; const bt = sl[a.status || 'new']; const pb = a.assignedPlan ? `<span style="font-size:.7rem;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:8px;margin-left:4px;"><i class="fa-solid fa-clipboard-list" style="font-size:.6rem;"></i> ${a.assignedPlan}</span>` : ''; return `<div class="athlete-card" style="cursor:pointer;" onclick="openAthleteDetail(${a.id})"><div class="avatar">${a.initials}</div><div class="a-body"><div class="a-top"><b>${a.name}</b><span class="badge ${bc}">${bt}</span></div><small>${a.sport} · ${a.streak} ${stkL} · ${a.level}${pb}</small><p class="a-last">${a.sessions} ${sesL}${a.notes ? ' · ' + a.notes : ''}</p><div class="athlete-quick-actions" style="display:flex;gap:6px;margin-top:8px;"><button class="btn ghost small" onclick="event.stopPropagation();openLogSessionModal(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-stopwatch"></i> ${logL}</button><button class="btn ghost small" onclick="event.stopPropagation();cycleAthleteStatus(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-arrows-rotate"></i> ${chgL}</button></div></div><button onclick="event.stopPropagation();removeAthlete(${a.id})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:.85rem;padding:4px 8px;align-self:flex-start;" title="Remove"><i class="fa-solid fa-xmark"></i></button></div>`; }).join(''); }
+
+function updateCoachStats() { const athletes = getCoachAthletes(); const plans = getCoachPlans(); const today = new Date().toDateString(); document.getElementById('coach-stat-athletes').textContent = athletes.length; document.getElementById('coach-stat-sessions').textContent = athletes.reduce((s, a) => s + (a.sessions || 0), 0); document.getElementById('coach-stat-attention').textContent = athletes.filter(a => a.status === 'needs-attention').length; document.getElementById('coach-stat-adherence').textContent = athletes.length > 0 ? Math.round((athletes.filter(a => a.status !== 'needs-attention').length / athletes.length) * 100) + '%' : '--'; document.getElementById('coach-stat-plans').textContent = plans.length; document.getElementById('coach-stat-avg-streak').textContent = athletes.length > 0 ? Math.round(athletes.reduce((s, a) => s + (a.streak || 0), 0) / athletes.length) : 0; let ts = 0; athletes.forEach(a => { if (a.sessionLog && a.sessionLog.length > 0) { a.sessionLog.forEach(s => { if (new Date(s.date).toDateString() === today) ts++; }); } }); document.getElementById('coach-stat-today-sessions').textContent = ts; document.getElementById('coach-stat-on-track').textContent = athletes.filter(a => a.status === 'on-track').length; }
+
+// Coach auth fields toggle on normal login
+function setRoleTab(role) {
+  const cb = document.getElementById('auth-coach-toggle');
+  const athleteTab = document.getElementById('role-tab-athlete');
+  const coachTab = document.getElementById('role-tab-coach');
+  if (role === 'coach') {
+    cb.checked = true;
+    if (athleteTab) athleteTab.classList.remove('active');
+    if (coachTab) coachTab.classList.add('active');
+  } else {
+    cb.checked = false;
+    if (athleteTab) athleteTab.classList.add('active');
+    if (coachTab) coachTab.classList.remove('active');
+  }
+  toggleCoachAuthFields();
+}
+
+function toggleCoachMode() {
+  // Legacy compatibility - toggles between athlete/coach
+  const cb = document.getElementById('auth-coach-toggle');
+  setRoleTab(cb.checked ? 'athlete' : 'coach');
+}
+
+function toggleCoachAuthFields() {
+  const checked = document.getElementById('auth-coach-toggle').checked;
+  // Update role tabs visual state
+  const athleteTab = document.getElementById('role-tab-athlete');
+  const coachTab = document.getElementById('role-tab-coach');
+  if (athleteTab) athleteTab.classList.toggle('active', !checked);
+  if (coachTab) coachTab.classList.toggle('active', checked);
+  document.getElementById('auth-coach-fields').style.display = (checked && authMode === 'signup') ? 'block' : 'none';
+  const submitBtn = document.getElementById('auth-submit');
+  if (checked) {
+    submitBtn.textContent = authMode === 'login' ? 'Log in as Coach' : 'Sign up as Coach';
+  } else {
+    submitBtn.textContent = authMode === 'login' ? 'Log in' : 'Sign up';
+  }
+}
+
+// Patch handleAuth to support coach signup
+const origHandleAuth = handleAuth;
+handleAuth = function(e) {
+  const isCoach = document.getElementById('auth-coach-toggle').checked;
+  if (isCoach && authMode === 'signup') {
+    e.preventDefault();
+    const email = document.getElementById('auth-email').value.trim().toLowerCase();
+    const pass = document.getElementById('auth-password').value;
+    const fullName = (document.getElementById('auth-coach-fn')?.value || '').trim();
+    const cert = document.getElementById('auth-coach-cert')?.value || '';
+    const specialty = document.getElementById('auth-coach-spec')?.value || 'Strength & Conditioning';
+    if (!email.includes('@') || !email.includes('.')) { setMsg('auth-msg', 'Please enter a valid email address.', 'error'); return false; }
+    if (pass.length < 6) { setMsg('auth-msg', 'Password must be at least 6 characters.', 'error'); return false; }
+    if (!fullName) { setMsg('auth-msg', 'Please enter your full name.', 'error'); return false; }
+    const coachUsers = getCoachUsers();
+    if (coachUsers[email]) { setMsg('auth-msg', 'Coach account already exists. Please log in.', 'error'); return false; }
+    coachUsers[email] = { fullName, email, cert, specialty, pwdHash: hashPassword(pass) };
+    saveCoachUsers(coachUsers);
+    localStorage.setItem(COACH_SESSION_KEY, email);
+    setMsg('auth-msg', 'Coach account created! Loading...', 'ok');
+    setTimeout(() => enterCoachApp(coachUsers[email]), 500);
+    return false;
+  }
+  if (isCoach && authMode === 'login') {
+    e.preventDefault();
+    const email = document.getElementById('auth-email').value.trim().toLowerCase();
+    const pass = document.getElementById('auth-password').value;
+    const coachUsers = getCoachUsers();
+    const user = coachUsers[email];
+    if (!user) { setMsg('auth-msg', 'No coach account found. Try signing up.', 'error'); return false; }
+    if (user.pwdHash !== hashPassword(pass)) { setMsg('auth-msg', 'Incorrect password.', 'error'); return false; }
+    localStorage.setItem(COACH_SESSION_KEY, email);
+    setMsg('auth-msg', 'Welcome back, Coach!', 'ok');
+    setTimeout(() => enterCoachApp(user), 500);
+    return false;
+  }
+  return origHandleAuth(e);
+};
+
+// Patch showCoachTab - already merged above
+
+// Patch enterCoachApp to render new features
+const origEnterCoachApp = enterCoachApp;
+enterCoachApp = function(user) {
+  origEnterCoachApp(user);
+  renderCoachAnnouncements();
+  renderCoachWeeklyOverview();
+};
+
+// Mobile CSS for coach session overlay
+(function(){
+  const style = document.createElement('style');
+  style.textContent = `@media (max-width: 768px) {
+    .coach-quick-actions { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .coach-quick-action { padding: 12px 8px; min-height: 80px; }
+    .coach-quick-action i { font-size: 18px; }
+    .coach-quick-action span { font-size: .75rem; }
+    .coach-weekly-grid { grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .coach-weekly-day { padding: 8px 4px; font-size: .68rem; }
+    .coach-weekly-day b { font-size: .85rem; }
+    .coach-search-bar { flex-wrap: wrap; }
+    .coach-search-bar input { max-width: 100%; width: 100%; }
+    .coach-filter-chip { padding: 4px 10px; font-size: .72rem; min-height: 36px; }
+    .athlete-detail-panel { max-height: 95vh; border-radius: 16px; padding: 20px 16px; }
+    .athlete-detail-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .coach-session-timer { font-size: 2.5rem; }
+    .coach-session-stats-row { gap: 8px; flex-wrap: wrap; }
+    .coach-session-stat-pill { padding: 6px 10px; }
+    .coach-session-stat-pill b { font-size: .9rem; }
+    .coach-announcement { padding: 10px 12px; }
+    .coach-export-btn { padding: 6px 10px; font-size: .78rem; }
+    .athlete-quick-actions { gap: 4px !important; }
+    .athlete-quick-actions .btn { font-size: .7rem !important; padding: 3px 8px !important; min-height: 36px !important; }
+    .stat-card { padding: 14px; }
+    .stat-card b { font-size: 1.05rem; }
+    .stat-card small { font-size: .72rem; }
+    .stat-icon { width: 36px; height: 36px; }
+    .stat-icon i { font-size: 16px !important; }
+    .modal-content { max-width: 100% !important; margin: 0; border-radius: 16px; }
+    .modal-overlay { padding: 8px; }
+    input, select, textarea { font-size: 16px !important; }
+    #tab-coach-home .panel { padding: 16px; }
+    .sessions-table { display: block; overflow-x: auto; white-space: nowrap; }
+    .plan-assign-select { font-size: 16px; }
+    #coach-session-overlay { padding: 16px; }
+  }`;
+  document.head.appendChild(style);
+})();
+
+
+
+// ============================================================
+// BARCODE SCANNER — Camera + Open Food Facts API
+// ============================================================
+let scannerStream = null;
+let scannerDetector = null;
+let scannerAnimFrame = null;
+let lastScannedBarcode = null;
+let lastScanResult = null;
+
+function startBarcodeScanner() {
+  const video = document.getElementById('scanner-video');
+  const container = document.getElementById('scanner-camera-container');
+  const startBtn = document.getElementById('scanner-start-btn');
+  const stopBtn = document.getElementById('scanner-stop-btn');
+  const fallback = document.getElementById('scanner-fallback');
+  const status = document.getElementById('scanner-status');
+
+  // Check if BarcodeDetector API is available
+  if ('BarcodeDetector' in window) {
+    scannerDetector = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'] });
+  }
+
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+  }).then(stream => {
+    scannerStream = stream;
+    video.srcObject = stream;
+    container.style.display = 'block';
+    startBtn.style.display = 'none';
+    stopBtn.style.display = '';
+    if (fallback) fallback.style.display = 'none';
+    if (status) status.textContent = store.lang === 'ar' ? 'جاهز للمسح' : 'Ready to scan';
+    video.play();
+    if (scannerDetector) {
+      scanFrame();
+    } else {
+      // No native BarcodeDetector — fall back to manual input
+      stopBarcodeScanner();
+      if (fallback) fallback.style.display = 'block';
+    }
+  }).catch(err => {
+    console.log('Camera not available:', err);
+    container.style.display = 'none';
+    if (fallback) fallback.style.display = 'block';
+    startBtn.style.display = 'none';
+  });
+}
+
+function scanFrame() {
+  if (!scannerStream) return;
+  const video = document.getElementById('scanner-video');
+  scannerDetector.detect(video).then(barcodes => {
+    if (barcodes.length > 0) {
+      const code = barcodes[0].rawValue;
+      if (code !== lastScannedBarcode) {
+        lastScannedBarcode = code;
+        document.getElementById('scanner-status').textContent = store.lang === 'ar' ? 'تم المسح!' : 'Scanned!';
+        stopBarcodeScanner();
+        lookupBarcode(code);
+      }
+    }
+  }).catch(() => {});
+  scannerAnimFrame = requestAnimationFrame(scanFrame);
+}
+
+function stopBarcodeScanner() {
+  if (scannerAnimFrame) cancelAnimationFrame(scannerAnimFrame);
+  if (scannerStream) {
+    scannerStream.getTracks().forEach(t => t.stop());
+    scannerStream = null;
+  }
+  const video = document.getElementById('scanner-video');
+  video.srcObject = null;
+  document.getElementById('scanner-camera-container').style.display = 'none';
+  document.getElementById('scanner-start-btn').style.display = '';
+  document.getElementById('scanner-stop-btn').style.display = 'none';
+  const fallback = document.getElementById('scanner-fallback');
+  if (fallback) fallback.style.display = 'block';
+}
+
+async function scanBarcodeFromFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const img = new Image();
+  img.src = URL.createObjectURL(file);
+  img.onload = async () => {
+    if ('BarcodeDetector' in window) {
+      const detector = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'] });
+      try {
+        const barcodes = await detector.detect(img);
+        if (barcodes.length > 0) {
+          lookupBarcode(barcodes[0].rawValue);
+        } else {
+          alert(store.lang === 'ar' ? 'لم يتم العثور على باركود. جرب صورة أوضح.' : 'No barcode found. Try a clearer image.');
+        }
+      } catch(e) {
+        alert(store.lang === 'ar' ? 'فشل في قراءة الباركود. أدخله يدوياً.' : 'Failed to read barcode. Enter it manually.');
+      }
+    } else {
+      alert(store.lang === 'ar' ? 'متصفحك لا يدعم المسح التلقائي. أدخل الباركود يدوياً.' : 'Your browser doesn\'t support auto-scanning. Enter the barcode manually.');
+    }
+    URL.revokeObjectURL(img.src);
+  };
+  input.value = '';
+}
+
+async function lookupBarcode(code) {
+  if (!code || code.trim().length < 4) { alert('Please enter a valid barcode.'); return; }
+  code = code.trim();
+  const status = document.getElementById('scanner-status');
+  if (status) status.textContent = store.lang === 'ar' ? 'جارٍ البحث...' : 'Looking up...';
+  const resultPanel = document.getElementById('scanner-result-panel');
+  const resultContent = document.getElementById('scanner-result-content');
+  const logBtn = document.getElementById('scanner-log-meal-btn');
+
+  try {
+    const resp = await fetch('https://world.openfoodfacts.org/api/v0/product/' + encodeURIComponent(code) + '.json');
+    const data = await resp.json();
+    if (data.status === 1 && data.product) {
+      const p = data.product;
+      const n = p.nutriments || {};
+      const isAr = (store.lang === 'ar');
+      const name = p.product_name || (isAr ? 'منتج غير معروف' : 'Unknown Product');
+      const brand = p.brands || '';
+      const kcal = Math.round(n['energy-kcal_100g'] || n['energy-kcal'] || 0);
+      const protein = Math.round((n.proteins_100g || 0) * 10) / 10;
+      const carbs = Math.round((n.carbohydrates_100g || 0) * 10) / 10;
+      const fat = Math.round((n.fat_100g || 0) * 10) / 10;
+      const fiber = Math.round((n.fiber_100g || 0) * 10) / 10;
+      const serving = p.serving_size || (isAr ? 'لكل 100غ' : 'per 100g');
+      const img = p.image_small_url || p.image_url || '';
+
+      lastScanResult = { name, brand, kcal, protein, carbs, fat, fiber, serving, barcode: code, img, loggedAt: new Date().toISOString() };
+
+      resultContent.innerHTML = `
+        <div class="scanner-product-card">
+          ${img ? `<img src="${img}" alt="${name}" style="width:80px;height:80px;object-fit:cover;border-radius:10px;float:right;margin-left:12px;" onerror="this.style.display='none'" />` : ''}
+          <h4>${name}</h4>
+          <div class="brand">${brand} · ${serving}</div>
+          <div class="nutri-grid">
+            <div class="scanner-nutri-item"><b>${kcal}</b><small>${isAr ? 'سعرة' : 'kcal'}</small></div>
+            <div class="scanner-nutri-item"><b>${protein}g</b><small>${isAr ? 'بروتين' : 'Protein'}</small></div>
+            <div class="scanner-nutri-item"><b>${carbs}g</b><small>${isAr ? 'كربوهيدرات' : 'Carbs'}</small></div>
+            <div class="scanner-nutri-item"><b>${fat}g</b><small>${isAr ? 'دهون' : 'Fat'}</small></div>
+            <div class="scanner-nutri-item"><b>${fiber}g</b><small>${isAr ? 'ألياف' : 'Fiber'}</small></div>
+          </div>
+        </div>`;
+      resultPanel.classList.remove('hidden');
+      logBtn.style.display = '';
+      saveScannerHistory(lastScanResult);
+    } else {
+      resultContent.innerHTML = `<p style="color:var(--muted);text-align:center;padding:20px;">${store.lang === 'ar' ? 'لم يتم العثور على المنتج. جرب باركود آخر.' : 'Product not found. Try another barcode.'}</p>`;
+      resultPanel.classList.remove('hidden');
+      logBtn.style.display = 'none';
+    }
+  } catch(e) {
+    resultContent.innerHTML = `<p style="color:var(--red);text-align:center;padding:20px;">${store.lang === 'ar' ? 'خطأ في الاتصال. تحقق من الإنترنت.' : 'Connection error. Check your internet.'}</p>`;
+    resultPanel.classList.remove('hidden');
+    logBtn.style.display = 'none';
+  }
+  renderScannerHistory();
+}
+
+function logScannedProduct() {
+  if (!lastScanResult) return;
+  const log = getDietLog();
+  log.push({ ...lastScanResult, id: Date.now() });
+  saveDietLog(log);
+  renderDietLog();
+  document.getElementById('scanner-log-meal-btn').style.display = 'none';
+  const isAr = (store.lang === 'ar');
+  alert(isAr ? 'تمت إضافة المنتج إلى سجل الوجبات!' : 'Product added to meal log!');
+}
+
+function addManualMealLog() {
+  const isAr = (store.lang === 'ar');
+  const name = prompt(isAr ? 'اسم الوجبة:' : 'Meal name:');
+  if (!name) return;
+  const kcal = parseInt(prompt(isAr ? 'السعرات الحرارية:' : 'Calories (kcal):') || '0');
+  const protein = parseFloat(prompt(isAr ? 'البروتين (غ):' : 'Protein (g):') || '0');
+  const carbs = parseFloat(prompt(isAr ? 'الكربوهيدرات (غ):' : 'Carbs (g):') || '0');
+  const fat = parseFloat(prompt(isAr ? 'الدهون (غ):' : 'Fat (g):') || '0');
+  const log = getDietLog();
+  log.push({ id: Date.now(), name, brand: '', kcal, protein, carbs, fat, fiber: 0, serving: isAr ? 'يدوي' : 'manual', barcode: '', loggedAt: new Date().toISOString() });
+  saveDietLog(log);
+  renderDietLog();
+}
+
+function getDietLog() {
+  try {
+    const u = currentUser();
+    if (!u) return [];
+    const key = 'volta_diet_log_' + u.email;
+    return JSON.parse(localStorage.getItem(key) || '[]');
+  } catch(e) { return []; }
+}
+
+function saveDietLog(log) {
+  const u = currentUser();
+  if (!u) return;
+  const key = 'volta_diet_log_' + u.email;
+  localStorage.setItem(key, JSON.stringify(log));
+  // Also save to IndexedDB for offline
+  if (typeof voltaDB !== 'undefined') {
+    voltaDB.put('dietLog', { email: u.email, log });
+  }
+}
+
+function deleteDietLogEntry(id) {
+  const log = getDietLog().filter(x => x.id !== id);
+  saveDietLog(log);
+  renderDietLog();
+}
+
+function renderDietLog() {
+  const container = document.getElementById('diet-log-list');
+  if (!container) return;
+  const log = getDietLog();
+  const isAr = (store.lang === 'ar');
+  const today = new Date().toISOString().split('T')[0];
+  const todayLog = log.filter(x => (x.loggedAt || '').startsWith(today));
+  if (todayLog.length === 0) {
+    container.innerHTML = `<p style="color:var(--muted);text-align:center;padding:12px;">${isAr ? 'لم تسجل أي وجبات بعد. استخدم ماسح الباركود أو أضف يدوياً.' : 'No meals logged yet. Use the barcode scanner or add manually.'}</p>`;
+    return;
+  }
+  const totalKcal = todayLog.reduce((s, x) => s + (x.kcal || 0), 0);
+  container.innerHTML = `<div style="text-align:center;margin-bottom:12px;padding:8px;background:var(--accent-soft);border-radius:10px;"><b style="font-size:1.2rem;color:var(--accent);">${totalKcal}</b> <small style="color:var(--muted);">${isAr ? 'سعرة اليوم' : 'kcal today'}</small></div>` +
+    todayLog.map(x => `<div class="diet-log-entry"><div class="diet-log-icon"><i class="fa-solid fa-utensils"></i></div><div class="diet-log-body"><b>${x.name}</b><small>${x.brand ? x.brand + ' · ' : ''}${x.serving || ''}</small></div><span class="diet-log-kcal">${x.kcal || 0} kcal</span><button class="diet-log-del" onclick="deleteDietLogEntry(${x.id})" title="Remove"><i class="fa-solid fa-xmark"></i></button></div>`).join('');
+}
+
+function saveScannerHistory(item) {
+  try {
+    const key = 'volta_scanner_history';
+    const history = JSON.parse(localStorage.getItem(key) || '[]');
+    history.unshift({ name: item.name, brand: item.brand, kcal: item.kcal, barcode: item.barcode, date: new Date().toISOString() });
+    if (history.length > 20) history.length = 20;
+    localStorage.setItem(key, JSON.stringify(history));
+  } catch(e) {}
+}
+
+function renderScannerHistory() {
+  const container = document.getElementById('scanner-history');
+  if (!container) return;
+  const isAr = (store.lang === 'ar');
+  try {
+    const history = JSON.parse(localStorage.getItem('volta_scanner_history') || '[]');
+    if (history.length === 0) {
+      container.innerHTML = `<p style="color:var(--muted);text-align:center;padding:12px;">${isAr ? 'لا توجد عمليات مسح سابقة.' : 'No recent scans.'}</p>`;
+      return;
+    }
+    container.innerHTML = history.map(x => {
+      const d = new Date(x.date).toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { month: 'short', day: 'numeric' });
+      return `<div class="scanner-history-item" style="cursor:pointer;" onclick="lookupBarcode('${x.barcode}')"><div class="sh-icon"><i class="fa-solid fa-barcode"></i></div><div class="sh-body"><b>${x.name}</b><small>${x.brand || ''} · ${d}</small></div><span class="sh-kcal">${x.kcal || 0} kcal</span></div>`;
+    }).join('');
+  } catch(e) { container.innerHTML = ''; }
+}
+
+// ============================================================
+// WEB AUDIO API REST TIMER & INTERVAL BEEPER
+// ============================================================
+let timerAudioCtx = null;
+let timerMode = 'rest';
+let timerRunning = false;
+let timerPaused = false;
+let timerInterval = null;
+let timerRemaining = 0;
+let timerTotal = 0;
+let timerCurrentRound = 1;
+let timerTotalRounds = 8;
+let timerPhase = 'idle'; // idle, work, rest, countdown
+let restDuration = 90;
+let timerLaps = [];
+let timerStartTime = null;
+let timerElapsed = 0;
+
+function getTimerAudioCtx() {
+  if (!timerAudioCtx) timerAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (timerAudioCtx.state === 'suspended') timerAudioCtx.resume();
+  return timerAudioCtx;
+}
+
+function playBeep(freq, duration, type) {
+  if (!document.getElementById('timer-sound-toggle').checked) return;
+  try {
+    const ctx = getTimerAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (duration / 1000));
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + (duration / 1000));
+  } catch(e) {}
+}
+
+function playCountdownBeep() { playBeep(880, 150, 'square'); }
+function playWorkBeep() { playBeep(1200, 300, 'sawtooth'); }
+function playRestBeep() { playBeep(600, 300, 'sine'); }
+function playDoneBeep() {
+  playBeep(1000, 200, 'square');
+  setTimeout(() => playBeep(1200, 200, 'square'), 250);
+  setTimeout(() => playBeep(1500, 400, 'square'), 500);
+}
+
+function vibrateDevice(pattern) {
+  if (!document.getElementById('timer-vibrate-toggle').checked) return;
+  try { navigator.vibrate(pattern); } catch(e) {}
+}
+
+function testTimerSound() {
+  playBeep(800, 200, 'sine');
+  setTimeout(() => playBeep(1000, 200, 'sine'), 300);
+  setTimeout(() => playBeep(1200, 300, 'sine'), 600);
+  vibrateDevice([100, 50, 100]);
+}
+
+function setTimerMode(mode) {
+  if (timerRunning) return;
+  timerMode = mode;
+  document.querySelectorAll('#timer-mode-tabs .btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('timer-mode-' + mode).classList.add('active');
+  document.getElementById('rest-settings').style.display = mode === 'rest' ? '' : 'none';
+  document.getElementById('hiit-settings').style.display = mode === 'hiit' ? '' : 'none';
+  document.getElementById('tabata-settings').style.display = mode === 'tabata' ? '' : 'none';
+  document.getElementById('stopwatch-settings').style.display = mode === 'stopwatch' ? '' : 'none';
+  document.getElementById('timer-round-info').style.display = mode === 'stopwatch' ? 'none' : '';
+  document.getElementById('timer-lap-btn').style.display = mode === 'stopwatch' ? '' : 'none';
+  resetTimer();
+}
+
+function adjustRestTime(delta) {
+  restDuration = Math.max(10, Math.min(300, restDuration + delta));
+  document.getElementById('rest-duration-display').textContent = restDuration;
+  document.getElementById('rest-duration-slider').value = restDuration;
+}
+
+function updateRestDuration(val) {
+  restDuration = parseInt(val);
+  document.getElementById('rest-duration-display').textContent = restDuration;
+}
+
+function formatTimerTime(seconds) {
+  const m = Math.floor(Math.abs(seconds) / 60).toString().padStart(2, '0');
+  const s = (Math.abs(seconds) % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+function startTimer() {
+  if (timerRunning && timerPaused) {
+    // Resume
+    timerPaused = false;
+    document.getElementById('timer-pause-btn').style.display = '';
+    document.getElementById('timer-start-btn').style.display = 'none';
+    return;
+  }
+  if (timerRunning) return;
+
+  // Initialize audio context on user gesture
+  getTimerAudioCtx();
+
+  timerRunning = true;
+  timerPaused = false;
+  timerLaps = [];
+  timerCurrentRound = 1;
+  timerStartTime = Date.now();
+  timerElapsed = 0;
+
+  document.getElementById('timer-start-btn').style.display = 'none';
+  document.getElementById('timer-pause-btn').style.display = '';
+  document.getElementById('timer-reset-btn').style.display = '';
+  document.getElementById('timer-laps').innerHTML = '';
+
+  if (timerMode === 'rest') {
+    timerTotal = restDuration;
+    timerRemaining = restDuration;
+    timerPhase = 'rest';
+    updateTimerPhaseLabel();
+    timerInterval = setInterval(tickRestTimer, 1000);
+  } else if (timerMode === 'hiit') {
+    const workTime = parseInt(document.getElementById('hiit-work').value) || 40;
+    const restTime = parseInt(document.getElementById('hiit-rest').value) || 20;
+    timerTotalRounds = parseInt(document.getElementById('hiit-rounds').value) || 8;
+    timerTotal = workTime;
+    timerRemaining = workTime;
+    timerPhase = 'work';
+    timerCurrentRound = 1;
+    updateTimerRoundInfo();
+    updateTimerPhaseLabel();
+    timerInterval = setInterval(() => tickHIITTimer(workTime, restTime), 1000);
+  } else if (timerMode === 'tabata') {
+    timerTotalRounds = parseInt(document.getElementById('tabata-rounds').value) || 8;
+    timerTotal = 20;
+    timerRemaining = 20;
+    timerPhase = 'work';
+    timerCurrentRound = 1;
+    updateTimerRoundInfo();
+    updateTimerPhaseLabel();
+    timerInterval = setInterval(() => tickHIITTimer(20, 10), 1000);
+  } else if (timerMode === 'stopwatch') {
+    timerPhase = 'work';
+    updateTimerPhaseLabel();
+    timerInterval = setInterval(tickStopwatch, 100);
+  }
+
+  // 3-2-1 countdown
+  if (document.getElementById('timer-countdown-toggle').checked && timerMode !== 'stopwatch') {
+    clearInterval(timerInterval);
+    let countdown = 3;
+    timerRemaining = countdown;
+    timerPhase = 'countdown';
+    updateTimerPhaseLabel();
+    document.getElementById('timer-display').textContent = formatTimerTime(countdown);
+    playCountdownBeep();
+    vibrateDevice(50);
+    const countdownInt = setInterval(() => {
+      countdown--;
+      if (countdown > 0) {
+        document.getElementById('timer-display').textContent = formatTimerTime(countdown);
+        playCountdownBeep();
+        vibrateDevice(50);
+      } else {
+        clearInterval(countdownInt);
+        timerPhase = timerMode === 'rest' ? 'rest' : 'work';
+        if (timerMode === 'rest') {
+          timerRemaining = restDuration;
+          timerInterval = setInterval(tickRestTimer, 1000);
+        } else if (timerMode === 'hiit') {
+          const workTime = parseInt(document.getElementById('hiit-work').value) || 40;
+          const restTime = parseInt(document.getElementById('hiit-rest').value) || 20;
+          timerRemaining = workTime;
+          timerInterval = setInterval(() => tickHIITTimer(workTime, restTime), 1000);
+        } else if (timerMode === 'tabata') {
+          timerRemaining = 20;
+          timerInterval = setInterval(() => tickHIITTimer(20, 10), 1000);
+        }
+        updateTimerPhaseLabel();
+        document.getElementById('timer-display').textContent = formatTimerTime(timerRemaining);
+        playWorkBeep();
+        vibrateDevice([100, 50, 100]);
+      }
+    }, 1000);
+  }
+}
+
+function tickRestTimer() {
+  if (timerPaused) return;
+  timerRemaining--;
+  document.getElementById('timer-display').textContent = formatTimerTime(timerRemaining);
+  if (timerRemaining <= 3 && timerRemaining > 0) {
+    playCountdownBeep();
+    vibrateDevice(50);
+  }
+  if (timerRemaining <= 0) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    timerPhase = 'done';
+    updateTimerPhaseLabel();
+    playDoneBeep();
+    vibrateDevice([200, 100, 200, 100, 200]);
+    document.getElementById('timer-pause-btn').style.display = 'none';
+    document.getElementById('timer-start-btn').style.display = '';
+    document.getElementById('timer-start-btn').querySelector('span').textContent = store.lang === 'ar' ? 'إعادة' : 'Restart';
+  }
+}
+
+function tickHIITTimer(workTime, restTime) {
+  if (timerPaused) return;
+  timerRemaining--;
+  document.getElementById('timer-display').textContent = formatTimerTime(timerRemaining);
+  if (timerRemaining <= 3 && timerRemaining > 0) {
+    playCountdownBeep();
+    vibrateDevice(50);
+  }
+  if (timerRemaining <= 0) {
+    if (timerPhase === 'work') {
+      // Switch to rest
+      timerPhase = 'rest';
+      timerRemaining = restTime;
+      playRestBeep();
+      vibrateDevice([100]);
+    } else {
+      // Rest over, next round or done
+      timerCurrentRound++;
+      if (timerCurrentRound > timerTotalRounds) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        timerPhase = 'done';
+        updateTimerPhaseLabel();
+        playDoneBeep();
+        vibrateDevice([200, 100, 200, 100, 200]);
+        document.getElementById('timer-pause-btn').style.display = 'none';
+        document.getElementById('timer-start-btn').style.display = '';
+        document.getElementById('timer-start-btn').querySelector('span').textContent = store.lang === 'ar' ? 'إعادة' : 'Restart';
+        return;
+      }
+      timerPhase = 'work';
+      timerRemaining = workTime;
+      playWorkBeep();
+      vibrateDevice([100, 50, 100]);
+    }
+    updateTimerRoundInfo();
+    updateTimerPhaseLabel();
+  }
+}
+
+function tickStopwatch() {
+  if (timerPaused) return;
+  timerElapsed = Math.floor((Date.now() - timerStartTime) / 1000);
+  document.getElementById('timer-display').textContent = formatTimerTime(timerElapsed);
+}
+
+function pauseTimer() {
+  timerPaused = true;
+  document.getElementById('timer-pause-btn').style.display = 'none';
+  document.getElementById('timer-start-btn').style.display = '';
+  document.getElementById('timer-start-btn').querySelector('span').textContent = store.lang === 'ar' ? 'استئناف' : 'Resume';
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerPaused = false;
+  timerRemaining = 0;
+  timerPhase = 'idle';
+  timerLaps = [];
+  timerElapsed = 0;
+  document.getElementById('timer-display').textContent = '00:00';
+  document.getElementById('timer-pause-btn').style.display = 'none';
+  document.getElementById('timer-reset-btn').style.display = 'none';
+  document.getElementById('timer-lap-btn').style.display = timerMode === 'stopwatch' ? '' : 'none';
+  document.getElementById('timer-start-btn').style.display = '';
+  const startSpan = document.getElementById('timer-start-btn').querySelector('span');
+  if (startSpan) startSpan.textContent = store.lang === 'ar' ? 'ابدأ' : 'Start';
+  document.getElementById('timer-phase-label').style.display = 'none';
+  document.getElementById('timer-laps').innerHTML = '';
+}
+
+function recordLap() {
+  if (!timerRunning || timerMode !== 'stopwatch') return;
+  timerLaps.push(timerElapsed);
+  const isAr = (store.lang === 'ar');
+  document.getElementById('timer-laps').innerHTML = timerLaps.map((l, i) =>
+    `<div class="timer-lap-item"><span>${isAr ? 'لفة' : 'Lap'} ${i + 1}</span><b>${formatTimerTime(l)}</b></div>`
+  ).reverse().join('');
+}
+
+function updateTimerRoundInfo() {
+  document.getElementById('timer-current-round').textContent = timerCurrentRound;
+  document.getElementById('timer-total-rounds').textContent = timerTotalRounds;
+}
+
+function updateTimerPhaseLabel() {
+  const label = document.getElementById('timer-phase-label');
+  const isAr = (store.lang === 'ar');
+  label.style.display = 'inline-block';
+  label.className = '';
+  if (timerPhase === 'countdown') {
+    label.textContent = isAr ? 'العد التنازلي...' : 'Get ready...';
+    label.classList.add('timer-phase-rest');
+  } else if (timerPhase === 'work') {
+    label.textContent = isAr ? 'عمل!' : 'WORK!';
+    label.classList.add('timer-phase-work');
+  } else if (timerPhase === 'rest') {
+    label.textContent = isAr ? 'راحة' : 'REST';
+    label.classList.add('timer-phase-rest');
+  } else if (timerPhase === 'done') {
+    label.textContent = isAr ? 'انتهى!' : 'DONE!';
+    label.classList.add('timer-phase-done');
+  } else {
+    label.style.display = 'none';
+  }
+}
+
+// ============================================================
+// PWA & OFFLINE-FIRST — IndexedDB + Service Worker
+// ============================================================
+let voltaDB = null;
+
+function initIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('volta_offline_db', 2);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('users')) db.createObjectStore('users', { keyPath: 'email' });
+      if (!db.objectStoreNames.contains('dietLog')) db.createObjectStore('dietLog', { keyPath: 'email' });
+      if (!db.objectStoreNames.contains('coachAthletes')) db.createObjectStore('coachAthletes', { keyPath: 'coachEmail' });
+      if (!db.objectStoreNames.contains('settings')) db.createObjectStore('settings', { keyPath: 'key' });
+    };
+    request.onsuccess = (e) => {
+      voltaDB = e.target.result;
+      // Add helper methods
+      voltaDB.put = function(storeName, data) {
+        return new Promise((res, rej) => {
+          const tx = this.transaction(storeName, 'readwrite');
+          tx.objectStore(storeName).put(data);
+          tx.oncomplete = () => res();
+          tx.onerror = () => rej(tx.error);
+        });
+      };
+      voltaDB.get = function(storeName, key) {
+        return new Promise((res, rej) => {
+          const tx = this.transaction(storeName, 'readonly');
+          const req = tx.objectStore(storeName).get(key);
+          req.onsuccess = () => res(req.result);
+          req.onerror = () => rej(req.error);
+        });
+      };
+      voltaDB.getAll = function(storeName) {
+        return new Promise((res, rej) => {
+          const tx = this.transaction(storeName, 'readonly');
+          const req = tx.objectStore(storeName).getAll();
+          req.onsuccess = () => res(req.result);
+          req.onerror = () => rej(req.error);
+        });
+      };
+      resolve(voltaDB);
+    };
+    request.onerror = () => reject(request.error);
+  });
+}
+
+// Sync localStorage to IndexedDB for offline persistence
+function syncToIndexedDB() {
+  try {
+    const users = store.users;
+    if (users && voltaDB) {
+      Object.entries(users).forEach(([email, data]) => {
+        voltaDB.put('users', { email, data });
+      });
+    }
+    // Save settings
+    if (voltaDB) {
+      voltaDB.put('settings', { key: 'theme', value: store.theme });
+      voltaDB.put('settings', { key: 'lang', value: store.lang });
+    }
+  } catch(e) { console.log('IndexedDB sync error:', e); }
+}
+
+// Register Service Worker
+function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      console.log('Service Worker registered:', reg.scope);
+    }).catch(err => {
+      console.log('Service Worker registration failed:', err);
+    });
+  }
+}
+
+// Offline/Online detection
+function setupOfflineDetection() {
+  const banner = document.getElementById('offline-banner');
+  function updateOnlineStatus() {
+    if (banner) {
+      if (!navigator.onLine) {
+        banner.classList.add('visible');
+      } else {
+        banner.classList.remove('visible');
+      }
+    }
+  }
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  updateOnlineStatus();
+}
+
+// Initialize IndexedDB and sync on load
+initIndexedDB().then(() => {
+  console.log('IndexedDB initialized');
+  syncToIndexedDB();
+}).catch(e => {
+  console.log('IndexedDB init failed:', e);
+});
+
+// Auto-sync to IndexedDB periodically
+setInterval(syncToIndexedDB, 30000);
+
+// ============================================================
+// PATCH showTab — already merged above
+// ============================================================
+
+// ============================================================
+// Initialize on load
+// ============================================================
+registerServiceWorker();
+setupOfflineDetection();
+
+
+
+// Font Awesome fallback — if icons don't load, show text fallback
+(function() {
+  setTimeout(() => {
+    const testIcon = document.querySelector('.sidebar .brand i');
+    if (testIcon) {
+      const cs = window.getComputedStyle(testIcon, '::before');
+      if (!cs || cs.content === 'none' || cs.content === 'normal' || cs.fontFamily.indexOf('Font') === -1) {
+        // FA didn't load — replace icons with text in sidebar brands
+        document.querySelectorAll('.sidebar .brand i').forEach(icon => {
+          const fallback = document.createElement('span');
+          fallback.className = 'brand-icon-fallback';
+          fallback.textContent = 'V';
+          fallback.style.display = 'flex';
+          icon.replaceWith(fallback);
+        });
+      }
+    }
+  }, 3000);
+})();
+
 </script>
 </body>
 </html>
