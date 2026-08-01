@@ -39,18 +39,16 @@ body.ocr-active #chatbase-bubble-button, body.ocr-active #chatbase-bubble-window
 
 
 /* ===== BOTTOM NAVIGATION BAR (Mobile) ===== */
-.bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000; background: var(--white); border-top: 1px solid var(--line); padding: 4px 0 env(safe-area-inset-bottom, 6px); box-shadow: 0 -2px 12px rgba(0,0,0,.06); overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-.bottom-nav::-webkit-scrollbar { display: none; }
-.bottom-nav-inner { display: flex; min-width: max-content; width: 100%; }
-.bottom-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; flex: 0 0 auto; width: 64px; background: none; border: none; cursor: pointer; padding: 5px 0 3px; color: var(--muted); font-size: .58rem; font-weight: 600; font-family: inherit; transition: color .15s, transform .15s; min-height: 48px; position: relative; white-space: nowrap; }
-.bottom-nav-item i { font-size: 17px; transition: transform .15s; }
-.bottom-nav-item.active { color: var(--accent); }
+.bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000; background: var(--white); border-top: 1px solid var(--line); padding: 6px 8px env(safe-area-inset-bottom, 6px); box-shadow: 0 -2px 12px rgba(0,0,0,.06); }
+.bottom-nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px 0; }
+.bottom-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: none; border: none; cursor: pointer; padding: 4px 0 2px; color: var(--muted); font-size: .55rem; font-weight: 600; font-family: inherit; transition: color .15s, transform .15s; min-height: 42px; position: relative; white-space: nowrap; border-radius: 8px; }
+.bottom-nav-item i { font-size: 16px; transition: transform .15s; }
+.bottom-nav-item.active { color: var(--accent); background: var(--accent-soft); }
 .bottom-nav-item.active i { transform: scale(1.15); }
-.bottom-nav-item.active::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 20px; height: 3px; background: var(--accent); border-radius: 0 0 3px 3px; }
 .bottom-nav-item:active { transform: scale(.92); }
 /* AI chat button - repositioned above bottom nav on mobile */
 @media (max-width: 768px) {
-  #chatbase-bubble-button { bottom: 68px !important; }
+  #chatbase-bubble-button { bottom: 100px !important; }
 }
 body.dark-mode .bottom-nav { background: var(--white); border-top-color: var(--line); }
 
@@ -459,7 +457,7 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 
 
 /* RTL support for bottom nav */
-body.lang-ar .bottom-nav-inner { direction: rtl; }
+body.lang-ar .bottom-nav-grid { direction: rtl; }
 
 @media (max-width: 768px) {
   .ocr-panel { padding: 28px 20px; gap: 14px; }
@@ -885,7 +883,7 @@ html { scroll-behavior: smooth; }
 
   /* Main content takes full width with bottom nav padding */
   .main {
-    padding: 16px 16px 80px 16px !important;
+    padding: 16px 16px 100px 16px !important;
     width: 100% !important;
   }
 
@@ -984,7 +982,7 @@ html { scroll-behavior: smooth; }
     transform: translateX(0);
   }
   #mobile-menu-btn-coach { display: flex !important; }
-  #screen-coach-app .main { padding-top: 70px !important; padding-bottom: 80px !important; }
+  #screen-coach-app .main { padding-top: 70px !important; padding-bottom: 100px !important; }
 
   /* Athletes grid */
   .athletes-grid { grid-template-columns: 1fr; }
@@ -1066,8 +1064,8 @@ html { scroll-behavior: smooth; }
   .sports-grid { grid-template-columns: repeat(2, 1fr); }
   .safety-grid { grid-template-columns: repeat(2, 1fr); }
   .landing-hero h1 { font-size: 1.5rem; }
-  .bottom-nav-item { width: 58px; font-size: .54rem; }
-  .bottom-nav-item i { font-size: 15px; }
+  .bottom-nav-item { font-size: .5rem; min-height: 38px; }
+  .bottom-nav-item i { font-size: 14px; }
 }
 
 /* ===== PERFORMANCE: Keep animations smooth on mobile ===== */
@@ -1604,7 +1602,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 
 
     <nav id="bottom-nav" class="bottom-nav">
-      <div class="bottom-nav-inner">
+      <div class="bottom-nav-grid">
         <button class="bottom-nav-item active" data-btab="home" onclick="showTab('home')">
           <i class="fa-solid fa-table-cells-large"></i>
           <span data-ar="الرئيسية">Home</span>
@@ -2617,11 +2615,6 @@ showTab = function(name) {
   bottomNavItems.forEach(item => {
     item.classList.toggle('active', item.dataset.btab === activeBtab);
   });
-  // Scroll the active item into view
-  const activeItem = document.querySelector('#bottom-nav .bottom-nav-item.active');
-  if (activeItem) {
-    activeItem.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
-  }
 };
 
 const origShowCoachTab = showCoachTab;
