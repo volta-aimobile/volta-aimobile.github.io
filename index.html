@@ -39,22 +39,20 @@ body.ocr-active #chatbase-bubble-button, body.ocr-active #chatbase-bubble-window
 
 
 /* ===== BOTTOM NAVIGATION BAR (Mobile) ===== */
-.bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000; background: var(--white); border-top: 1px solid var(--line); padding: 6px 0 env(safe-area-inset-bottom, 8px); box-shadow: 0 -2px 12px rgba(0,0,0,.06); }
-.bottom-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; background: none; border: none; cursor: pointer; padding: 6px 0; color: var(--muted); font-size: .65rem; font-weight: 600; font-family: inherit; transition: color .15s; min-height: 44px; }
-.bottom-nav-item i { font-size: 18px; transition: transform .15s; }
+.bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000; background: var(--white); border-top: 1px solid var(--line); padding: 4px 0 env(safe-area-inset-bottom, 6px); box-shadow: 0 -2px 12px rgba(0,0,0,.06); overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.bottom-nav::-webkit-scrollbar { display: none; }
+.bottom-nav-inner { display: flex; min-width: max-content; width: 100%; }
+.bottom-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; flex: 0 0 auto; width: 64px; background: none; border: none; cursor: pointer; padding: 5px 0 3px; color: var(--muted); font-size: .58rem; font-weight: 600; font-family: inherit; transition: color .15s, transform .15s; min-height: 48px; position: relative; white-space: nowrap; }
+.bottom-nav-item i { font-size: 17px; transition: transform .15s; }
 .bottom-nav-item.active { color: var(--accent); }
-.bottom-nav-item.active i { transform: scale(1.1); }
-.bottom-nav-more { display: none; position: fixed; bottom: 70px; left: 8px; right: 8px; z-index: 9001; background: var(--white); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,.15); border: 1px solid var(--line); padding: 16px; animation: fadeInUp .2s ease; }
-.bottom-nav-more.active { display: block; }
-.bottom-nav-more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.bottom-nav-more-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 4px; background: var(--bg); border: none; border-radius: 12px; cursor: pointer; color: var(--text); font-size: .7rem; font-weight: 600; font-family: inherit; transition: background .15s, transform .15s; min-height: 60px; }
-.bottom-nav-more-item i { font-size: 18px; color: var(--accent); }
-.bottom-nav-more-item:active { transform: scale(.95); background: var(--accent-soft); }
-.bottom-nav-more-overlay { display: none; position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,.2); }
-.bottom-nav-more-overlay.active { display: block; }
+.bottom-nav-item.active i { transform: scale(1.15); }
+.bottom-nav-item.active::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 20px; height: 3px; background: var(--accent); border-radius: 0 0 3px 3px; }
+.bottom-nav-item:active { transform: scale(.92); }
+/* AI chat button - repositioned above bottom nav on mobile */
+@media (max-width: 768px) {
+  #chatbase-bubble-button { bottom: 68px !important; }
+}
 body.dark-mode .bottom-nav { background: var(--white); border-top-color: var(--line); }
-body.dark-mode .bottom-nav-more { background: var(--white); border-color: var(--line); }
-body.dark-mode .bottom-nav-more-item { background: var(--bg); color: var(--text); }
 
 /* ===== ENHANCED ORIGINAL SPLASH SCREEN ===== */
 #splash-screen { position: fixed; inset: 0; background: #fff; z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; transition: opacity 0.5s ease, visibility 0.5s ease; }
@@ -461,7 +459,7 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 
 
 /* RTL support for bottom nav */
-body.lang-ar .bottom-nav-more-grid { direction: rtl; }
+body.lang-ar .bottom-nav-inner { direction: rtl; }
 
 @media (max-width: 768px) {
   .ocr-panel { padding: 28px 20px; gap: 14px; }
@@ -1068,9 +1066,8 @@ html { scroll-behavior: smooth; }
   .sports-grid { grid-template-columns: repeat(2, 1fr); }
   .safety-grid { grid-template-columns: repeat(2, 1fr); }
   .landing-hero h1 { font-size: 1.5rem; }
-  .bottom-nav-more-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  .bottom-nav-more-item { padding: 8px 2px; font-size: .65rem; min-height: 54px; }
-  .bottom-nav-more-item i { font-size: 16px; }
+  .bottom-nav-item { width: 58px; font-size: .54rem; }
+  .bottom-nav-item i { font-size: 15px; }
 }
 
 /* ===== PERFORMANCE: Keep animations smooth on mobile ===== */
@@ -1574,6 +1571,14 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div id="profile-goal-plan"></div>
         <button class="btn primary fit" onclick="openGoalModal(true)"><i class="fa-solid fa-pen-to-square"></i> <span data-ar="تعديل خطة الهدف">Edit Goal Plan</span></button>
       </div>
+
+      <!-- Quick actions (Settings & Logout) for mobile bottom nav -->
+      <div class="panel" style="margin-top:12px;">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn ghost" onclick="showTab('settings')" style="flex:1;min-width:140px;"><i class="fa-solid fa-gear"></i> <span data-ar="الإعدادات">Settings</span></button>
+          <button class="btn ghost" onclick="logout()" style="flex:1;min-width:140px;color:var(--red);"><i class="fa-solid fa-right-from-bracket"></i> <span data-ar="خروج">Log out</span></button>
+        </div>
+      </div>
     </div>
 
     <div id="tab-settings" class="tab">
@@ -1599,63 +1604,49 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 
 
     <nav id="bottom-nav" class="bottom-nav">
-      <button class="bottom-nav-item active" data-btab="home" onclick="showTab('home')">
-        <i class="fa-solid fa-table-cells-large"></i>
-        <span data-ar="الرئيسية">Home</span>
-      </button>
-      <button class="bottom-nav-item" data-btab="sports" onclick="showTab('sports')">
-        <i class="fa-solid fa-dumbbell"></i>
-        <span data-ar="الرياضة">Sports</span>
-      </button>
-      <button class="bottom-nav-item" data-btab="daily" onclick="showTab('daily')">
-        <i class="fa-solid fa-list-check"></i>
-        <span data-ar="التمارين">Exercise</span>
-      </button>
-      <button class="bottom-nav-item" data-btab="diet" onclick="showTab('diet')">
-        <i class="fa-solid fa-utensils"></i>
-        <span data-ar="الغذاء">Diet</span>
-      </button>
-      <button class="bottom-nav-item" data-btab="more" onclick="toggleBottomNavMore()">
-        <i class="fa-solid fa-ellipsis"></i>
-        <span data-ar="المزيد">More</span>
-      </button>
-    </nav>
-    <div id="bottom-nav-more" class="bottom-nav-more">
-      <div class="bottom-nav-more-grid">
-        <button class="bottom-nav-more-item" onclick="showTab('marathon');closeBottomNavMore()">
+      <div class="bottom-nav-inner">
+        <button class="bottom-nav-item active" data-btab="home" onclick="showTab('home')">
+          <i class="fa-solid fa-table-cells-large"></i>
+          <span data-ar="الرئيسية">Home</span>
+        </button>
+        <button class="bottom-nav-item" data-btab="sports" onclick="showTab('sports')">
+          <i class="fa-solid fa-dumbbell"></i>
+          <span data-ar="الرياضة">Sports</span>
+        </button>
+        <button class="bottom-nav-item" data-btab="daily" onclick="showTab('daily')">
+          <i class="fa-solid fa-list-check"></i>
+          <span data-ar="التمارين">Exercise</span>
+        </button>
+        <button class="bottom-nav-item" data-btab="marathon" onclick="showTab('marathon')">
           <i class="fa-solid fa-map-location-dot"></i>
           <span data-ar="الماراثون">Marathon</span>
         </button>
-        <button class="bottom-nav-more-item" onclick="showTab('calc');closeBottomNavMore()">
+        <button class="bottom-nav-item" data-btab="diet" onclick="showTab('diet')">
+          <i class="fa-solid fa-utensils"></i>
+          <span data-ar="الغذاء">Diet</span>
+        </button>
+        <button class="bottom-nav-item" data-btab="calc" onclick="showTab('calc')">
           <i class="fa-solid fa-calculator"></i>
           <span data-ar="الحاسبة">Calc</span>
         </button>
-        <button class="bottom-nav-more-item" onclick="showTab('weather');closeBottomNavMore()">
+        <button class="bottom-nav-item" data-btab="weather" onclick="showTab('weather')">
           <i class="fa-solid fa-cloud-sun"></i>
           <span data-ar="الطقس">Weather</span>
         </button>
-        <button class="bottom-nav-more-item" onclick="showTab('moodmorph');closeBottomNavMore()">
+        <button class="bottom-nav-item" data-btab="moodmorph" onclick="showTab('moodmorph')">
           <i class="fa-solid fa-wand-magic-sparkles"></i>
           <span data-ar="المزاج">Mood</span>
         </button>
-        <button class="bottom-nav-more-item" onclick="showTab('reminders');closeBottomNavMore()">
+        <button class="bottom-nav-item" data-btab="reminders" onclick="showTab('reminders')">
           <i class="fa-solid fa-bell"></i>
           <span data-ar="التذكيرات">Reminders</span>
         </button>
-        <button class="bottom-nav-more-item" onclick="showTab('profile');closeBottomNavMore()">
+        <button class="bottom-nav-item" data-btab="profile" onclick="showTab('profile')">
           <i class="fa-solid fa-user"></i>
           <span data-ar="الملف">Profile</span>
         </button>
-        <button class="bottom-nav-more-item" onclick="showTab('settings');closeBottomNavMore()">
-          <i class="fa-solid fa-gear"></i>
-          <span data-ar="الإعدادات">Settings</span>
-        </button>
-        <button class="bottom-nav-more-item" onclick="logout();closeBottomNavMore()">
-          <i class="fa-solid fa-right-from-bracket"></i>
-          <span data-ar="خروج">Logout</span>
-        </button>
       </div>
-    </div>
+    </nav>
 
 <div id="session-overlay">
   <button class="session-exit-btn" onclick="exitSession()">&times;</button>
@@ -2145,6 +2136,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
 .de-rest-label { font-weight: 600; color: var(--muted); }
 .de-rest-display { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 30px; text-align: center; }
 .de-rest-timer .btn { margin-top: 0 !important; padding: 4px 10px !important; font-size: .75rem !important; min-height: 28px !important; }
+.de-rest-btns { margin-left: auto; display: flex; gap: 6px; align-items: center; margin-top: -2px; }
 
 /* Mobile fixes for new features */
 @media (max-width: 768px) {
@@ -2611,45 +2603,25 @@ showTab = function(name) {
 
 
 // ===== BOTTOM NAVIGATION BAR (Mobile) =====
-function toggleBottomNavMore() {
-  const more = document.getElementById('bottom-nav-more');
-  let overlay = document.getElementById('bottom-nav-more-overlay');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'bottom-nav-more-overlay';
-    overlay.className = 'bottom-nav-more-overlay';
-    overlay.onclick = closeBottomNavMore;
-    document.getElementById('screen-app').appendChild(overlay);
-  }
-  const isActive = more.classList.contains('active');
-  if (isActive) {
-    closeBottomNavMore();
-  } else {
-    more.classList.add('active');
-    overlay.classList.add('active');
-  }
-}
-function closeBottomNavMore() {
-  const more = document.getElementById('bottom-nav-more');
-  const overlay = document.getElementById('bottom-nav-more-overlay');
-  if (more) more.classList.remove('active');
-  if (overlay) overlay.classList.remove('active');
-}
 
 // Update bottom nav active state when tab changes
 const origShowTabForBottomNav = showTab;
 showTab = function(name) {
-  closeBottomNavMore();
   origShowTabForBottomNav(name);
   // Update bottom nav active state
   const bottomNavItems = document.querySelectorAll('#bottom-nav .bottom-nav-item');
   const tabToBtab = { home: 'home', sports: 'sports', daily: 'daily', diet: 'diet',
-    marathon: 'more', calc: 'more', weather: 'more', moodmorph: 'more',
-    reminders: 'more', profile: 'more', settings: 'more' };
+    marathon: 'marathon', calc: 'calc', weather: 'weather', moodmorph: 'moodmorph',
+    reminders: 'reminders', profile: 'profile', settings: 'profile' };
   const activeBtab = tabToBtab[name] || 'home';
   bottomNavItems.forEach(item => {
     item.classList.toggle('active', item.dataset.btab === activeBtab);
   });
+  // Scroll the active item into view
+  const activeItem = document.querySelector('#bottom-nav .bottom-nav-item.active');
+  if (activeItem) {
+    activeItem.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
+  }
 };
 
 const origShowCoachTab = showCoachTab;
@@ -3750,7 +3722,7 @@ function renderDailyExercise() {
           <button class="btn ghost small" style="flex-shrink:0;" onclick="resetDailyPlan()"><i class="fa-solid fa-rotate-right"></i> <span data-ar="خطة جديدة">${newPlanLabel}</span></button>
         </div>
         <div class="workout-list-container" id="workout-list-container"></div>
-        <button class="btn primary" style="width:100%;margin-top:24px;${deState.workouts.every(w => w.done) ? '' : 'opacity:.5;pointer-events:none;'}" onclick="finishDailyWorkout()"><i class="fa-solid fa-check"></i> ${finishLabel}</button>
+        <button class="btn primary" id="finish-workout-btn" style="width:100%;margin-top:24px;${deState.workouts.every(w => w.done) ? '' : 'opacity:.5;cursor:not-allowed;'}" ${deState.workouts.every(w => w.done) ? '' : 'disabled'} onclick="finishDailyWorkout()"><i class="fa-solid fa-check"></i> ${finishLabel}</button>
         ${!deState.workouts.every(w => w.done) ? `<p style="text-align:center;color:var(--muted);font-size:.82rem;margin-top:8px;">${ar ? 'أكمل جميع التمارين أولاً لإنهاء اليوم' : 'Complete all exercises to finish the day'}</p>` : ''}
       </div>
     `;
@@ -3884,7 +3856,7 @@ function renderWorkoutList() {
             <i class="fa-solid fa-hourglass-half" style="color:var(--accent);font-size:.9rem;"></i>
             <span class="de-rest-label">${restLabel}</span>
             <span class="de-rest-display" id="de-rest-display-${nextIdx}">60${restSecsLabel}</span>
-            <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
+            <div class="de-rest-btns">
               <button class="btn ghost small" style="padding:3px 10px;font-size:.75rem;min-height:28px;" onclick="skipDeRest(${nextIdx})">${skipLabel}</button>
               <button class="btn ghost small" style="padding:3px 10px;font-size:.75rem;min-height:28px;" onclick="startDeRest(${nextIdx})"><i class="fa-solid fa-play"></i></button>
             </div>
@@ -4018,12 +3990,18 @@ function completeWorkout(index) {
   if (deState.currentWorkout >= deState.workouts.length) {
     alert(ar ? 'أحسنت! لقد أكملت جميع التمارين.' : 'All workouts completed! Great job.');
   }
+  // Update finish button state when all workouts are done
+  const finishBtn = document.getElementById('finish-workout-btn');
+  if (finishBtn && deState.workouts.every(w => w.done)) {
+    finishBtn.disabled = false;
+    finishBtn.style.opacity = '1';
+    finishBtn.style.cursor = 'pointer';
+  }
 }
 function closeWorkoutDetail() { closeModal('workout-detail-modal'); if (workoutTimerInt) clearInterval(workoutTimerInt); workoutTimerStart = null; }
 function finishDailyWorkout() {
   const ar = (store.lang === 'ar');
-  if (deState.workouts.some(w => !w.done)) {
-    alert(ar ? 'أكمل جميع التمارين أولاً قبل إنهاء اليوم.' : 'Please complete all exercises before finishing the day.');
+  if (!deState.workouts.every(w => w.done)) {
     return;
   }
   // Mark today as completed
