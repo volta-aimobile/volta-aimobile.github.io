@@ -38,19 +38,63 @@ body:not(.app-active) #chatbase-bubble-button, body:not(.app-active) #chatbase-b
 body.ocr-active #chatbase-bubble-button, body.ocr-active #chatbase-bubble-window, body.ocr-active #chatbase-message-bubbles, body.ocr-active .chatbase-launcher, body.ocr-active iframe[src*="chatbase.co"], body.ocr-active #chatbase-bubble-button + *, body.ocr-active #chatbase-bubble-window + * { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -1 !important; }
 
 
+
+
 /* ===== BOTTOM NAVIGATION BAR (Mobile) ===== */
-.bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000; background: var(--white); border-top: 1px solid var(--line); padding: 6px 8px env(safe-area-inset-bottom, 6px); box-shadow: 0 -2px 12px rgba(0,0,0,.06); }
-.bottom-nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px 0; }
-.bottom-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: none; border: none; cursor: pointer; padding: 4px 0 2px; color: var(--muted); font-size: .55rem; font-weight: 600; font-family: inherit; transition: color .15s, transform .15s; min-height: 42px; position: relative; white-space: nowrap; border-radius: 8px; }
-.bottom-nav-item i { font-size: 16px; transition: transform .15s; }
-.bottom-nav-item.active { color: var(--accent); background: var(--accent-soft); }
-.bottom-nav-item.active i { transform: scale(1.15); }
-.bottom-nav-item:active { transform: scale(.92); }
-/* AI chat button - repositioned above bottom nav on mobile */
+.bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000; background: rgba(255,255,255,.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 6px 12px env(safe-area-inset-bottom, 8px); }
+.bottom-nav-items { display: flex; justify-content: space-around; align-items: center; }
+.bottom-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 6px 12px; border-radius: 14px; color: #6B7280; font-size: .6rem; font-weight: 500; font-family: inherit; transition: color .2s, background .2s; min-height: 50px; position: relative; }
+.bottom-nav-item i { font-size: 20px; transition: color .2s; }
+.bottom-nav-item.active { color: var(--accent); background: rgba(100,149,237,.12); }
+.bottom-nav-item.active i { color: var(--accent); }
+.bottom-nav-item:active { transform: scale(.93); }
+/* More popup */
+.bottom-nav-more { display: none; position: fixed; bottom: 72px; left: 12px; right: 12px; z-index: 9001; background: var(--white); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,.15); border: 1px solid var(--line); padding: 12px; animation: fadeInUp .2s ease; }
+.bottom-nav-more.active { display: block; }
+.bottom-nav-more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.bottom-nav-more-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 4px; background: var(--bg); border: none; border-radius: 12px; cursor: pointer; color: var(--text); font-size: .68rem; font-weight: 600; font-family: inherit; transition: background .15s, transform .15s; min-height: 58px; }
+.bottom-nav-more-item i { font-size: 18px; color: var(--accent); }
+.bottom-nav-more-item:active { transform: scale(.95); background: var(--accent-soft); }
+.bottom-nav-more-overlay { display: none; position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,.2); }
+.bottom-nav-more-overlay.active { display: block; }
+/* AI chat button above nav on mobile */
 @media (max-width: 768px) {
-  #chatbase-bubble-button { bottom: 100px !important; }
+  #chatbase-bubble-button { bottom: 80px !important; }
 }
-body.dark-mode .bottom-nav { background: var(--white); border-top-color: var(--line); }
+body.dark-mode .bottom-nav { background: rgba(26,31,41,.95); }
+body.dark-mode .bottom-nav-item { color: #8b95a7; }
+body.dark-mode .bottom-nav-item.active { color: var(--accent); background: rgba(100,149,237,.15); }
+body.dark-mode .bottom-nav-more { background: var(--white); border-color: var(--line); }
+body.dark-mode .bottom-nav-more-item { background: var(--bg); color: var(--text); }
+body.lang-ar .bottom-nav-more-grid { direction: rtl; }
+
+/* ===== BOTTOM NAVIGATION BAR (Mobile) ===== */
+.bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000; background: rgba(255,255,255,.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 6px 12px env(safe-area-inset-bottom, 8px); }
+.bottom-nav-items { display: flex; justify-content: space-around; align-items: center; }
+.bottom-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 6px 12px; border-radius: 14px; color: #6B7280; font-size: .6rem; font-weight: 500; font-family: inherit; transition: color .2s, background .2s; min-height: 50px; position: relative; }
+.bottom-nav-item i { font-size: 20px; transition: color .2s; }
+.bottom-nav-item.active { color: var(--accent); background: rgba(100,149,237,.12); }
+.bottom-nav-item.active i { color: var(--accent); }
+.bottom-nav-item:active { transform: scale(.93); }
+/* More popup */
+.bottom-nav-more { display: none; position: fixed; bottom: 72px; left: 12px; right: 12px; z-index: 9001; background: var(--white); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,.15); border: 1px solid var(--line); padding: 12px; animation: fadeInUp .2s ease; }
+.bottom-nav-more.active { display: block; }
+.bottom-nav-more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.bottom-nav-more-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 4px; background: var(--bg); border: none; border-radius: 12px; cursor: pointer; color: var(--text); font-size: .68rem; font-weight: 600; font-family: inherit; transition: background .15s, transform .15s; min-height: 58px; }
+.bottom-nav-more-item i { font-size: 18px; color: var(--accent); }
+.bottom-nav-more-item:active { transform: scale(.95); background: var(--accent-soft); }
+.bottom-nav-more-overlay { display: none; position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,.2); }
+.bottom-nav-more-overlay.active { display: block; }
+/* AI chat button above nav on mobile */
+@media (max-width: 768px) {
+  #chatbase-bubble-button { bottom: 80px !important; }
+}
+body.dark-mode .bottom-nav { background: rgba(26,31,41,.95); }
+body.dark-mode .bottom-nav-item { color: #8b95a7; }
+body.dark-mode .bottom-nav-item.active { color: var(--accent); background: rgba(100,149,237,.15); }
+body.dark-mode .bottom-nav-more { background: var(--white); border-color: var(--line); }
+body.dark-mode .bottom-nav-more-item { background: var(--bg); color: var(--text); }
+body.lang-ar .bottom-nav-more-grid { direction: rtl; }
 
 /* ===== ENHANCED ORIGINAL SPLASH SCREEN ===== */
 #splash-screen { position: fixed; inset: 0; background: #fff; z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; transition: opacity 0.5s ease, visibility 0.5s ease; }
@@ -456,8 +500,7 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .ocr-error-icon i { color: #fff; font-size: 32px; }
 
 
-/* RTL support for bottom nav */
-body.lang-ar .bottom-nav-grid { direction: rtl; }
+
 
 @media (max-width: 768px) {
   .ocr-panel { padding: 28px 20px; gap: 14px; }
@@ -869,21 +912,18 @@ html { scroll-behavior: smooth; }
 }
 
 @media (max-width: 768px) {
-  /* Show bottom navigation bar on mobile */
-  .bottom-nav { display: flex; }
+  /* Show bottom nav on mobile */
+  .bottom-nav { display: block; }
 
-  /* Hide hamburger button and sidebar on mobile */
+  /* Hide sidebar & hamburger on mobile */
   #mobile-menu-btn { display: none !important; }
   .sidebar { display: none !important; }
   #mobile-sidebar-overlay { display: none !important; }
   .expand-btn { display: none !important; }
   .collapse-btn { display: none !important; }
 
-
-
-  /* Main content takes full width with bottom nav padding */
   .main {
-    padding: 16px 16px 100px 16px !important;
+    padding: 16px 16px 80px 16px !important;
     width: 100% !important;
   }
 
@@ -982,9 +1022,7 @@ html { scroll-behavior: smooth; }
     transform: translateX(0);
   }
   #mobile-menu-btn-coach { display: flex !important; }
-  #screen-coach-app .main { padding-top: 70px !important; padding-bottom: 100px !important; }
-
-  /* Athletes grid */
+  #screen-coach-app .main { padding-top: 70px !important; padding-bottom: 80px !important; }
   .athletes-grid { grid-template-columns: 1fr; }
 
   /* Plans grid */
@@ -1064,8 +1102,7 @@ html { scroll-behavior: smooth; }
   .sports-grid { grid-template-columns: repeat(2, 1fr); }
   .safety-grid { grid-template-columns: repeat(2, 1fr); }
   .landing-hero h1 { font-size: 1.5rem; }
-  .bottom-nav-item { font-size: .5rem; min-height: 38px; }
-  .bottom-nav-item i { font-size: 14px; }
+
 }
 
 /* ===== PERFORMANCE: Keep animations smooth on mobile ===== */
@@ -1569,14 +1606,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div id="profile-goal-plan"></div>
         <button class="btn primary fit" onclick="openGoalModal(true)"><i class="fa-solid fa-pen-to-square"></i> <span data-ar="تعديل خطة الهدف">Edit Goal Plan</span></button>
       </div>
-
-      <!-- Quick actions (Settings & Logout) for mobile bottom nav -->
-      <div class="panel" style="margin-top:12px;">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <button class="btn ghost" onclick="showTab('settings')" style="flex:1;min-width:140px;"><i class="fa-solid fa-gear"></i> <span data-ar="الإعدادات">Settings</span></button>
-          <button class="btn ghost" onclick="logout()" style="flex:1;min-width:140px;color:var(--red);"><i class="fa-solid fa-right-from-bracket"></i> <span data-ar="خروج">Log out</span></button>
-        </div>
-      </div>
     </div>
 
     <div id="tab-settings" class="tab">
@@ -1602,7 +1631,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 
 
     <nav id="bottom-nav" class="bottom-nav">
-      <div class="bottom-nav-grid">
+      <div class="bottom-nav-items">
         <button class="bottom-nav-item active" data-btab="home" onclick="showTab('home')">
           <i class="fa-solid fa-table-cells-large"></i>
           <span data-ar="الرئيسية">Home</span>
@@ -1613,38 +1642,54 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         </button>
         <button class="bottom-nav-item" data-btab="daily" onclick="showTab('daily')">
           <i class="fa-solid fa-list-check"></i>
-          <span data-ar="التمارين">Exercise</span>
-        </button>
-        <button class="bottom-nav-item" data-btab="marathon" onclick="showTab('marathon')">
-          <i class="fa-solid fa-map-location-dot"></i>
-          <span data-ar="الماراثون">Marathon</span>
+          <span data-ar="التمارين">Tasks</span>
         </button>
         <button class="bottom-nav-item" data-btab="diet" onclick="showTab('diet')">
           <i class="fa-solid fa-utensils"></i>
           <span data-ar="الغذاء">Diet</span>
         </button>
-        <button class="bottom-nav-item" data-btab="calc" onclick="showTab('calc')">
-          <i class="fa-solid fa-calculator"></i>
-          <span data-ar="الحاسبة">Calc</span>
-        </button>
-        <button class="bottom-nav-item" data-btab="weather" onclick="showTab('weather')">
-          <i class="fa-solid fa-cloud-sun"></i>
-          <span data-ar="الطقس">Weather</span>
-        </button>
-        <button class="bottom-nav-item" data-btab="moodmorph" onclick="showTab('moodmorph')">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
-          <span data-ar="المزاج">Mood</span>
-        </button>
-        <button class="bottom-nav-item" data-btab="reminders" onclick="showTab('reminders')">
-          <i class="fa-solid fa-bell"></i>
-          <span data-ar="التذكيرات">Reminders</span>
-        </button>
-        <button class="bottom-nav-item" data-btab="profile" onclick="showTab('profile')">
-          <i class="fa-solid fa-user"></i>
-          <span data-ar="الملف">Profile</span>
+        <button class="bottom-nav-item" data-btab="more" onclick="toggleBottomNavMore()">
+          <i class="fa-solid fa-ellipsis"></i>
+          <span data-ar="المزيد">More</span>
         </button>
       </div>
     </nav>
+    <div id="bottom-nav-more" class="bottom-nav-more">
+      <div class="bottom-nav-more-grid">
+        <button class="bottom-nav-more-item" onclick="showTab('marathon');closeBottomNavMore()">
+          <i class="fa-solid fa-map-location-dot"></i>
+          <span data-ar="الماراثون">Marathon</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('calc');closeBottomNavMore()">
+          <i class="fa-solid fa-calculator"></i>
+          <span data-ar="الحاسبة">Calc</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('weather');closeBottomNavMore()">
+          <i class="fa-solid fa-cloud-sun"></i>
+          <span data-ar="الطقس">Weather</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('moodmorph');closeBottomNavMore()">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span data-ar="المزاج">Mood</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('reminders');closeBottomNavMore()">
+          <i class="fa-solid fa-bell"></i>
+          <span data-ar="التذكيرات">Reminders</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('profile');closeBottomNavMore()">
+          <i class="fa-solid fa-user"></i>
+          <span data-ar="الملف">Profile</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('settings');closeBottomNavMore()">
+          <i class="fa-solid fa-gear"></i>
+          <span data-ar="الإعدادات">Settings</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="logout();closeBottomNavMore()">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span data-ar="خروج">Logout</span>
+        </button>
+      </div>
+    </div>
 
 <div id="session-overlay">
   <button class="session-exit-btn" onclick="exitSession()">&times;</button>
@@ -2595,27 +2640,45 @@ function updateMobileMenuBtn() {
 const origShowTab = showTab;
 showTab = function(name) {
   closeMobileSidebar();
+  closeBottomNavMore();
   origShowTab(name);
   if (name === 'diet') { renderDietLog(); renderScannerHistory(); }
-};
-
-
-// ===== BOTTOM NAVIGATION BAR (Mobile) =====
-
-// Update bottom nav active state when tab changes
-const origShowTabForBottomNav = showTab;
-showTab = function(name) {
-  origShowTabForBottomNav(name);
   // Update bottom nav active state
   const bottomNavItems = document.querySelectorAll('#bottom-nav .bottom-nav-item');
   const tabToBtab = { home: 'home', sports: 'sports', daily: 'daily', diet: 'diet',
-    marathon: 'marathon', calc: 'calc', weather: 'weather', moodmorph: 'moodmorph',
-    reminders: 'reminders', profile: 'profile', settings: 'profile' };
+    marathon: 'more', calc: 'more', weather: 'more', moodmorph: 'more',
+    reminders: 'more', profile: 'more', settings: 'more' };
   const activeBtab = tabToBtab[name] || 'home';
   bottomNavItems.forEach(item => {
     item.classList.toggle('active', item.dataset.btab === activeBtab);
   });
 };
+
+// ===== BOTTOM NAVIGATION BAR (Mobile) =====
+function toggleBottomNavMore() {
+  const more = document.getElementById('bottom-nav-more');
+  let overlay = document.getElementById('bottom-nav-more-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'bottom-nav-more-overlay';
+    overlay.className = 'bottom-nav-more-overlay';
+    overlay.onclick = closeBottomNavMore;
+    document.getElementById('screen-app').appendChild(overlay);
+  }
+  const isActive = more.classList.contains('active');
+  if (isActive) {
+    closeBottomNavMore();
+  } else {
+    more.classList.add('active');
+    overlay.classList.add('active');
+  }
+}
+function closeBottomNavMore() {
+  const more = document.getElementById('bottom-nav-more');
+  const overlay = document.getElementById('bottom-nav-more-overlay');
+  if (more) more.classList.remove('active');
+  if (overlay) overlay.classList.remove('active');
+}
 
 const origShowCoachTab = showCoachTab;
 showCoachTab = function(t) {
