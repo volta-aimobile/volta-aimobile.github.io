@@ -885,6 +885,42 @@ html { scroll-behavior: smooth; }
   pointer-events: auto;
 }
 
+/* Coach mobile menu button */
+#mobile-menu-btn-coach {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 10001;
+  width: 40px;
+  height: 40px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  transition: background .15s;
+}
+#mobile-menu-btn-coach:hover { background: var(--accent-soft); }
+#mobile-sidebar-overlay-coach {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+}
+#mobile-sidebar-overlay-coach.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 @media (max-width: 768px) {
   /* Show bottom nav on mobile only when app is active */
   .bottom-nav { display: block; }
@@ -986,23 +1022,12 @@ html { scroll-behavior: smooth; }
   .calc-input-card { padding: 20px; }
   .calc-big-number { font-size: 1.8rem; }
 
-  /* Coach sidebar - keep hamburger on mobile for coach */
-  #screen-coach-app .sidebar {
-    position: fixed !important;
-    left: 0;
-    top: 0;
-    height: 100vh !important;
-    width: 260px !important;
-    z-index: 10000 !important;
-    transform: translateX(-100%);
-    transition: transform .3s ease !important;
-    display: flex !important;
-  }
-  #screen-coach-app .sidebar.mobile-open {
-    transform: translateX(0);
-  }
-  #mobile-menu-btn-coach { display: flex !important; }
-  #screen-coach-app .main { padding-top: 70px !important; padding-bottom: 80px !important; }
+  /* Coach: hide sidebar on mobile, show bottom nav */
+  #screen-coach-app .sidebar { display: none !important; }
+  #mobile-menu-btn-coach { display: none !important; }
+  #mobile-sidebar-overlay-coach { display: none !important; }
+  .coach-bottom-nav { display: block; }
+  #screen-coach-app .main { padding: 16px 16px 80px 16px !important; width: 100% !important; }
   .athletes-grid { grid-template-columns: 1fr; }
 
   /* Plans grid */
@@ -1040,6 +1065,7 @@ html { scroll-behavior: smooth; }
 
   /* Profile mobile actions - visible on mobile */
   .profile-mobile-actions { display: flex; }
+  .profile-action-btn { min-height: 48px; }
 
   /* Rec sports grid */
   .rec-sports-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1073,8 +1099,7 @@ html { scroll-behavior: smooth; }
   /* Touch-friendly buttons */
   .side-btn, .btn { min-height: 44px; }
 
-  /* Coach top bar on mobile */
-  #screen-coach-app .main { padding-top: 70px !important; }
+  /* Coach: bottom nav already handled above */
 }
 
 @media (max-width: 400px) {
@@ -1105,16 +1130,35 @@ html { scroll-behavior: smooth; }
   .sport-card { will-change: transform; }
   .banner-card { will-change: transform; }
   .panel { will-change: auto; }
+  /* Coach: show sidebar on desktop, hide bottom nav */
+  #screen-coach-app .sidebar { display: flex !important; }
+  .coach-bottom-nav { display: none !important; }
+  #coach-bottom-nav-more { display: none !important; }
+  #mobile-menu-btn-coach { display: none !important; }
+  #mobile-sidebar-overlay-coach { display: none !important; }
+  /* Coach: normal padding on desktop (no bottom nav space) */
+  #screen-coach-app .main { padding-bottom: 34px !important; width: auto !important; }
 }
 
 
 
+
+/* ===== COACH: Bottom nav hidden by default (shown on mobile via media query) ===== */
+.coach-bottom-nav { display: none; }
+#coach-bottom-nav-more { display: none; }
+
+/* Hide coach bottom nav on non-coach screens */
+#screen-coach-app:not(.active) .coach-bottom-nav,
+#screen-coach-app:not(.active) #coach-bottom-nav-more { display: none !important; }
+
 /* ===== COMPREHENSIVE MOBILE UI FIXES ===== */
 /* Safe area insets for notched devices */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .bottom-nav { padding-bottom: calc(6px + env(safe-area-inset-bottom)); }
-  .main { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
-  #screen-coach-app .main { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+  @media (max-width: 768px) {
+    .bottom-nav { padding-bottom: calc(6px + env(safe-area-inset-bottom)); }
+    .main { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+    #screen-coach-app .main { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+  }
 }
 
 /* Fix viewport height issues on mobile browsers */
@@ -1192,6 +1236,12 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 
 /* Profile mobile actions - hidden on desktop, visible on mobile */
 .profile-mobile-actions { display: none; gap: 10px; margin-top: 24px; }
+.profile-action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--white); font-size: .9rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: background .15s, transform .15s; min-height: 48px; }
+.profile-action-btn:active { transform: scale(.97); }
+.profile-action-settings { color: var(--accent); border-color: var(--accent-border); }
+.profile-action-settings i { color: var(--accent); }
+.profile-action-logout { color: var(--red); border-color: rgba(201,68,68,.3); }
+.profile-action-logout i { color: var(--red); }
 </style>
 </head>
 <body>
@@ -1670,10 +1720,10 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div id="profile-goal-plan"></div>
         <button class="btn primary fit" onclick="openGoalModal(true)"><i class="fa-solid fa-pen-to-square"></i> <span data-ar="تعديل خطة الهدف">Edit Goal Plan</span></button>
       </div>
-      <!-- Mobile-only quick actions: Settings & Logout -->
+      <!-- Mobile-only quick actions: Settings & Logout (side-by-side like photo) -->
       <div class="profile-mobile-actions" id="profile-mobile-actions">
-        <button class="btn ghost fit" onclick="showTab('settings')"><i class="fa-solid fa-gear"></i> <span data-ar="الإعدادات">Settings</span></button>
-        <button class="btn ghost fit" style="color:var(--red);border-color:var(--red);" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> <span data-ar="تسجيل الخروج">Log out</span></button>
+        <button class="profile-action-btn profile-action-settings" onclick="showTab('settings')"><i class="fa-solid fa-gear"></i> <span data-ar="الإعدادات">Settings</span></button>
+        <button class="profile-action-btn profile-action-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> <span data-ar="تسجيل الخروج">Log out</span></button>
       </div>
     </div>
 
@@ -1858,22 +1908,70 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 </section>
 
 <section id="screen-coach-app" class="screen">
-  
-<button id="mobile-menu-btn-coach" onclick="toggleMobileSidebarCoach()" style="display:none;position:fixed;top:10px;left:10px;z-index:10001;width:40px;height:40px;background:var(--white);border:1px solid var(--line);border-radius:10px;cursor:pointer;align-items:center;justify-content:center;color:var(--text);font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.12);"><i class="fa-solid fa-bars"></i></button>
-<div id="mobile-sidebar-overlay-coach" onclick="closeMobileSidebarCoach()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;opacity:0;transition:opacity .25s ease;pointer-events:none;"></div>
 
-  <aside class="sidebar">
-    <div class="brand brand-coach"><i class="fa-solid fa-bolt"></i><span>Volta</span><em data-ar="كوتش">Coach</em></div>
-    <button class="side-btn active" data-tab="coach-home" onclick="showCoachTab('coach-home')"><i class="fa-solid fa-table-cells-large"></i><span data-ar="لوحة التحكم">Dashboard</span></button>
+  <!-- Coach mobile hamburger button (mobile only) -->
+  <button id="mobile-menu-btn-coach" onclick="toggleMobileSidebarCoach()"><i class="fa-solid fa-bars"></i></button>
+  <div id="mobile-sidebar-overlay-coach" onclick="closeMobileSidebarCoach()"></div>
+
+  <!-- Coach sidebar (desktop) -->
+  <aside class="sidebar" id="coach-sidebar">
+    <div class="brand brand-coach"><i class="fa-solid fa-bolt"></i><span>Volta</span><em data-ar="مدرب">Coach</em></div>
+    <button class="side-btn active" data-tab="coach-home" onclick="showCoachTab('coach-home')"><i class="fa-solid fa-table-cells-large"></i><span data-ar="الرئيسية">Dashboard</span></button>
     <button class="side-btn" data-tab="coach-athletes" onclick="showCoachTab('coach-athletes')"><i class="fa-solid fa-users"></i><span data-ar="الرياضيون">Athletes</span></button>
-    <button class="side-btn" data-tab="coach-sessions" onclick="showCoachTab('coach-sessions')"><i class="fa-solid fa-stopwatch"></i><span data-ar="الجلسات المباشرة">Live Sessions</span></button>
-    <button class="side-btn" data-tab="coach-plans" onclick="showCoachTab('coach-plans')"><i class="fa-solid fa-clipboard-list"></i><span data-ar="خطط التدريب">Training Plans</span></button>
-    <button class="side-btn" data-tab="coach-meals" onclick="showCoachTab('coach-meals')"><i class="fa-solid fa-utensils"></i><span data-ar="تسجيل الوجبات">Meal Logging</span></button>
+    <button class="side-btn" data-tab="coach-sessions" onclick="showCoachTab('coach-sessions')"><i class="fa-solid fa-stopwatch"></i><span data-ar="الجلسات">Sessions</span></button>
+    <button class="side-btn" data-tab="coach-plans" onclick="showCoachTab('coach-plans')"><i class="fa-solid fa-clipboard-list"></i><span data-ar="الخطط">Plans</span></button>
+    <button class="side-btn" data-tab="coach-meals" onclick="showCoachTab('coach-meals')"><i class="fa-solid fa-utensils"></i><span data-ar="الوجبات">Meals</span></button>
     <button class="side-btn" data-tab="coach-profile" onclick="showCoachTab('coach-profile')"><i class="fa-solid fa-user"></i><span data-ar="الملف الشخصي">Profile</span></button>
     <div style="flex:1;"></div>
     <button class="side-btn" data-tab="coach-settings" onclick="showCoachTab('coach-settings')"><i class="fa-solid fa-gear"></i><span data-ar="الإعدادات">Settings</span></button>
     <button class="side-btn" onclick="logoutCoach()"><i class="fa-solid fa-right-from-bracket"></i><span data-ar="تسجيل الخروج">Log out</span></button>
   </aside>
+
+  <!-- Coach bottom nav bar (mobile only) -->
+  <nav id="coach-bottom-nav" class="bottom-nav coach-bottom-nav">
+    <div class="bottom-nav-items">
+      <button class="bottom-nav-item active" data-btab="coach-home" onclick="showCoachTab('coach-home')">
+        <i class="fa-solid fa-table-cells-large"></i>
+        <span data-ar="الرئيسية">Home</span>
+      </button>
+      <button class="bottom-nav-item" data-btab="coach-athletes" onclick="showCoachTab('coach-athletes')">
+        <i class="fa-solid fa-users"></i>
+        <span data-ar="الرياضيون">Athletes</span>
+      </button>
+      <button class="bottom-nav-item" data-btab="coach-sessions" onclick="showCoachTab('coach-sessions')">
+        <i class="fa-solid fa-stopwatch"></i>
+        <span data-ar="الجلسات">Sessions</span>
+      </button>
+      <button class="bottom-nav-item" data-btab="coach-plans" onclick="showCoachTab('coach-plans')">
+        <i class="fa-solid fa-clipboard-list"></i>
+        <span data-ar="الخطط">Plans</span>
+      </button>
+      <button class="bottom-nav-item" data-btab="coach-more" onclick="toggleCoachBottomNavMore()">
+        <i class="fa-solid fa-ellipsis"></i>
+        <span data-ar="المزيد">More</span>
+      </button>
+    </div>
+  </nav>
+  <div id="coach-bottom-nav-more" class="bottom-nav-more">
+    <div class="bottom-nav-more-grid">
+      <button class="bottom-nav-more-item" onclick="showCoachTab('coach-meals');closeCoachBottomNavMore()">
+        <i class="fa-solid fa-utensils"></i>
+        <span data-ar="الوجبات">Meals</span>
+      </button>
+      <button class="bottom-nav-more-item" onclick="showCoachTab('coach-profile');closeCoachBottomNavMore()">
+        <i class="fa-solid fa-user"></i>
+        <span data-ar="الملف">Profile</span>
+      </button>
+      <button class="bottom-nav-more-item" onclick="showCoachTab('coach-settings');closeCoachBottomNavMore()">
+        <i class="fa-solid fa-gear"></i>
+        <span data-ar="الإعدادات">Settings</span>
+      </button>
+      <button class="bottom-nav-more-item" onclick="logoutCoach();closeCoachBottomNavMore()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span data-ar="خروج">Logout</span>
+      </button>
+    </div>
+  </div>
 
   <main class="main">
     <div id="tab-coach-home" class="tab active">
@@ -2030,6 +2128,11 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div class="settings-row"><div><b data-ar="البريد الإلكتروني">Email</b><small id="coach-email-2">—</small></div><button class="btn ghost small" data-ar="تغيير">Change</button></div>
         <div class="settings-row"><div><b data-ar="كلمة المرور">Password</b><small data-ar="آخر تحديث قريب">Last updated recently</small></div><button class="btn ghost small" data-ar="تحديث">Update</button></div>
         <div class="settings-row"><div><b data-ar="تسجيل الخروج من هذا الجهاز">Sign out of this device</b><small data-ar="إنهاء جلسة المدرب الحالية">End your current coach session</small></div><button class="btn ghost small" onclick="logoutCoach()" data-ar="تسجيل الخروج">Log out</button></div>
+      </div>
+      <!-- Mobile-only quick actions: Settings & Logout -->
+      <div class="profile-mobile-actions" id="coach-profile-mobile-actions">
+        <button class="profile-action-btn profile-action-settings" onclick="showCoachTab('coach-settings')"><i class="fa-solid fa-gear"></i> <span data-ar="الإعدادات">Settings</span></button>
+        <button class="profile-action-btn profile-action-logout" onclick="logoutCoach()"><i class="fa-solid fa-right-from-bracket"></i> <span data-ar="تسجيل الخروج">Log out</span></button>
       </div>
     </div>
 
@@ -2296,7 +2399,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
 .de-rest-timer-inner { display: flex; align-items: center; gap: 10px; font-size: .85rem; }
 .de-rest-label { font-weight: 600; color: var(--muted); }
 .de-rest-display { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 30px; text-align: center; }
-.de-rest-timer .btn { margin-top: 0 !important; padding: 4px 10px !important; font-size: .75rem !important; min-height: 28px !important; }
+.de-rest-timer .btn { margin-top: 0 !important; padding: 6px 12px !important; font-size: .8rem !important; min-height: 36px !important; }
 .de-rest-btns { margin-left: auto; display: flex; gap: 6px; align-items: center; margin-top: -2px; }
 
 /* Mobile fixes for new features */
@@ -2312,6 +2415,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   .sessions-table { font-size: .82rem; }
   .sessions-table th, .sessions-table td { padding: 8px 6px; }
   #offline-banner { font-size: .78rem; padding: 8px; }
+  .de-rest-timer .btn { min-height: 40px !important; padding: 8px 14px !important; font-size: .82rem !important; }
 }
 @media (max-width: 480px) {
   #timer-display { font-size: 3rem !important; }
@@ -2755,29 +2859,24 @@ function closeMobileSidebar() {
   document.body.classList.remove('sidebar-mobile-open');
 }
 
+// Coach sidebar functions (mobile)
 function toggleMobileSidebarCoach() {
-  const sidebar = document.querySelector('#screen-coach-app .sidebar');
+  const sidebar = document.getElementById('coach-sidebar');
   const overlay = document.getElementById('mobile-sidebar-overlay-coach');
-  const btn = document.getElementById('mobile-menu-btn-coach');
   const isOpen = sidebar.classList.contains('mobile-open');
   if (isOpen) {
-    sidebar.classList.remove('mobile-open');
-    overlay.style.opacity = '0';
-    overlay.style.pointerEvents = 'none';
-    document.body.classList.remove('sidebar-mobile-open');
+    closeMobileSidebarCoach();
   } else {
     sidebar.classList.add('mobile-open');
-    overlay.style.opacity = '1';
-    overlay.style.pointerEvents = 'auto';
+    overlay.classList.add('active');
     document.body.classList.add('sidebar-mobile-open');
   }
 }
 function closeMobileSidebarCoach() {
-  const sidebar = document.querySelector('#screen-coach-app .sidebar');
+  const sidebar = document.getElementById('coach-sidebar');
   const overlay = document.getElementById('mobile-sidebar-overlay-coach');
-  sidebar.classList.remove('mobile-open');
-  overlay.style.opacity = '0';
-  overlay.style.pointerEvents = 'none';
+  if (sidebar) sidebar.classList.remove('mobile-open');
+  if (overlay) overlay.classList.remove('active');
   document.body.classList.remove('sidebar-mobile-open');
 }
 
@@ -2785,29 +2884,32 @@ function closeMobileSidebarCoach() {
 function updateMobileMenuBtn() {
   const isMobile = window.innerWidth <= 768;
   const appBtn = document.getElementById('mobile-menu-btn');
-  const coachBtn = document.getElementById('mobile-menu-btn-coach');
-  const coachOverlay = document.getElementById('mobile-sidebar-overlay-coach');
   const bottomNav = document.getElementById('bottom-nav');
+  const coachBottomNav = document.getElementById('coach-bottom-nav');
+  const coachSidebar = document.getElementById('coach-sidebar');
 
   // Determine if an app screen is active (not login/auth screens)
   const appActive = document.getElementById('screen-app').classList.contains('active');
   const coachAppActive = document.getElementById('screen-coach-app').classList.contains('active');
-  const showNav = appActive || coachAppActive;
 
   if (isMobile) {
-    if (appBtn) appBtn.style.display = 'flex';
-    if (coachBtn) coachBtn.style.display = coachAppActive ? 'flex' : 'none';
-    if (coachOverlay) coachOverlay.style.display = coachAppActive ? 'block' : 'none';
-    // Hide bottom nav on login/auth screens
-    if (bottomNav) bottomNav.style.display = showNav ? 'block' : 'none';
+    if (appBtn) appBtn.style.display = 'none';
+    // Show athlete bottom nav only when athlete app is active
+    if (bottomNav) bottomNav.style.display = appActive ? 'block' : 'none';
+    // Show coach bottom nav only when coach app is active
+    if (coachBottomNav) coachBottomNav.style.display = coachAppActive ? 'block' : 'none';
+    // Hide coach sidebar on mobile
+    if (coachSidebar) coachSidebar.style.display = 'none';
   } else {
     if (appBtn) appBtn.style.display = 'none';
-    if (coachBtn) coachBtn.style.display = 'none';
-    if (coachOverlay) coachOverlay.style.display = 'none';
+    // On desktop, hide bottom navs
     if (bottomNav) bottomNav.style.display = 'none';
+    if (coachBottomNav) coachBottomNav.style.display = 'none';
+    // Show coach sidebar on desktop when coach app is active
+    if (coachSidebar && coachAppActive) coachSidebar.style.display = '';
+    else if (coachSidebar) coachSidebar.style.display = 'none';
     // Close any open mobile sidebar
     closeMobileSidebar();
-    closeMobileSidebarCoach();
   }
 }
 
@@ -2827,6 +2929,8 @@ showTab = function(name) {
   bottomNavItems.forEach(item => {
     item.classList.toggle('active', item.dataset.btab === activeBtab);
   });
+  // Ensure proper nav visibility
+  updateMobileMenuBtn();
 };
 
 // ===== BOTTOM NAVIGATION BAR (Mobile) =====
@@ -2859,13 +2963,52 @@ function closeBottomNavMore() {
   document.body.classList.remove('more-popup-active');
 }
 
+// ===== COACH BOTTOM NAV MORE POPUP =====
+function toggleCoachBottomNavMore() {
+  const more = document.getElementById('coach-bottom-nav-more');
+  let overlay = document.getElementById('coach-bottom-nav-more-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'coach-bottom-nav-more-overlay';
+    overlay.className = 'bottom-nav-more-overlay';
+    overlay.onclick = closeCoachBottomNavMore;
+    document.getElementById('screen-coach-app').appendChild(overlay);
+  }
+  const isActive = more.classList.contains('active');
+  if (isActive) {
+    closeCoachBottomNavMore();
+  } else {
+    more.classList.add('active');
+    overlay.classList.add('active');
+    // Hide AI chat button when more popup is open
+    document.body.classList.add('more-popup-active');
+  }
+}
+function closeCoachBottomNavMore() {
+  const more = document.getElementById('coach-bottom-nav-more');
+  const overlay = document.getElementById('coach-bottom-nav-more-overlay');
+  if (more) more.classList.remove('active');
+  if (overlay) overlay.classList.remove('active');
+  document.body.classList.remove('more-popup-active');
+}
+
 const origShowCoachTab = showCoachTab;
 showCoachTab = function(t) {
-  closeMobileSidebarCoach();
+  closeCoachBottomNavMore();
   origShowCoachTab(t);
   if (t === 'coach-home') { renderCoachAnnouncements(); renderCoachWeeklyOverview(); }
   if (t === 'coach-athletes') { renderCoachAthletes(); filterCoachAthletes(); }
   if (t === 'coach-meals') { populateCoachMealAthletes(); renderCoachMealsLog(); }
+  // Update coach bottom nav active state
+  const coachBottomNavItems = document.querySelectorAll('#coach-bottom-nav .bottom-nav-item');
+  const tabToBtab = { 'coach-home': 'coach-home', 'coach-athletes': 'coach-athletes',
+    'coach-sessions': 'coach-sessions', 'coach-plans': 'coach-plans',
+    'coach-meals': 'coach-more', 'coach-profile': 'coach-more',
+    'coach-settings': 'coach-more' };
+  const activeBtab = tabToBtab[t] || 'coach-home';
+  coachBottomNavItems.forEach(item => {
+    item.classList.toggle('active', item.dataset.btab === activeBtab);
+  });
 };
 
 // Run on load and resize (debounced)
@@ -4093,8 +4236,8 @@ function renderWorkoutList() {
             <span class="de-rest-label">${restLabel}</span>
             <span class="de-rest-display" id="de-rest-display-${nextIdx}">60${restSecsLabel}</span>
             <div class="de-rest-btns">
-              <button class="btn ghost small" style="padding:3px 10px;font-size:.75rem;min-height:28px;" onclick="skipDeRest(${nextIdx})">${skipLabel}</button>
-              <button class="btn ghost small" style="padding:3px 10px;font-size:.75rem;min-height:28px;" onclick="startDeRest(${nextIdx})"><i class="fa-solid fa-play"></i></button>
+              <button class="btn ghost small de-rest-play-btn" id="de-rest-play-${nextIdx}" onclick="startDeRest(${nextIdx})"><i class="fa-solid fa-play"></i></button>
+              <button class="btn ghost small de-rest-skip-btn" id="de-rest-skip-${nextIdx}" onclick="skipDeRest(${nextIdx})">${skipLabel}</button>
             </div>
           </div>
         </div>
@@ -4106,30 +4249,39 @@ function renderWorkoutList() {
 
 // Mini rest timer for daily exercise
 let deRestTimers = {};
+let deRestSecs = {};
 function startDeRest(idx) {
-  if (deRestTimers[idx]) clearInterval(deRestTimers[idx]);
+  // If already running, do nothing
+  if (deRestTimers[idx]) return;
   const ar = (store.lang === 'ar');
   const restSecsLabel = ar ? 'ثانية' : 's';
-  let secs = 60;
-  const display = document.getElementById('de-rest-display-' + idx);
-  if (!display) return;
-  display.textContent = secs + restSecsLabel;
+  deRestSecs[idx] = 60;
+  // Update display immediately
+  const d = document.getElementById('de-rest-display-' + idx);
+  if (d) d.textContent = deRestSecs[idx] + restSecsLabel;
+  // Swap play button to pause icon
+  const playBtn = document.getElementById('de-rest-play-' + idx);
+  if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
   // Play start beep
   if (typeof playBeep === 'function') playBeep(800, 0.15);
   if (typeof vibrateDevice === 'function') vibrateDevice(100);
-  deRestTimers[idx] = setInterval(() => {
-    secs--;
-    display.textContent = secs + restSecsLabel;
+  deRestTimers[idx] = setInterval(function() {
+    deRestSecs[idx]--;
+    // Look up display element fresh every tick (survives re-renders)
+    const disp = document.getElementById('de-rest-display-' + idx);
+    const lbl = (store.lang === 'ar') ? 'ثانية' : 's';
+    if (disp) disp.textContent = deRestSecs[idx] + lbl;
     // Countdown beep at 3, 2, 1
-    if (secs <= 3 && secs > 0 && typeof playCountdownBeep === 'function') playCountdownBeep();
-    if (secs <= 0) {
+    if (deRestSecs[idx] <= 3 && deRestSecs[idx] > 0 && typeof playCountdownBeep === 'function') playCountdownBeep();
+    if (deRestSecs[idx] <= 0) {
       clearInterval(deRestTimers[idx]);
       delete deRestTimers[idx];
-      display.textContent = '0' + restSecsLabel;
+      delete deRestSecs[idx];
+      if (disp) disp.textContent = '0' + lbl;
       // Done beep
       if (typeof playDoneBeep === 'function') playDoneBeep();
       if (typeof vibrateDevice === 'function') vibrateDevice([200, 100, 200]);
-      // Auto-skip after timer ends
+      // Dim the rest timer
       const restEl = document.getElementById('de-rest-' + idx);
       if (restEl) restEl.style.opacity = '0.5';
     }
@@ -4138,10 +4290,13 @@ function startDeRest(idx) {
 
 function skipDeRest(idx) {
   if (deRestTimers[idx]) { clearInterval(deRestTimers[idx]); delete deRestTimers[idx]; }
+  delete deRestSecs[idx];
+  const ar = (store.lang === 'ar');
+  const restSecsLabel = ar ? 'ثانية' : 's';
+  const display = document.getElementById('de-rest-display-' + idx);
+  if (display) display.textContent = '0' + restSecsLabel;
   const restEl = document.getElementById('de-rest-' + idx);
   if (restEl) restEl.style.opacity = '0.4';
-  const display = document.getElementById('de-rest-display-' + idx);
-  if (display) display.textContent = '0s';
 }
 let workoutTimerInt = null;
 let workoutTimerStart = null;  // tracks wall-clock start time so we can compute actual elapsed minutes
