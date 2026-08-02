@@ -36,37 +36,11 @@ i.fa-solid, i.fa-regular { font-size: 18px; }
 body:not(.app-active) #chatbase-bubble-button, body:not(.app-active) #chatbase-bubble-window, body:not(.app-active) #chatbase-message-bubbles, body:not(.app-active) .chatbase-launcher, body:not(.app-active) iframe[src*="chatbase.co"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
 /* Hide chatbase widget whenever ANY full-screen overlay (OCR scan, etc.) is active so it can't leak through the high z-index chatbase uses */
 body.ocr-active #chatbase-bubble-button, body.ocr-active #chatbase-bubble-window, body.ocr-active #chatbase-message-bubbles, body.ocr-active .chatbase-launcher, body.ocr-active iframe[src*="chatbase.co"], body.ocr-active #chatbase-bubble-button + *, body.ocr-active #chatbase-bubble-window + * { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -1 !important; }
+/* Hide AI chat button when 'more' popup is active */
+body.more-popup-active #chatbase-bubble-button, body.more-popup-active #chatbase-bubble-window, body.more-popup-active #chatbase-message-bubbles, body.more-popup-active .chatbase-launcher, body.more-popup-active iframe[src*="chatbase.co"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
 
 
 
-
-/* ===== BOTTOM NAVIGATION BAR (Mobile) ===== */
-.bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000; background: rgba(255,255,255,.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 6px 12px env(safe-area-inset-bottom, 8px); }
-.bottom-nav-items { display: flex; justify-content: space-around; align-items: center; }
-.bottom-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 6px 12px; border-radius: 14px; color: #6B7280; font-size: .6rem; font-weight: 500; font-family: inherit; transition: color .2s, background .2s; min-height: 50px; position: relative; }
-.bottom-nav-item i { font-size: 20px; transition: color .2s; }
-.bottom-nav-item.active { color: var(--accent); background: rgba(100,149,237,.12); }
-.bottom-nav-item.active i { color: var(--accent); }
-.bottom-nav-item:active { transform: scale(.93); }
-/* More popup */
-.bottom-nav-more { display: none; position: fixed; bottom: 72px; left: 12px; right: 12px; z-index: 9001; background: var(--white); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,.15); border: 1px solid var(--line); padding: 12px; animation: fadeInUp .2s ease; }
-.bottom-nav-more.active { display: block; }
-.bottom-nav-more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.bottom-nav-more-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 4px; background: var(--bg); border: none; border-radius: 12px; cursor: pointer; color: var(--text); font-size: .68rem; font-weight: 600; font-family: inherit; transition: background .15s, transform .15s; min-height: 58px; }
-.bottom-nav-more-item i { font-size: 18px; color: var(--accent); }
-.bottom-nav-more-item:active { transform: scale(.95); background: var(--accent-soft); }
-.bottom-nav-more-overlay { display: none; position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,.2); }
-.bottom-nav-more-overlay.active { display: block; }
-/* AI chat button above nav on mobile */
-@media (max-width: 768px) {
-  #chatbase-bubble-button { bottom: 80px !important; }
-}
-body.dark-mode .bottom-nav { background: rgba(26,31,41,.95); }
-body.dark-mode .bottom-nav-item { color: #8b95a7; }
-body.dark-mode .bottom-nav-item.active { color: var(--accent); background: rgba(100,149,237,.15); }
-body.dark-mode .bottom-nav-more { background: var(--white); border-color: var(--line); }
-body.dark-mode .bottom-nav-more-item { background: var(--bg); color: var(--text); }
-body.lang-ar .bottom-nav-more-grid { direction: rtl; }
 
 /* ===== BOTTOM NAVIGATION BAR (Mobile) ===== */
 .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000; background: rgba(255,255,255,.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 6px 12px env(safe-area-inset-bottom, 8px); }
@@ -912,8 +886,14 @@ html { scroll-behavior: smooth; }
 }
 
 @media (max-width: 768px) {
-  /* Show bottom nav on mobile */
+  /* Show bottom nav on mobile only when app is active */
   .bottom-nav { display: block; }
+  /* Hide bottom nav on non-app screens (landing, auth, etc.) */
+  #screen-landing.active ~ .bottom-nav,
+  #screen-auth.active ~ .bottom-nav,
+  #screen-forgot.active ~ .bottom-nav,
+  #screen-onboarding.active ~ .bottom-nav,
+  #screen-coach-auth.active ~ .bottom-nav { display: none !important; }
 
   /* Hide sidebar & hamburger on mobile */
   #mobile-menu-btn { display: none !important; }
@@ -1058,6 +1038,9 @@ html { scroll-behavior: smooth; }
   /* Banner cards smaller */
   .banner-card { height: 120px; }
 
+  /* Profile mobile actions - visible on mobile */
+  .profile-mobile-actions { display: flex; }
+
   /* Rec sports grid */
   .rec-sports-grid { grid-template-columns: repeat(2, 1fr); }
 
@@ -1125,9 +1108,90 @@ html { scroll-behavior: smooth; }
 }
 
 
+
+/* ===== COMPREHENSIVE MOBILE UI FIXES ===== */
+/* Safe area insets for notched devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-nav { padding-bottom: calc(6px + env(safe-area-inset-bottom)); }
+  .main { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+  #screen-coach-app .main { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+}
+
+/* Fix viewport height issues on mobile browsers */
+@supports (height: 100dvh) {
+  body { min-height: 100dvh; }
+  .screen { min-height: 100dvh; }
+}
+
+/* Prevent iOS rubber-band scrolling on non-app screens */
+#screen-landing, #screen-auth, #screen-forgot, #screen-coach-auth {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure consistent button sizing */
+@media (max-width: 768px) {
+  .btn { min-height: 44px; padding: 10px 16px; font-size: .9rem; }
+  .btn.small { min-height: 36px; padding: 7px 12px; font-size: .82rem; }
+  .btn.primary { min-height: 44px; }
+  .btn.ghost { min-height: 44px; }
+
+  /* Fix input field sizing on all mobile */
+  input, select, textarea { font-size: 16px !important; min-height: 44px; }
+
+  /* Ensure panels don't overflow */
+  .panel { max-width: 100%; overflow-x: hidden; }
+
+  /* Fix stat cards on very small screens */
+  @media (max-width: 360px) {
+    .cards-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat-card { padding: 10px; }
+    .stat-card b { font-size: .9rem; }
+  }
+
+  /* Bottom nav safe spacing */
+  .bottom-nav-item { min-height: 50px; padding: 6px 8px; }
+  .bottom-nav-item span { font-size: .58rem; }
+
+  /* Fix coach app mobile bottom padding for nav */
+  #screen-coach-app .main { padding-bottom: 80px !important; }
+
+  /* Ensure modal content is scrollable on small screens */
+  .modal-content { max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Fix meal modal on mobile */
+  #manual-meal-modal .modal-content { max-width: 100%; margin: 0 8px; }
+}
+
+/* Landscape phone adjustments */
+@media (max-width: 768px) and (orientation: landscape) {
+  .bottom-nav { padding: 4px 12px; }
+  .bottom-nav-item { min-height: 40px; padding: 4px 10px; }
+  .bottom-nav-item span { font-size: .55rem; }
+  .bottom-nav-item i { font-size: 16px; }
+  .main { padding-bottom: 60px !important; }
+}
+
+/* Fix for iPhone SE and small phones */
+@media (max-width: 375px) {
+  .bottom-nav-item { padding: 4px 6px; gap: 2px; }
+  .bottom-nav-item span { font-size: .55rem; }
+  .bottom-nav-item i { font-size: 18px; }
+  .cards-row { gap: 8px; }
+  .stat-card { padding: 10px; gap: 8px; }
+  .stat-icon { width: 32px; height: 32px; }
+  .stat-card b { font-size: .9rem; }
+}
+
+
 /* Prevent double-tap zoom delay on buttons */
 button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn, .survey-option-fancy { touch-action: manipulation; }
 
+
+/* Profile mobile actions - hidden on desktop, visible on mobile */
+.profile-mobile-actions { display: none; gap: 10px; margin-top: 24px; }
 </style>
 </head>
 <body>
@@ -1435,8 +1499,8 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
           <button class="btn ghost small" onclick="lookupBarcode(document.getElementById('scanner-manual-input').value)" style="white-space:nowrap;"><i class="fa-solid fa-search"></i></button>
         </div>
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px;background:var(--accent-soft);border-radius:10px;border:1px solid var(--accent-border);justify-content:center;font-size:.85rem;margin-bottom:12px;">
-          <i class="fa-solid fa-camera" style="color:var(--accent);"></i>
-          <span data-ar="التقط صورة للباركود">Take a photo of barcode</span>
+          <i class="fa-solid fa-cloud-arrow-up" style="color:var(--accent);"></i>
+          <span data-ar="ارفع صورة للباركود">Upload a photo</span>
           <input type="file" id="scanner-file-input" accept="image/*" capture="environment" style="display:none;" onchange="scanBarcodeFromFile(this)" />
         </label>
         <div class="hidden" id="scanner-result-panel" style="background:var(--accent-soft);border-radius:10px;padding:12px;margin-bottom:12px;">
@@ -1605,6 +1669,11 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <h3><i class="fa-solid fa-bullseye"></i> <span data-ar="خطة هدف اللياقة">Fitness Goal Plan</span></h3>
         <div id="profile-goal-plan"></div>
         <button class="btn primary fit" onclick="openGoalModal(true)"><i class="fa-solid fa-pen-to-square"></i> <span data-ar="تعديل خطة الهدف">Edit Goal Plan</span></button>
+      </div>
+      <!-- Mobile-only quick actions: Settings & Logout -->
+      <div class="profile-mobile-actions" id="profile-mobile-actions">
+        <button class="btn ghost fit" onclick="showTab('settings')"><i class="fa-solid fa-gear"></i> <span data-ar="الإعدادات">Settings</span></button>
+        <button class="btn ghost fit" style="color:var(--red);border-color:var(--red);" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> <span data-ar="تسجيل الخروج">Log out</span></button>
       </div>
     </div>
 
@@ -1799,6 +1868,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <button class="side-btn" data-tab="coach-athletes" onclick="showCoachTab('coach-athletes')"><i class="fa-solid fa-users"></i><span data-ar="الرياضيون">Athletes</span></button>
     <button class="side-btn" data-tab="coach-sessions" onclick="showCoachTab('coach-sessions')"><i class="fa-solid fa-stopwatch"></i><span data-ar="الجلسات المباشرة">Live Sessions</span></button>
     <button class="side-btn" data-tab="coach-plans" onclick="showCoachTab('coach-plans')"><i class="fa-solid fa-clipboard-list"></i><span data-ar="خطط التدريب">Training Plans</span></button>
+    <button class="side-btn" data-tab="coach-meals" onclick="showCoachTab('coach-meals')"><i class="fa-solid fa-utensils"></i><span data-ar="تسجيل الوجبات">Meal Logging</span></button>
     <button class="side-btn" data-tab="coach-profile" onclick="showCoachTab('coach-profile')"><i class="fa-solid fa-user"></i><span data-ar="الملف الشخصي">Profile</span></button>
     <div style="flex:1;"></div>
     <button class="side-btn" data-tab="coach-settings" onclick="showCoachTab('coach-settings')"><i class="fa-solid fa-gear"></i><span data-ar="الإعدادات">Settings</span></button>
@@ -1894,6 +1964,54 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <h1 class="page-title" data-ar="خطط التدريب">Training plans</h1>
       <p class="page-sub" data-ar="خطط قابلة لإعادة الاستخدام أنشأتها لقائمتك.">Reusable plans you've built for your roster.</p>
       <div class="plans-grid" id="coach-plans-grid"></div>
+    </div>
+
+    <div id="tab-coach-meals" class="tab">
+      <h1 class="page-title" data-ar="تسجيل الوجبات">Meal Logging</h1>
+      <p class="page-sub" data-ar="سجّل وجبات لرياضيك لمساعدتهم على تتبع تغذيتهم.">Log meals for your athletes to help them track their nutrition.</p>
+      <div class="panel">
+        <h3><i class="fa-solid fa-plus"></i> <span data-ar="تسجيل وجبة لرياضي">Log Meal for Athlete</span></h3>
+        <form onsubmit="return coachLogMeal(event)" style="margin-top:12px;">
+          <label data-ar="اختر الرياضي">Select Athlete</label>
+          <select id="coach-meal-athlete" required style="margin-bottom:12px;">
+            <option value="" data-ar="اختر رياضياً...">Select athlete...</option>
+          </select>
+          <label data-ar="اسم الوجبة">Meal Name</label>
+          <input type="text" id="coach-meal-name" placeholder="e.g. Grilled Chicken & Rice" required data-ar-ph="مثال: دجاج مشوي وأرز" style="margin-bottom:12px;" />
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div>
+              <label data-ar="السعرات الحرارية">Calories (kcal)</label>
+              <input type="number" id="coach-meal-kcal" placeholder="350" min="0" value="0" data-ar-ph="350" />
+            </div>
+            <div>
+              <label data-ar="حجم الحصة">Serving</label>
+              <input type="text" id="coach-meal-serving" placeholder="1 plate" data-ar-ph="طبق واحد" />
+            </div>
+          </div>
+          <div style="background:var(--accent-soft);border-radius:10px;padding:12px;margin-bottom:12px;">
+            <p style="font-size:.82rem;color:var(--muted);margin-bottom:8px;" data-ar="المغذيات الكلية (اختياري)">Macros (optional)</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+              <div>
+                <label style="font-size:.75rem;color:var(--green);" data-ar="بروتين (غ)">Protein (g)</label>
+                <input type="number" id="coach-meal-protein" min="0" value="0" style="font-size:.9rem;padding:8px;" />
+              </div>
+              <div>
+                <label style="font-size:.75rem;color:var(--amber);" data-ar="كربوهيدرات (غ)">Carbs (g)</label>
+                <input type="number" id="coach-meal-carbs" min="0" value="0" style="font-size:.9rem;padding:8px;" />
+              </div>
+              <div>
+                <label style="font-size:.75rem;color:var(--red);" data-ar="دهون (غ)">Fat (g)</label>
+                <input type="number" id="coach-meal-fat" min="0" value="0" style="font-size:.9rem;padding:8px;" />
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn primary" style="margin-top:8px;"><i class="fa-solid fa-utensils"></i> <span data-ar="تسجيل الوجبة للرياضي">Log Meal for Athlete</span></button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3><i class="fa-solid fa-list-check"></i> <span data-ar="وجبات مسجلة مؤخراً">Recently Logged Meals</span></h3>
+        <div id="coach-meals-log-list"></div>
+      </div>
     </div>
 
     <div id="tab-coach-profile" class="tab">
@@ -2282,6 +2400,55 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   <div id="meditation-audio" style="margin-top:30px; display: flex; gap: 10px; flex-direction: column; align-items: center;"></div>
 </div>
 
+
+<!-- Manual Meal Log Modal -->
+<div id="manual-meal-modal" class="modal-overlay" style="z-index:10002;">
+  <div class="modal-content" style="max-width:460px;">
+    <button class="modal-close" onclick="closeModal('manual-meal-modal')">&times;</button>
+    <h3><i class="fa-solid fa-utensils"></i> <span data-ar="إضافة وجبة يدوياً">Add Meal Manually</span></h3>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:14px;" data-ar="أدخل تفاصيل وجبتك. لا تعرف القيم الدقيقة؟ لا تقلق، أدخل ما تعرفه واترك الباقي صفراً.">Enter your meal details. Don't know exact values? No worries — enter what you know and leave the rest as 0.</p>
+    <form onsubmit="return submitManualMeal(event)" style="margin-top:16px;">
+      <label data-ar="اسم الوجبة">Meal Name</label>
+      <input type="text" id="meal-name-input" placeholder="e.g. Grilled Chicken Salad" required data-ar-ph="مثال: سلطة دجاج مشوي" style="margin-bottom:12px;" />
+      <label data-ar="نوع الوجبة">Meal Type</label>
+      <select id="meal-type-input" style="margin-bottom:12px;">
+        <option value="breakfast" data-ar="فطور">Breakfast</option>
+        <option value="lunch" data-ar="غداء">Lunch</option>
+        <option value="dinner" data-ar="عشاء">Dinner</option>
+        <option value="snack" data-ar="وجبة خفيفة">Snack</option>
+      </select>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label data-ar="السعرات الحرارية (كيلو)">Calories (kcal)</label>
+          <input type="number" id="meal-kcal-input" placeholder="e.g. 350" min="0" value="0" data-ar-ph="مثال: 350" />
+        </div>
+        <div>
+          <label data-ar="حجم الحصة">Serving Size</label>
+          <input type="text" id="meal-serving-input" placeholder="e.g. 1 plate" data-ar-ph="مثال: طبق واحد" />
+        </div>
+      </div>
+      <div style="background:var(--accent-soft);border-radius:10px;padding:12px;margin-bottom:12px;">
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:8px;" data-ar="المغذيات الكلية (اختياري - اتركها صفراً إذا لم تكن متأكداً)">Macros (optional — leave as 0 if unsure)</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div>
+            <label style="font-size:.75rem;color:var(--green);" data-ar="بروتين (غ)">Protein (g)</label>
+            <input type="number" id="meal-protein-input" min="0" value="0" style="font-size:.9rem;padding:8px;" />
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:var(--amber);" data-ar="كربوهيدرات (غ)">Carbs (g)</label>
+            <input type="number" id="meal-carbs-input" min="0" value="0" style="font-size:.9rem;padding:8px;" />
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:var(--red);" data-ar="دهون (غ)">Fat (g)</label>
+            <input type="number" id="meal-fat-input" min="0" value="0" style="font-size:.9rem;padding:8px;" />
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn primary" style="margin-top:8px;"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة الوجبة">Add Meal</span></button>
+    </form>
+  </div>
+</div>
+
 <div id="workout-detail-modal" class="modal-overlay" style="z-index:10001;">
   <div class="modal-content" style="max-width:480px;">
     <button class="modal-close" onclick="closeWorkoutDetail()">&times;</button>
@@ -2620,16 +2787,24 @@ function updateMobileMenuBtn() {
   const appBtn = document.getElementById('mobile-menu-btn');
   const coachBtn = document.getElementById('mobile-menu-btn-coach');
   const coachOverlay = document.getElementById('mobile-sidebar-overlay-coach');
+  const bottomNav = document.getElementById('bottom-nav');
+
+  // Determine if an app screen is active (not login/auth screens)
+  const appActive = document.getElementById('screen-app').classList.contains('active');
+  const coachAppActive = document.getElementById('screen-coach-app').classList.contains('active');
+  const showNav = appActive || coachAppActive;
 
   if (isMobile) {
     if (appBtn) appBtn.style.display = 'flex';
-    const coachAppActive = document.getElementById('screen-coach-app').classList.contains('active');
     if (coachBtn) coachBtn.style.display = coachAppActive ? 'flex' : 'none';
     if (coachOverlay) coachOverlay.style.display = coachAppActive ? 'block' : 'none';
+    // Hide bottom nav on login/auth screens
+    if (bottomNav) bottomNav.style.display = showNav ? 'block' : 'none';
   } else {
     if (appBtn) appBtn.style.display = 'none';
     if (coachBtn) coachBtn.style.display = 'none';
     if (coachOverlay) coachOverlay.style.display = 'none';
+    if (bottomNav) bottomNav.style.display = 'none';
     // Close any open mobile sidebar
     closeMobileSidebar();
     closeMobileSidebarCoach();
@@ -2671,6 +2846,8 @@ function toggleBottomNavMore() {
   } else {
     more.classList.add('active');
     overlay.classList.add('active');
+    // Hide AI chat button when more popup is open
+    document.body.classList.add('more-popup-active');
   }
 }
 function closeBottomNavMore() {
@@ -2678,6 +2855,8 @@ function closeBottomNavMore() {
   const overlay = document.getElementById('bottom-nav-more-overlay');
   if (more) more.classList.remove('active');
   if (overlay) overlay.classList.remove('active');
+  // Restore AI chat button when more popup is closed
+  document.body.classList.remove('more-popup-active');
 }
 
 const origShowCoachTab = showCoachTab;
@@ -2686,6 +2865,7 @@ showCoachTab = function(t) {
   origShowCoachTab(t);
   if (t === 'coach-home') { renderCoachAnnouncements(); renderCoachWeeklyOverview(); }
   if (t === 'coach-athletes') { renderCoachAthletes(); filterCoachAthletes(); }
+  if (t === 'coach-meals') { populateCoachMealAthletes(); renderCoachMealsLog(); }
 };
 
 // Run on load and resize (debounced)
@@ -3991,13 +4171,22 @@ function startWorkoutTimer(index) {
   let secs = 45;
   const display = document.getElementById('workout-timer-display');
   const btn = document.getElementById('workout-start-timer-btn');
+  // Update the big timer display
+  const mins = Math.floor(secs / 60);
+  const secsRem = secs % 60;
+  display.textContent = String(mins).padStart(2,'0') + ':' + String(secsRem).padStart(2,'0');
   btn.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> ' + timeLeftLabel + secs + 's';
   btn.disabled = true;
   workoutTimerInt = setInterval(() => {
     secs--;
+    // Update big timer display
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    display.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
     btn.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> ' + timeLeftLabel + secs + 's';
     if (secs <= 0) {
       clearInterval(workoutTimerInt);
+      display.textContent = '00:00';
       btn.innerHTML = '<i class="fa-solid fa-check"></i> ' + completeBtnLabel;
       btn.disabled = false;
       btn.style.background = 'var(--green)';
@@ -5763,6 +5952,98 @@ function renderCoachMealsForUser() {
   setTimeout(applyTranslations, 0);
 }
 
+// ===== COACH MEAL LOGGING =====
+function coachLogMeal(e) {
+  e.preventDefault();
+  const ar = (store.lang === 'ar');
+  const athleteEmail = document.getElementById('coach-meal-athlete').value;
+  if (!athleteEmail) { alert(ar ? 'يرجى اختيار رياضي' : 'Please select an athlete'); return false; }
+  const name = document.getElementById('coach-meal-name').value.trim();
+  if (!name) return false;
+  const kcal = parseInt(document.getElementById('coach-meal-kcal').value) || 0;
+  const protein = parseFloat(document.getElementById('coach-meal-protein').value) || 0;
+  const carbs = parseFloat(document.getElementById('coach-meal-carbs').value) || 0;
+  const fat = parseFloat(document.getElementById('coach-meal-fat').value) || 0;
+  const serving = document.getElementById('coach-meal-serving').value || 'coach-assigned';
+
+  // Save to athlete's diet log
+  const key = 'volta_diet_log_' + athleteEmail;
+  let log = [];
+  try { log = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+  log.push({ id: Date.now(), name, brand: '', kcal, protein, carbs, fat, fiber: 0, serving, barcode: '', mealType: 'coach-assigned', loggedAt: new Date().toISOString(), coachAssigned: true });
+  localStorage.setItem(key, JSON.stringify(log));
+  // Also save to IndexedDB for offline
+  if (typeof voltaDB !== 'undefined') {
+    voltaDB.put('dietLog', { email: athleteEmail, log });
+  }
+
+  // Save to coach meals collection (for the "Coach-Recommended Meals" section)
+  const allMeals = JSON.parse(localStorage.getItem(COACH_MEALS_KEY) || '{}');
+  if (!allMeals[athleteEmail]) allMeals[athleteEmail] = [];
+  allMeals[athleteEmail].push({ name, desc: serving, kcal, p: protein, c: carbs, f: fat });
+  localStorage.setItem(COACH_MEALS_KEY, JSON.stringify(allMeals));
+
+  // Reset form
+  document.getElementById('coach-meal-name').value = '';
+  document.getElementById('coach-meal-kcal').value = '0';
+  document.getElementById('coach-meal-serving').value = '';
+  document.getElementById('coach-meal-protein').value = '0';
+  document.getElementById('coach-meal-carbs').value = '0';
+  document.getElementById('coach-meal-fat').value = '0';
+
+  // Show success
+  alert(ar ? 'تم تسجيل الوجبة لرياضيك بنجاح!' : 'Meal logged for athlete successfully!');
+  renderCoachMealsLog();
+  return false;
+}
+
+function renderCoachMealsLog() {
+  const container = document.getElementById('coach-meals-log-list');
+  if (!container) return;
+  const ar = (store.lang === 'ar');
+  const allMeals = JSON.parse(localStorage.getItem(COACH_MEALS_KEY) || '{}');
+  const athletes = getCoachAthletes();
+  let allEntries = [];
+  for (const [email, meals] of Object.entries(allMeals)) {
+    const athlete = athletes.find(a => a.email === email);
+    const athleteName = athlete ? athlete.name : (email || ar ? 'غير معروف' : 'Unknown');
+    meals.forEach(m => {
+      allEntries.push({ ...m, athleteName, athleteEmail: email });
+    });
+  }
+  // Sort by most recent (last in array = most recent)
+  allEntries = allEntries.slice(-20).reverse();
+  if (allEntries.length === 0) {
+    container.innerHTML = `<p style="color:var(--muted);text-align:center;padding:20px;">${ar ? 'لا توجد وجبات مسجلة بعد.' : 'No meals logged yet.'}</p>`;
+    return;
+  }
+  container.innerHTML = allEntries.map(e => `
+    <div class="diet-log-entry" style="margin-bottom:8px;">
+      <div class="diet-log-icon"><i class="fa-solid fa-utensils"></i></div>
+      <div class="diet-log-body">
+        <b>${e.name}</b>
+        <small style="color:var(--accent);"><i class="fa-solid fa-user"></i> ${e.athleteName}</small>
+      </div>
+      <span class="diet-log-kcal">${e.kcal || 0} kcal</span>
+    </div>
+  `).join('');
+}
+
+function populateCoachMealAthletes() {
+  const select = document.getElementById('coach-meal-athlete');
+  if (!select) return;
+  const athletes = getCoachAthletes();
+  // Keep the first placeholder option
+  const ar = (store.lang === 'ar');
+  select.innerHTML = '<option value="">' + (ar ? 'اختر رياضياً...' : 'Select athlete...') + '</option>';
+  athletes.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.email || a.name;
+    opt.textContent = a.name + (a.sport ? ' (' + a.sport + ')' : '');
+    select.appendChild(opt);
+  });
+}
+
 function autofillFromInBody() {
   const file = document.getElementById('inbody-file').files[0];
   if (!file) { setMsg('inbody-status', 'Please select an InBody result sheet image.', 'error'); return; }
@@ -6342,17 +6623,33 @@ function logScannedProduct() {
 }
 
 function addManualMealLog() {
-  const isAr = (store.lang === 'ar');
-  const name = prompt(isAr ? 'اسم الوجبة:' : 'Meal name:');
-  if (!name) return;
-  const kcal = parseInt(prompt(isAr ? 'السعرات الحرارية:' : 'Calories (kcal):') || '0');
-  const protein = parseFloat(prompt(isAr ? 'البروتين (غ):' : 'Protein (g):') || '0');
-  const carbs = parseFloat(prompt(isAr ? 'الكربوهيدرات (غ):' : 'Carbs (g):') || '0');
-  const fat = parseFloat(prompt(isAr ? 'الدهون (غ):' : 'Fat (g):') || '0');
+  // Reset form fields
+  document.getElementById('meal-name-input').value = '';
+  document.getElementById('meal-type-input').value = 'lunch';
+  document.getElementById('meal-kcal-input').value = '0';
+  document.getElementById('meal-serving-input').value = '';
+  document.getElementById('meal-protein-input').value = '0';
+  document.getElementById('meal-carbs-input').value = '0';
+  document.getElementById('meal-fat-input').value = '0';
+  openModal('manual-meal-modal');
+}
+
+function submitManualMeal(e) {
+  e.preventDefault();
+  const name = document.getElementById('meal-name-input').value.trim();
+  if (!name) return false;
+  const kcal = parseInt(document.getElementById('meal-kcal-input').value) || 0;
+  const protein = parseFloat(document.getElementById('meal-protein-input').value) || 0;
+  const carbs = parseFloat(document.getElementById('meal-carbs-input').value) || 0;
+  const fat = parseFloat(document.getElementById('meal-fat-input').value) || 0;
+  const mealType = document.getElementById('meal-type-input').value;
+  const serving = document.getElementById('meal-serving-input').value || mealType;
   const log = getDietLog();
-  log.push({ id: Date.now(), name, brand: '', kcal, protein, carbs, fat, fiber: 0, serving: isAr ? 'يدوي' : 'manual', barcode: '', loggedAt: new Date().toISOString() });
+  log.push({ id: Date.now(), name, brand: '', kcal, protein, carbs, fat, fiber: 0, serving, barcode: '', mealType, loggedAt: new Date().toISOString() });
   saveDietLog(log);
   renderDietLog();
+  closeModal('manual-meal-modal');
+  return false;
 }
 
 function getDietLog() {
