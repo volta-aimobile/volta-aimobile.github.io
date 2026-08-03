@@ -1145,9 +1145,8 @@ html { scroll-behavior: smooth; }
 
 /* ===== COACH: Bottom nav hidden by default (shown on mobile via media query) ===== */
 .coach-bottom-nav { display: none; }
-#coach-bottom-nav-more { display: none; }
 
-/* Hide coach bottom nav on non-coach screens */
+/* Hide coach bottom nav (and its More popup) on non-coach screens */
 #screen-coach-app:not(.active) .coach-bottom-nav,
 #screen-coach-app:not(.active) #coach-bottom-nav-more { display: none !important; }
 
@@ -1413,7 +1412,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <div class="survey-progress-fancy">
         <div class="survey-progress-fancy-fill" id="survey-progress-fill" style="width:0%;"></div>
       </div>
-      <div class="survey-counter" id="survey-counter" data-ar="السؤال 1 من 35">Question 1 of 35</div>
+      <div class="survey-counter" id="survey-counter">Question 1 of 34</div>
       <div id="survey-question-content"></div>
       <div class="survey-nav-fancy">
         <button class="btn ghost" id="survey-prev-btn" onclick="prevSurveyQuestion()"><i class="fa-solid fa-arrow-left"></i> <span data-ar="رجوع">Back</span></button>
@@ -1720,6 +1719,55 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div id="profile-goal-plan"></div>
         <button class="btn primary fit" onclick="openGoalModal(true)"><i class="fa-solid fa-pen-to-square"></i> <span data-ar="تعديل خطة الهدف">Edit Goal Plan</span></button>
       </div>
+
+      <!-- ===== LINKED COACH (athlete side of coach↔athlete linking) ===== -->
+      <div class="panel">
+        <h3><i class="fa-solid fa-link"></i> <span data-ar="ارتباط بالمدرب">Linked Coach</span></h3>
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="أدخل بريد مدربك لربط حسابك به. سيتمكن من رؤية تقدمك وجلساتك.">Enter your coach's email to link your account. They'll be able to see your progress and sessions.</p>
+        <div id="linked-coach-display" style="margin-bottom:12px;"></div>
+        <label style="font-size:.82rem;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;" data-ar="بريد المدرب">Coach Email</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input type="email" id="linked-coach-email" placeholder="coach@email.com" data-ar-ph="coach@email.com" style="flex:1;min-width:200px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;font-size:.95rem;" />
+          <button class="btn primary" onclick="saveLinkedCoach()" style="white-space:nowrap;"><i class="fa-solid fa-link"></i> <span data-ar="ربط">Link</span></button>
+        </div>
+        <p id="linked-coach-msg" class="msg" style="margin-top:8px;"></p>
+      </div>
+
+      <!-- ===== QUICK LINKS (replaces the old "More" popup) ===== -->
+      <div class="panel">
+        <h3><i class="fa-solid fa-grip"></i> <span data-ar="روابط سريعة">Quick Links</span></h3>
+        <div class="bottom-nav-more-grid" style="grid-template-columns:repeat(4,1fr);gap:6px;">
+          <button class="bottom-nav-more-item" onclick="showTab('marathon')" style="min-height:64px;">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <span data-ar="الماراثون">Marathon</span>
+          </button>
+          <button class="bottom-nav-more-item" onclick="showTab('calc')" style="min-height:64px;">
+            <i class="fa-solid fa-calculator"></i>
+            <span data-ar="الحاسبة">Calc</span>
+          </button>
+          <button class="bottom-nav-more-item" onclick="showTab('weather')" style="min-height:64px;">
+            <i class="fa-solid fa-cloud-sun"></i>
+            <span data-ar="الطقس">Weather</span>
+          </button>
+          <button class="bottom-nav-more-item" onclick="showTab('moodmorph')" style="min-height:64px;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span data-ar="المزاج">Mood</span>
+          </button>
+          <button class="bottom-nav-more-item" onclick="showTab('reminders')" style="min-height:64px;">
+            <i class="fa-solid fa-bell"></i>
+            <span data-ar="التذكيرات">Reminders</span>
+          </button>
+          <button class="bottom-nav-more-item" onclick="showTab('settings')" style="min-height:64px;">
+            <i class="fa-solid fa-gear"></i>
+            <span data-ar="الإعدادات">Settings</span>
+          </button>
+          <button class="bottom-nav-more-item" onclick="logout()" style="min-height:64px;color:var(--red);">
+            <i class="fa-solid fa-right-from-bracket" style="color:var(--red);"></i>
+            <span data-ar="خروج">Logout</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Mobile-only quick actions: Settings & Logout (side-by-side like photo) -->
       <div class="profile-mobile-actions" id="profile-mobile-actions">
         <button class="profile-action-btn profile-action-settings" onclick="showTab('settings')"><i class="fa-solid fa-gear"></i> <span data-ar="الإعدادات">Settings</span></button>
@@ -1744,6 +1792,28 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
           <div class="toggle-group"><button class="toggle-btn active" id="loc-on-btn" onclick="setLoc(true)" data-ar="تشغيل">On</button><button class="toggle-btn" id="loc-off-btn" onclick="setLoc(false)" data-ar="إيقاف">Off</button></div>
         </div>
       </div>
+
+      <!-- ===== CROSS-DEVICE ACCOUNT SYNC ===== -->
+      <div class="panel">
+        <h3><i class="fa-solid fa-cloud-arrow-up-down"></i> <span data-ar="مزامنة الحساب عبر الأجهزة">Cross-Device Account Sync</span></h3>
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="صدّر بيانات حسابك كرمز، ثم أدخله على جهاز آخر لمزامنة كل تقدمك.">Export your account data as a sync code, then enter it on another device to mirror all your progress.</p>
+
+        <div style="margin-bottom:16px;">
+          <b style="font-size:.88rem;display:block;margin-bottom:6px;" data-ar="رمز المزامنة الخاص بك">Your Sync Code</b>
+          <textarea id="sync-export-code" readonly placeholder="Tap 'Generate Sync Code' to create one..." data-ar-ph="اضغط 'إنشاء رمز المزامنة' لإنشاء رمز..." style="width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:.78rem;font-family:monospace;background:var(--bg);color:var(--text);resize:vertical;"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+            <button class="btn primary small" onclick="generateSyncCode()"><i class="fa-solid fa-key"></i> <span data-ar="إنشاء رمز المزامنة">Generate Sync Code</span></button>
+            <button class="btn ghost small" onclick="copySyncCode()"><i class="fa-solid fa-copy"></i> <span data-ar="نسخ">Copy</span></button>
+          </div>
+        </div>
+
+        <div>
+          <b style="font-size:.88rem;display:block;margin-bottom:6px;" data-ar="استيراد من جهاز آخر">Import From Another Device</b>
+          <textarea id="sync-import-code" placeholder="Paste a sync code from another device here..." data-ar-ph="الصق رمز المزامنة من جهاز آخر هنا..." style="width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:.78rem;font-family:monospace;background:var(--white);color:var(--text);resize:vertical;"></textarea>
+          <button class="btn primary small" onclick="importSyncCode()" style="margin-top:8px;"><i class="fa-solid fa-cloud-arrow-down"></i> <span data-ar="استيراد الحساب">Import Account</span></button>
+          <p id="sync-msg" class="msg" style="margin-top:8px;"></p>
+        </div>
+      </div>
     </div>
   </main>
 </section>
@@ -1761,7 +1831,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         </button>
         <button class="bottom-nav-item" data-btab="daily" onclick="showTab('daily')">
           <i class="fa-solid fa-list-check"></i>
-          <span data-ar="التمارين">Tasks</span>
+          <span data-ar="التمارين اليومية">Daily Exercise</span>
         </button>
         <button class="bottom-nav-item" data-btab="diet" onclick="showTab('diet')">
           <i class="fa-solid fa-utensils"></i>
@@ -1773,6 +1843,8 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         </button>
       </div>
     </nav>
+    <!-- More popup: opens when "More" is tapped. Contains Profile, Settings, and
+         other secondary destinations. Profile remains accessible from here. -->
     <div id="bottom-nav-more" class="bottom-nav-more">
       <div class="bottom-nav-more-grid">
         <button class="bottom-nav-more-item" onclick="showTab('marathon');closeBottomNavMore()">
@@ -1994,7 +2066,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div class="coach-quick-actions">
           <div class="coach-quick-action" onclick="openAddAthleteModal()"><i class="fa-solid fa-user-plus"></i><span data-ar="إضافة رياضي">Add Athlete</span></div>
           <div class="coach-quick-action" onclick="openNewPlanModal()"><i class="fa-solid fa-clipboard-list"></i><span data-ar="خطة جديدة">New Plan</span></div>
-          <div class="coach-quick-action" onclick="openAnnouncementModal()"><i class="fa-solid fa-bullhorn"></i><span data-ar="إعلان">Announce</span></div>
           <div class="coach-quick-action" onclick="exportAthletesCSV()"><i class="fa-solid fa-file-export"></i><span data-ar="تصدير">Export CSV</span></div>
         </div>
       </div>
@@ -2005,11 +2076,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <div class="panel">
         <h3><i class="fa-solid fa-chart-bar"></i> <span data-ar="جلسات الرياضي هذا الأسبوع">Athlete Sessions This Week</span></h3>
         <div id="coachSessionsChart-container" style="max-height:250px;"><canvas id="coachSessionsChart"></canvas></div>
-      </div>
-      <div class="panel">
-        <h3><i class="fa-solid fa-bullhorn"></i> <span data-ar="الإعلانات">Announcements</span></h3>
-        <div id="coach-announcements-list"></div>
-        <p id="coach-no-announcements" style="color:var(--muted);font-size:.85rem;text-align:center;padding:10px;" data-ar="لا توجد إعلانات بعد.">No announcements yet.</p>
       </div>
       <div class="panel">
         <h3><i class="fa-solid fa-brain"></i> <span data-ar="توصيات المدرب">Coach's Recommendations</span></h3>
@@ -2122,6 +2188,27 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
           <div class="chips"><span class="chip" data-ar="مدرب معتمد">Certified Coach</span><span class="chip" data-ar="القوة والتأهيل">Strength &amp; Conditioning</span><span class="chip" id="coach-profile-athlete-count" data-ar="0 رياضياً">0 athletes</span></div>
         </div>
       </div>
+
+      <!-- ===== COACH LINK CODE (athletes use this email to link) ===== -->
+      <div class="panel">
+        <h3><i class="fa-solid fa-link"></i> <span data-ar="رمز ربط الرياضي">Athlete Link Code</span></h3>
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:10px;" data-ar="شارك بريدك مع رياضيك. عندما يدخلونه في ملفاتهم الشخصية، سيظهر تقدمهم تلقائياً في قائمتك.">Share your email with your athletes. When they enter it in their profile, their progress will automatically appear in your roster.</p>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--accent-soft);border:1px dashed var(--accent-border);border-radius:10px;padding:12px 14px;">
+          <i class="fa-solid fa-envelope" style="color:var(--accent);font-size:1.1rem;"></i>
+          <b id="coach-link-code" style="font-size:1rem;color:var(--accent);word-break:break-all;flex:1;">—</b>
+          <button class="btn ghost small" onclick="copyCoachLinkCode()" style="white-space:nowrap;"><i class="fa-solid fa-copy"></i> <span data-ar="نسخ">Copy</span></button>
+        </div>
+        <p id="coach-link-msg" class="msg" style="margin-top:8px;"></p>
+      </div>
+
+      <!-- ===== LINKED ATHLETES (athletes who linked with this coach) ===== -->
+      <div class="panel">
+        <h3><i class="fa-solid fa-user-check"></i> <span data-ar="الرياضيون المرتبطون">Linked Athletes</span></h3>
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="الرياضيون الذين ربطوا حساباتهم ببريدك. يظهر تقدمهم تلقائياً هنا.">Athletes who linked their account to your email. Their progress appears here automatically.</p>
+        <div id="linked-athletes-list"></div>
+        <p id="no-linked-athletes" style="color:var(--muted);font-size:.85rem;text-align:center;padding:14px;" data-ar="لا يوجد رياضيون مرتبطون بعد. شارك رمز الربط أعلاه مع رياضيك.">No linked athletes yet. Share your link code above with your athletes.</p>
+      </div>
+
       <div class="panel">
         <h3><i class="fa-solid fa-gear"></i> <span data-ar="الحساب">Account</span></h3>
         <div class="settings-row"><div><b data-ar="البريد الإلكتروني">Email</b><small id="coach-email-2">—</small></div><button class="btn ghost small" data-ar="تغيير">Change</button></div>
@@ -2156,6 +2243,28 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <h3><i class="fa-solid fa-circle-info"></i> <span data-ar="حول">About</span></h3>
         <div class="settings-row"><div><b data-ar="الإصدار">Version</b><small>Volta Coach 1.0</small></div></div>
         <div class="settings-row"><div><b data-ar="الدعم">Support</b><small>coach@volta.app</small></div></div>
+      </div>
+
+      <!-- ===== CROSS-DEVICE COACH ACCOUNT SYNC ===== -->
+      <div class="panel">
+        <h3><i class="fa-solid fa-cloud-arrow-up-down"></i> <span data-ar="مزامنة الحساب عبر الأجهزة">Cross-Device Account Sync</span></h3>
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="صدّر بيانات حسابك كرمز، ثم أدخله على جهاز آخر لمزامنة رياضيك وخططك وجلساتك.">Export your coach account data as a sync code, then enter it on another device to mirror your athletes, plans, and sessions.</p>
+
+        <div style="margin-bottom:16px;">
+          <b style="font-size:.88rem;display:block;margin-bottom:6px;" data-ar="رمز المزامنة الخاص بك">Your Sync Code</b>
+          <textarea id="coach-sync-export-code" readonly placeholder="Tap 'Generate Sync Code' to create one..." data-ar-ph="اضغط 'إنشاء رمز المزامنة' لإنشاء رمز..." style="width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:.78rem;font-family:monospace;background:var(--bg);color:var(--text);resize:vertical;"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+            <button class="btn primary small" onclick="generateCoachSyncCode()"><i class="fa-solid fa-key"></i> <span data-ar="إنشاء رمز المزامنة">Generate Sync Code</span></button>
+            <button class="btn ghost small" onclick="copyCoachSyncCode()"><i class="fa-solid fa-copy"></i> <span data-ar="نسخ">Copy</span></button>
+          </div>
+        </div>
+
+        <div>
+          <b style="font-size:.88rem;display:block;margin-bottom:6px;" data-ar="استيراد من جهاز آخر">Import From Another Device</b>
+          <textarea id="coach-sync-import-code" placeholder="Paste a sync code from another device here..." data-ar-ph="الصق رمز المزامنة من جهاز آخر هنا..." style="width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:.78rem;font-family:monospace;background:var(--white);color:var(--text);resize:vertical;"></textarea>
+          <button class="btn primary small" onclick="importCoachSyncCode()" style="margin-top:8px;"><i class="fa-solid fa-cloud-arrow-down"></i> <span data-ar="استيراد الحساب">Import Account</span></button>
+          <p id="coach-sync-msg" class="msg" style="margin-top:8px;"></p>
+        </div>
       </div>
     </div>
   </main>
@@ -2616,6 +2725,14 @@ function setTheme(mode) { store.theme = mode; applySettings(); }
 function setLang(lang) {
   store.lang = lang;
   applySettings();
+  // If the onboarding survey is currently open, re-render the current question
+  // so question text, options, counter, and nav button labels all switch language.
+  try {
+    const surveyArea = document.getElementById('survey-area');
+    if (surveyArea && surveyArea.style.display !== 'none' && typeof renderSurveyQuestion === 'function') {
+      renderSurveyQuestion();
+    }
+  } catch(e) {}
   // Re-render ALL tabs (not just the active one) so that hidden tabs also pick
   // up the new language. If we only re-rendered the active tab, content in
   // hidden tabs would stay in the old language until the user navigated to
@@ -2921,11 +3038,16 @@ showTab = function(name) {
   closeBottomNavMore();
   origShowTab(name);
   if (name === 'diet') { renderDietLog(); renderScannerHistory(); }
-  // Update bottom nav active state
+  // Update bottom nav active state.
+  // Tabs that don't have a dedicated bottom-nav button (marathon, calc, weather,
+  // moodmorph, reminders, profile, settings, timer) all live "under" the More
+  // button — they're reachable via the More popup — so we highlight More on
+  // the bottom nav whenever one of them is active.
   const bottomNavItems = document.querySelectorAll('#bottom-nav .bottom-nav-item');
   const tabToBtab = { home: 'home', sports: 'sports', daily: 'daily', diet: 'diet',
+    profile: 'more',
     marathon: 'more', calc: 'more', weather: 'more', moodmorph: 'more',
-    reminders: 'more', profile: 'more', settings: 'more' };
+    reminders: 'more', settings: 'more', scanner: 'more' };
   const activeBtab = tabToBtab[name] || 'home';
   bottomNavItems.forEach(item => {
     item.classList.toggle('active', item.dataset.btab === activeBtab);
@@ -2951,6 +3073,10 @@ function toggleBottomNavMore() {
   } else {
     more.classList.add('active');
     overlay.classList.add('active');
+    // Highlight the More button while its popup is open
+    document.querySelectorAll('#bottom-nav .bottom-nav-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.btab === 'more');
+    });
     // Hide AI chat button when more popup is open
     document.body.classList.add('more-popup-active');
   }
@@ -3149,42 +3275,427 @@ function loginSuccess(email) {
 }
 function logout() { store.session = null; showScreen('screen-landing'); }
 
+// ===== CROSS-DEVICE ACCOUNT SYNC (athlete side) =====
+//
+// How it works:
+// - Export: gather the current user's profile, survey, sessions, streaks,
+//   reminders, InBody data, daily-exercise plan, and goal plan — along with
+//   their stored theme/language prefs — into one JSON blob, then base64-encode
+//   it. The user copies that string and pastes it on another device.
+// - Import: decode the blob, write each piece back into localStorage keyed
+//   under the current (or matched) account email, then reload the app so all
+//   screens re-render from the freshly imported data.
+//
+// Notes:
+// - Sync codes are NOT encrypted — they're a convenience transport, not a
+//   security boundary. Don't paste sync codes from untrusted sources.
+// - Sync codes are versioned (volta_sync_v1) so future formats can be
+//   detected gracefully.
+const VOLTA_SYNC_VERSION = 'volta_sync_v1';
+function _btoaUnicode(str) {
+  // Handle Unicode chars (Arabic, emoji, etc.) safely across browsers.
+  try { return btoa(unescape(encodeURIComponent(str))); }
+  catch(e) { return btoa(str); }
+}
+function _atobUnicode(b64) {
+  try { return decodeURIComponent(escape(atob(b64))); }
+  catch(e) { return atob(b64); }
+}
+function setSyncMsg(id, text, kind) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'msg ' + (kind === 'ok' ? 'ok' : kind === 'error' ? 'error' : '');
+}
+function generateSyncCode() {
+  const email = store.session;
+  if (!email) {
+    setSyncMsg('sync-msg', 'Please log in first.', 'error');
+    return;
+  }
+  const u = store.users[email];
+  if (!u) {
+    setSyncMsg('sync-msg', 'No account data found.', 'error');
+    return;
+  }
+  const payload = {
+    v: VOLTA_SYNC_VERSION,
+    type: 'athlete',
+    email: email,
+    exportedAt: new Date().toISOString(),
+    user: u,
+    prefs: { theme: store.theme, lang: store.lang, locationEnabled: store.locationEnabled },
+    // Include the daily exercise plan (lives in its own localStorage keys).
+    dailyPlan: localStorage.getItem('de_daily_plan') || null,
+    // Include any linked-coach binding set from the Profile screen.
+    linkedCoach: localStorage.getItem('volta_linked_coach_' + email) || null,
+  };
+  const json = JSON.stringify(payload);
+  const code = _btoaUnicode(json);
+  const ta = document.getElementById('sync-export-code');
+  if (ta) ta.value = code;
+  setSyncMsg('sync-msg', 'Sync code generated. Copy it and paste on another device.', 'ok');
+}
+function copySyncCode() {
+  const ta = document.getElementById('sync-export-code');
+  if (!ta || !ta.value) {
+    setSyncMsg('sync-msg', 'Generate a sync code first.', 'error');
+    return;
+  }
+  // Use the clipboard API with a fallback to select+execCommand.
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ta.value).then(
+      () => setSyncMsg('sync-msg', 'Copied to clipboard.', 'ok'),
+      () => { ta.select(); document.execCommand('copy'); setSyncMsg('sync-msg', 'Copied.', 'ok'); }
+    );
+  } else {
+    ta.select(); document.execCommand('copy'); setSyncMsg('sync-msg', 'Copied.', 'ok');
+  }
+}
+function importSyncCode() {
+  const ta = document.getElementById('sync-import-code');
+  if (!ta || !ta.value.trim()) {
+    setSyncMsg('sync-msg', 'Paste a sync code first.', 'error');
+    return;
+  }
+  let payload;
+  try {
+    const json = _atobUnicode(ta.value.trim());
+    payload = JSON.parse(json);
+  } catch(e) {
+    setSyncMsg('sync-msg', 'That code looks invalid or corrupted.', 'error');
+    return;
+  }
+  if (!payload || payload.v !== VOLTA_SYNC_VERSION) {
+    setSyncMsg('sync-msg', 'Unsupported sync code version.', 'error');
+    return;
+  }
+  if (payload.type !== 'athlete') {
+    setSyncMsg('sync-msg', 'This is not an athlete sync code.', 'error');
+    return;
+  }
+  // Confirm overwrite: if user is logged in as a different email, ask.
+  const currentEmail = store.session;
+  if (currentEmail && currentEmail !== payload.email) {
+    const ar = (store.lang === 'ar');
+    const ok = confirm(ar
+      ? 'هذا الرمز مرتبط بحساب آخر (' + payload.email + '). هل تريد استيراده إلى هذا الحساب؟'
+      : 'This code belongs to another account (' + payload.email + '). Import it into the current account anyway?');
+    if (!ok) return;
+  }
+  // Make sure the user record exists locally (create if missing).
+  const targetEmail = currentEmail || payload.email;
+  if (!store.users[targetEmail]) {
+    store.users[targetEmail] = { password: null, verified: false, profile: null, survey: null, streak: 0, lastDone: null, sessions: [], reminders: [] };
+  }
+  // Merge: overwrite each known field from the payload.
+  const u = store.users[targetEmail];
+  const incoming = payload.user || {};
+  ['profile','survey','streak','lastDone','sessions','reminders','inbody','goalPlan','google','verified','password'].forEach(k => {
+    if (incoming[k] !== undefined) u[k] = incoming[k];
+  });
+  store.users[targetEmail] = u;
+  store.session = targetEmail;
+  // Restore prefs
+  if (payload.prefs) {
+    if (payload.prefs.theme) store.theme = payload.prefs.theme;
+    if (payload.prefs.lang) store.lang = payload.prefs.lang;
+    if (typeof payload.prefs.locationEnabled === 'boolean') store.locationEnabled = payload.prefs.locationEnabled;
+  }
+  // Restore daily plan
+  if (payload.dailyPlan) localStorage.setItem('de_daily_plan', payload.dailyPlan);
+  // Restore linked-coach binding
+  if (payload.linkedCoach) localStorage.setItem('volta_linked_coach_' + targetEmail, payload.linkedCoach);
+  setSyncMsg('sync-msg', 'Account imported! Reloading…', 'ok');
+  applySettings();
+  setTimeout(() => location.reload(), 800);
+}
+
+// ===== CROSS-DEVICE ACCOUNT SYNC (coach side) =====
+function generateCoachSyncCode() {
+  const email = localStorage.getItem(COACH_SESSION_KEY);
+  if (!email) {
+    setSyncMsg('coach-sync-msg', 'Please log in first.', 'error');
+    return;
+  }
+  const coachUsers = JSON.parse(localStorage.getItem('volta_coach_users') || '{}');
+  const coachAccount = coachUsers[email] || { password: null, name: email.split('@')[0] };
+  const payload = {
+    v: VOLTA_SYNC_VERSION,
+    type: 'coach',
+    email: email,
+    exportedAt: new Date().toISOString(),
+    coachAccount: coachAccount,
+    athletes: JSON.parse(localStorage.getItem(COACH_ATHLETES_KEY) || '{}')[email] || [],
+    plans: JSON.parse(localStorage.getItem('volta_coach_plans') || '{}')[email] || [],
+    prefs: { theme: store.theme, lang: store.lang },
+  };
+  const json = JSON.stringify(payload);
+  const code = _btoaUnicode(json);
+  const ta = document.getElementById('coach-sync-export-code');
+  if (ta) ta.value = code;
+  setSyncMsg('coach-sync-msg', 'Sync code generated. Copy it and paste on another device.', 'ok');
+}
+function copyCoachSyncCode() {
+  const ta = document.getElementById('coach-sync-export-code');
+  if (!ta || !ta.value) {
+    setSyncMsg('coach-sync-msg', 'Generate a sync code first.', 'error');
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ta.value).then(
+      () => setSyncMsg('coach-sync-msg', 'Copied to clipboard.', 'ok'),
+      () => { ta.select(); document.execCommand('copy'); setSyncMsg('coach-sync-msg', 'Copied.', 'ok'); }
+    );
+  } else {
+    ta.select(); document.execCommand('copy'); setSyncMsg('coach-sync-msg', 'Copied.', 'ok');
+  }
+}
+function importCoachSyncCode() {
+  const ta = document.getElementById('coach-sync-import-code');
+  if (!ta || !ta.value.trim()) {
+    setSyncMsg('coach-sync-msg', 'Paste a sync code first.', 'error');
+    return;
+  }
+  let payload;
+  try {
+    const json = _atobUnicode(ta.value.trim());
+    payload = JSON.parse(json);
+  } catch(e) {
+    setSyncMsg('coach-sync-msg', 'That code looks invalid or corrupted.', 'error');
+    return;
+  }
+  if (!payload || payload.v !== VOLTA_SYNC_VERSION) {
+    setSyncMsg('coach-sync-msg', 'Unsupported sync code version.', 'error');
+    return;
+  }
+  if (payload.type !== 'coach') {
+    setSyncMsg('coach-sync-msg', 'This is not a coach sync code.', 'error');
+    return;
+  }
+  const currentEmail = localStorage.getItem(COACH_SESSION_KEY);
+  if (currentEmail && currentEmail !== payload.email) {
+    const ar = (store.lang === 'ar');
+    const ok = confirm(ar
+      ? 'هذا الرمز مرتبط بحساب مدرب آخر (' + payload.email + '). هل تريد استيراده إلى هذا الحساب؟'
+      : 'This code belongs to another coach account (' + payload.email + '). Import it into the current account anyway?');
+    if (!ok) return;
+  }
+  const targetEmail = currentEmail || payload.email;
+  // Ensure coach account exists locally.
+  const coachUsers = JSON.parse(localStorage.getItem('volta_coach_users') || '{}');
+  if (!coachUsers[targetEmail]) {
+    coachUsers[targetEmail] = payload.coachAccount || { password: null, name: targetEmail.split('@')[0] };
+    localStorage.setItem('volta_coach_users', JSON.stringify(coachUsers));
+  }
+  localStorage.setItem(COACH_SESSION_KEY, targetEmail);
+  // Merge athletes
+  const allAthletes = JSON.parse(localStorage.getItem(COACH_ATHLETES_KEY) || '{}');
+  allAthletes[targetEmail] = payload.athletes || [];
+  localStorage.setItem(COACH_ATHLETES_KEY, JSON.stringify(allAthletes));
+  // Merge plans
+  const allPlans = JSON.parse(localStorage.getItem('volta_coach_plans') || '{}');
+  allPlans[targetEmail] = payload.plans || [];
+  localStorage.setItem('volta_coach_plans', JSON.stringify(allPlans));
+  // Restore prefs
+  if (payload.prefs) {
+    if (payload.prefs.theme) store.theme = payload.prefs.theme;
+    if (payload.prefs.lang) store.lang = payload.prefs.lang;
+  }
+  setSyncMsg('coach-sync-msg', 'Coach account imported! Reloading…', 'ok');
+  applySettings();
+  setTimeout(() => location.reload(), 800);
+}
+
+// ===== COACH ↔ ATHLETE ACCOUNT LINKING =====
+//
+// Athlete side:
+// - Athlete enters their coach's email in Profile → "Linked Coach" panel.
+// - We store it under 'volta_linked_coach_<athlete_email>' in localStorage.
+// - When the athlete is also logged in on the same device as the coach, the
+//   coach automatically sees them in their "Linked Athletes" list.
+//
+// Cross-device: when the athlete uses Cross-Device Sync to push their data
+// to the coach's device, the linkedCoach binding travels with the sync code.
+// The coach's `renderLinkedAthletes()` then scans all known linked-coach
+// bindings and surfaces the ones that point at this coach's email.
+//
+// Coach side:
+// - The Profile screen shows the coach's email as the "Athlete Link Code".
+// - The Profile screen also renders the Linked Athletes list (athletes who
+//   linked to this coach's email).
+const VOLTA_LINKED_COACH_PREFIX = 'volta_linked_coach_';
+const VOLTA_ATHLETE_PROFILE_PREFIX = 'volta_athlete_profile_';
+
+function saveLinkedCoach() {
+  const email = store.session;
+  if (!email) {
+    setSyncMsg('linked-coach-msg', 'Please log in first.', 'error');
+    return;
+  }
+  const input = document.getElementById('linked-coach-email');
+  const coachEmail = (input.value || '').trim().toLowerCase();
+  if (!coachEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(coachEmail)) {
+    setSyncMsg('linked-coach-msg', 'Please enter a valid coach email.', 'error');
+    return;
+  }
+  localStorage.setItem(VOLTA_LINKED_COACH_PREFIX + email, coachEmail);
+  // Also persist a snapshot of this athlete's profile so the coach can see
+  // their info even before the athlete logs a new session.
+  const u = store.users[email];
+  if (u) {
+    const snapshot = {
+      email: email,
+      name: (u.profile && u.profile.name) || email.split('@')[0],
+      sport: (u.profile && u.profile.sport) || 'General Fitness',
+      level: (u.profile && u.profile.level) || 'Beginner',
+      goal: (u.profile && u.profile.goal) || '',
+      sessions: (u.sessions || []).length,
+      streak: u.streak || 0,
+      lastDone: u.lastDone || null,
+      syncedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(VOLTA_ATHLETE_PROFILE_PREFIX + email, JSON.stringify(snapshot));
+  }
+  setSyncMsg('linked-coach-msg', 'Linked with coach successfully!', 'ok');
+  renderLinkedCoachDisplay();
+}
+
+function unlinkCoach() {
+  const email = store.session;
+  if (!email) return;
+  localStorage.removeItem(VOLTA_LINKED_COACH_PREFIX + email);
+  setSyncMsg('linked-coach-msg', 'Unlinked from coach.', 'ok');
+  renderLinkedCoachDisplay();
+}
+
+function renderLinkedCoachDisplay() {
+  const email = store.session;
+  const container = document.getElementById('linked-coach-display');
+  const input = document.getElementById('linked-coach-email');
+  if (!container) return;
+  const linked = email ? localStorage.getItem(VOLTA_LINKED_COACH_PREFIX + email) : null;
+  const ar = (store.lang === 'ar');
+  if (linked) {
+    container.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;background:var(--green-bg);border:1px solid var(--green);border-radius:10px;padding:10px 14px;">
+        <i class="fa-solid fa-circle-check" style="color:var(--green);font-size:1.1rem;"></i>
+        <div style="flex:1;">
+          <b style="font-size:.88rem;display:block;">${ar ? 'مرتبط بـ' : 'Linked with'} ${linked}</b>
+          <small style="color:var(--muted);">${ar ? 'سيتمكن مدربك من رؤية تقدمك.' : 'Your coach can now see your progress.'}</small>
+        </div>
+        <button class="btn ghost small" onclick="unlinkCoach()" style="white-space:nowrap;color:var(--red);border-color:var(--red-bg);"><i class="fa-solid fa-link-slash"></i> <span data-ar="إلغاء الربط">Unlink</span></button>
+      </div>
+    `;
+    if (input) input.value = '';
+  } else {
+    container.innerHTML = '';
+  }
+}
+
+function copyCoachLinkCode() {
+  const el = document.getElementById('coach-link-code');
+  if (!el || !el.textContent || el.textContent === '—') {
+    setSyncMsg('coach-link-msg', 'No link code available.', 'error');
+    return;
+  }
+  const text = el.textContent.trim();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(
+      () => setSyncMsg('coach-link-msg', 'Link code copied to clipboard.', 'ok'),
+      () => { setSyncMsg('coach-link-msg', 'Could not copy. Please copy manually: ' + text, 'error'); }
+    );
+  } else {
+    setSyncMsg('coach-link-msg', 'Please copy manually: ' + text, 'error');
+  }
+}
+
+// Render the list of athletes who linked to this coach's email.
+function renderLinkedAthletes() {
+  const list = document.getElementById('linked-athletes-list');
+  const noEl = document.getElementById('no-linked-athletes');
+  if (!list) return;
+  const coachEmail = localStorage.getItem(COACH_SESSION_KEY);
+  if (!coachEmail) { list.innerHTML = ''; if (noEl) noEl.style.display = 'block'; return; }
+  // Scan all localStorage keys for athlete profile snapshots whose linkedCoach
+  // matches this coach's email.
+  const linked = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k) continue;
+    if (k.startsWith(VOLTA_ATHLETE_PROFILE_PREFIX)) {
+      try {
+        const snap = JSON.parse(localStorage.getItem(k) || '{}');
+        const athleteEmail = k.substring(VOLTA_ATHLETE_PROFILE_PREFIX.length);
+        const linkedCoach = localStorage.getItem(VOLTA_LINKED_COACH_PREFIX + athleteEmail);
+        if (linkedCoach && linkedCoach.toLowerCase() === coachEmail.toLowerCase()) {
+          linked.push(snap);
+        }
+      } catch(e) {}
+    }
+  }
+  const ar = (store.lang === 'ar');
+  if (linked.length === 0) {
+    list.innerHTML = '';
+    if (noEl) noEl.style.display = 'block';
+    return;
+  }
+  if (noEl) noEl.style.display = 'none';
+  linked.sort((a, b) => new Date(b.syncedAt || 0) - new Date(a.syncedAt || 0));
+  const statusLabels = ar ? { 'on-track': 'على المسار', 'needs-attention': 'بحاجة لاهتمام', 'new': 'جديد' } : { 'on-track': 'On track', 'needs-attention': 'Needs attention', 'new': 'New' };
+  list.innerHTML = linked.map(a => {
+    const initials = (a.name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const lastDoneStr = a.lastDone ? new Date(a.lastDone).toLocaleDateString(ar ? 'ar-EG' : 'en-US', { month: 'short', day: 'numeric' }) : (ar ? 'لم يبدأ' : 'Not started');
+    return `
+      <div class="athlete-card" style="margin-bottom:8px;">
+        <div class="avatar">${initials}</div>
+        <div class="a-body">
+          <div class="a-top"><b>${a.name}</b></div>
+          <small>${a.sport || 'General'} · ${ar ? 'مستوى' : 'Level'} ${a.level || 'Beginner'}</small>
+          <p class="a-last">${a.sessions || 0} ${ar ? 'جلسة' : 'sessions'} · ${ar ? 'السلسلة' : 'Streak'} ${a.streak || 0} · ${ar ? 'آخر نشاط' : 'Last'} ${lastDoneStr}</p>
+          ${a.goal ? `<p class="a-last" style="color:var(--muted);font-size:.78rem;">${ar ? 'الهدف' : 'Goal'}: ${a.goal}</p>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 // ===== 35-Question Survey =====
 const surveyQuestions = [
-  {key:'name', q:'What is your full name?', icon:'fa-user', type:'text', placeholder:'e.g. Alex Johnson'},
-  {key:'gender', q:'What is your gender?', icon:'fa-venus-mars', type:'select', options:['Male', 'Female']},
-  {key:'age', q:'How old are you?', icon:'fa-cake-candles', type:'number', placeholder:'e.g. 25'},
-  {key:'height', q:'What is your height in cm?', icon:'fa-ruler-vertical', type:'number', placeholder:'e.g. 175'},
-  {key:'weight', q:'What is your current weight in kg?', icon:'fa-weight-scale', type:'number', placeholder:'e.g. 75'},
-  {key:'goal', q:'What is your primary fitness goal?', icon:'fa-bullseye', type:'select', options:['Lose weight', 'Build muscle', 'Improve endurance', 'Stay healthy', 'Improve flexibility', 'Sports performance']},
-  {key:'sport', q:'What is your favorite sport?', icon:'fa-trophy', type:'text', placeholder:'e.g. Basketball'},
-  {key:'level', q:'How would you rate your current fitness level?', icon:'fa-chart-line', type:'select', options:['Beginner', 'Intermediate', 'Advanced']},
-  {key:'injury', q:'Do you have any injuries or joint pain?', icon:'fa-band-aid', type:'select', options:['None', 'Knees', 'Lower back', 'Shoulders']},
-  {key:'schedule', q:'How many days a week can you train?', icon:'fa-calendar-week', type:'select', options:['1-2 days', '3-4 days', '5+ days', 'Everyday']},
-  {key:'time', q:'How much time can you spare per session?', icon:'fa-stopwatch', type:'select', options:['15 minutes', '30 minutes', '45 minutes', '60+ minutes']},
-  {key:'environment', q:'Where do you mostly work out?', icon:'fa-house', type:'select', options:['Home', 'Gym', 'Outdoors', 'Mixed']},
-  {key:'motivation', q:'What motivates you the most?', icon:'fa-fire', type:'select', options:['Long-term Health', 'Looking Good', 'Sports Performance', 'Stress Relief']},
-  {key:'meals', q:'How many meals do you have a day?', icon:'fa-utensils', type:'select', options:['1 meal', '2 meals', '3 meals', '3+ meals']},
-  {key:'sleep', q:'What is your average sleep duration?', icon:'fa-bed', type:'select', options:['Less than 5h', '5-6 hours', '7-8 hours', 'More than 8h']},
-  {key:'stress', q:'How would you rate your daily stress level?', icon:'fa-brain', type:'select', options:['Low', 'Moderate', 'High', 'Very High']},
-  {key:'smoking', q:'Do you smoke?', icon:'fa-smoking', type:'select', options:['Never', 'Occasionally', 'Daily', 'Trying to quit']},
-  {key:'diet_pref', q:'Do you have any dietary preferences?', icon:'fa-seedling', type:'select', options:['None', 'Vegetarian', 'Vegan', 'Gluten-free', 'Keto', 'Halal']},
-  {key:'medical', q:'Any pre-existing medical conditions?', icon:'fa-heart-pulse', type:'select', options:['None', 'Diabetes', 'Hypertension', 'Asthma', 'Heart condition']},
-  {key:'hydration', q:'How much water do you drink daily?', icon:'fa-droplet', type:'select', options:['Rarely drink water', '1-2L per day', '2-3L per day', '3L+ per day']},
-  {key:'supplements', q:'Do you take any supplements?', icon:'fa-pills', type:'select', options:['None', 'Protein powder', 'Multi-vitamins', 'Creatine', 'Other']},
-  {key:'equipment', q:'What equipment do you have access to?', icon:'fa-dumbbell', type:'text', placeholder:'e.g. Dumbbells, Kettlebell, None'},
-  {key:'budget', q:'What is your monthly fitness budget?', icon:'fa-dollar-sign', type:'select', options:['$0 (Free only)', '$1-$50', '$51-$100', '$100+']},
-  {key:'trainer', q:'Have you worked with a trainer before?', icon:'fa-user-tie', type:'select', options:['No', 'Yes, in person', 'Yes, online']},
-  {key:'progress_tracking', q:'How do you prefer to track progress?', icon:'fa-chart-bar', type:'select', options:['Photos', 'Weight scale', 'Measurements', 'Performance']},
-  {key:'music', q:'What type of music do you like during workouts?', icon:'fa-music', type:'select', options:['Upbeat/Pop', 'Rock', 'Hip Hop', 'Lo-fi', 'None']},
-  {key:'time_of_day', q:'When do you prefer to train?', icon:'fa-clock', type:'select', options:['Morning', 'Afternoon', 'Evening', 'Night']},
-  {key:'mobility', q:'How is your current mobility/flexibility?', icon:'fa-person-walking', type:'select', options:['Poor', 'Average', 'Good', 'Excellent']},
-  {key:'balance', q:'How is your balance?', icon:'fa-scale-balanced', type:'select', options:['Poor', 'Average', 'Good', 'Excellent']},
-  {key:'cardio_pref', q:'Do you prefer steady cardio or HIIT?', icon:'fa-heart', type:'select', options:['Steady cardio', 'HIIT', 'Mixed', 'No preference']},
-  {key:'weight_goal', q:'Do you have a specific target weight?', icon:'fa-bullseye', type:'text', placeholder:'e.g. 70 kg'},
-  {key:'pushups', q:'How many push-ups can you do continuously?', icon:'fa-hand-fist', type:'number', placeholder:'e.g. 20'},
-  {key:'plank', q:'How long can you hold a plank (seconds)?', icon:'fa-stopwatch-20', type:'number', placeholder:'e.g. 60'},
-  {key:'mile_time', q:'What is your average 1-mile run time (minutes)?', icon:'fa-person-running', type:'number', placeholder:'e.g. 10'}
+  {key:'name', q:'What is your full name?', icon:'fa-user', type:'text', placeholder:'e.g. Alex Johnson', q_ar:'ما اسمك الكامل؟', ph_ar:'مثال: أحمد جونسون'},
+  {key:'gender', q:'What is your gender?', icon:'fa-venus-mars', type:'select', options:['Male', 'Female'], q_ar:'ما نوعك؟', opts_ar:['ذكر', 'أنثى']},
+  {key:'age', q:'How old are you?', icon:'fa-cake-candles', type:'number', placeholder:'e.g. 25', q_ar:'كم عمرك؟', ph_ar:'مثال: 25'},
+  {key:'height', q:'What is your height in cm?', icon:'fa-ruler-vertical', type:'number', placeholder:'e.g. 175', q_ar:'كم طولك بالسنتيمتر؟', ph_ar:'مثال: 175'},
+  {key:'weight', q:'What is your current weight in kg?', icon:'fa-weight-scale', type:'number', placeholder:'e.g. 75', q_ar:'كم وزنك الحالي بالكيلوجرام؟', ph_ar:'مثال: 75'},
+  {key:'goal', q:'What is your primary fitness goal?', icon:'fa-bullseye', type:'select', options:['Lose weight', 'Build muscle', 'Improve endurance', 'Stay healthy', 'Improve flexibility', 'Sports performance'], q_ar:'ما هدفك الأساسي من اللياقة؟', opts_ar:['خسارة الوزن', 'بناء العضلات', 'تحمل أفضل', 'الحفاظ على الصحة', 'مرونة أكبر', 'أداء رياضي']},
+  {key:'sport', q:'What is your favorite sport?', icon:'fa-trophy', type:'text', placeholder:'e.g. Basketball', q_ar:'ما رياضتك المفضلة؟', ph_ar:'مثال: كرة السلة'},
+  {key:'level', q:'How would you rate your current fitness level?', icon:'fa-chart-line', type:'select', options:['Beginner', 'Intermediate', 'Advanced'], q_ar:'كيف تقيّم مستوى لياقتك الحالي؟', opts_ar:['مبتدئ', 'متوسط', 'متقدم']},
+  {key:'injury', q:'Do you have any injuries or joint pain?', icon:'fa-band-aid', type:'select', options:['None', 'Knees', 'Lower back', 'Shoulders'], q_ar:'هل لديك أي إصابات أو آلام في المفاصل؟', opts_ar:['لا يوجد', 'الركبتان', 'أسفل الظهر', 'الكتفان']},
+  {key:'schedule', q:'How many days a week can you train?', icon:'fa-calendar-week', type:'select', options:['1-2 days', '3-4 days', '5+ days', 'Everyday'], q_ar:'كم يوماً في الأسبوع يمكنك التدريب؟', opts_ar:['1-2 يوم', '3-4 أيام', '5+ أيام', 'يومياً']},
+  {key:'time', q:'How much time can you spare per session?', icon:'fa-stopwatch', type:'select', options:['15 minutes', '30 minutes', '45 minutes', '60+ minutes'], q_ar:'كم من الوقت يمكنك تخصيصه لكل جلسة؟', opts_ar:['15 دقيقة', '30 دقيقة', '45 دقيقة', '60+ دقيقة']},
+  {key:'environment', q:'Where do you mostly work out?', icon:'fa-house', type:'select', options:['Home', 'Gym', 'Outdoors', 'Mixed'], q_ar:'أين تتدرب في الغالب؟', opts_ar:['المنزل', 'الجيم', 'في الهواء الطلق', 'متنوع']},
+  {key:'motivation', q:'What motivates you the most?', icon:'fa-fire', type:'select', options:['Long-term Health', 'Looking Good', 'Sports Performance', 'Stress Relief'], q_ar:'ما الذي يحفزك أكثر؟', opts_ar:['الصحة على المدى الطويل', 'المظهر الجيد', 'الأداء الرياضي', 'تخفيف التوتر']},
+  {key:'meals', q:'How many meals do you have a day?', icon:'fa-utensils', type:'select', options:['1 meal', '2 meals', '3 meals', '3+ meals'], q_ar:'كم عدد وجباتك في اليوم؟', opts_ar:['وجبة واحدة', 'وجبتان', '3 وجبات', '3+ وجبات']},
+  {key:'sleep', q:'What is your average sleep duration?', icon:'fa-bed', type:'select', options:['Less than 5h', '5-6 hours', '7-8 hours', 'More than 8h'], q_ar:'كم متوسط ساعات نومك؟', opts_ar:['أقل من 5 ساعات', '5-6 ساعات', '7-8 ساعات', 'أكثر من 8 ساعات']},
+  {key:'stress', q:'How would you rate your daily stress level?', icon:'fa-brain', type:'select', options:['Low', 'Moderate', 'High', 'Very High'], q_ar:'كيف تقيّم مستوى التوتر اليومي لديك؟', opts_ar:['منخفض', 'معتدل', 'مرتفع', 'مرتفع جداً']},
+  {key:'smoking', q:'Do you smoke?', icon:'fa-smoking', type:'select', options:['Never', 'Occasionally', 'Daily', 'Trying to quit'], q_ar:'هل تدخن؟', opts_ar:['أبداً', 'أحياناً', 'يومياً', 'أحاول الإقلاع']},
+  {key:'diet_pref', q:'Do you have any dietary preferences?', icon:'fa-seedling', type:'select', options:['None', 'Vegetarian', 'Vegan', 'Gluten-free', 'Keto', 'Halal'], q_ar:'هل لديك تفضيلات غذائية؟', opts_ar:['لا يوجد', 'نباتي', 'نباتي صرف', 'خالٍ من الجلوتين', 'كيتو', 'حلال']},
+  {key:'medical', q:'Any pre-existing medical conditions?', icon:'fa-heart-pulse', type:'select', options:['None', 'Diabetes', 'Hypertension', 'Asthma', 'Heart condition'], q_ar:'هل لديك حالات طبية مزمنة؟', opts_ar:['لا يوجد', 'سكري', 'ارتفاع ضغط الدم', 'ربو', 'حالة قلبية']},
+  {key:'hydration', q:'How much water do you drink daily?', icon:'fa-droplet', type:'select', options:['Rarely drink water', '1-2L per day', '2-3L per day', '3L+ per day'], q_ar:'كم من الماء تشرب يومياً؟', opts_ar:['نادراً ما أشرب', '1-2 لتر يومياً', '2-3 لتر يومياً', '3+ لتر يومياً']},
+  {key:'supplements', q:'Do you take any supplements?', icon:'fa-pills', type:'select', options:['None', 'Protein powder', 'Multi-vitamins', 'Creatine', 'Other'], q_ar:'هل تتناول أي مكملات؟', opts_ar:['لا يوجد', 'بروتين باودر', 'فيتامينات متعددة', 'كرياتين', 'أخرى']},
+  {key:'equipment', q:'What equipment do you have access to?', icon:'fa-dumbbell', type:'text', placeholder:'e.g. Dumbbells, Kettlebell, None', q_ar:'ما المعدات المتاحة لك؟', ph_ar:'مثال: دمبل، كيتل بل، لا شيء'},
+  {key:'budget', q:'What is your monthly fitness budget?', icon:'fa-dollar-sign', type:'select', options:['$0 (Free only)', '$1-$50', '$51-$100', '$100+'], q_ar:'ما ميزانيتك الشهرية لللياقة؟', opts_ar:['0$ (مجاني فقط)', '1-50$', '51-100$', 'أكثر من 100$']},
+  {key:'trainer', q:'Have you worked with a trainer before?', icon:'fa-user-tie', type:'select', options:['No', 'Yes, in person', 'Yes, online'], q_ar:'هل سبق أن تدربت مع مدرب؟', opts_ar:['لا', 'نعم، حضورياً', 'نعم، أونلاين']},
+  {key:'progress_tracking', q:'How do you prefer to track progress?', icon:'fa-chart-bar', type:'select', options:['Photos', 'Weight scale', 'Measurements', 'Performance'], q_ar:'كيف تفضل تتبع تقدمك؟', opts_ar:['الصور', 'ميزان الوزن', 'القياسات', 'الأداء']},
+  {key:'music', q:'What type of music do you like during workouts?', icon:'fa-music', type:'select', options:['Upbeat/Pop', 'Rock', 'Hip Hop', 'Lo-fi', 'None'], q_ar:'ما نوع الموسيقى التي تفضلها أثناء التدريب؟', opts_ar:['حيوي/بوب', 'روك', 'هيب هوب', 'لو-فاي', 'بدون']},
+  {key:'time_of_day', q:'When do you prefer to train?', icon:'fa-clock', type:'select', options:['Morning', 'Afternoon', 'Evening', 'Night'], q_ar:'متى تفضل التدريب؟', opts_ar:['الصباح', 'الظهيرة', 'المساء', 'الليل']},
+  {key:'mobility', q:'How is your current mobility/flexibility?', icon:'fa-person-walking', type:'select', options:['Poor', 'Average', 'Good', 'Excellent'], q_ar:'كيف هي مرونتك الحالية؟', opts_ar:['ضعيفة', 'متوسطة', 'جيدة', 'ممتازة']},
+  {key:'balance', q:'How is your balance?', icon:'fa-scale-balanced', type:'select', options:['Poor', 'Average', 'Good', 'Excellent'], q_ar:'كيف هو توازنك؟', opts_ar:['ضعيف', 'متوسط', 'جيد', 'ممتاز']},
+  {key:'cardio_pref', q:'Do you prefer steady cardio or HIIT?', icon:'fa-heart', type:'select', options:['Steady cardio', 'HIIT', 'Mixed', 'No preference'], q_ar:'هل تفضل الكارديو الثابت أم الـ HIIT؟', opts_ar:['كارديو ثابت', 'HIIT', 'مختلط', 'لا تفضيل']},
+  {key:'weight_goal', q:'Do you have a specific target weight?', icon:'fa-bullseye', type:'text', placeholder:'e.g. 70 kg', q_ar:'هل لديك وزن مستهدف محدد؟', ph_ar:'مثال: 70 كجم'},
+  {key:'pushups', q:'How many push-ups can you do continuously?', icon:'fa-hand-fist', type:'number', placeholder:'e.g. 20', q_ar:'كم ضغطة (Push-up) يمكنك أداءها بتتابع؟', ph_ar:'مثال: 20'},
+  {key:'plank', q:'How long can you hold a plank (seconds)?', icon:'fa-stopwatch-20', type:'number', placeholder:'e.g. 60', q_ar:'كم ثانية يمكنك إبقاء البلانك (Plank)؟', ph_ar:'مثال: 60'},
+  {key:'mile_time', q:'What is your average 1-mile run time (minutes)?', icon:'fa-person-running', type:'number', placeholder:'e.g. 10', q_ar:'ما متوسط زمنك في ركض 1 ميل (دقائق)؟', ph_ar:'مثال: 10'}
 ];
 
 let currentSurveyStep = 0;
@@ -3201,31 +3712,46 @@ function startSurvey() {
 function renderSurveyQuestion() {
   const q = surveyQuestions[currentSurveyStep];
   const total = surveyQuestions.length;
-  document.getElementById('survey-counter').textContent = `Question ${currentSurveyStep + 1} of ${total}`;
+  const ar = (store.lang === 'ar');
+  const counterText = ar
+    ? `السؤال ${currentSurveyStep + 1} من ${total}`
+    : `Question ${currentSurveyStep + 1} of ${total}`;
+  document.getElementById('survey-counter').textContent = counterText;
   document.getElementById('survey-progress-fill').style.width = ((currentSurveyStep + 1) / total * 100) + '%';
-  
+
+  const questionText = ar ? (q.q_ar || q.q) : q.q;
+  const placeholder   = ar ? (q.ph_ar || q.placeholder || '') : (q.placeholder || '');
+
   let inputHtml = '';
   if (q.type === 'text' || q.type === 'number') {
-    inputHtml = `<input type="${q.type}" class="survey-text-input" id="survey-input" placeholder="${q.placeholder || ''}" value="${surveyAnswers[q.key] || ''}">`;
+    inputHtml = `<input type="${q.type}" class="survey-text-input" id="survey-input" placeholder="${placeholder}" value="${surveyAnswers[q.key] || ''}">`;
   } else if (q.type === 'select') {
+    // When Arabic is active, show Arabic labels but store the English value
+    // internally so the rest of the app keeps matching on English keys.
+    const opts = q.options || [];
+    const labels = ar ? (q.opts_ar || opts) : opts;
     inputHtml = `<div class="survey-options-fancy">`;
-    q.options.forEach(opt => {
+    opts.forEach((opt, i) => {
+      const label = labels[i] || opt;
       const selected = surveyAnswers[q.key] === opt ? 'selected' : '';
-      inputHtml += `<button class="survey-option-fancy ${selected}" onclick="selectSurveyOption('${opt}')">${opt}</button>`;
+      inputHtml += `<button class="survey-option-fancy ${selected}" onclick="selectSurveyOption('${opt}')">${label}</button>`;
     });
     inputHtml += `</div>`;
   }
-  
+
   document.getElementById('survey-question-content').innerHTML = `
     <div style="max-width: 580px; margin: 0 auto; animation: fadeIn .3s ease;">
       <div class="survey-icon-wrapper"><i class="fa-solid ${q.icon}"></i></div>
-      <div class="survey-question-text">${q.q}</div>
+      <div class="survey-question-text">${questionText}</div>
       ${inputHtml}
     </div>
   `;
-  
+
   document.getElementById('survey-prev-btn').style.visibility = currentSurveyStep === 0 ? 'hidden' : 'visible';
-  document.getElementById('survey-next-btn').innerHTML = currentSurveyStep === total - 1 ? 'Finish <i class="fa-solid fa-check"></i>' : 'Next <i class="fa-solid fa-arrow-right"></i>';
+  const nextLabel = ar
+    ? (currentSurveyStep === total - 1 ? 'إنهاء <i class="fa-solid fa-check"></i>' : 'التالي <i class="fa-solid fa-arrow-left"></i>')
+    : (currentSurveyStep === total - 1 ? 'Finish <i class="fa-solid fa-check"></i>' : 'Next <i class="fa-solid fa-arrow-right"></i>');
+  document.getElementById('survey-next-btn').innerHTML = nextLabel;
 }
 
 function selectSurveyOption(value) {
@@ -3238,12 +3764,13 @@ function selectSurveyOption(value) {
 
 function nextSurveyQuestion() {
   const q = surveyQuestions[currentSurveyStep];
+  const ar = (store.lang === 'ar');
   if (q.type === 'text' || q.type === 'number') {
     const val = document.getElementById('survey-input').value.trim();
-    if (!val) { alert('Please enter a value.'); return; }
+    if (!val) { alert(ar ? 'الرجاء إدخال قيمة.' : 'Please enter a value.'); return; }
     surveyAnswers[q.key] = q.type === 'number' ? parseFloat(val) : val;
   } else if (!surveyAnswers[q.key]) {
-    alert('Please select an option.'); return;
+    alert(ar ? 'الرجاء اختيار خيار.' : 'Please select an option.'); return;
   }
   
   if (currentSurveyStep === surveyQuestions.length - 1) {
@@ -3330,7 +3857,7 @@ function closeGoalModal() {
 
 function currentUser() { return store.users[store.session]; }
 function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); applySettings(); updateChatbaseVisibility(); window.scrollTo(0, 0); updateMobileMenuBtn(); }
-function showTab(name) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.side-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name)); document.getElementById('tab-' + name).classList.add('active'); if (name === 'marathon') setTimeout(() => initMap(), 100); if (name === 'daily') renderDailyExercise(); if (name === 'calc') renderCalc(); if (name === 'reminders') renderReminders(); if (name === 'diet') renderDiet(); if (name === 'sports') renderSports(); if (name === 'home') { renderHome(); renderTracker(); } if (name === 'profile') renderProfile(); if (name === 'weather') { if (!lastWeather) loadWeather(); else renderWeather(); } setTimeout(() => applyTranslations(), 30); }
+function showTab(name) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.side-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name)); document.getElementById('tab-' + name).classList.add('active'); if (name === 'marathon') setTimeout(() => initMap(), 100); if (name === 'daily') renderDailyExercise(); if (name === 'calc') renderCalc(); if (name === 'reminders') renderReminders(); if (name === 'diet') renderDiet(); if (name === 'sports') renderSports(); if (name === 'home') { renderHome(); renderTracker(); } if (name === 'profile') { renderProfile(); if (typeof renderLinkedCoachDisplay === 'function') renderLinkedCoachDisplay(); } if (name === 'weather') { if (!lastWeather) loadWeather(); else renderWeather(); } setTimeout(() => applyTranslations(), 30); }
 function enterApp() { 
   showScreen('screen-app'); 
   showTab('home'); 
@@ -5686,7 +6213,13 @@ function enterCoachApp(user) {
   document.getElementById('coach-email-1').textContent = user.email;
   document.getElementById('coach-email-2').textContent = user.email;
   document.getElementById('coach-initial').textContent = (first[0]||'C').toUpperCase();
+  // Populate the Coach Link Code (athletes use this email to link).
+  const linkCodeEl = document.getElementById('coach-link-code');
+  if (linkCodeEl) linkCodeEl.textContent = user.email;
   renderCoachAthletes(); updateCoachStats(); renderCoachSessionsTable(); renderCoachPlans();
+  // Also render the linked-athletes list (in case any athlete already linked
+  // to this coach's email from a previous session).
+  if (typeof renderLinkedAthletes === 'function') renderLinkedAthletes();
   // Render the chart on the next animation frame — by then the layout has
   // settled and the canvas has its final pixel dimensions, so Chart.js can
   // size itself correctly without needing a manual resize() call later.
@@ -5703,6 +6236,14 @@ function showCoachTab(t) {
   if (t === 'coach-athletes') { renderCoachAthletes(); }
   if (t === 'coach-sessions') { renderCoachSessionsTable(); }
   if (t === 'coach-plans') { renderCoachPlans(); }
+  if (t === 'coach-profile') {
+    // Re-populate the Coach Link Code (email) in case it hasn't been set yet,
+    // and refresh the Linked Athletes list.
+    const coachEmail = localStorage.getItem(COACH_SESSION_KEY);
+    const linkCodeEl = document.getElementById('coach-link-code');
+    if (linkCodeEl && coachEmail) linkCodeEl.textContent = coachEmail;
+    if (typeof renderLinkedAthletes === 'function') renderLinkedAthletes();
+  }
   setTimeout(() => applyTranslations(), 30);
 }
 
