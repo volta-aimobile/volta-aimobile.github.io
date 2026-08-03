@@ -1064,7 +1064,7 @@ html { scroll-behavior: smooth; }
   .banner-card { height: 120px; }
 
   /* Profile mobile actions - visible on mobile */
-  .profile-mobile-actions { display: flex; }
+  .profile-mobile-actions { display: flex !important; }
   .profile-action-btn { min-height: 48px; }
 
   /* Rec sports grid */
@@ -1720,55 +1720,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <button class="btn primary fit" onclick="openGoalModal(true)"><i class="fa-solid fa-pen-to-square"></i> <span data-ar="تعديل خطة الهدف">Edit Goal Plan</span></button>
       </div>
 
-      <!-- ===== LINKED COACH (athlete side of coach↔athlete linking) ===== -->
-      <div class="panel">
-        <h3><i class="fa-solid fa-link"></i> <span data-ar="ارتباط بالمدرب">Linked Coach</span></h3>
-        <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="أدخل بريد مدربك لربط حسابك به. سيتمكن من رؤية تقدمك وجلساتك.">Enter your coach's email to link your account. They'll be able to see your progress and sessions.</p>
-        <div id="linked-coach-display" style="margin-bottom:12px;"></div>
-        <label style="font-size:.82rem;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;" data-ar="بريد المدرب">Coach Email</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input type="email" id="linked-coach-email" placeholder="coach@email.com" data-ar-ph="coach@email.com" style="flex:1;min-width:200px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;font-size:.95rem;" />
-          <button class="btn primary" onclick="saveLinkedCoach()" style="white-space:nowrap;"><i class="fa-solid fa-link"></i> <span data-ar="ربط">Link</span></button>
-        </div>
-        <p id="linked-coach-msg" class="msg" style="margin-top:8px;"></p>
-      </div>
-
-      <!-- ===== QUICK LINKS (replaces the old "More" popup) ===== -->
-      <div class="panel">
-        <h3><i class="fa-solid fa-grip"></i> <span data-ar="روابط سريعة">Quick Links</span></h3>
-        <div class="bottom-nav-more-grid" style="grid-template-columns:repeat(4,1fr);gap:6px;">
-          <button class="bottom-nav-more-item" onclick="showTab('marathon')" style="min-height:64px;">
-            <i class="fa-solid fa-map-location-dot"></i>
-            <span data-ar="الماراثون">Marathon</span>
-          </button>
-          <button class="bottom-nav-more-item" onclick="showTab('calc')" style="min-height:64px;">
-            <i class="fa-solid fa-calculator"></i>
-            <span data-ar="الحاسبة">Calc</span>
-          </button>
-          <button class="bottom-nav-more-item" onclick="showTab('weather')" style="min-height:64px;">
-            <i class="fa-solid fa-cloud-sun"></i>
-            <span data-ar="الطقس">Weather</span>
-          </button>
-          <button class="bottom-nav-more-item" onclick="showTab('moodmorph')" style="min-height:64px;">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-            <span data-ar="المزاج">Mood</span>
-          </button>
-          <button class="bottom-nav-more-item" onclick="showTab('reminders')" style="min-height:64px;">
-            <i class="fa-solid fa-bell"></i>
-            <span data-ar="التذكيرات">Reminders</span>
-          </button>
-          <button class="bottom-nav-more-item" onclick="showTab('settings')" style="min-height:64px;">
-            <i class="fa-solid fa-gear"></i>
-            <span data-ar="الإعدادات">Settings</span>
-          </button>
-          <button class="bottom-nav-more-item" onclick="logout()" style="min-height:64px;color:var(--red);">
-            <i class="fa-solid fa-right-from-bracket" style="color:var(--red);"></i>
-            <span data-ar="خروج">Logout</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile-only quick actions: Settings & Logout (side-by-side like photo) -->
+      <!-- Settings & Logout (the only actions on the Profile screen) -->
       <div class="profile-mobile-actions" id="profile-mobile-actions">
         <button class="profile-action-btn profile-action-settings" onclick="showTab('settings')"><i class="fa-solid fa-gear"></i> <span data-ar="الإعدادات">Settings</span></button>
         <button class="profile-action-btn profile-action-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> <span data-ar="تسجيل الخروج">Log out</span></button>
@@ -1793,27 +1745,10 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         </div>
       </div>
 
-      <!-- ===== CROSS-DEVICE ACCOUNT SYNC ===== -->
-      <div class="panel">
-        <h3><i class="fa-solid fa-cloud-arrow-up-down"></i> <span data-ar="مزامنة الحساب عبر الأجهزة">Cross-Device Account Sync</span></h3>
-        <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="صدّر بيانات حسابك كرمز، ثم أدخله على جهاز آخر لمزامنة كل تقدمك.">Export your account data as a sync code, then enter it on another device to mirror all your progress.</p>
-
-        <div style="margin-bottom:16px;">
-          <b style="font-size:.88rem;display:block;margin-bottom:6px;" data-ar="رمز المزامنة الخاص بك">Your Sync Code</b>
-          <textarea id="sync-export-code" readonly placeholder="Tap 'Generate Sync Code' to create one..." data-ar-ph="اضغط 'إنشاء رمز المزامنة' لإنشاء رمز..." style="width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:.78rem;font-family:monospace;background:var(--bg);color:var(--text);resize:vertical;"></textarea>
-          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-            <button class="btn primary small" onclick="generateSyncCode()"><i class="fa-solid fa-key"></i> <span data-ar="إنشاء رمز المزامنة">Generate Sync Code</span></button>
-            <button class="btn ghost small" onclick="copySyncCode()"><i class="fa-solid fa-copy"></i> <span data-ar="نسخ">Copy</span></button>
-          </div>
-        </div>
-
-        <div>
-          <b style="font-size:.88rem;display:block;margin-bottom:6px;" data-ar="استيراد من جهاز آخر">Import From Another Device</b>
-          <textarea id="sync-import-code" placeholder="Paste a sync code from another device here..." data-ar-ph="الصق رمز المزامنة من جهاز آخر هنا..." style="width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:.78rem;font-family:monospace;background:var(--white);color:var(--text);resize:vertical;"></textarea>
-          <button class="btn primary small" onclick="importSyncCode()" style="margin-top:8px;"><i class="fa-solid fa-cloud-arrow-down"></i> <span data-ar="استيراد الحساب">Import Account</span></button>
-          <p id="sync-msg" class="msg" style="margin-top:8px;"></p>
-        </div>
-      </div>
+      <!-- Cross-device account sync is fully automatic on this device —
+           no manual code entry required. When the same account is signed in
+           on another browser/tab on this device, all data syncs instantly
+           via the storage event. -->
     </div>
   </main>
 </section>
@@ -2245,27 +2180,8 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div class="settings-row"><div><b data-ar="الدعم">Support</b><small>coach@volta.app</small></div></div>
       </div>
 
-      <!-- ===== CROSS-DEVICE COACH ACCOUNT SYNC ===== -->
-      <div class="panel">
-        <h3><i class="fa-solid fa-cloud-arrow-up-down"></i> <span data-ar="مزامنة الحساب عبر الأجهزة">Cross-Device Account Sync</span></h3>
-        <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="صدّر بيانات حسابك كرمز، ثم أدخله على جهاز آخر لمزامنة رياضيك وخططك وجلساتك.">Export your coach account data as a sync code, then enter it on another device to mirror your athletes, plans, and sessions.</p>
-
-        <div style="margin-bottom:16px;">
-          <b style="font-size:.88rem;display:block;margin-bottom:6px;" data-ar="رمز المزامنة الخاص بك">Your Sync Code</b>
-          <textarea id="coach-sync-export-code" readonly placeholder="Tap 'Generate Sync Code' to create one..." data-ar-ph="اضغط 'إنشاء رمز المزامنة' لإنشاء رمز..." style="width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:.78rem;font-family:monospace;background:var(--bg);color:var(--text);resize:vertical;"></textarea>
-          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-            <button class="btn primary small" onclick="generateCoachSyncCode()"><i class="fa-solid fa-key"></i> <span data-ar="إنشاء رمز المزامنة">Generate Sync Code</span></button>
-            <button class="btn ghost small" onclick="copyCoachSyncCode()"><i class="fa-solid fa-copy"></i> <span data-ar="نسخ">Copy</span></button>
-          </div>
-        </div>
-
-        <div>
-          <b style="font-size:.88rem;display:block;margin-bottom:6px;" data-ar="استيراد من جهاز آخر">Import From Another Device</b>
-          <textarea id="coach-sync-import-code" placeholder="Paste a sync code from another device here..." data-ar-ph="الصق رمز المزامنة من جهاز آخر هنا..." style="width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:.78rem;font-family:monospace;background:var(--white);color:var(--text);resize:vertical;"></textarea>
-          <button class="btn primary small" onclick="importCoachSyncCode()" style="margin-top:8px;"><i class="fa-solid fa-cloud-arrow-down"></i> <span data-ar="استيراد الحساب">Import Account</span></button>
-          <p id="coach-sync-msg" class="msg" style="margin-top:8px;"></p>
-        </div>
-      </div>
+      <!-- Cross-device coach account sync is fully automatic on this device —
+           no manual code entry required. -->
     </div>
   </main>
 </section>
@@ -2281,8 +2197,12 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div><label data-ar="الرياضة">Sport</label><select id="add-athlete-sport" required><option value="" data-ar="اختر…">Select…</option><option>Running</option><option>Cycling</option><option>Swimming</option><option>Strength</option><option>Football</option><option>Basketball</option><option>Tennis</option><option>HIIT</option><option>Yoga</option><option>Boxing</option></select></div>
         <div><label data-ar="المستوى">Level</label><select id="add-athlete-level" required><option value="" data-ar="اختر…">Select…</option><option data-ar="مبتدئ">Beginner</option><option data-ar="متوسط">Intermediate</option><option data-ar="متقدم">Advanced</option></select></div>
       </div>
-      <label data-ar="البريد الإلكتروني (اختياري)">Email (optional)</label>
-      <input type="email" id="add-athlete-email" placeholder="athlete@email.com" data-ar-ph="athlete@email.com" />
+      <label><span data-ar="بريد الرياضي (مطلوب للربط)">Athlete Email (required for linking)</span> <span style="color:var(--red);">*</span></label>
+      <input type="email" id="add-athlete-email" placeholder="athlete@email.com" required data-ar-ph="athlete@email.com" />
+      <div style="background:var(--accent-soft);border:1px dashed var(--accent-border);border-radius:10px;padding:10px 12px;margin:8px 0 12px;display:flex;gap:10px;align-items:flex-start;">
+        <i class="fa-solid fa-circle-info" style="color:var(--accent);font-size:.95rem;margin-top:2px;"></i>
+        <small style="color:var(--text);line-height:1.4;" data-ar="أدخل البريد الذي يستخدمه الرياضي لتسجيل الدخول إلى تطبيق Volta. عند تسجيل الدخول، سيظهر تقدمه وجلساته تلقائياً في قائمتك.">Enter the email this athlete uses to sign in to the Volta athlete app. When they sign in, their progress and sessions will automatically appear in your roster.</small>
+      </div>
       <label data-ar="ملاحظات">Notes</label>
       <textarea id="add-athlete-notes" rows="2" placeholder="Any notes about this athlete…" style="resize:vertical;" data-ar-ph="أي ملاحظات حول هذا الرياضي…"></textarea>
       <button type="submit" class="btn primary" style="margin-top:12px;"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة للقائمة">Add to Roster</span></button>
@@ -3270,7 +3190,29 @@ function openGooglePicker() {
 }
 function loginSuccess(email) {
   store.session = email; const u = store.users[email];
-  if (!u.profile) { showScreen('screen-onboarding'); } 
+  // If a coach already added this athlete by email (creating a pending-link
+  // snapshot), refresh that snapshot with the live profile data so the coach
+  // sees them as fully linked.
+  try {
+    const snapKey = VOLTA_ATHLETE_PROFILE_PREFIX + email.toLowerCase();
+    const raw = localStorage.getItem(snapKey);
+    if (raw) {
+      const snap = JSON.parse(raw);
+      if (u && u.profile) {
+        snap.name = u.profile.name || snap.name;
+        snap.sport = u.profile.sport || snap.sport;
+        snap.level = u.profile.level || snap.level;
+        snap.goal = u.profile.goal || snap.goal || '';
+        snap.sessions = (u.sessions || []).length;
+        snap.streak = u.streak || 0;
+        snap.lastDone = u.lastDone || null;
+        snap.syncedAt = new Date().toISOString();
+        snap.pendingLink = false;
+        localStorage.setItem(snapKey, JSON.stringify(snap));
+      }
+    }
+  } catch(e) {}
+  if (!u.profile) { showScreen('screen-onboarding'); }
   else { enterApp(); }
 }
 function logout() { store.session = null; showScreen('screen-landing'); }
@@ -3507,6 +3449,59 @@ function importCoachSyncCode() {
   setTimeout(() => location.reload(), 800);
 }
 
+// ===== AUTOMATIC CROSS-DEVICE/TAB SYNC =====
+//
+// When the same account is signed in on another tab or window on this device,
+// any localStorage write triggers a 'storage' event in this tab. We listen for
+// those events and live-refresh the visible screen so changes made in tab A
+// appear instantly in tab B without needing a manual sync code.
+//
+// Notes:
+// - The 'storage' event only fires in OTHER tabs/windows (not the one that
+//   made the change), so this won't cause redundant re-renders in the writer.
+// - We only refresh if (a) the user is currently in the app, and (b) the
+//   changed key is one we care about (user data, sessions, prefs, coach
+//   athletes, plans, linked bindings). Otherwise we ignore it.
+// - For prefs (theme/lang), we also re-apply them so the UI matches the other
+//   tab without a reload.
+window.addEventListener('storage', function(e) {
+  if (!e.key) return;
+  // Keys we care about for live refresh.
+  const watchedPrefixes = [
+    'fb_users',          // athlete users DB
+    'fb_session',        // athlete session
+    'fb_theme',          // theme pref
+    'fb_lang',           // language pref
+    'fb_location',       // location toggle
+    'fb_welcomed',
+    'de_daily_plan',     // daily exercise plan
+    'volta_coach_users', // coach accounts DB
+    'volta_coach_session',
+    'volta_coach_athletes',
+    'volta_coach_plans',
+    'volta_linked_coach_',
+    'volta_athlete_profile_'
+  ];
+  const matches = watchedPrefixes.some(p => e.key === p || e.key.startsWith(p));
+  if (!matches) return;
+
+  // Re-apply prefs first (theme/lang/location).
+  try { applySettings(); } catch(err) {}
+
+  // Re-render the currently visible screen so changes are reflected.
+  try {
+    const appActive = document.getElementById('screen-app').classList.contains('active');
+    const coachActive = document.getElementById('screen-coach-app').classList.contains('active');
+    if (appActive) {
+      const activeTab = document.querySelector('#screen-app .tab.active');
+      if (activeTab) showTab(activeTab.id.replace('tab-', ''));
+    } else if (coachActive) {
+      const activeTab = document.querySelector('#screen-coach-app .tab.active');
+      if (activeTab) showCoachTab(activeTab.id.replace('tab-', ''));
+    }
+  } catch(err) {}
+});
+
 // ===== COACH ↔ ATHLETE ACCOUNT LINKING =====
 //
 // Athlete side:
@@ -3646,11 +3641,14 @@ function renderLinkedAthletes() {
   list.innerHTML = linked.map(a => {
     const initials = (a.name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
     const lastDoneStr = a.lastDone ? new Date(a.lastDone).toLocaleDateString(ar ? 'ar-EG' : 'en-US', { month: 'short', day: 'numeric' }) : (ar ? 'لم يبدأ' : 'Not started');
+    const pendingBadge = a.pendingLink
+      ? `<span style="font-size:.65rem;background:var(--amber-bg,var(--bg));color:var(--amber,#b07900);padding:2px 8px;border-radius:8px;margin-left:6px;border:1px solid var(--amber-border,transparent);"><i class="fa-solid fa-clock" style="font-size:.6rem;"></i> ${ar ? 'بانتظار تسجيل الرياضي' : 'Awaiting athlete sign-in'}</span>`
+      : '';
     return `
       <div class="athlete-card" style="margin-bottom:8px;">
         <div class="avatar">${initials}</div>
         <div class="a-body">
-          <div class="a-top"><b>${a.name}</b></div>
+          <div class="a-top"><b>${a.name}</b>${pendingBadge}</div>
           <small>${a.sport || 'General'} · ${ar ? 'مستوى' : 'Level'} ${a.level || 'Beginner'}</small>
           <p class="a-last">${a.sessions || 0} ${ar ? 'جلسة' : 'sessions'} · ${ar ? 'السلسلة' : 'Streak'} ${a.streak || 0} · ${ar ? 'آخر نشاط' : 'Last'} ${lastDoneStr}</p>
           ${a.goal ? `<p class="a-last" style="color:var(--muted);font-size:.78rem;">${ar ? 'الهدف' : 'Goal'}: ${a.goal}</p>` : ''}
@@ -3857,7 +3855,7 @@ function closeGoalModal() {
 
 function currentUser() { return store.users[store.session]; }
 function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); applySettings(); updateChatbaseVisibility(); window.scrollTo(0, 0); updateMobileMenuBtn(); }
-function showTab(name) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.side-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name)); document.getElementById('tab-' + name).classList.add('active'); if (name === 'marathon') setTimeout(() => initMap(), 100); if (name === 'daily') renderDailyExercise(); if (name === 'calc') renderCalc(); if (name === 'reminders') renderReminders(); if (name === 'diet') renderDiet(); if (name === 'sports') renderSports(); if (name === 'home') { renderHome(); renderTracker(); } if (name === 'profile') { renderProfile(); if (typeof renderLinkedCoachDisplay === 'function') renderLinkedCoachDisplay(); } if (name === 'weather') { if (!lastWeather) loadWeather(); else renderWeather(); } setTimeout(() => applyTranslations(), 30); }
+function showTab(name) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.side-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name)); document.getElementById('tab-' + name).classList.add('active'); if (name === 'marathon') setTimeout(() => initMap(), 100); if (name === 'daily') renderDailyExercise(); if (name === 'calc') renderCalc(); if (name === 'reminders') renderReminders(); if (name === 'diet') renderDiet(); if (name === 'sports') renderSports(); if (name === 'home') { renderHome(); renderTracker(); } if (name === 'profile') { renderProfile(); } if (name === 'weather') { if (!lastWeather) loadWeather(); else renderWeather(); } setTimeout(() => applyTranslations(), 30); }
 function enterApp() { 
   showScreen('screen-app'); 
   showTab('home'); 
@@ -6531,21 +6529,90 @@ function saveCoachAthletes(athletes) { const coachEmail = localStorage.getItem(C
 function openAddAthleteModal() { document.getElementById('add-athlete-name').value = ''; document.getElementById('add-athlete-sport').value = ''; document.getElementById('add-athlete-level').value = ''; document.getElementById('add-athlete-email').value = ''; document.getElementById('add-athlete-notes').value = ''; document.getElementById('add-athlete-msg').textContent = ''; openModal('add-athlete-modal'); }
 function addAthlete(e) {
   e.preventDefault();
+  const msgEl = document.getElementById('add-athlete-msg');
   const name = document.getElementById('add-athlete-name').value.trim();
   const sport = document.getElementById('add-athlete-sport').value;
   const level = document.getElementById('add-athlete-level').value;
-  const email = document.getElementById('add-athlete-email').value.trim();
+  const email = document.getElementById('add-athlete-email').value.trim().toLowerCase();
   const notes = document.getElementById('add-athlete-notes').value.trim();
-  if (!name || !sport || !level) { document.getElementById('add-athlete-msg').textContent = 'Please fill in all required fields.'; document.getElementById('add-athlete-msg').className = 'msg error'; return false; }
+  if (!name || !sport || !level) { msgEl.textContent = 'Please fill in all required fields.'; msgEl.className = 'msg error'; return false; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    msgEl.textContent = 'A valid athlete email is required for account linking.';
+    msgEl.className = 'msg error';
+    return false;
+  }
+  const coachEmail = localStorage.getItem(COACH_SESSION_KEY);
+  if (!coachEmail) {
+    msgEl.textContent = 'Your coach session has expired. Please log in again.';
+    msgEl.className = 'msg error';
+    return false;
+  }
+
   const athletes = getCoachAthletes();
+  // Prevent duplicate-linking: if this athlete email is already on the roster,
+  // bail out with a friendly message.
+  if (athletes.some(a => (a.email || '').toLowerCase() === email)) {
+    msgEl.textContent = 'This athlete is already on your roster.';
+    msgEl.className = 'msg error';
+    return false;
+  }
   const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
   athletes.push({ id: Date.now(), name, sport, level, email, notes, initials, streak: 0, sessions: 0, status: 'new', addedAt: new Date().toISOString(), sessionLog: [], assignedPlan: null, lastSessionDate: null, goals: '', injuryNotes: '', phone: '' });
   saveCoachAthletes(athletes);
+
+  // === ACCOUNT LINKING ===
+  // Write the linked-coach binding so the athlete — when they sign in with
+  // this email — will see this coach as their linked coach.
+  localStorage.setItem(VOLTA_LINKED_COACH_PREFIX + email, coachEmail);
+
+  // Also persist a snapshot of the athlete's profile so the coach can see
+  // their info immediately (before the athlete logs a new session). When the
+  // athlete signs in later, saveLinkedCoach() / renderProfile() will refresh
+  // this snapshot with live data.
+  const snapshot = {
+    email: email,
+    name: name,
+    sport: sport,
+    level: level,
+    goal: '',
+    sessions: 0,
+    streak: 0,
+    lastDone: null,
+    syncedAt: new Date().toISOString(),
+    pendingLink: true   // flag: athlete hasn't signed in yet
+  };
+  localStorage.setItem(VOLTA_ATHLETE_PROFILE_PREFIX + email, JSON.stringify(snapshot));
+
   closeModal('add-athlete-modal');
+  // Reset the form for next time
+  document.getElementById('add-athlete-name').value = '';
+  document.getElementById('add-athlete-sport').value = '';
+  document.getElementById('add-athlete-level').value = '';
+  document.getElementById('add-athlete-email').value = '';
+  document.getElementById('add-athlete-notes').value = '';
+  msgEl.textContent = '';
+  msgEl.className = 'msg';
+
   renderCoachAthletes(); updateCoachStats(); renderCoachSessionsTable();
+  // Refresh the Linked Athletes list on the coach profile so the new athlete
+  // shows up immediately.
+  if (typeof renderLinkedAthletes === 'function') renderLinkedAthletes();
   return false;
 }
-function removeAthlete(id) { let a = getCoachAthletes(); a = a.filter(x => x.id !== id); saveCoachAthletes(a); renderCoachAthletes(); updateCoachStats(); renderCoachSessionsTable(); }
+function removeAthlete(id) {
+  let a = getCoachAthletes();
+  const removed = a.find(x => x.id === id);
+  a = a.filter(x => x.id !== id);
+  saveCoachAthletes(a);
+  // Clean up the linking binding + profile snapshot for the removed athlete
+  // (only if they were added via Add Athlete with email linking).
+  if (removed && removed.email) {
+    localStorage.removeItem(VOLTA_LINKED_COACH_PREFIX + removed.email.toLowerCase());
+    localStorage.removeItem(VOLTA_ATHLETE_PROFILE_PREFIX + removed.email.toLowerCase());
+  }
+  renderCoachAthletes(); updateCoachStats(); renderCoachSessionsTable();
+  if (typeof renderLinkedAthletes === 'function') renderLinkedAthletes();
+}
 function renderCoachAthletes() {
   const athletes = getCoachAthletes();
   const grid = document.getElementById('coach-athletes-grid');
