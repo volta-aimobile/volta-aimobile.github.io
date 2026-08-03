@@ -2028,8 +2028,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <h1 class="page-title" data-ar="الرياضيون">Athletes</h1>
       <p class="page-sub" data-ar="قائمتك النشطة عبر جميع التخصصات.">Your active roster across all disciplines.</p>
       <div class="coach-search-bar">
-        <input type="text" id="coach-athlete-search" placeholder="Search athletes..." oninput="filterCoachAthletes()" data-ar-ph="ابحث عن رياضيين..." style="flex:1;max-width:320px;" />
-        <button class="coach-export-btn" onclick="exportAthletesCSV()"><i class="fa-solid fa-file-export"></i> <span data-ar="تصدير">Export</span></button>
+        <button class="coach-export-btn" onclick="exportAthletesCSV()" style="padding:10px 20px;font-size:.88rem;"><i class="fa-solid fa-file-export"></i> <span data-ar="تصدير">Export</span></button>
         <button class="btn primary" onclick="openAddAthleteModal()" style="padding:10px 20px;"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة رياضي">Add Athlete</span></button>
       </div>
       <div class="coach-filter-chips">
@@ -2570,7 +2569,9 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
 </div>
 
 <script>
+/* Chatbase welcome popup disabled per user request — no longer loads on app open
 (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="ndl_6Z-6DcDLM9g7DY-XD";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+*/
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -4251,20 +4252,33 @@ function renderWorkoutList() {
 let deRestTimers = {};
 let deRestSecs = {};
 function startDeRest(idx) {
-  // If already running, do nothing
-  if (deRestTimers[idx]) return;
   const ar = (store.lang === 'ar');
   const restSecsLabel = ar ? 'ثانية' : 's';
-  deRestSecs[idx] = 60;
+  const playBtn = document.getElementById('de-rest-play-' + idx);
+
+  // If timer is currently running → PAUSE it (clear interval, keep remaining seconds, swap to play icon)
+  if (deRestTimers[idx]) {
+    clearInterval(deRestTimers[idx]);
+    delete deRestTimers[idx];
+    if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+    return;
+  }
+
+  // Timer is not running → START or RESUME.
+  // If no remaining time stored (or already 0), initialize to 60 so it always counts 60 → 0.
+  if (!deRestSecs[idx] || deRestSecs[idx] <= 0) {
+    deRestSecs[idx] = 60;
+    // Play start beep only on a fresh start (not on resume)
+    if (typeof playBeep === 'function') playBeep(800, 0.15);
+    if (typeof vibrateDevice === 'function') vibrateDevice(100);
+  }
+
   // Update display immediately
   const d = document.getElementById('de-rest-display-' + idx);
   if (d) d.textContent = deRestSecs[idx] + restSecsLabel;
   // Swap play button to pause icon
-  const playBtn = document.getElementById('de-rest-play-' + idx);
   if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-  // Play start beep
-  if (typeof playBeep === 'function') playBeep(800, 0.15);
-  if (typeof vibrateDevice === 'function') vibrateDevice(100);
+
   deRestTimers[idx] = setInterval(function() {
     deRestSecs[idx]--;
     // Look up display element fresh every tick (survives re-renders)
@@ -4284,6 +4298,9 @@ function startDeRest(idx) {
       // Dim the rest timer
       const restEl = document.getElementById('de-rest-' + idx);
       if (restEl) restEl.style.opacity = '0.5';
+      // Reset button back to play icon when finished
+      const btn = document.getElementById('de-rest-play-' + idx);
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-play"></i>';
     }
   }, 1000);
 }
