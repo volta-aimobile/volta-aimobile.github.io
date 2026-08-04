@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: volta-app
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: OTP_DEV_IN_RESPONSE
+        value: "true"
+      - key: DB_PATH
+        value: ./data/volta.db
+    disk:
+      name: volta-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1
