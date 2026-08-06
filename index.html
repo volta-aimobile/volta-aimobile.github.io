@@ -454,28 +454,30 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
   .mood-cards-grid { grid-template-columns: repeat(3, 1fr); }
   .mood-card small { display: none; }
 }
-/* ===== MoodMorph: compact "bar" (energy slider) on MOBILE ONLY =====
-   User asked to "make the bar smaller in moodmorph" on Volta Mobile.
-   The "bar" = the .moodmorph-energy panel (slider + label + number).
-   Reduce its padding, header size, and slider height on phones only.
-   Desktop layout is untouched.
-   Round 7: tightened further per user follow-up ("make the energy level bar
-   in moodmorph smaller in volta mobile"). */
+/* ===== MoodMorph: mobile tweaks =====
+   Round 10: Per user spec — "moodmorph energy bar is too big on mobile, make
+   the bar itself smaller, make it look like pc version". The slider track and
+   thumb now match the PC version exactly (6px track, 20px thumb) so it looks
+   polished and consistent. Only the panel padding is slightly tighter on
+   mobile to save vertical space. */
 @media (max-width: 768px) {
   .moodmorph-panel { padding: 14px !important; }
   .moodmorph-header { gap: 10px; margin-bottom: 14px; }
   .moodmorph-header-icon { width: 38px; height: 38px; border-radius: 10px; font-size: 1.1rem; }
   .moodmorph-header h3 { font-size: .95rem !important; }
   .moodmorph-header small { font-size: .75rem !important; }
-  .moodmorph-energy { padding: 6px 10px !important; margin-bottom: 10px !important; border-radius: 8px !important; }
-  .moodmorph-energy-head { margin-bottom: 4px !important; }
-  .moodmorph-energy-head span { font-size: .72rem !important; }
-  .moodmorph-energy-head b { font-size: .9rem !important; }
-  .moodmorph-energy-head b span { font-size: .65rem !important; }
-  .moodmorph-energy input[type="range"] { height: 3px !important; }
-  .moodmorph-energy input[type="range"]::-webkit-slider-thumb { width: 12px !important; height: 12px !important; border-width: 2px !important; }
-  .moodmorph-energy input[type="range"]::-moz-range-thumb { width: 12px !important; height: 12px !important; border-width: 2px !important; }
-  .moodmorph-energy-ticks { font-size: .58rem !important; margin-top: 3px !important; }
+  /* Energy bar: match PC look — same slider height (6px), thumb size (20px),
+     border (3px), and tick font (.72rem) as desktop. Only panel padding is
+     slightly tighter to save space on phones. */
+  .moodmorph-energy { padding: 10px 12px !important; margin-bottom: 12px !important; }
+  .moodmorph-energy-head { margin-bottom: 6px !important; }
+  .moodmorph-energy-head span { font-size: .82rem !important; }
+  .moodmorph-energy-head b { font-size: 1.2rem !important; }
+  .moodmorph-energy-head b span { font-size: .8rem !important; }
+  .moodmorph-energy input[type="range"] { height: 6px !important; }
+  .moodmorph-energy input[type="range"]::-webkit-slider-thumb { width: 20px !important; height: 20px !important; border-width: 3px !important; }
+  .moodmorph-energy input[type="range"]::-moz-range-thumb { width: 20px !important; height: 20px !important; border-width: 3px !important; }
+  .moodmorph-energy-ticks { font-size: .72rem !important; margin-top: 6px !important; }
   .moodmorph-go { padding: 10px; font-size: .92rem; }
   .mood-cards-grid { gap: 6px; margin-bottom: 12px; }
   .mood-card { padding: 10px 4px; }
@@ -1464,6 +1466,10 @@ html { scroll-behavior: smooth; }
   #coach-bottom-nav-more { display: none !important; }
   #mobile-menu-btn-coach { display: none !important; }
   #mobile-sidebar-overlay-coach { display: none !important; }
+  /* Round 10: Remove Announce button on PC version (per user spec).
+     The Announce feature is mobile-only — on PC the coach uses the full
+     sidebar + dashboard panels. The button still shows on mobile. */
+  #coach-announce-btn { display: none !important; }
   /* Coach: normal padding on desktop (no bottom nav space) */
   #screen-coach-app .main { padding-bottom: 34px !important; width: auto !important; }
 }
@@ -1473,7 +1479,16 @@ html { scroll-behavior: smooth; }
 
 /* ===== COACH: Bottom nav hidden by default (shown on mobile via media query) ===== */
 .coach-bottom-nav { display: none; }
-#coach-bottom-nav-more { display: none; }
+/* Round 8: Removed the ID-level `#coach-bottom-nav-more { display: none; }` rule
+   because it had CSS specificity (1,0,0) which BEAT `.bottom-nav-more.active
+   { display: block; }` (specificity 0,2,0), preventing the coach "more" popup
+   from ever becoming visible on mobile. The element already has
+   class="bottom-nav-more" which inherits `display: none` from line 76, and the
+   desktop `!important` rule at line 1464 handles desktop hiding. So this ID
+   rule was both redundant AND harmful — removing it makes the coach popup
+   behave identically to the regular app's popup. */
+/* When .active is added by toggleCoachBottomNavMore(), the popup shows. */
+#coach-bottom-nav-more.active { display: block; }
 
 /* Hide coach bottom nav on non-coach screens */
 #screen-coach-app:not(.active) .coach-bottom-nav,
@@ -1555,6 +1570,57 @@ html { scroll-behavior: smooth; }
   .stat-card { padding: 10px; gap: 8px; }
   .stat-icon { width: 32px; height: 32px; }
   .stat-card b { font-size: .9rem; }
+}
+
+/* ===== Round 10: Comprehensive mobile UI polish for ALL phone sizes =====
+   Ensures UI is perfect on phones from 320px to 768px. Addresses common
+   issues: text overflow, button sizing, panel padding, grid columns, and
+   touch target sizes. */
+@media (max-width: 768px) {
+  /* Ensure all panels have consistent padding on mobile */
+  .panel { padding: 14px !important; }
+  /* Make sure headings don't overflow */
+  h1 { font-size: 1.25rem !important; }
+  h3 { font-size: 1rem !important; }
+  /* Buttons: minimum touch target 44px (Apple HIG) */
+  .btn { min-height: 44px; padding: 10px 16px; font-size: .9rem; }
+  .btn.small { min-height: 36px; padding: 6px 12px; font-size: .82rem; }
+  /* Forms: full-width inputs on mobile */
+  input, select, textarea { font-size: 16px !important; }  /* prevents iOS zoom on focus */
+  /* Tables: allow horizontal scroll */
+  .sessions-table { display: block; overflow-x: auto; white-space: nowrap; }
+  /* Banner cards: 2 columns on mobile */
+  .banner-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+  .banner-card { height: 110px !important; }
+  /* Diet grid: single column on mobile */
+  .diet-grid { grid-template-columns: 1fr !important; }
+  /* Sports grid: 2 columns on mobile */
+  .sports-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+  /* Modals: full-width with margin */
+  .modal-content { max-width: calc(100% - 24px) !important; margin: 12px !important; }
+  /* Auth card: full-width on mobile */
+  .auth-card { max-width: calc(100% - 24px) !important; padding: 20px !important; }
+  /* Goal progress: smaller text on mobile */
+  .goal-progress-header { font-size: .8rem !important; }
+  /* Rec sports grid: 2 columns on mobile */
+  .rec-sports-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .rec-sport-card { padding: 10px !important; font-size: .82rem !important; }
+}
+
+/* Extra-small phones (320px - 360px) */
+@media (max-width: 360px) {
+  .panel { padding: 12px !important; }
+  h1 { font-size: 1.15rem !important; }
+  .bottom-nav-item { padding: 3px 4px !important; gap: 1px !important; }
+  .bottom-nav-item span { font-size: .5rem !important; }
+  .bottom-nav-item i { font-size: 16px !important; }
+  .banner-grid { grid-template-columns: 1fr !important; }
+  .sports-grid { grid-template-columns: 1fr !important; }
+  .stat-card { padding: 8px !important; gap: 6px !important; }
+  .stat-card b { font-size: .85rem !important; }
+  .stat-icon { width: 28px !important; height: 28px !important; }
+  .modal-content { max-width: calc(100% - 16px) !important; margin: 8px !important; padding: 14px !important; }
+  .auth-card { padding: 16px !important; }
 }
 
 
@@ -1744,6 +1810,10 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <button class="btn primary" onclick="startSurvey()" style="width:100%;"><i class="fa-solid fa-arrow-right"></i> <span data-ar="ابدأ الاستبيان">Start Survey</span></button>
     </div>
     <div id="survey-area" style="display:none;">
+      <button class="back-to-home" onclick="backFromSurvey()" style="margin-bottom:14px;">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span data-ar="العودة للرئيسية">Back to Home</span>
+      </button>
       <div class="survey-progress-fancy">
         <div class="survey-progress-fancy-fill" id="survey-progress-fill" style="width:0%;"></div>
       </div>
@@ -1823,7 +1893,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
             <span id="goal-days-left-lbl" data-ar="يوم متبقي">days left</span>
           </span>
         </div>
-        <small id="goal-days-left" style="display:none;"></small>
       </div>
       <div class="panel">
         <h3><i class="fa-solid fa-chart-column"></i> <span data-ar="النشاط الأسبوعي">Weekly Activity</span></h3>
@@ -2256,6 +2325,10 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
           <i class="fa-solid fa-user"></i>
           <span data-ar="الملف">Profile</span>
         </button>
+        <button class="bottom-nav-more-item" onclick="showTab('settings');closeBottomNavMore()">
+          <i class="fa-solid fa-gear"></i>
+          <span data-ar="الإعدادات">Settings</span>
+        </button>
       </div>
     </div>
 
@@ -2443,7 +2516,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div class="coach-quick-actions">
           <div class="coach-quick-action" onclick="openAddAthleteModal()"><i class="fa-solid fa-user-plus"></i><span data-ar="إضافة رياضي">Add Athlete</span></div>
           <div class="coach-quick-action" onclick="openNewPlanModal()"><i class="fa-solid fa-clipboard-list"></i><span data-ar="خطة جديدة">New Plan</span></div>
-          <div class="coach-quick-action" onclick="openAnnouncementModal()"><i class="fa-solid fa-bullhorn"></i><span data-ar="إعلان">Announce</span></div>
+          <div class="coach-quick-action" id="coach-announce-btn" onclick="openAnnouncementModal()"><i class="fa-solid fa-bullhorn"></i><span data-ar="إعلان">Announce</span></div>
           <div class="coach-quick-action" onclick="exportAthletesCSV()"><i class="fa-solid fa-file-export"></i><span data-ar="تصدير">Export CSV</span></div>
         </div>
       </div>
@@ -2552,7 +2625,10 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
               </div>
             </div>
           </div>
-          <button type="submit" class="btn primary" style="margin-top:8px;"><i class="fa-solid fa-utensils"></i> <span data-ar="تسجيل الوجبة للرياضي">Log Meal for Athlete</span></button>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button type="submit" class="btn primary" style="flex:1;"><i class="fa-solid fa-utensils"></i> <span data-ar="تسجيل الوجبة للرياضي">Log Meal for Athlete</span></button>
+            <button type="button" class="btn ghost" id="coach-meal-cancel-btn" onclick="cancelEditCoachMeal()" style="display:none;"><i class="fa-solid fa-xmark"></i> <span data-ar="إلغاء">Cancel</span></button>
+          </div>
         </form>
       </div>
       <div class="panel">
@@ -2622,13 +2698,25 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div><label data-ar="الرياضة">Sport</label><select id="add-athlete-sport" required><option value="" data-ar="اختر…">Select…</option><option>Running</option><option>Cycling</option><option>Swimming</option><option>Strength</option><option>Football</option><option>Basketball</option><option>Tennis</option><option>HIIT</option><option>Yoga</option><option>Boxing</option></select></div>
         <div><label data-ar="المستوى">Level</label><select id="add-athlete-level" required><option value="" data-ar="اختر…">Select…</option><option data-ar="مبتدئ">Beginner</option><option data-ar="متوسط">Intermediate</option><option data-ar="متقدم">Advanced</option></select></div>
       </div>
-      <label data-ar="البريد الإلكتروني (اختياري)">Email (optional)</label>
-      <input type="email" id="add-athlete-email" placeholder="athlete@email.com" data-ar-ph="athlete@email.com" />
+      <label data-ar="البريد الإلكتروني (يجب أن يكون Gmail)">Email (must be @gmail.com)</label>
+      <input type="email" id="add-athlete-email" placeholder="athlete@gmail.com" required pattern="[^@]+@gmail\.com" data-ar-ph="athlete@gmail.com" />
+      <small style="color:var(--muted);font-size:.78rem;margin-top:-6px;margin-bottom:10px;display:block;" data-ar="يجب أن يكون بريد الرياضي عنوان Gmail صالح.">Athlete email must be a valid @gmail.com address.</small>
       <label data-ar="ملاحظات">Notes</label>
       <textarea id="add-athlete-notes" rows="2" placeholder="Any notes about this athlete…" style="resize:vertical;" data-ar-ph="أي ملاحظات حول هذا الرياضي…"></textarea>
       <button type="submit" class="btn primary" style="margin-top:12px;"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة للقائمة">Add to Roster</span></button>
     </form>
     <p id="add-athlete-msg" class="msg"></p>
+  </div>
+</div>
+
+<!-- ===== Athlete Detail Modal (Round 9) =====
+     Per user spec: "add more details button for athletes in volta coach".
+     The openAthleteDetail() JS function was already implemented but had no
+     modal HTML to render into — this shell fixes that. -->
+<div id="athlete-detail-modal" class="modal-overlay" style="z-index:10002;">
+  <div class="modal-content" style="max-width:560px;">
+    <button class="modal-close" onclick="closeModal('athlete-detail-modal')">&times;</button>
+    <div id="athlete-detail-body"></div>
   </div>
 </div>
 
@@ -3745,6 +3833,21 @@ function startSurvey() {
   renderSurveyQuestion();
 }
 
+// === Round 10: Back button at the start of the survey ===
+// Per user spec: "add a back button at the start of the survey to go back to
+// the homepage". Resets survey state and returns to the landing screen.
+function backFromSurvey() {
+  // Hide the survey, show the intro again (in case the user re-enters)
+  document.getElementById('survey-area').style.display = 'none';
+  const intro = document.getElementById('inbody-intro');
+  if (intro) intro.style.display = 'block';
+  // Reset survey state so re-entering starts fresh
+  currentSurveyStep = 0;
+  surveyAnswers = {};
+  // Go back to the homepage (landing screen)
+  showScreen('screen-landing');
+}
+
 function renderSurveyQuestion() {
   const q = surveyQuestions[currentSurveyStep];
   const total = surveyQuestions.length;
@@ -4459,12 +4562,14 @@ function renderHome() {
   animateCount(document.getElementById('stat-week-mins'), getSessionStats().weekMin);
 
   // ===== Today's Activity Goal progress bar =====
-  // Tracks today's logged workout minutes against a daily target derived from
-  // the user's weekly schedule (1-2 days=15min, 3-4 days=30min, 5+=45min, daily=60min).
-  // This is the bar that ACTUALLY MOVES when the user exercises (e.g. logs a 2-min session).
+  // Round 9: The workout duration is HALF the survey time (e.g. 60-min survey →
+  // 30 min of workouts). So the progress bar goal is also HALF the survey time,
+  // and each completed exercise logs 1 min (workout only, no rest). This makes
+  // the bar show "X / 30" for a 60-min survey user, reaching 100% when all
+  // 30 exercises are done.
   try {
     const todayMin = getTodayMinutes();
-    const dailyGoal = getDailyGoalMinutes();
+    const dailyGoal = Math.max(1, Math.round(getDailyGoalMinutes() / 2));
     const pct = Math.min(100, Math.round((todayMin / dailyGoal) * 100));
     const fill = document.getElementById('today-progress-fill');
     const pctEl = document.getElementById('today-percent');
@@ -4520,18 +4625,15 @@ function renderHome() {
         daysLeft = Math.max(0, u.goalPlan.daysNeeded - elapsed);
       }
       if (daysLeft !== null) {
-        daysLabel.textContent = ar
-          ? `${daysLeft} يوم متبقي`
-          : `${daysLeft} days left`;
-        daysLabel.style.display = 'block';
-        // Update the new badge UI (visible pill in the goal progress bar)
+        // Round 9: removed the duplicate <small> text counter at the bottom.
+        // Only the badge pill (goal-days-left-badge) is shown now.
         const numEl = document.getElementById('goal-days-left-num');
         const lblEl = document.getElementById('goal-days-left-lbl');
         const badgeEl = document.getElementById('goal-days-left-badge');
         if (numEl) numEl.textContent = daysLeft;
         if (lblEl) {
           lblEl.textContent = ar
-            ? (daysLeft === 1 ? 'يوم متبقي' : 'يوم متبقي')
+            ? 'يوم متبقي'
             : (daysLeft === 1 ? 'day left' : 'days left');
         }
         if (badgeEl) badgeEl.style.display = 'inline-flex';
@@ -4559,12 +4661,12 @@ function renderCoachRecommendation() {
   const goalAr = GOAL_AR_NAMES[p.goal] || p.goal;
 
   const sportMap = {
-    'Lose weight': ['Running', 'Cycling', 'Boxing', 'HIIT'],
-    'Build muscle': ['Weightlifting', 'Calisthenics', 'Crossfit'],
-    'Improve endurance': ['Running', 'Cycling', 'Swimming'],
-    'Stay healthy': ['Yoga', 'Pilates', 'General Fitness'],
-    'Improve flexibility': ['Yoga', 'Pilates', 'Stretching'],
-    'Sports performance': [p.sport || 'General Fitness']
+    'Lose weight':         ['Running', 'Cycling', 'Boxing', 'Swimming', 'Sprinting', 'Bootcamp', 'Crossfit', 'Track & Field'],
+    'Build muscle':        ['Weightlifting', 'Calisthenics', 'Crossfit', 'Gymnastics', 'Climbing', 'Rugby', 'Wrestling'],
+    'Improve endurance':   ['Running', 'Cycling', 'Swimming', 'Rowing', 'Triathlon', 'Marathon', 'Road Cycling'],
+    'Stay healthy':        ['Yoga', 'Pilates', 'General Fitness', 'Stretching', 'Zumba', 'Hiking', 'Bootcamp'],
+    'Improve flexibility': ['Yoga', 'Pilates', 'Stretching', 'Gymnastics', 'Ballet', 'Contemporary', 'Martial Arts'],
+    'Sports performance':  [p.sport || 'General Fitness', 'Crossfit', 'Sprinting', 'Weightlifting', 'Bootcamp', 'Track & Field']
   };
 
   let recs = sportMap[p.goal] || ['General Fitness'];
@@ -4590,7 +4692,16 @@ function renderCoachRecommendation() {
       ? [p.sport]
       : ['General Fitness'];
   }
-  store.recommendedSports = recs.slice(0, 4);
+  // ===== BACKFILL: ensure we have at least 4 recommendations (target 6).
+  // If filtering dropped below 4, pull in more sports from the goal's sportMap
+  // that weren't already included, then from a safe no-equipment allowlist. =====
+  if (recs.length < 4) {
+    const preferred = (sportMap[p.goal] || []).filter(n => !recs.includes(n));
+    const safeExtras = ['General Fitness', 'Yoga', 'Pilates', 'Stretching', 'Zumba', 'Bootcamp', 'Calisthenics', 'Contemporary']
+      .filter(n => !recs.includes(n) && !preferred.includes(n));
+    recs = recs.concat(preferred, safeExtras);
+  }
+  store.recommendedSports = recs.slice(0, 6);
   // Make sure defaultSport points to a sport that actually exists in SPORTS
   // (and wasn't filtered out). Otherwise showWorkout() will crash.
   store.defaultSport = store.recommendedSports[0] || 'General Fitness';
@@ -4951,7 +5062,10 @@ function checkDailyGoalReached() {
     const u = currentUser();
     if (!u) return;
     const todayMin = getTodayMinutes();
-    const dailyGoal = getDailyGoalMinutes();
+    // Round 9: the daily goal for the streak is HALF the survey time (matches
+    // the workout duration being half). So a 60-min survey user hits their
+    // streak goal at 30 min of logged workouts.
+    const dailyGoal = Math.max(1, Math.round(getDailyGoalMinutes() / 2));
     if (todayMin < dailyGoal) return; // not yet
     const today = new Date().toDateString();
     if (u.lastDone === today && (u.streakGoalCountedFor || '') === today) return; // already counted
@@ -5212,6 +5326,11 @@ function renderDiet() {
       <button class="btn primary small diet-log-meal-btn" id="diet-log-meal-btn-${idx}" onclick="logAIMeal('${m.name.replace(/'/g, "\\'")}', ${idx})" style="width:100%;margin-top:10px;font-size:.8rem;padding:8px;${btnStyle}" ${btnAttrs}>${btnInner}</button>
     </div>`;
   }).join('');
+  // === Round 10: Refresh coach-recommended meals panel ===
+  // Per user spec: "make coach meals appear on athlete version". This ensures
+  // the #diet-coach-meals panel updates every time the Diet tab is rendered,
+  // so the athlete sees meals their coach assigned.
+  try { if (typeof renderCoachMealsForUser === 'function') renderCoachMealsForUser(); } catch(e) {}
 }
 
 // === Round 6: Log an AI-generated meal to the diet log ===
@@ -5734,40 +5853,47 @@ function loadDailyPlan() {
     deState.currentDay = Math.min(p2.currentDay || 0, p2.dailyPlan.length - 1);
     deState.view = p2.view || 'front';
     deState.workouts = deState.dailyPlan[deState.currentDay].workouts || [];
-    // === TOP-UP: if the loaded plan has fewer workouts than the user's current
-    // daily goal (e.g. plan was generated by an older version of the code that
-    // only produced 5 workouts), top it up so the count matches the goal.
-    // This fixes the "only 5 workouts" issue without forcing the user to
-    // regenerate their plan from scratch.
+    // === TOP-UP OR TRIM: sync the loaded plan's workout count to the user's
+    // current daily goal. If the plan has TOO FEW workouts (e.g. generated by
+    // an older code version that only produced 5), top it up. If it has TOO
+    // MANY (e.g. generated when the formula produced 60 workouts for a 60-min
+    // goal, before the "half" formula was introduced), trim it down.
     //
-    // Round 7: target count now uses the rest-aware formula (matches generateWorkoutList):
-    //   N = (goalSecs + REST) / (PER_EXERCISE + REST), clamped to [8, 30].
-    // So old plans that had 5/15/30 workouts will be topped up to the new count
-    // (8/15/23/30 for 15/30/45/60-min goals respectively).
-    const REST_SECS_TU = 60, PER_EX_TU = 60;
+    // Round 9: target count = surveyTime / 2 (matches generateWorkoutList).
+    //   15-min survey → 8 workouts, 30-min → 15, 45-min → 23, 60-min → 30.
     const goalMinTU = (typeof getDailyGoalMinutes === 'function') ? Math.max(15, getDailyGoalMinutes()) : 15;
-    const goalSecsTU = goalMinTU * 60;
-    let targetPerDay = Math.round((goalSecsTU + REST_SECS_TU) / (PER_EX_TU + REST_SECS_TU));
-    targetPerDay = Math.max(8, Math.min(30, targetPerDay));
-    if (deState.workouts.length < targetPerDay && deState.muscles.length > 0) {
-      // Build the exercise pool from the user's selected muscles
+    let targetPerDay = Math.round(goalMinTU / 2);
+    targetPerDay = Math.max(4, Math.min(30, targetPerDay));
+    if (deState.muscles.length > 0 && deState.workouts.length !== targetPerDay) {
+      let needSave = false;
+      // Build the exercise pool from the user's selected muscles (for top-up)
       const pool = [];
       [...deState.muscles].forEach(m => {
         (WORKOUT_DB[m] || []).forEach(w => pool.push({ name: w, info: WORKOUT_INFO[w] || {muscle: m} }));
       });
       if (pool.length === 0) pool.push({ name: 'Full Body Circuit', info: {muscle: 'Full Body'} });
-      // Top up EVERY day's workout list to the target count
+      // Sync EVERY day's workout list to the target count
       for (let d = 0; d < deState.dailyPlan.length; d++) {
         const dayW = deState.dailyPlan[d].workouts || [];
-        const startLen = dayW.length;
-        for (let i = startLen; i < targetPerDay; i++) {
-          const idx = (d * targetPerDay + i) % pool.length;
-          dayW.push({ name: pool[idx].name, info: pool[idx].info, done: false });
+        if (dayW.length < targetPerDay) {
+          // TOP-UP: add exercises to reach targetPerDay
+          const startLen = dayW.length;
+          for (let i = startLen; i < targetPerDay; i++) {
+            const idx = (d * targetPerDay + i) % pool.length;
+            dayW.push({ name: pool[idx].name, info: pool[idx].info, done: false });
+          }
+          deState.dailyPlan[d].workouts = dayW;
+          needSave = true;
+        } else if (dayW.length > targetPerDay) {
+          // TRIM: cut down to targetPerDay (preserves done flags on the first
+          // targetPerDay exercises; drops the extras). Also fixes currentWorkout
+          // pointer if it was pointing past the new end.
+          deState.dailyPlan[d].workouts = dayW.slice(0, targetPerDay);
+          needSave = true;
         }
-        deState.dailyPlan[d].workouts = dayW;
       }
       deState.workouts = deState.dailyPlan[deState.currentDay].workouts;
-      saveDailyPlan();  // persist the topped-up plan
+      if (needSave) saveDailyPlan();  // persist the synced plan
     }
     // Resume at the first not-yet-done workout (or end if all done)
     let cw = 0;
@@ -6134,29 +6260,26 @@ function generateWorkoutList() {
     (WORKOUT_DB[m] || []).forEach(w => pool.push({ name: w, info: WORKOUT_INFO[w] || {muscle: m} }));
   });
   if (pool.length === 0) pool.push({ name: 'Full Body Circuit', info: {muscle: 'Full Body'} });
-  // === Per user spec (round 7): "add rests in the total session duration".
-  // The user's daily goal (e.g. 60 min) is the TOTAL session time INCLUDING rests.
-  // Each rest is 60s and happens BETWEEN workouts (so N-1 rests for N workouts).
-  // The per-exercise duration is capped at 60s.
+  // === Per user spec (round 8): "make the workout duration in daily exercise
+  // the half of the time instead of the full duration (e.g. if the user said
+  // that they can work for 60 minutes in survey, then make the duration 30
+  // minutes)".
   //
-  // Math: totalSeconds = N × perExercise + (N-1) × restSecs
-  // With perExercise=60s and restSecs=60s: total = N×60 + (N-1)×60 = (2N-1)×60
-  // Solving for N: N = (totalSeconds/60 + 1) / 2 = (goalMin + 1) / 2
+  // So the WORKOUT portion (sum of all exercises, no rests) = surveyTime / 2.
+  // Each exercise is 60s, so numExercises = surveyTime / 2 (in minutes).
+  // Rests (60s between each pair) are added on top, filling the other half.
   //
   // Examples (perExercise=60s, rest=60s):
-  //   15-min goal → N=8 workouts  → 8×60 + 7×60 = 900s   = 15 min ✓
-  //   30-min goal → N=15 workouts → 15×60 + 14×60 = 1740s ≈ 29 min ✓
-  //   45-min goal → N=23 workouts → 23×60 + 22×60 = 2700s = 45 min ✓
-  //   60-min goal → N=30 workouts → 30×60 + 29×60 = 3540s ≈ 59 min ✓
+  //   15-min goal → N=8 workouts  → workout=8min, rest=7min,  total=15 min ✓
+  //   30-min goal → N=15 workouts → workout=15min, rest=14min, total=29 min ✓
+  //   45-min goal → N=23 workouts → workout=23min, rest=22min, total=45 min ✓
+  //   60-min goal → N=30 workouts → workout=30min, rest=29min, total=59 min ✓
   //
-  // Floor at 8 (so even a tiny goal still gives a real workout), cap at 30.
+  // The workout duration is exactly half the survey time. Rests bring the
+  // total session close to the survey time. Floor at 4, cap at 30.
   const dailyGoalMin = (typeof getDailyGoalMinutes === 'function') ? getDailyGoalMinutes() : 15;
-  const REST_SECS = 60;
-  const PER_EXERCISE_SECS = 60;
-  const goalSecs = Math.max(15, dailyGoalMin) * 60;
-  // N = (goalSecs + REST_SECS) / (PER_EXERCISE_SECS + REST_SECS)
-  let perDay = Math.round((goalSecs + REST_SECS) / (PER_EXERCISE_SECS + REST_SECS));
-  perDay = Math.max(8, Math.min(30, perDay));
+  let perDay = Math.round(Math.max(15, dailyGoalMin) / 2);
+  perDay = Math.max(4, Math.min(30, perDay));
   deState.dailyPlan = [];
   for (let d = 0; d < deState.numDays; d++) {
     const dayWorkouts = [];
@@ -6427,23 +6550,19 @@ const WORKOUT_DURATION = {
   'Full Body Circuit': 60
 };
 function getWorkoutDuration(name) {
-  // === Per user spec (round 7): each exercise MUST NOT surpass 1 minute (60s),
-  // AND the 60s rest between exercises counts toward the total session duration.
-  //
-  // With generateWorkoutList() now producing N workouts where
-  //   N = (goalSecs + REST_SECS) / (PER_EXERCISE_SECS + REST_SECS),
-  // each exercise is 60s long, and the rest after it is 60s.
+  // === Per user spec (round 8): each exercise MUST NOT surpass 1 minute (60s),
+  // AND the workout duration is HALF the survey time (e.g. 60-min survey →
+  // 30-min workout → 30 exercises × 60s each). Rests (60s between each pair)
+  // are added on top via getWorkoutRestSecs() and logged separately in
+  // completeWorkout() so the dashboard progress bar reflects total session time.
   //
   // The per-exercise DURATION (workout-only, no rest) is therefore 60s.
-  // The session logging in completeWorkout() adds the 60s rest separately
-  // so the dashboard progress bar correctly reflects total session time.
   const legacyMap = WORKOUT_DURATION[name] || 45;
   const legacy = Math.min(60, Math.max(30, legacyMap));
   try {
     const totalExercises = (deState.workouts && deState.workouts.length) || 0;
     if (totalExercises <= 0) return legacy; // no plan yet
-    // With the new generateWorkoutList() formula, each exercise is 60s.
-    // We still cap at 60s per the user's hard rule.
+    // Each exercise is 60s (hard cap per user spec).
     return 60;
   } catch(e) { return legacy; }
 }
@@ -6613,21 +6732,18 @@ function completeWorkout(index) {
     const plannedSecs = (typeof getWorkoutDuration === 'function')
       ? getWorkoutDuration(deState.workouts[index] ? deState.workouts[index].name : '')
       : 45;
-    // === Round 7: include the rest after each exercise in the logged duration,
-    // so the dashboard progress bar reflects the TOTAL session time (workout + rest).
-    // Per user spec: "add rests in the total session duration". The rest is 60s
-    // and happens between workouts — we attribute it to the exercise that just finished,
-    // except for the very last exercise of the day (no rest after the last one).
-    const restSecs = (typeof getWorkoutRestSecs === 'function') ? getWorkoutRestSecs() : 60;
-    const isLastExercise = (index >= deState.workouts.length - 1);
-    const totalSecs = plannedSecs + (isLastExercise ? 0 : restSecs);
-    // Round to the nearest minute (min 1) so the bar moves visibly per exercise.
-    // Use Math.round so 60s workout + 60s rest = 120s = 2 min exactly.
-    const minutes = Math.max(1, Math.round(totalSecs / 60));
+    // === Round 9: log ONLY the workout time (60s = 1 min per exercise), NOT the
+    // rest. The user wants the workout duration to be HALF the survey time
+    // (e.g. 60-min survey → 30 min of workouts). With 30 exercises × 1 min each
+    // = 30 min logged, and the progress bar goal is also 30 min (half of 60),
+    // so the bar reaches exactly 100% when all exercises are done.
+    // Rests still happen in the UI (60s between exercises) but they don't
+    // inflate the logged minutes — the dashboard shows pure workout time.
+    const minutes = Math.max(1, Math.round(plannedSecs / 60));  // = 1 min per exercise
     // === Round 6: store calories too (MET × weight × duration) so the daily
     // activity panel + workout list popup can show today's kcal burnt. ===
     // Calories are computed from the WORKOUT portion only (you don't burn extra
-    // calories during a rest), so use plannedSecs not totalSecs.
+    // calories during a rest).
     const workoutMinutesForCal = Math.max(1, Math.round(plannedSecs / 60));
     const cals = (typeof getWorkoutCalories === 'function')
       ? getWorkoutCalories(deState.workouts[index] ? deState.workouts[index].name : '')
@@ -8571,6 +8687,28 @@ function addAthlete(e) {
   const email = document.getElementById('add-athlete-email').value.trim();
   const notes = document.getElementById('add-athlete-notes').value.trim();
   if (!name || !sport || !level) { document.getElementById('add-athlete-msg').textContent = 'Please fill in all required fields.'; document.getElementById('add-athlete-msg').className = 'msg error'; return false; }
+  // === Round 9: require @gmail.com email for athletes ===
+  // Per user spec: "require gmail in volta coach when adding athletes".
+  // The HTML input has pattern="[^@]+@gmail\.com" + required, but we also
+  // validate here in case the browser doesn't enforce the pattern.
+  const isAr = (store.lang === 'ar');
+  if (!email) {
+    document.getElementById('add-athlete-msg').textContent = isAr ? 'يرجى إدخال بريد إلكتروني.' : 'Please enter an email address.';
+    document.getElementById('add-athlete-msg').className = 'msg error';
+    return false;
+  }
+  if (!/^[^@]+@gmail\.com$/i.test(email)) {
+    document.getElementById('add-athlete-msg').textContent = isAr ? 'يجب أن يكون البريد الإلكتروني عنوان Gmail صالح (تنتهي بـ @gmail.com).' : 'Athlete email must be a valid @gmail.com address.';
+    document.getElementById('add-athlete-msg').className = 'msg error';
+    return false;
+  }
+  // Prevent duplicate athlete emails (same coach can't add the same gmail twice)
+  const existing = getCoachAthletes();
+  if (existing.some(a => (a.email || '').toLowerCase() === email.toLowerCase())) {
+    document.getElementById('add-athlete-msg').textContent = isAr ? 'هذا الرياضي موجود بالفعل في قائمتك.' : 'This athlete is already in your roster.';
+    document.getElementById('add-athlete-msg').className = 'msg error';
+    return false;
+  }
   const athletes = getCoachAthletes();
   const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
   athletes.push({ id: Date.now(), name, sport, level, email, notes, initials, streak: 0, sessions: 0, status: 'new', addedAt: new Date().toISOString(), sessionLog: [], assignedPlan: null, lastSessionDate: null, goals: '', injuryNotes: '', phone: '' });
@@ -8598,12 +8736,13 @@ function renderCoachAthletes() {
   const sessionsLabel = isAr ? 'جلسة' : 'sessions';
   const logLabel = isAr ? 'تسجيل جلسة' : 'Log Session';
   const statusLabel = isAr ? 'تغيير الحالة' : 'Change Status';
+  const detailsLabel = isAr ? 'التفاصيل' : 'Details';
   grid.innerHTML = athletes.map(a => {
     const bc = a.status === 'on-track' ? 'badge-on-track' : a.status === 'needs-attention' ? 'badge-needs-attention' : 'badge-new';
     const statusKey = a.status || 'new';
     const bt = statusLabels[statusKey];
     const planBadge = a.assignedPlan ? `<span style="font-size:.7rem;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:8px;margin-left:4px;"><i class="fa-solid fa-clipboard-list" style="font-size:.6rem;"></i> ${a.assignedPlan}</span>` : '';
-    return `<div class="athlete-card" style="cursor:pointer;" onclick="openAthleteDetail(${a.id})"><div class="avatar">${a.initials}</div><div class="a-body"><div class="a-top"><b>${a.name}</b><span class="badge ${bc}">${bt}</span></div><small>${a.sport} · ${a.streak} ${streakLabel} · ${a.level}${planBadge}</small><p class="a-last">${a.sessions} ${sessionsLabel}${a.notes ? ' · ' + a.notes : ''}</p><div class="athlete-quick-actions" style="display:flex;gap:6px;margin-top:8px;"><button class="btn ghost small" onclick="event.stopPropagation();openLogSessionModal(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-stopwatch"></i> ${logLabel}</button><button class="btn ghost small" onclick="event.stopPropagation();cycleAthleteStatus(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-arrows-rotate"></i> ${statusLabel}</button></div></div><button onclick="event.stopPropagation();removeAthlete(${a.id})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:.85rem;padding:4px 8px;align-self:flex-start;" title="Remove"><i class="fa-solid fa-xmark"></i></button></div>`;
+    return `<div class="athlete-card" style="cursor:pointer;" onclick="openAthleteDetail(${a.id})"><div class="avatar">${a.initials}</div><div class="a-body"><div class="a-top"><b>${a.name}</b><span class="badge ${bc}">${bt}</span></div><small>${a.sport} · ${a.streak} ${streakLabel} · ${a.level}${planBadge}</small><p class="a-last">${a.sessions} ${sessionsLabel}${a.notes ? ' · ' + a.notes : ''}</p><div class="athlete-quick-actions" style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;"><button class="btn ghost small" onclick="event.stopPropagation();openAthleteDetail(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-circle-info"></i> ${detailsLabel}</button><button class="btn ghost small" onclick="event.stopPropagation();openLogSessionModal(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-stopwatch"></i> ${logLabel}</button><button class="btn ghost small" onclick="event.stopPropagation();cycleAthleteStatus(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-arrows-rotate"></i> ${statusLabel}</button></div></div><button onclick="event.stopPropagation();removeAthlete(${a.id})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:.85rem;padding:4px 8px;align-self:flex-start;" title="Remove"><i class="fa-solid fa-xmark"></i></button></div>`;
   }).join('');
 }
 function updateCoachStats() {
@@ -8776,6 +8915,41 @@ function coachLogMeal(e) {
   const fat = parseFloat(document.getElementById('coach-meal-fat').value) || 0;
   const serving = document.getElementById('coach-meal-serving').value || 'coach-assigned';
 
+  // === Round 10: Edit mode ===
+  // If the edit flag is set, update the existing meal instead of pushing a new one.
+  if (window.__editingCoachMeal) {
+    const { athleteEmail: editEmail, mealIdx } = window.__editingCoachMeal;
+    const allMeals = JSON.parse(localStorage.getItem(COACH_MEALS_KEY) || '{}');
+    if (allMeals[editEmail] && allMeals[editEmail][mealIdx]) {
+      allMeals[editEmail][mealIdx] = { name, desc: serving, kcal, p: protein, c: carbs, f: fat };
+      localStorage.setItem(COACH_MEALS_KEY, JSON.stringify(allMeals));
+      // Also update the athlete's diet log entry with the same name (best-effort sync)
+      try {
+        const key = 'volta_diet_log_' + editEmail;
+        let log = JSON.parse(localStorage.getItem(key) || '[]');
+        // Find the most recent coach-assigned entry with the old name and update it
+        // (we don't have the old name here, so we just update the latest coach-assigned entry)
+        for (let i = log.length - 1; i >= 0; i--) {
+          if (log[i].mealType === 'coach-assigned') {
+            log[i].name = name;
+            log[i].kcal = kcal;
+            log[i].protein = protein;
+            log[i].carbs = carbs;
+            log[i].fat = fat;
+            log[i].serving = serving;
+            break;
+          }
+        }
+        localStorage.setItem(key, JSON.stringify(log));
+      } catch(e) {}
+    }
+    // Clear edit mode + reset form
+    cancelEditCoachMeal();
+    alert(ar ? 'تم تحديث الوجبة بنجاح!' : 'Meal updated successfully!');
+    renderCoachMealsLog();
+    return false;
+  }
+
   // Save to athlete's diet log
   const key = 'volta_diet_log_' + athleteEmail;
   let log = [];
@@ -8817,8 +8991,9 @@ function renderCoachMealsLog() {
   for (const [email, meals] of Object.entries(allMeals)) {
     const athlete = athletes.find(a => a.email === email);
     const athleteName = athlete ? athlete.name : (email || ar ? 'غير معروف' : 'Unknown');
-    meals.forEach(m => {
-      allEntries.push({ ...m, athleteName, athleteEmail: email });
+    // Round 10: track mealIdx so the edit button can find the exact meal to update
+    meals.forEach((m, i) => {
+      allEntries.push({ ...m, athleteName, athleteEmail: email, mealIdx: i });
     });
   }
   // Sort by most recent (last in array = most recent)
@@ -8827,16 +9002,99 @@ function renderCoachMealsLog() {
     container.innerHTML = `<p style="color:var(--muted);text-align:center;padding:20px;">${ar ? 'لا توجد وجبات مسجلة بعد.' : 'No meals logged yet.'}</p>`;
     return;
   }
+  // Round 10: added Edit + Delete buttons per user spec
+  // "add edit meal button for athletes when you log a meal for an athlete"
+  const editLabel = ar ? 'تعديل' : 'Edit';
+  const delLabel = ar ? 'حذف' : 'Delete';
   container.innerHTML = allEntries.map(e => `
     <div class="diet-log-entry" style="margin-bottom:8px;">
       <div class="diet-log-icon"><i class="fa-solid fa-utensils"></i></div>
       <div class="diet-log-body">
         <b>${e.name}</b>
         <small style="color:var(--accent);"><i class="fa-solid fa-user"></i> ${e.athleteName}</small>
+        ${e.desc && e.desc !== 'coach-assigned' ? '<small style="color:var(--muted);"> · ' + e.desc + '</small>' : ''}
       </div>
       <span class="diet-log-kcal">${e.kcal || 0} kcal</span>
+      <button class="diet-log-del" onclick="editCoachMeal('${e.athleteEmail}', ${e.mealIdx})" title="${editLabel}" style="color:var(--accent);"><i class="fa-solid fa-pen"></i></button>
+      <button class="diet-log-del" onclick="deleteCoachMeal('${e.athleteEmail}', ${e.mealIdx})" title="${delLabel}"><i class="fa-solid fa-xmark"></i></button>
     </div>
   `).join('');
+}
+
+// === Round 10: Edit a coach-assigned meal ===
+// Loads the meal into the "Log Meal for Athlete" form so the coach can update
+// the name/kcal/macros/serving, then submit to save changes.
+function editCoachMeal(athleteEmail, mealIdx) {
+  try {
+    const allMeals = JSON.parse(localStorage.getItem(COACH_MEALS_KEY) || '{}');
+    const meals = allMeals[athleteEmail] || [];
+    const m = meals[mealIdx];
+    if (!m) return;
+    const ar = (store.lang === 'ar');
+    // Pre-fill the form
+    const sel = document.getElementById('coach-meal-athlete');
+    if (sel) { sel.value = athleteEmail; sel.disabled = true; }  // lock athlete during edit
+    document.getElementById('coach-meal-name').value = m.name || '';
+    document.getElementById('coach-meal-kcal').value = m.kcal || 0;
+    document.getElementById('coach-meal-serving').value = (m.desc && m.desc !== 'coach-assigned') ? m.desc : '';
+    document.getElementById('coach-meal-protein').value = m.p || 0;
+    document.getElementById('coach-meal-carbs').value = m.c || 0;
+    document.getElementById('coach-meal-fat').value = m.f || 0;
+    // Set edit-mode flag so coachLogMeal() knows to update instead of push
+    window.__editingCoachMeal = { athleteEmail, mealIdx };
+    // Update the submit button label to "Update Meal"
+    const submitBtn = document.querySelector('#tab-coach-meals form button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> ' + (ar ? 'تحديث الوجبة' : 'Update Meal');
+    }
+    // Show the Cancel button so the coach can exit edit mode
+    const cancelBtn = document.getElementById('coach-meal-cancel-btn');
+    if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+    // Scroll to the form so the coach can edit
+    const form = document.querySelector('#tab-coach-meals form');
+    if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch(e) { console.warn('editCoachMeal error:', e); }
+}
+
+// === Round 10: Cancel edit mode (reset the form + flag) ===
+function cancelEditCoachMeal() {
+  window.__editingCoachMeal = null;
+  const sel = document.getElementById('coach-meal-athlete');
+  if (sel) sel.disabled = false;
+  // Reset form fields
+  document.getElementById('coach-meal-name').value = '';
+  document.getElementById('coach-meal-kcal').value = '0';
+  document.getElementById('coach-meal-serving').value = '';
+  document.getElementById('coach-meal-protein').value = '0';
+  document.getElementById('coach-meal-carbs').value = '0';
+  document.getElementById('coach-meal-fat').value = '0';
+  // Reset submit button label
+  const ar = (store.lang === 'ar');
+  const submitBtn = document.querySelector('#tab-coach-meals form button[type="submit"]');
+  if (submitBtn) {
+    submitBtn.innerHTML = '<i class="fa-solid fa-utensils"></i> ' + (ar ? 'تسجيل الوجبة للرياضي' : 'Log Meal for Athlete');
+  }
+  // Hide the Cancel button
+  const cancelBtn = document.getElementById('coach-meal-cancel-btn');
+  if (cancelBtn) cancelBtn.style.display = 'none';
+}
+
+// === Round 10: Delete a coach-assigned meal ===
+function deleteCoachMeal(athleteEmail, mealIdx) {
+  try {
+    const ar = (store.lang === 'ar');
+    if (!confirm(ar ? 'هل أنت متأكد من حذف هذه الوجبة؟' : 'Are you sure you want to delete this meal?')) return;
+    const allMeals = JSON.parse(localStorage.getItem(COACH_MEALS_KEY) || '{}');
+    if (!allMeals[athleteEmail]) return;
+    allMeals[athleteEmail].splice(mealIdx, 1);
+    if (allMeals[athleteEmail].length === 0) delete allMeals[athleteEmail];
+    localStorage.setItem(COACH_MEALS_KEY, JSON.stringify(allMeals));
+    renderCoachMealsLog();
+    // If we were editing this meal, cancel edit mode
+    if (window.__editingCoachMeal && window.__editingCoachMeal.athleteEmail === athleteEmail && window.__editingCoachMeal.mealIdx === mealIdx) {
+      cancelEditCoachMeal();
+    }
+  } catch(e) { console.warn('deleteCoachMeal error:', e); }
 }
 
 function populateCoachMealAthletes() {
@@ -9124,7 +9382,7 @@ function exportAthletesCSV() { const athletes = getCoachAthletes(); if (athletes
 
 let coachAthleteFilter = 'all';
 function setCoachFilter(filter) { coachAthleteFilter = filter; document.querySelectorAll('.coach-filter-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === filter)); filterCoachAthletes(); }
-function filterCoachAthletes() { const search = (document.getElementById('coach-athlete-search')?.value || '').toLowerCase(); const athletes = getCoachAthletes(); const filtered = athletes.filter(a => { const ms = !search || a.name.toLowerCase().includes(search) || a.sport.toLowerCase().includes(search) || (a.email || '').toLowerCase().includes(search); const mf = coachAthleteFilter === 'all' || (a.status || 'new') === coachAthleteFilter; return ms && mf; }); const grid = document.getElementById('coach-athletes-grid'); const noEl = document.getElementById('coach-no-athletes'); const countEl = document.getElementById('coach-athlete-count'); const isAr = (store.lang === 'ar'); const aw = isAr ? 'رياضي' : 'athlete'; const awp = isAr ? 'رياضيون' : 'athletes'; if (countEl) countEl.textContent = filtered.length + ' ' + (filtered.length === 1 ? aw : awp); if (filtered.length === 0) { grid.innerHTML = ''; noEl.style.display = 'block'; return; } noEl.style.display = 'none'; const sl = isAr ? { 'on-track': 'على المسار', 'needs-attention': 'بحاجة لاهتمام', 'new': 'جديد' } : { 'on-track': 'On track', 'needs-attention': 'Needs attention', 'new': 'New' }; const stkL = isAr ? 'يوم في السلسلة' : '-day streak'; const sesL = isAr ? 'جلسة' : 'sessions'; const logL = isAr ? 'تسجيل جلسة' : 'Log Session'; const chgL = isAr ? 'تغيير الحالة' : 'Change Status'; grid.innerHTML = filtered.map(a => { const bc = a.status === 'on-track' ? 'badge-on-track' : a.status === 'needs-attention' ? 'badge-needs-attention' : 'badge-new'; const bt = sl[a.status || 'new']; const pb = a.assignedPlan ? `<span style="font-size:.7rem;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:8px;margin-left:4px;"><i class="fa-solid fa-clipboard-list" style="font-size:.6rem;"></i> ${a.assignedPlan}</span>` : ''; return `<div class="athlete-card" style="cursor:pointer;" onclick="openAthleteDetail(${a.id})"><div class="avatar">${a.initials}</div><div class="a-body"><div class="a-top"><b>${a.name}</b><span class="badge ${bc}">${bt}</span></div><small>${a.sport} · ${a.streak} ${stkL} · ${a.level}${pb}</small><p class="a-last">${a.sessions} ${sesL}${a.notes ? ' · ' + a.notes : ''}</p><div class="athlete-quick-actions" style="display:flex;gap:6px;margin-top:8px;"><button class="btn ghost small" onclick="event.stopPropagation();openLogSessionModal(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-stopwatch"></i> ${logL}</button><button class="btn ghost small" onclick="event.stopPropagation();cycleAthleteStatus(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-arrows-rotate"></i> ${chgL}</button></div></div><button onclick="event.stopPropagation();removeAthlete(${a.id})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:.85rem;padding:4px 8px;align-self:flex-start;" title="Remove"><i class="fa-solid fa-xmark"></i></button></div>`; }).join(''); }
+function filterCoachAthletes() { const search = (document.getElementById('coach-athlete-search')?.value || '').toLowerCase(); const athletes = getCoachAthletes(); const filtered = athletes.filter(a => { const ms = !search || a.name.toLowerCase().includes(search) || a.sport.toLowerCase().includes(search) || (a.email || '').toLowerCase().includes(search); const mf = coachAthleteFilter === 'all' || (a.status || 'new') === coachAthleteFilter; return ms && mf; }); const grid = document.getElementById('coach-athletes-grid'); const noEl = document.getElementById('coach-no-athletes'); const countEl = document.getElementById('coach-athlete-count'); const isAr = (store.lang === 'ar'); const aw = isAr ? 'رياضي' : 'athlete'; const awp = isAr ? 'رياضيون' : 'athletes'; if (countEl) countEl.textContent = filtered.length + ' ' + (filtered.length === 1 ? aw : awp); if (filtered.length === 0) { grid.innerHTML = ''; noEl.style.display = 'block'; return; } noEl.style.display = 'none'; const sl = isAr ? { 'on-track': 'على المسار', 'needs-attention': 'بحاجة لاهتمام', 'new': 'جديد' } : { 'on-track': 'On track', 'needs-attention': 'Needs attention', 'new': 'New' }; const stkL = isAr ? 'يوم في السلسلة' : '-day streak'; const sesL = isAr ? 'جلسة' : 'sessions'; const logL = isAr ? 'تسجيل جلسة' : 'Log Session'; const chgL = isAr ? 'تغيير الحالة' : 'Change Status'; const detL = isAr ? 'التفاصيل' : 'Details'; grid.innerHTML = filtered.map(a => { const bc = a.status === 'on-track' ? 'badge-on-track' : a.status === 'needs-attention' ? 'badge-needs-attention' : 'badge-new'; const bt = sl[a.status || 'new']; const pb = a.assignedPlan ? `<span style="font-size:.7rem;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:8px;margin-left:4px;"><i class="fa-solid fa-clipboard-list" style="font-size:.6rem;"></i> ${a.assignedPlan}</span>` : ''; return `<div class="athlete-card" style="cursor:pointer;" onclick="openAthleteDetail(${a.id})"><div class="avatar">${a.initials}</div><div class="a-body"><div class="a-top"><b>${a.name}</b><span class="badge ${bc}">${bt}</span></div><small>${a.sport} · ${a.streak} ${stkL} · ${a.level}${pb}</small><p class="a-last">${a.sessions} ${sesL}${a.notes ? ' · ' + a.notes : ''}</p><div class="athlete-quick-actions" style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;"><button class="btn ghost small" onclick="event.stopPropagation();openAthleteDetail(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-circle-info"></i> ${detL}</button><button class="btn ghost small" onclick="event.stopPropagation();openLogSessionModal(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-stopwatch"></i> ${logL}</button><button class="btn ghost small" onclick="event.stopPropagation();cycleAthleteStatus(${a.id})" style="font-size:.75rem;padding:4px 10px;"><i class="fa-solid fa-arrows-rotate"></i> ${chgL}</button></div></div><button onclick="event.stopPropagation();removeAthlete(${a.id})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:.85rem;padding:4px 8px;align-self:flex-start;" title="Remove"><i class="fa-solid fa-xmark"></i></button></div>`; }).join(''); }
 
 function updateCoachStats() { const athletes = getCoachAthletes(); const plans = getCoachPlans(); const today = new Date().toDateString(); document.getElementById('coach-stat-athletes').textContent = athletes.length; document.getElementById('coach-stat-sessions').textContent = athletes.reduce((s, a) => s + (a.sessions || 0), 0); document.getElementById('coach-stat-attention').textContent = athletes.filter(a => a.status === 'needs-attention').length; document.getElementById('coach-stat-adherence').textContent = athletes.length > 0 ? Math.round((athletes.filter(a => a.status !== 'needs-attention').length / athletes.length) * 100) + '%' : '--'; document.getElementById('coach-stat-plans').textContent = plans.length; document.getElementById('coach-stat-avg-streak').textContent = athletes.length > 0 ? Math.round(athletes.reduce((s, a) => s + (a.streak || 0), 0) / athletes.length) : 0; let ts = 0; athletes.forEach(a => { if (a.sessionLog && a.sessionLog.length > 0) { a.sessionLog.forEach(s => { if (new Date(s.date).toDateString() === today) ts++; }); } }); document.getElementById('coach-stat-today-sessions').textContent = ts; document.getElementById('coach-stat-on-track').textContent = athletes.filter(a => a.status === 'on-track').length; }
 
