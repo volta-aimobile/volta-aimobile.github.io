@@ -441,11 +441,16 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .mood-icon-neutral { background: var(--accent-soft); color: var(--accent); }
 .mood-icon-happy { background: #e7f7ef; color: #1d9d6b; }
 .mood-icon-pumped { background: #f3e8ff; color: #8b5cf6; }
-.moodmorph-energy { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; }
-.moodmorph-energy-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+/* Round 11: MoodMorph energy bar — bigger thumb (28px touch target), thinner
+   panel padding, smaller header number. Per user spec: "the slider is too
+   small and the bar is too big". The thumb is now 28px (was 20px) for a
+   proper touch target, and the panel padding + header font are reduced so
+   the whole bar feels less bulky. */
+.moodmorph-energy { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; }
+.moodmorph-energy-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .moodmorph-energy input[type="range"] { width: 100%; height: 6px; -webkit-appearance: none; appearance: none; background: var(--line); border-radius: 3px; outline: none; }
-.moodmorph-energy input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 6px rgba(100,149,237,.4); border: 3px solid #fff; }
-.moodmorph-energy input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 6px rgba(100,149,237,.4); border: 3px solid #fff; }
+.moodmorph-energy input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 8px rgba(100,149,237,.4); border: 3px solid #fff; margin-top: -11px; }
+.moodmorph-energy input[type="range"]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 8px rgba(100,149,237,.4); border: 3px solid #fff; }
 .moodmorph-energy-ticks { display: flex; justify-content: space-between; margin-top: 6px; font-size: .72rem; color: var(--muted); font-weight: 500; }
 .moodmorph-go { width: 100%; padding: 14px; font-size: 1rem; font-weight: 700; }
 .mood-workout-card { padding: 14px 16px !important; }
@@ -455,29 +460,28 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
   .mood-card small { display: none; }
 }
 /* ===== MoodMorph: mobile tweaks =====
-   Round 10: Per user spec — "moodmorph energy bar is too big on mobile, make
-   the bar itself smaller, make it look like pc version". The slider track and
-   thumb now match the PC version exactly (6px track, 20px thumb) so it looks
-   polished and consistent. Only the panel padding is slightly tighter on
-   mobile to save vertical space. */
+   Round 11: Per user spec — "still the moodmorph energy bar still looks bad,
+   the slider is too small and the bar is too big". Fixed by:
+   - Making the slider thumb BIGGER (28px, was 20px) for a proper touch target
+   - Making the panel SMALLER (tighter padding, smaller header number)
+   - The thumb now matches desktop exactly (28px) so mobile + PC look identical
+   - margin-top: -11px centers the 28px thumb on the 6px track in WebKit */
 @media (max-width: 768px) {
   .moodmorph-panel { padding: 14px !important; }
   .moodmorph-header { gap: 10px; margin-bottom: 14px; }
   .moodmorph-header-icon { width: 38px; height: 38px; border-radius: 10px; font-size: 1.1rem; }
   .moodmorph-header h3 { font-size: .95rem !important; }
   .moodmorph-header small { font-size: .75rem !important; }
-  /* Energy bar: match PC look — same slider height (6px), thumb size (20px),
-     border (3px), and tick font (.72rem) as desktop. Only panel padding is
-     slightly tighter to save space on phones. */
-  .moodmorph-energy { padding: 10px 12px !important; margin-bottom: 12px !important; }
+  /* Energy bar: bigger thumb (28px), smaller panel, matches desktop exactly */
+  .moodmorph-energy { padding: 8px 12px !important; margin-bottom: 10px !important; }
   .moodmorph-energy-head { margin-bottom: 6px !important; }
-  .moodmorph-energy-head span { font-size: .82rem !important; }
-  .moodmorph-energy-head b { font-size: 1.2rem !important; }
-  .moodmorph-energy-head b span { font-size: .8rem !important; }
+  .moodmorph-energy-head span { font-size: .8rem !important; }
+  .moodmorph-energy-head b { font-size: 1rem !important; }
+  .moodmorph-energy-head b span { font-size: .75rem !important; }
   .moodmorph-energy input[type="range"] { height: 6px !important; }
-  .moodmorph-energy input[type="range"]::-webkit-slider-thumb { width: 20px !important; height: 20px !important; border-width: 3px !important; }
-  .moodmorph-energy input[type="range"]::-moz-range-thumb { width: 20px !important; height: 20px !important; border-width: 3px !important; }
-  .moodmorph-energy-ticks { font-size: .72rem !important; margin-top: 6px !important; }
+  .moodmorph-energy input[type="range"]::-webkit-slider-thumb { width: 28px !important; height: 28px !important; border-width: 3px !important; margin-top: -11px !important; }
+  .moodmorph-energy input[type="range"]::-moz-range-thumb { width: 28px !important; height: 28px !important; border-width: 3px !important; }
+  .moodmorph-energy-ticks { font-size: .68rem !important; margin-top: 6px !important; }
   .moodmorph-go { padding: 10px; font-size: .92rem; }
   .mood-cards-grid { gap: 6px; margin-bottom: 12px; }
   .mood-card { padding: 10px 4px; }
@@ -1623,6 +1627,52 @@ html { scroll-behavior: smooth; }
   .auth-card { padding: 16px !important; }
 }
 
+/* ===== Round 11: Native app feel — no page scroll, only lists scroll =====
+   Per user spec: "make the web applcation feel like an app, like dont make
+   anything scrollable except lists". We lock the body to the viewport height
+   and make the .main content area scroll internally. The bottom-nav stays
+   fixed. This makes the app feel like a native mobile app instead of a
+   scrollable web page. */
+@media (max-width: 768px) {
+  /* Lock the app screen to the viewport — the page itself never scrolls */
+  #screen-app.active {
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  /* The .main area scrolls internally — this is where tab content lives */
+  #screen-app .main {
+    flex: 1 1 0% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;  /* smooth momentum scroll on iOS */
+    padding-bottom: 80px !important;  /* space for the fixed bottom-nav */
+    height: 100% !important;
+  }
+  /* Same for the coach app */
+  #screen-coach-app.active {
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  #screen-coach-app .main {
+    flex: 1 1 0% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 80px !important;
+    height: 100% !important;
+  }
+  /* Prevent the body from scrolling/bouncing on iOS */
+  body { overscroll-behavior: none; }
+  /* The bottom-nav is already position:fixed — keep it above the scroll area */
+  .bottom-nav { position: fixed !important; }
+}
+
 
 /* Prevent double-tap zoom delay on buttons */
 button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn, .survey-option-fancy { touch-action: manipulation; }
@@ -2090,10 +2140,10 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 
         <div class="moodmorph-energy">
           <div class="moodmorph-energy-head">
-            <span style="font-size:.88rem;font-weight:600;color:var(--muted);"><i class="fa-solid fa-battery-half" style="color:var(--accent);margin-right:6px;"></i><span data-ar="مستوى الطاقة">Energy level</span></span>
-            <b id="energy-label" style="font-size:1.4rem;color:var(--accent);">5<span style="font-size:.85rem;color:var(--muted);font-weight:500;">/10</span></b>
+            <span style="font-size:.82rem;font-weight:600;color:var(--muted);"><i class="fa-solid fa-battery-half" style="color:var(--accent);margin-right:6px;"></i><span data-ar="مستوى الطاقة">Energy level</span></span>
+            <b id="energy-label" style="font-size:1.1rem;color:var(--accent);">5<span style="font-size:.75rem;color:var(--muted);font-weight:500;">/10</span></b>
           </div>
-          <input type="range" id="energy" min="1" max="10" value="5" oninput="document.getElementById('energy-label').innerHTML=this.value+'<span style=\'font-size:.85rem;color:var(--muted);font-weight:500;\'>/10</span>'" />
+          <input type="range" id="energy" min="1" max="10" value="5" oninput="document.getElementById('energy-label').innerHTML=this.value+'<span style=\'font-size:.75rem;color:var(--muted);font-weight:500;\'>/10</span>'" />
           <div class="moodmorph-energy-ticks"><span data-ar="منخفض">Low</span><span data-ar="متوسط">Medium</span><span data-ar="مرتفع">High</span></div>
         </div>
 
@@ -3560,7 +3610,7 @@ showTab = function(name) {
   const bottomNavItems = document.querySelectorAll('#bottom-nav .bottom-nav-item');
   const tabToBtab = { home: 'home', sports: 'sports', daily: 'daily', diet: 'diet',
     marathon: 'more', weather: 'more', moodmorph: 'more',
-    reminders: 'more', profile: 'more', settings: 'more' };
+    reminders: 'more', mycoach: 'more', profile: 'more', settings: 'more' };
   const activeBtab = tabToBtab[name] || 'home';
   bottomNavItems.forEach(item => {
     item.classList.toggle('active', item.dataset.btab === activeBtab);
@@ -4022,6 +4072,27 @@ function calculateGoalPlan() {
   let heightInches = p.height / 2.54;
   let inchesOver5Ft = Math.max(0, heightInches - 60);
   let idealWeight = p.gender === 'Female' ? 45.5 + (2.3 * inchesOver5Ft) : 50 + (2.3 * inchesOver5Ft);
+  // === Round 11: Goal-aware target weight ===
+  // Per user spec: "fix target weight not working when the user chooses lose
+  // weight". Previously the target weight was always set to the height-based
+  // idealWeight (Devine formula) regardless of goal. Now we compute a
+  // goal-specific target (mirroring autoSetGoalWeightFromProfile):
+  //   - Lose weight: 10% reduction from current, floored at ibw-5 (healthy min)
+  //   - Build muscle: current + 3 kg (lean gain)
+  //   - Improve endurance: ideal weight (recomposition)
+  //   - Stay healthy / others: ideal weight
+  const currentWeight = parseFloat(p.weight) || 70;
+  let goalTargetWeight;
+  if (p.goal === 'Lose weight') {
+    goalTargetWeight = Math.max(idealWeight - 5, currentWeight * 0.90);
+  } else if (p.goal === 'Build muscle') {
+    goalTargetWeight = currentWeight + 3;
+  } else if (p.goal === 'Improve endurance') {
+    goalTargetWeight = idealWeight;
+  } else {
+    goalTargetWeight = idealWeight;
+  }
+  goalTargetWeight = Math.round(goalTargetWeight * 10) / 10;  // 1 decimal place
   let proG = Math.round(p.weight * 2);
   let fatG = Math.round((targetCals * 0.25) / 9);
   let carbG = Math.round((targetCals - (proG * 4) - (fatG * 9)) / 4);
@@ -4036,7 +4107,8 @@ function calculateGoalPlan() {
   // we keep it — calculateGoalPlan() is also called on profile edits and we
   // don't want to keep moving the target date every time.
   const startW = parseFloat(u.goalPlan?.startWeight || p.weight);
-  const targetW = parseFloat(u.goalPlan?.targetWeight || idealWeight.toFixed(1));
+  // Use the goal-aware target if no existing targetWeight is saved
+  const targetW = parseFloat(u.goalPlan?.targetWeight || goalTargetWeight);
   const weightDiff = Math.abs(startW - targetW);
   let daysNeeded;
   if (weightDiff < 0.1) {
@@ -4066,7 +4138,8 @@ function calculateGoalPlan() {
     targetCals: Math.round(targetCals),
     idealWeight: idealWeight.toFixed(1),
     startWeight: u.goalPlan?.startWeight || p.weight,
-    targetWeight: u.goalPlan?.targetWeight || idealWeight.toFixed(1),
+    // Use goal-aware target weight if no existing targetWeight is saved
+    targetWeight: u.goalPlan?.targetWeight || goalTargetWeight,
     macros: { p: proG, f: fatG, c: carbG },
     targetDate: targetDateStr,
     startDate: startDateStr,
@@ -4660,48 +4733,62 @@ function renderCoachRecommendation() {
   const ar = (store.lang === 'ar');
   const goalAr = GOAL_AR_NAMES[p.goal] || p.goal;
 
-  const sportMap = {
-    'Lose weight':         ['Running', 'Cycling', 'Boxing', 'Swimming', 'Sprinting', 'Bootcamp', 'Crossfit', 'Track & Field'],
-    'Build muscle':        ['Weightlifting', 'Calisthenics', 'Crossfit', 'Gymnastics', 'Climbing', 'Rugby', 'Wrestling'],
-    'Improve endurance':   ['Running', 'Cycling', 'Swimming', 'Rowing', 'Triathlon', 'Marathon', 'Road Cycling'],
-    'Stay healthy':        ['Yoga', 'Pilates', 'General Fitness', 'Stretching', 'Zumba', 'Hiking', 'Bootcamp'],
-    'Improve flexibility': ['Yoga', 'Pilates', 'Stretching', 'Gymnastics', 'Ballet', 'Contemporary', 'Martial Arts'],
-    'Sports performance':  [p.sport || 'General Fitness', 'Crossfit', 'Sprinting', 'Weightlifting', 'Bootcamp', 'Track & Field']
-  };
+  // === Round 11: Wrap the whole recommendation logic in try/catch so a
+  // partial failure (e.g. malformed survey data) always falls back to a
+  // valid 4-6 sport list instead of leaving the user with 1 or 0 sports. ===
+  try {
+    const sportMap = {
+      'Lose weight':         ['Running', 'Cycling', 'Boxing', 'Swimming', 'Sprinting', 'Bootcamp', 'Crossfit', 'Track & Field'],
+      'Build muscle':        ['Weightlifting', 'Calisthenics', 'Crossfit', 'Gymnastics', 'Climbing', 'Rugby', 'Wrestling'],
+      'Improve endurance':   ['Running', 'Cycling', 'Swimming', 'Rowing', 'Triathlon', 'Marathon', 'Road Cycling'],
+      'Stay healthy':        ['Yoga', 'Pilates', 'General Fitness', 'Stretching', 'Zumba', 'Hiking', 'Bootcamp'],
+      'Improve flexibility': ['Yoga', 'Pilates', 'Stretching', 'Gymnastics', 'Ballet', 'Contemporary', 'Martial Arts'],
+      'Sports performance':  [p.sport || 'General Fitness', 'Crossfit', 'Sprinting', 'Weightlifting', 'Bootcamp', 'Track & Field']
+    };
 
-  let recs = sportMap[p.goal] || ['General Fitness'];
-  if (p.sport && p.sport !== 'General Fitness' && !recs.includes(p.sport)) recs.unshift(p.sport);
-  // ===== SURVEY-AWARE FILTERING =====
-  // Filter out sports the user can't actually do based on their survey answers:
-  //  1. Equipment: if user said "None" or empty equipment, filter out sports that
-  //     strictly require equipment (e.g. Weightlifting needs Barbell, Tennis needs
-  //     Racket). Sports whose equip list includes "None" stay.
-  //  2. Health conditions: if user has Diabetes / Hypertension / Heart condition /
-  //     Asthma, filter out high-intensity outdoor sports (Marathon, Triathlon,
-  //     Boxing, Crossfit, Sprinting, etc.) that could be unsafe.
-  //  3. Injuries: if user has Knee injury, filter out high-impact leg sports
-  //     (Running, Sprinting, Hiking, Skiing). If Lower back, filter out
-  //     Weightlifting / Rowing. If Shoulders, filter out Boxing / Swimming.
-  //  4. Environment: if user is "Home" only, filter out outdoor sports that
-  //     need a court/field/pool (Football, Basketball, Swimming, etc.).
-  recs = filterSportsBySurvey(recs, u.survey || {}, p);
-  // ===== FALLBACK: if filtering killed every recommendation, fall back to the
-  // user's favorite sport or General Fitness so the panel is NEVER empty. =====
-  if (!recs || recs.length === 0) {
-    recs = (p.sport && p.sport !== 'General Fitness')
-      ? [p.sport]
-      : ['General Fitness'];
+    // Case-insensitive goal matching (fixes accounts where goal was saved with
+    // different casing, e.g. 'lose weight' instead of 'Lose weight')
+    const goalKey = Object.keys(sportMap).find(k => k.toLowerCase() === (p.goal || '').toLowerCase());
+    let recs = sportMap[goalKey] || sportMap['Stay healthy'];
+    if (p.sport && p.sport !== 'General Fitness' && !recs.includes(p.sport)) recs.unshift(p.sport);
+
+    // ===== SURVEY-AWARE FILTERING =====
+    recs = filterSportsBySurvey(recs, u.survey || {}, p);
+
+    // ===== FALLBACK: if filtering killed every recommendation =====
+    if (!recs || recs.length === 0) {
+      recs = (p.sport && p.sport !== 'General Fitness')
+        ? [p.sport]
+        : ['General Fitness'];
+    }
+
+    // ===== BACKFILL: ensure 4-6 recommendations.
+    // Re-filter the backfill list through filterSportsBySurvey() so we don't
+    // re-add sports that were already filtered out (Round 11 fix). =====
+    if (recs.length < 6) {
+      const pool = (sportMap[goalKey] || sportMap['Stay healthy'])
+        .concat(['General Fitness', 'Yoga', 'Pilates', 'Stretching', 'Zumba', 'Bootcamp', 'Calisthenics', 'Contemporary', 'Hiking', 'Hip Hop', 'Breakdance'])
+        .filter(n => !recs.includes(n));
+      const reFiltered = filterSportsBySurvey(pool, u.survey || {}, p);
+      recs = recs.concat(reFiltered);
+    }
+
+    // ===== FINAL GUARANTEE: if still < 4 (extreme edge case), force-fill
+    // with always-safe sports that pass every filter. =====
+    const alwaysSafe = ['General Fitness', 'Yoga', 'Pilates', 'Stretching', 'Calisthenics', 'Zumba'];
+    let safetyIdx = 0;
+    while (recs.length < 4 && safetyIdx < alwaysSafe.length) {
+      const next = alwaysSafe[safetyIdx];
+      if (!recs.includes(next)) recs.push(next);
+      safetyIdx++;
+    }
+
+    store.recommendedSports = recs.slice(0, 6);
+  } catch(e) {
+    console.warn('renderCoachRecommendation error:', e);
+    // Ultimate fallback — always show 4 safe sports
+    store.recommendedSports = ['General Fitness', 'Yoga', 'Pilates', 'Stretching', 'Calisthenics', 'Zumba'].slice(0, 6);
   }
-  // ===== BACKFILL: ensure we have at least 4 recommendations (target 6).
-  // If filtering dropped below 4, pull in more sports from the goal's sportMap
-  // that weren't already included, then from a safe no-equipment allowlist. =====
-  if (recs.length < 4) {
-    const preferred = (sportMap[p.goal] || []).filter(n => !recs.includes(n));
-    const safeExtras = ['General Fitness', 'Yoga', 'Pilates', 'Stretching', 'Zumba', 'Bootcamp', 'Calisthenics', 'Contemporary']
-      .filter(n => !recs.includes(n) && !preferred.includes(n));
-    recs = recs.concat(preferred, safeExtras);
-  }
-  store.recommendedSports = recs.slice(0, 6);
   // Make sure defaultSport points to a sport that actually exists in SPORTS
   // (and wasn't filtered out). Otherwise showWorkout() will crash.
   store.defaultSport = store.recommendedSports[0] || 'General Fitness';
@@ -8823,10 +8910,13 @@ function renderCoachMealsForUser() {
   const ar = (store.lang === 'ar');
   const kcalUnit = ar ? 'سعرة' : 'kcal';
   const pLabel = ar ? 'ب' : 'P';
+  const cLabel = ar ? 'ك' : 'C';
+  const fLabel = ar ? 'د' : 'F';
   const emptyMsg = ar ? 'لا توجد وجبات مخصصة بعد.' : 'No coach meals assigned yet.';
   const fromCoachMsg = ar ? 'من مدربك' : 'From your coach';
   const unableMsg = ar ? 'تعذّر تحميل وجبات المدرب.' : 'Unable to load coach meals.';
   const logBtnLabel = ar ? 'تسجيل هذه الوجبة' : 'Log this meal';
+  const loggedLabel = ar ? 'تم التسجيل' : 'Logged';
   try {
     const allMeals = JSON.parse(localStorage.getItem(COACH_MEALS_KEY) || '{}');
     const myMeals = allMeals[store.session] || [];
@@ -8834,7 +8924,40 @@ function renderCoachMealsForUser() {
       container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);"><i class="fa-solid fa-utensils" style="font-size:24px;opacity:.4;display:block;margin-bottom:8px;"></i><span data-ar="لا توجد وجبات مخصصة بعد.">${emptyMsg}</span></div>`;
       return;
     }
-    container.innerHTML = myMeals.map((m, idx) => `<div class="meal-card" style="cursor:default;"><div class="meal-img" style="background:linear-gradient(135deg,var(--accent-soft),var(--accent-border));display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-utensils" style="font-size:24px;color:var(--accent);"></i></div><div class="meal-body"><b>${m.name}</b><small style="color:var(--muted);">${m.desc||''}</small><div class="diet-macros" style="margin-top:6px;"><span>${m.kcal||'--'} ${kcalUnit}</span><span>${pLabel}: ${m.p||'--'}g</span></div><small style="color:var(--accent);font-weight:600;"><i class="fa-solid fa-user-tie"></i> <span data-ar="من مدربك">${fromCoachMsg}</span></small><button class="btn primary small diet-log-meal-btn" id="coach-log-meal-btn-${idx}" onclick="logCoachMealForUser('${(m.name||'').replace(/'/g, "\\'")}', ${idx})" style="width:100%;margin-top:8px;font-size:.8rem;padding:8px;"><i class="fa-solid fa-plus"></i> <span>${logBtnLabel}</span></button></div></div>`).join('');
+    // === Round 11: Render coach meals EXACTLY like AI generated meals.
+    // Same HTML structure: .diet-card > h4 + p.diet-desc + .diet-macros (4
+    // macro-pill spans) + "From your coach" label + Log button. This makes
+    // the coach meals visually identical to the AI meals panel above. ===
+    const dietLog = (typeof getDietLog === 'function') ? getDietLog() : [];
+    const todayStr = (typeof localDateStr === 'function') ? localDateStr() : null;
+    container.innerHTML = myMeals.map((m, idx) => {
+      const dispName = m.name || 'Meal';
+      const dispDesc = m.desc || '';
+      // Check if this meal was already logged today (mirror AI meals behavior)
+      const isLoggedToday = dietLog.some(function(x) {
+        return x.mealType === 'coach-assigned' && x.date === todayStr && x.name === dispName;
+      });
+      const btnStyle = isLoggedToday
+        ? 'background:var(--green);color:#fff;cursor:default;'
+        : '';
+      const btnAttrs = isLoggedToday ? 'disabled' : '';
+      const btnInner = isLoggedToday
+        ? '<i class="fa-solid fa-check"></i> <span>' + loggedLabel + '</span>'
+        : '<i class="fa-solid fa-plus"></i> <span>' + logBtnLabel + '</span>';
+      return `
+      <div class="diet-card">
+        <h4>${dispName}</h4>
+        <p class="diet-desc">${dispDesc}</p>
+        <div class="diet-macros">
+          <span class="macro-pill macro-kcal">${m.kcal || '--'} ${kcalUnit}</span>
+          <span class="macro-pill macro-p">${pLabel}: ${m.p || '--'}g</span>
+          <span class="macro-pill macro-c">${cLabel}: ${m.c || '--'}g</span>
+          <span class="macro-pill macro-f">${fLabel}: ${m.f || '--'}g</span>
+        </div>
+        <small style="color:var(--accent);font-weight:600;display:block;margin-top:8px;"><i class="fa-solid fa-user-tie"></i> <span data-ar="من مدربك">${fromCoachMsg}</span></small>
+        <button class="btn primary small diet-log-meal-btn" id="coach-log-meal-btn-${idx}" onclick="logCoachMealForUser('${(m.name||'').replace(/'/g, "\\'")}', ${idx})" style="width:100%;margin-top:10px;font-size:.8rem;padding:8px;${btnStyle}" ${btnAttrs}>${btnInner}</button>
+      </div>`;
+    }).join('');
   } catch(e) { container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);"><span data-ar="تعذّر تحميل وجبات المدرب.">${unableMsg}</span></div>`; }
   setTimeout(applyTranslations, 0);
 }
