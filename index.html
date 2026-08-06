@@ -38,6 +38,24 @@ body:not(.app-active) #chatbase-bubble-button, body:not(.app-active) #chatbase-b
    We use the custom #volta-ai-chat-btn instead (branded, consistent position,
    works on mobile + desktop). This eliminates the duplicate-AI-button issue. */
 #chatbase-bubble-button { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+/* === Hide the chatbase greeting bubble ("How can I help you?" welcome message). ===
+   The chatbase widget auto-renders a small floating greeting bubble next to the
+   launcher when the page loads. Since we already hide the launcher button above
+   and use our own #volta-ai-chat-btn, the greeting bubble is orphaned visual
+   clutter. Hide it everywhere, but keep the actual chat window (chat window only
+   opens when the user clicks our custom button). */
+#chatbase-message-bubbles,
+.chatbase-launcher,
+.chatbase-launcher-text,
+.chatbase-launcher-greeting,
+.chatbase-greeting,
+[class*="chatbase"][class*="greeting"],
+[class*="chatbase"][class*="bubble"]:not(#chatbase-bubble-window) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 /* Hide chatbase widget whenever ANY full-screen overlay (OCR scan, etc.) is active so it can't leak through the high z-index chatbase uses */
 body.ocr-active #chatbase-bubble-button, body.ocr-active #chatbase-bubble-window, body.ocr-active #chatbase-message-bubbles, body.ocr-active .chatbase-launcher, body.ocr-active iframe[src*="chatbase.co"], body.ocr-active #chatbase-bubble-button + *, body.ocr-active #chatbase-bubble-window + * { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -1 !important; }
 /* Hide AI chat button when 'more' popup is active */
@@ -440,20 +458,24 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
    User asked to "make the bar smaller in moodmorph" on Volta Mobile.
    The "bar" = the .moodmorph-energy panel (slider + label + number).
    Reduce its padding, header size, and slider height on phones only.
-   Desktop layout is untouched. */
+   Desktop layout is untouched.
+   Round 7: tightened further per user follow-up ("make the energy level bar
+   in moodmorph smaller in volta mobile"). */
 @media (max-width: 768px) {
   .moodmorph-panel { padding: 14px !important; }
   .moodmorph-header { gap: 10px; margin-bottom: 14px; }
   .moodmorph-header-icon { width: 38px; height: 38px; border-radius: 10px; font-size: 1.1rem; }
   .moodmorph-header h3 { font-size: .95rem !important; }
   .moodmorph-header small { font-size: .75rem !important; }
-  .moodmorph-energy { padding: 8px 12px; margin-bottom: 12px; }
-  .moodmorph-energy-head { margin-bottom: 6px; }
-  .moodmorph-energy-head b { font-size: 1.1rem !important; }
-  .moodmorph-energy input[type="range"] { height: 4px; }
-  .moodmorph-energy input[type="range"]::-webkit-slider-thumb { width: 16px; height: 16px; border-width: 2px; }
-  .moodmorph-energy input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-width: 2px; }
-  .moodmorph-energy-ticks { font-size: .65rem; margin-top: 4px; }
+  .moodmorph-energy { padding: 6px 10px !important; margin-bottom: 10px !important; border-radius: 8px !important; }
+  .moodmorph-energy-head { margin-bottom: 4px !important; }
+  .moodmorph-energy-head span { font-size: .72rem !important; }
+  .moodmorph-energy-head b { font-size: .9rem !important; }
+  .moodmorph-energy-head b span { font-size: .65rem !important; }
+  .moodmorph-energy input[type="range"] { height: 3px !important; }
+  .moodmorph-energy input[type="range"]::-webkit-slider-thumb { width: 12px !important; height: 12px !important; border-width: 2px !important; }
+  .moodmorph-energy input[type="range"]::-moz-range-thumb { width: 12px !important; height: 12px !important; border-width: 2px !important; }
+  .moodmorph-energy-ticks { font-size: .58rem !important; margin-top: 3px !important; }
   .moodmorph-go { padding: 10px; font-size: .92rem; }
   .mood-cards-grid { gap: 6px; margin-bottom: 12px; }
   .mood-card { padding: 10px 4px; }
@@ -514,6 +536,90 @@ body.dark-mode #streak-popup-card {
   box-shadow: 0 4px 14px rgba(255,87,0,.4); transition: transform .15s;
 }
 .streak-close-btn:active { transform: scale(.96); }
+
+/* ===== GREAT WORK ANIMATION POPUP (Round 7) =====
+   Replaces the old alert() "Great job!" popup after finishing a daily exercise day.
+   Shows two flexing bicep emojis (💪) that animate in a "flex" motion, plus a
+   "GREAT WORK!" headline and a context-aware subtitle. */
+#great-work-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.75);
+  z-index: 10510; display: none; align-items: center; justify-content: center;
+  animation: streakFadeIn .3s ease;
+}
+#great-work-overlay.active { display: flex; }
+#great-work-card {
+  background: linear-gradient(160deg, #eaf1fd 0%, #ffffff 60%);
+  border-radius: 24px; padding: 36px 28px; text-align: center;
+  max-width: 360px; width: calc(100% - 48px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 0 4px rgba(100,149,237,.25);
+  animation: streakPopIn .5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+body.dark-mode #great-work-card {
+  background: linear-gradient(160deg, #232d3f 0%, #1a1f29 60%);
+}
+.gw-biceps-row {
+  display: flex; justify-content: center; align-items: center; gap: 24px;
+  margin-bottom: 8px;
+}
+.gw-biceps {
+  font-size: 4.5rem; line-height: 1; display: inline-block;
+  transform-origin: center bottom;
+  filter: drop-shadow(0 4px 12px rgba(100,149,237,.4));
+}
+.gw-biceps-left { animation: gwFlexLeft 1.2s ease-in-out infinite; }
+.gw-biceps-right { animation: gwFlexRight 1.2s ease-in-out infinite; animation-delay: .15s; }
+@keyframes gwFlexLeft {
+  0%, 100% { transform: scale(1) rotate(-8deg); }
+  50%      { transform: scale(1.18) rotate(8deg); }
+}
+@keyframes gwFlexRight {
+  0%, 100% { transform: scale(1) rotate(8deg); }
+  50%      { transform: scale(1.18) rotate(-8deg); }
+}
+.gw-headline {
+  font-size: 2.2rem; font-weight: 800; color: var(--accent);
+  margin: 10px 0 6px; letter-spacing: -.02em;
+  text-shadow: 0 2px 8px rgba(100,149,237,.3);
+  animation: gwHeadlinePulse 1.5s ease-in-out infinite;
+}
+@keyframes gwHeadlinePulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+.gw-sub {
+  font-size: .95rem; color: var(--text); margin-bottom: 14px; font-weight: 500;
+}
+.gw-stars-row {
+  display: flex; justify-content: center; gap: 8px; margin-bottom: 18px;
+}
+.gw-star {
+  font-size: 1.6rem; color: #ffc107;
+  animation: gwStarPop .6s ease-in-out both;
+  text-shadow: 0 2px 6px rgba(255,193,7,.5);
+}
+.gw-star:nth-child(1) { animation-delay: .2s; }
+.gw-star:nth-child(2) { animation-delay: .4s; }
+.gw-star:nth-child(3) { animation-delay: .6s; }
+@keyframes gwStarPop {
+  0%   { transform: scale(0) rotate(-45deg); opacity: 0; }
+  70%  { transform: scale(1.3) rotate(8deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+.gw-close-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #fff; border: none; padding: 12px 32px; border-radius: 12px;
+  font-weight: 700; font-size: .95rem; cursor: pointer; font-family: inherit;
+  box-shadow: 0 4px 14px rgba(100,149,237,.4); transition: transform .15s;
+}
+.gw-close-btn:active { transform: scale(.96); }
+@media (max-width: 768px) {
+  #great-work-card { padding: 28px 20px; }
+  .gw-biceps { font-size: 3.5rem; }
+  .gw-biceps-row { gap: 16px; }
+  .gw-headline { font-size: 1.8rem; }
+  .gw-sub { font-size: .88rem; }
+  .gw-star { font-size: 1.3rem; }
+}
 input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: var(--line); border-radius: 4px; outline: none; margin: 10px 0; }
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 3px solid var(--white); box-shadow: 0 2px 6px rgba(100,149,237,.4); }
 input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 3px solid var(--white); }
@@ -1286,7 +1392,7 @@ html { scroll-behavior: smooth; }
   .banner-card { height: 120px; }
 
   /* Profile mobile actions - visible on mobile */
-  .profile-mobile-actions { display: flex; }
+  .profile-mobile-actions { display: flex !important; }
   .profile-action-btn { min-height: 48px; }
 
   /* Rec sports grid */
@@ -1464,6 +1570,12 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 .profile-action-settings i { color: var(--accent); }
 .profile-action-logout { color: var(--red); border-color: rgba(201,68,68,.3); }
 .profile-action-logout i { color: var(--red); }
+/* Round 7: ensure the profile mobile actions have enough bottom clearance
+   so they're not hidden behind the bottom-nav bar on phones. */
+@media (max-width: 768px) {
+  #tab-profile { padding-bottom: 90px; }
+  .profile-mobile-actions { margin-bottom: 12px; }
+}
 </style>
 </head>
 <body>
@@ -1704,7 +1816,14 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div class="goal-progress-bar-bg">
           <div class="goal-progress-bar-fill" id="goal-progress-fill" style="width: 0%;"></div>
         </div>
-        <small id="goal-days-left" style="display:block;text-align:center;margin-top:8px;color:var(--accent);font-weight:600;"></small>
+        <div class="goal-days-left-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;">
+          <span class="goal-days-left-badge" id="goal-days-left-badge" style="display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-border);border-radius:999px;padding:5px 14px;font-size:.82rem;font-weight:700;">
+            <i class="fa-solid fa-calendar-day" style="font-size:.85rem;"></i>
+            <span id="goal-days-left-num">--</span>
+            <span id="goal-days-left-lbl" data-ar="يوم متبقي">days left</span>
+          </span>
+        </div>
+        <small id="goal-days-left" style="display:none;"></small>
       </div>
       <div class="panel">
         <h3><i class="fa-solid fa-chart-column"></i> <span data-ar="النشاط الأسبوعي">Weekly Activity</span></h3>
@@ -1719,7 +1838,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div class="banner-card" onclick="showTab('sports')"><img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Sports"><div class="banner-overlay"><h4 data-ar="الرياضة والتتبع">Sports & Tracker</h4><p data-ar="سجّل جلساتك المباشرة.">Log your live sessions.</p></div></div>
         <div class="banner-card" onclick="showTab('marathon')"><img src="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Marathon"><div class="banner-overlay"><h4 data-ar="الماراثون">Marathon</h4><p data-ar="خطّط مسارك واركض.">Map your route & run.</p></div></div>
         <div class="banner-card" onclick="showTab('moodmorph')"><img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Mood"><div class="banner-overlay"><h4 data-ar="تحول المزاج">MoodMorph</h4><p data-ar="تمارين تناسب مزاجك.">Workouts for your mood.</p></div></div>
-        <div class="banner-card" onclick="showTab('calc')"><img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Calc"><div class="banner-overlay"><h4 data-ar="حاسبة اللياقة">Fitness Calculator</h4><p data-ar="متى ستصل إلى هدفك؟">When will you hit your goal?</p></div></div>
       </div>
     </div>
 
@@ -2100,7 +2218,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         </button>
         <button class="bottom-nav-item" data-btab="daily" onclick="showTab('daily')">
           <i class="fa-solid fa-list-check"></i>
-          <span data-ar="التمارين">Tasks</span>
+          <span data-ar="التمارين اليومية" style="font-size:.54rem;line-height:1.1;">Daily Exercise</span>
         </button>
         <button class="bottom-nav-item" data-btab="diet" onclick="showTab('diet')">
           <i class="fa-solid fa-utensils"></i>
@@ -2117,10 +2235,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <button class="bottom-nav-more-item" onclick="showTab('marathon');closeBottomNavMore()">
           <i class="fa-solid fa-map-location-dot"></i>
           <span data-ar="الماراثون">Marathon</span>
-        </button>
-        <button class="bottom-nav-more-item" onclick="showTab('calc');closeBottomNavMore()">
-          <i class="fa-solid fa-calculator"></i>
-          <span data-ar="الحاسبة">Calc</span>
         </button>
         <button class="bottom-nav-more-item" onclick="showTab('weather');closeBottomNavMore()">
           <i class="fa-solid fa-cloud-sun"></i>
@@ -2769,6 +2883,17 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
 #auth-coach-fields { overflow: hidden; }
 #auth-coach-fields .grid-form { gap: 0 12px !important; }
 
+/* ===== My Coach tab mobile alignment =====
+   Ensures the coach profile panel doesn't overflow on narrow phones,
+   and the coach's email wraps instead of going off-screen. */
+@media (max-width: 768px) {
+  #tab-mycoach .panel { padding: 14px; max-width: 100%; overflow-x: hidden; }
+  #tab-mycoach h3 { font-size: 1.05rem; }
+  #tab-mycoach small { font-size: .8rem; word-break: break-all; overflow-wrap: anywhere; }
+  #mycoach-content small { word-break: break-all; overflow-wrap: anywhere; }
+  #mycoach-content b { word-break: break-all; overflow-wrap: anywhere; }
+}
+
 </style>
 
 <div id="meal-modal" class="modal-overlay">
@@ -2917,6 +3042,31 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
     <div class="streak-label" id="streak-popup-title" data-ar="يوم في السلسلة!">Day Streak!</div>
     <div class="streak-sub" id="streak-popup-sub" data-ar="أحسنت! وصلت إلى هدفك اليومي. استمر!">Great job! You hit your daily goal. Keep going!</div>
     <button class="streak-close-btn" onclick="closeStreakPopup()" data-ar="متابعة">Keep Going</button>
+  </div>
+</div>
+
+<!-- ===== GREAT WORK ANIMATION POPUP (Round 7) =====
+     Replaces the old alert() "Great job! You're now on Day X of Y" popup that
+     fired when the user finished a day in daily exercise. Per user spec:
+     "when the user finishes a day in daily exercise, i want you to remove that
+     popup that motivates the user and make a cool animation that says great
+     work or something like that with animations (e.g. biceps flexing, etc.)".
+     This overlay shows a flexing bicep emoji (💪) that scales/rotates with a
+     "flex" animation, plus a "GREAT WORK!" headline and a context-aware subtitle. -->
+<div id="great-work-overlay" role="dialog" aria-modal="true">
+  <div id="great-work-card">
+    <div class="gw-biceps-row">
+      <div class="gw-biceps gw-biceps-left">💪</div>
+      <div class="gw-biceps gw-biceps-right">💪</div>
+    </div>
+    <div class="gw-headline" id="great-work-headline" data-ar="عمل رائع!">GREAT WORK!</div>
+    <div class="gw-sub" id="great-work-sub" data-ar="لقد أكملت تمرين اليوم. استمر!">You crushed today's workout. Keep it up!</div>
+    <div class="gw-stars-row">
+      <span class="gw-star">★</span>
+      <span class="gw-star">★</span>
+      <span class="gw-star">★</span>
+    </div>
+    <button class="gw-close-btn" onclick="closeGreatWorkPopup()" data-ar="متابعة">Continue</button>
   </div>
 </div>
 
@@ -3298,12 +3448,30 @@ const origShowTab = showTab;
 showTab = function(name) {
   closeMobileSidebar();
   closeBottomNavMore();
+  // === Round 7: detect same-tab click BEFORE calling origShowTab ===
+  // origShowTab early-returns silently when the tab is already active, but the
+  // post-call logic below (renderDietLog, etc.) still ran anyway, causing the
+  // AI meals panel to "auto-reopen" / flash when the user tapped Diet while
+  // already on Diet. We now detect the same-tab case and skip those re-renders.
+  let isAlreadyActive = false;
+  try {
+    const sideBtn = document.querySelector('.side-btn[data-tab="' + name + '"]');
+    if (sideBtn && sideBtn.classList.contains('active')) isAlreadyActive = true;
+    // Also check the bottom-nav button (mobile)
+    if (!isAlreadyActive) {
+      const bbtn = document.querySelector('.bottom-nav-item[data-btab="' + name + '"]');
+      if (bbtn && bbtn.classList.contains('active')) isAlreadyActive = true;
+    }
+  } catch(e) {}
   origShowTab(name);
-  if (name === 'diet') { renderDietLog(); renderScannerHistory(); }
+  // Only re-render diet panels if we actually switched to the diet tab
+  // (i.e. it wasn't already active). This stops the AI meals panel from
+  // re-rendering / flashing when the user taps Diet while already on Diet.
+  if (name === 'diet' && !isAlreadyActive) { renderDietLog(); renderScannerHistory(); }
   // Update bottom nav active state
   const bottomNavItems = document.querySelectorAll('#bottom-nav .bottom-nav-item');
   const tabToBtab = { home: 'home', sports: 'sports', daily: 'daily', diet: 'diet',
-    marathon: 'more', calc: 'more', weather: 'more', moodmorph: 'more',
+    marathon: 'more', weather: 'more', moodmorph: 'more',
     reminders: 'more', profile: 'more', settings: 'more' };
   const activeBtab = tabToBtab[name] || 'home';
   bottomNavItems.forEach(item => {
@@ -3889,72 +4057,158 @@ function enterApp() {
   }, 1500);
   
   try {
-    const u = currentUser();
-    if (u && u.profile && window.chatbase) {
-      // Build a rich context string the chatbot can read so its answers are
-      // tailored to this specific user. Includes everything we know: profile,
-      // survey, InBody scan, goal plan, sessions history, streak, reminders.
-      const s = u.survey || {};
-      const scan = u.inbodyScan || {};
-      const sessions = u.sessions || [];
-      const totalMinutes = sessions.reduce((a, x) => a + (x.duration || 0), 0);
-      const topSport = (() => {
-        const counts = {};
-        sessions.forEach(x => { counts[x.sport] = (counts[x.sport] || 0) + 1; });
-        const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
-        return top ? top[0] : 'None yet';
-      })();
-      const contextSummary = [
-        `User: ${u.profile.name} (${u.profile.gender}, ${u.profile.age}y, ${u.profile.height}cm, ${u.profile.weight}kg)`,
-        `Goal: ${u.profile.goal} | Favorite sport: ${u.profile.sport} | Level: ${u.profile.level} | Injury: ${u.profile.injury || 'None'}`,
-        `Schedule: ${s.schedule || 'unknown'} | Session time: ${s.time || 'unknown'} | Environment: ${s.environment || 'unknown'}`,
-        `Diet pref: ${s.diet_pref || 'none'} | Meals/day: ${s.meals || 'unknown'} | Hydration: ${s.hydration || 'unknown'}`,
-        `Medical: ${s.medical || 'none'} | Sleep: ${s.sleep || 'unknown'} | Stress: ${s.stress || 'unknown'}`,
-        `Equipment: ${s.equipment || 'none'} | Mobility: ${s.mobility || 'unknown'} | Balance: ${s.balance || 'unknown'}`,
-        `Pushups: ${s.pushups || 'unknown'} | Plank: ${s.plank || 'unknown'}s | Mile time: ${s.mile_time || 'unknown'}min`,
-        `InBody scan: BMI=${scan.bmi ?? 'n/a'}, BodyFat=${scan.bodyFat ?? 'n/a'}%, Muscle=${scan.muscle ?? 'n/a'}kg, BMR=${scan.bmr ?? 'n/a'}kcal`,
-        `Goal plan: target=${u.goalPlan?.targetWeight ?? 'n/a'}kg, targetCals=${u.goalPlan?.targetCals ?? 'n/a'}kcal, TDEE=${u.goalPlan?.tdee ?? 'n/a'}kcal`,
-        `Activity: ${sessions.length} sessions, ${totalMinutes} total minutes, top sport: ${topSport}, streak: ${u.streak || 0} days`,
-        `Reminders: ${(u.reminders || []).length}`
-      ].join(' || ');
-      window.chatbase('update', { 
-        userId: store.session, 
-        name: u.profile.name, 
-        email: store.session,
-        // Pass each field as a separate custom variable so the chatbot can
-        // reference any of them by name when answering questions.
-        goals: u.profile.goal,
-        fav_sport: u.profile.sport,
-        fitness_level: u.profile.level,
-        injury: u.profile.injury || 'None',
-        age: String(u.profile.age),
-        gender: u.profile.gender,
-        height_cm: String(u.profile.height),
-        weight_kg: String(u.profile.weight),
-        bmi: scan.bmi ? String(scan.bmi) : (u.profile.weight && u.profile.height ? (u.profile.weight / Math.pow(u.profile.height / 100, 2)).toFixed(1) : ''),
-        body_fat_pct: scan.bodyFat ? String(scan.bodyFat) : '',
-        muscle_mass_kg: scan.muscle ? String(scan.muscle) : '',
-        bmr: scan.bmr ? String(scan.bmr) : '',
-        target_weight: u.goalPlan?.targetWeight ? String(u.goalPlan.targetWeight) : '',
-        target_calories: u.goalPlan?.targetCals ? String(u.goalPlan.targetCals) : '',
-        tdee: u.goalPlan?.tdee ? String(u.goalPlan.tdee) : '',
-        streak_days: String(u.streak || 0),
-        total_sessions: String(sessions.length),
-        total_minutes: String(totalMinutes),
-        top_sport: topSport,
-        schedule: s.schedule || '',
-        session_time: s.time || '',
-        environment: s.environment || '',
-        diet_pref: s.diet_pref || '',
-        medical: s.medical || '',
-        sleep: s.sleep || '',
-        stress: s.stress || '',
-        equipment: s.equipment || '',
-        // A single rolled-up context string the chatbot can scan in one go
-        health: contextSummary
-      });
-    }
+    syncChatbaseUser();
   } catch(e) {}
+}
+
+// ============================================================
+// syncChatbaseUser() — push the user's WHOLE data record to the AI chat
+// ============================================================
+// Per user spec (round 7, optional): "make sure that the ai chat can read the
+// whole user's data". This function builds a comprehensive payload from the
+// current user object and calls chatbase('update', {...}) so the AI coach can
+// reference any field by name when answering questions.
+//
+// The payload includes:
+//   - Profile (name, age, gender, height, weight, goal, sport, level, injury)
+//   - Full survey (schedule, time, environment, diet_pref, meals, hydration,
+//     medical, sleep, stress, equipment, mobility, balance, pushups, plank,
+//     mile_time)
+//   - InBody scan (bmi, bodyFat, muscle, bmr)
+//   - Goal plan (targetWeight, targetCals, tdee, macros, targetDate, daysNeeded)
+//   - Sessions (total count, total minutes, top sport, last 10 sessions detail)
+//   - Daily plan (current day, muscles, today's workout list + done flags)
+//   - Reminders (count + contents)
+//   - Streak + lastDone
+//   - Weekly survey history (12-week trend)
+//   - A rolled-up `health` context string the bot can scan in one go
+//
+// Call sites:
+//   - enterApp() (above) — initial sync on login
+//   - Any state-changing function that saves the user (saveSurvey, saveInlineSession,
+//     saveDailyPlan, calculateGoalPlan, saveInBodyFollowup, addReminder, etc.)
+//   - The chat button's click handler (so the freshest data is sent right before
+//     the chat window opens)
+// ============================================================
+function syncChatbaseUser() {
+  try {
+    const u = currentUser();
+    if (!u || !u.profile || !window.chatbase) return;
+    const s = u.survey || {};
+    const scan = u.inbodyScan || {};
+    const sessions = u.sessions || [];
+    const totalMinutes = sessions.reduce((a, x) => a + (x.duration || 0), 0);
+    const topSport = (() => {
+      const counts = {};
+      sessions.forEach(x => { counts[x.sport] = (counts[x.sport] || 0) + 1; });
+      const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+      return top ? top[0] : 'None yet';
+    })();
+    // Last 10 sessions (most recent first) for the bot to reference
+    const recentSessions = sessions.slice(-10).reverse().map(x => ({
+      sport: x.sport, date: x.date, duration: x.duration,
+      intensity: x.intensity, note: x.note
+    }));
+    // Daily plan summary
+    let dailyPlanSummary = 'None';
+    let todayWorkouts = '[]';
+    if (u.dailyPlan && u.dailyPlan.dailyPlan) {
+      const cd = u.dailyPlan.currentDay || 0;
+      const day = u.dailyPlan.dailyPlan[cd];
+      dailyPlanSummary = `Day ${cd + 1}/${u.dailyPlan.dailyPlan.length}, muscles: ${(u.dailyPlan.muscles || []).join('/')}, view: ${u.dailyPlan.view || 'front'}`;
+      if (day && day.workouts) {
+        todayWorkouts = JSON.stringify(day.workouts.map(w => ({ name: w.name, done: !!w.done })));
+      }
+    }
+    // Reminder contents
+    const remindersList = (u.reminders || []).map(r => ({
+      title: r.title, date: r.date, time: r.time, note: r.note
+    }));
+    // Weekly trend (last 12 weeks)
+    const weeklyTrend = (u.weeklySurveyHistory || []).slice(-12);
+    // Build a rich, scannable context string
+    const contextSummary = [
+      `User: ${u.profile.name} (${u.profile.gender}, ${u.profile.age}y, ${u.profile.height}cm, ${u.profile.weight}kg)`,
+      `Goal: ${u.profile.goal} | Favorite sport: ${u.profile.sport} | Level: ${u.profile.level} | Injury: ${u.profile.injury || 'None'}`,
+      `Schedule: ${s.schedule || 'unknown'} | Session time: ${s.time || 'unknown'} | Environment: ${s.environment || 'unknown'}`,
+      `Diet pref: ${s.diet_pref || 'none'} | Meals/day: ${s.meals || 'unknown'} | Hydration: ${s.hydration || 'unknown'}`,
+      `Medical: ${s.medical || 'none'} | Sleep: ${s.sleep || 'unknown'} | Stress: ${s.stress || 'unknown'}`,
+      `Equipment: ${s.equipment || 'none'} | Mobility: ${s.mobility || 'unknown'} | Balance: ${s.balance || 'unknown'}`,
+      `Pushups: ${s.pushups || 'unknown'} | Plank: ${s.plank || 'unknown'}s | Mile time: ${s.mile_time || 'unknown'}min`,
+      `InBody scan: BMI=${scan.bmi ?? 'n/a'}, BodyFat=${scan.bodyFat ?? 'n/a'}%, Muscle=${scan.muscle ?? 'n/a'}kg, BMR=${scan.bmr ?? 'n/a'}kcal`,
+      `Goal plan: target=${u.goalPlan?.targetWeight ?? 'n/a'}kg, targetCals=${u.goalPlan?.targetCals ?? 'n/a'}kcal, TDEE=${u.goalPlan?.tdee ?? 'n/a'}kcal, targetDate=${u.goalPlan?.targetDate ?? 'n/a'}, daysNeeded=${u.goalPlan?.daysNeeded ?? 'n/a'}`,
+      `Macros: protein=${u.goalPlan?.proteinG ?? 'n/a'}g, fat=${u.goalPlan?.fatG ?? 'n/a'}g, carbs=${u.goalPlan?.carbG ?? 'n/a'}g`,
+      `Activity: ${sessions.length} sessions, ${totalMinutes} total minutes, top sport: ${topSport}, streak: ${u.streak || 0} days, last active: ${u.lastDone || 'never'}`,
+      `Daily plan: ${dailyPlanSummary}`,
+      `Today's workouts: ${todayWorkouts}`,
+      `Reminders: ${(u.reminders || []).length} — ${JSON.stringify(remindersList)}`,
+      `Weekly trend (last 12 weeks): ${JSON.stringify(weeklyTrend)}`,
+      `Recent sessions (last 10): ${JSON.stringify(recentSessions)}`,
+      `Busy mode: ${u.busyMode ? 'ON' : 'off'} | Stop training: ${u.stopTraining ? 'ON' : 'off'}`
+    ].join(' || ');
+    window.chatbase('update', {
+      userId: store.session,
+      name: u.profile.name,
+      email: store.session,
+      // Profile fields
+      goals: u.profile.goal,
+      fav_sport: u.profile.sport,
+      fitness_level: u.profile.level,
+      injury: u.profile.injury || 'None',
+      age: String(u.profile.age),
+      gender: u.profile.gender,
+      height_cm: String(u.profile.height),
+      weight_kg: String(u.profile.weight),
+      // Body composition
+      bmi: scan.bmi ? String(scan.bmi) : (u.profile.weight && u.profile.height ? (u.profile.weight / Math.pow(u.profile.height / 100, 2)).toFixed(1) : ''),
+      body_fat_pct: scan.bodyFat ? String(scan.bodyFat) : '',
+      muscle_mass_kg: scan.muscle ? String(scan.muscle) : '',
+      bmr: scan.bmr ? String(scan.bmr) : '',
+      // Goal plan
+      target_weight: u.goalPlan?.targetWeight ? String(u.goalPlan.targetWeight) : '',
+      target_calories: u.goalPlan?.targetCals ? String(u.goalPlan.targetCals) : '',
+      tdee: u.goalPlan?.tdee ? String(u.goalPlan.tdee) : '',
+      protein_g: u.goalPlan?.proteinG ? String(u.goalPlan.proteinG) : '',
+      fat_g: u.goalPlan?.fatG ? String(u.goalPlan.fatG) : '',
+      carb_g: u.goalPlan?.carbG ? String(u.goalPlan.carbG) : '',
+      target_date: u.goalPlan?.targetDate || '',
+      start_date: u.goalPlan?.startDate || '',
+      days_needed: u.goalPlan?.daysNeeded ? String(u.goalPlan.daysNeeded) : '',
+      // Activity
+      streak_days: String(u.streak || 0),
+      last_done: u.lastDone || '',
+      total_sessions: String(sessions.length),
+      total_minutes: String(totalMinutes),
+      top_sport: topSport,
+      recent_sessions: JSON.stringify(recentSessions),
+      // Survey (full)
+      schedule: s.schedule || '',
+      session_time: s.time || '',
+      environment: s.environment || '',
+      diet_pref: s.diet_pref || '',
+      meals_per_day: s.meals ? String(s.meals) : '',
+      hydration: s.hydration || '',
+      medical: s.medical || '',
+      sleep: s.sleep || '',
+      stress: s.stress || '',
+      equipment: s.equipment || '',
+      mobility: s.mobility || '',
+      balance: s.balance || '',
+      pushups: s.pushups ? String(s.pushups) : '',
+      plank_sec: s.plank ? String(s.plank) : '',
+      mile_time_min: s.mile_time ? String(s.mile_time) : '',
+      // Daily plan + reminders + weekly trend
+      daily_plan_summary: dailyPlanSummary,
+      daily_plan_workouts_today: todayWorkouts,
+      reminders_count: String((u.reminders || []).length),
+      reminders_list: JSON.stringify(remindersList),
+      weekly_trend: JSON.stringify(weeklyTrend),
+      busy_mode: u.busyMode ? 'ON' : 'off',
+      stop_training: u.stopTraining ? 'ON' : 'off',
+      // A single rolled-up context string the chatbot can scan in one go
+      health: contextSummary
+    });
+  } catch(e) { console.warn('syncChatbaseUser error:', e); }
 }
 function renderAllDynamic() { renderHome(); renderTracker(); }
 function renderAllDynamicFull() { renderHome(); renderSports(); renderTracker(); renderProfile(); renderDailyExercise(); renderDiet(); renderCoachMealsForUser(); }
@@ -4270,6 +4524,20 @@ function renderHome() {
           ? `${daysLeft} يوم متبقي`
           : `${daysLeft} days left`;
         daysLabel.style.display = 'block';
+        // Update the new badge UI (visible pill in the goal progress bar)
+        const numEl = document.getElementById('goal-days-left-num');
+        const lblEl = document.getElementById('goal-days-left-lbl');
+        const badgeEl = document.getElementById('goal-days-left-badge');
+        if (numEl) numEl.textContent = daysLeft;
+        if (lblEl) {
+          lblEl.textContent = ar
+            ? (daysLeft === 1 ? 'يوم متبقي' : 'يوم متبقي')
+            : (daysLeft === 1 ? 'day left' : 'days left');
+        }
+        if (badgeEl) badgeEl.style.display = 'inline-flex';
+      } else {
+        const badgeEl = document.getElementById('goal-days-left-badge');
+        if (badgeEl) badgeEl.style.display = 'none';
       }
     }
   }
@@ -4279,7 +4547,14 @@ function renderHome() {
 
 function renderCoachRecommendation() {
   const u = currentUser(), p = u.profile;
-  if (!p) return;
+  const recEl = document.getElementById('recommendation-content');
+  // Defensive: if the user has no profile yet, show a helpful prompt instead of
+  // leaving the static "Analyzing your profile..." placeholder forever.
+  if (!p) {
+    if (recEl) recEl.innerHTML = '<p style="color:var(--muted);"><i class="fa-solid fa-circle-info"></i> <span data-ar="أكمل ملفك الشخصي للحصول على توصيات مخصصة.">Complete your profile to get personalized recommendations.</span></p>';
+    setTimeout(applyTranslations, 0);
+    return;
+  }
   const ar = (store.lang === 'ar');
   const goalAr = GOAL_AR_NAMES[p.goal] || p.goal;
 
@@ -4308,6 +4583,13 @@ function renderCoachRecommendation() {
   //  4. Environment: if user is "Home" only, filter out outdoor sports that
   //     need a court/field/pool (Football, Basketball, Swimming, etc.).
   recs = filterSportsBySurvey(recs, u.survey || {}, p);
+  // ===== FALLBACK: if filtering killed every recommendation, fall back to the
+  // user's favorite sport or General Fitness so the panel is NEVER empty. =====
+  if (!recs || recs.length === 0) {
+    recs = (p.sport && p.sport !== 'General Fitness')
+      ? [p.sport]
+      : ['General Fitness'];
+  }
   store.recommendedSports = recs.slice(0, 4);
   // Make sure defaultSport points to a sport that actually exists in SPORTS
   // (and wasn't filtered out). Otherwise showWorkout() will crash.
@@ -4705,6 +4987,80 @@ function closeStreakPopup() {
   if (window._streakPopupTimer) { clearTimeout(window._streakPopupTimer); window._streakPopupTimer = null; }
 }
 
+// ============================================================
+// GREAT WORK ANIMATION POPUP (Round 7)
+// ============================================================
+// Replaces the old alert() "Great job!" popup that fired when the user
+// finished a day in daily exercise. Per user spec:
+// "when the user finishes a day in daily exercise, i want you to remove that
+// popup that motivates the user and make a cool animation that says great
+// work or something like that with animations (e.g. biceps flexing, etc.)".
+//
+// This shows a full-screen overlay with two flexing bicep emojis (💪), a
+// "GREAT WORK!" headline that pulses, three stars that pop in sequentially,
+// and a context-aware subtitle. Auto-hides after 4 seconds, or the user can
+// tap "Continue" to dismiss it immediately.
+//
+// Usage:
+//   showGreatWorkPopup();                           // default message
+//   showGreatWorkPopup({ day: 3, totalDays: 7 });   // "Day 3 of 7 complete!"
+//   showGreatWorkPopup({ planComplete: true });      // "You completed the whole plan!"
+function showGreatWorkPopup(opts) {
+  try {
+    const overlay = document.getElementById('great-work-overlay');
+    const subEl = document.getElementById('great-work-sub');
+    const headlineEl = document.getElementById('great-work-headline');
+    if (!overlay) return;
+    const ar = (store.lang === 'ar');
+    // Build the context-aware subtitle
+    let subText = ar
+      ? 'لقد أكملت تمرين اليوم. استمر!'
+      : "You crushed today's workout. Keep it up!";
+    let headlineText = ar ? 'عمل رائع!' : 'GREAT WORK!';
+    if (opts) {
+      if (opts.planComplete) {
+        subText = ar
+          ? 'لقد أكملت جميع أيام خطتك! يمكنك بدء خطة جديدة.'
+          : "You've completed all days of your plan! Time to start a new one.";
+        headlineText = ar ? 'إنجاز أسطوري!' : 'PLAN COMPLETE!';
+      } else if (opts.day && opts.totalDays) {
+        subText = ar
+          ? `أحسنت! انتقلت إلى اليوم ${opts.day} من ${opts.totalDays}.`
+          : `You're now on Day ${opts.day} of ${opts.totalDays}.`;
+      }
+    }
+    if (subEl) subEl.textContent = subText;
+    if (headlineEl) headlineEl.textContent = headlineText;
+    // === Restart the CSS animations every time the popup shows. ===
+    // Without this, the biceps-flex / star-pop / headline-pulse animations
+    // would only play once (on first open) and never again. We force a reflow
+    // by removing + re-adding the .active class with a void offsetWidth read
+    // in between, which restarts all child animations.
+    overlay.classList.remove('active');
+    void overlay.offsetWidth;  // force reflow so animations restart
+    overlay.classList.add('active');
+    // Apply translations
+    try { applyTranslations(); } catch(e) {}
+    // Auto-hide after 4 seconds
+    if (window._greatWorkTimer) clearTimeout(window._greatWorkTimer);
+    window._greatWorkTimer = setTimeout(function() {
+      overlay.classList.remove('active');
+    }, 4000);
+    // Vibrate the device if supported (mobile haptic feedback).
+    // Call navigator.vibrate directly (not vibrateDevice) so the haptic
+    // feedback works regardless of the timer's vibrate-toggle setting.
+    try { if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]); } catch(e) {}
+    // Play a celebratory beep if supported
+    try { if (typeof playDoneBeep === 'function') playDoneBeep(); } catch(e) {}
+  } catch(e) { console.warn('showGreatWorkPopup error:', e); }
+}
+function closeGreatWorkPopup() {
+  const overlay = document.getElementById('great-work-overlay');
+  if (!overlay) return;
+  overlay.classList.remove('active');
+  if (window._greatWorkTimer) { clearTimeout(window._greatWorkTimer); window._greatWorkTimer = null; }
+}
+
 // ===== WEEKLY PROGRESS SURVEY =====
 // Pops up every 7 days to ask the user about their progress.
 // Asks 4 quick questions: current weight, energy level (1-10),
@@ -4828,15 +5184,34 @@ function renderDiet() {
   // Round 6: each AI meal card now has a "Log this meal" button at the bottom.
   // Clicking it adds the meal's full macros (kcal/protein/carbs/fat) to the
   // diet log → updates the daily calorie progress bar in real time.
+  // Round 7: block duplicate logging per day. Pre-mark the button as Logged
+  // if the meal was already logged today (so the user can't log it twice).
+  // Also: the label has NO trailing ✓ — the FontAwesome fa-check icon is the
+  // single (big) checkmark (per user spec: "keep the big one and remove the small one").
   const logBtnLabel = ar ? 'تسجيل هذه الوجبة' : 'Log this meal';
-  const loggedLabel = ar ? 'تم التسجيل ✓' : 'Logged ✓';
-  document.getElementById('diet-meals').innerHTML = todaysMeals.map((m, idx) => `
+  const loggedLabel = ar ? 'تم التسجيل' : 'Logged';   // no ✓ — icon is the checkmark
+  const dietLog = getDietLog();
+  const todayStr = (typeof localDateStr === 'function') ? localDateStr() : null;
+  document.getElementById('diet-meals').innerHTML = todaysMeals.map((m, idx) => {
+    const dispName = getMealName(m);
+    const isLoggedToday = dietLog.some(function(x) {
+      return x.mealType === 'ai-meal' && x.date === todayStr && x.name === dispName;
+    });
+    const btnStyle = isLoggedToday
+      ? 'background:var(--green);color:#fff;cursor:default;'
+      : '';
+    const btnAttrs = isLoggedToday ? 'disabled' : '';
+    const btnInner = isLoggedToday
+      ? '<i class="fa-solid fa-check"></i> <span>' + loggedLabel + '</span>'
+      : '<i class="fa-solid fa-plus"></i> <span>' + logBtnLabel + '</span>';
+    return `
     <div class="diet-card">
       <button class="info-btn" onclick="showMealInfo('${m.name}')"><i class="fa-solid fa-circle-info"></i></button>
-      <h4>${getMealName(m)}</h4><p class="diet-desc">${getMealDesc(m)}</p>
+      <h4>${dispName}</h4><p class="diet-desc">${getMealDesc(m)}</p>
       <div class="diet-macros"><span class="macro-pill macro-kcal">${m.kcal} ${kcalUnit}</span><span class="macro-pill macro-p">${pLabel}: ${m.p}g</span><span class="macro-pill macro-c">${cLabel}: ${m.c}g</span><span class="macro-pill macro-f">${fLabel}: ${m.f}g</span></div>
-      <button class="btn primary small diet-log-meal-btn" id="diet-log-meal-btn-${idx}" onclick="logAIMeal('${m.name.replace(/'/g, "\\'")}', ${idx})" style="width:100%;margin-top:10px;font-size:.8rem;padding:8px;"><i class="fa-solid fa-plus"></i> <span>${logBtnLabel}</span></button>
-    </div>`).join('');
+      <button class="btn primary small diet-log-meal-btn" id="diet-log-meal-btn-${idx}" onclick="logAIMeal('${m.name.replace(/'/g, "\\'")}', ${idx})" style="width:100%;margin-top:10px;font-size:.8rem;padding:8px;${btnStyle}" ${btnAttrs}>${btnInner}</button>
+    </div>`;
+  }).join('');
 }
 
 // === Round 6: Log an AI-generated meal to the diet log ===
@@ -4849,9 +5224,36 @@ function logAIMeal(mealName, btnIdx) {
     const m = MEALS.find(x => x.name === mealName);
     if (!m) return;
     const log = getDietLog();
+    // === Round 7: BLOCK DUPLICATE AI MEAL LOG PER DAY ===
+    // The user explicitly said: "dont make the user to be able to log the same
+    // ai meal more than once a day". Check if this exact AI meal (by name + type)
+    // was already logged today — if so, just re-mark the button as Logged and bail.
+    const today = (typeof localDateStr === 'function') ? localDateStr() : null;
+    const displayName = getMealName(m);
+    const alreadyLogged = log.some(function(x) {
+      return x.mealType === 'ai-meal'
+        && x.date === today
+        && x.name === displayName;
+    });
+    if (alreadyLogged) {
+      // Just visually mark the button as Logged (no new entry pushed).
+      const btn0 = document.getElementById('diet-log-meal-btn-' + btnIdx);
+      if (btn0) {
+        const ar0 = (store.lang === 'ar');
+        // Note: label has NO trailing ✓ — the FontAwesome fa-check icon is the
+        // single checkmark (per user spec: "keep the big one and remove the small one").
+        const ll0 = ar0 ? 'تم التسجيل' : 'Logged';
+        btn0.innerHTML = '<i class="fa-solid fa-check"></i> <span>' + ll0 + '</span>';
+        btn0.style.background = 'var(--green)';
+        btn0.style.color = '#fff';
+        btn0.disabled = true;
+        btn0.style.cursor = 'default';
+      }
+      return;
+    }
     log.push({
       id: Date.now(),
-      name: getMealName(m),
+      name: displayName,
       brand: '',
       kcal: m.kcal || 0,
       protein: m.p || 0,
@@ -4868,13 +5270,12 @@ function logAIMeal(mealName, btnIdx) {
     // Refresh the diet log list + progress bar + home dashboard so the new
     // meal's calories show up everywhere immediately.
     try { renderDietLog(); renderDiet(); renderHome(); } catch(e) {}
-    // Visual feedback: change the button to "Logged ✓" and disable it.
-    // Only ONE checkmark is shown (the inline button). No toast — the user
-    // already sees the bar move and the button turn green.
+    // Visual feedback: change the button to "Logged" (no trailing ✓ — the big
+    // FontAwesome fa-check icon is the single checkmark, per user spec).
     const btn = document.getElementById('diet-log-meal-btn-' + btnIdx);
     if (btn) {
       const ar = (store.lang === 'ar');
-      const loggedLabel = ar ? 'تم التسجيل ✓' : 'Logged ✓';
+      const loggedLabel = ar ? 'تم التسجيل' : 'Logged';
       btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>' + loggedLabel + '</span>';
       btn.style.background = 'var(--green)';
       btn.style.color = '#fff';
@@ -5240,10 +5641,78 @@ function saveDailyPlan() {
       dailyPlan: deState.dailyPlan,
       currentDay: deState.currentDay,
       view: deState.view,
-      savedAt: Date.now()
+      savedAt: Date.now(),
+      // Round 7: track the device date when this day's workouts were last
+      // touched. Used by rolloverDailyPlanIfNeeded() to detect day changes
+      // and reset the day's done flags so the user starts fresh each day.
+      currentDayDate: (typeof localDateStr === 'function') ? localDateStr() : null
     };
     saveUser(store.session, u);
   } catch(e) { console.warn('saveDailyPlan error:', e); }
+}
+
+// ============================================================
+// DAILY ROLLOVER (device-date-based reset for daily exercise)
+// ============================================================
+// Per user spec (round 7): "make every daily bar/any daily information reset
+// every day properly (dont reset something like the main goal because its not
+// daily) you can do that by making the app read the user's device date and time".
+//
+// This function:
+//  1. Reads the user's device date via localDateStr() (LOCAL, not UTC).
+//  2. Compares it against u.dailyPlan.currentDayDate (the date the current
+//     day's workouts were last touched).
+//  3. If different → it's a new day → reset the current day's `done` flags,
+//     `completed` flag, and `currentWorkout` pointer so the user starts fresh.
+//  4. Does NOT touch: u.streak, u.goalPlan, u.profile, u.sessions (cumulative),
+//     u.reminders, u.weeklySurveyHistory — those are NOT daily.
+//
+// Should be called from:
+//  - loadDailyPlan() — when the app opens / user navigates to daily tab
+//  - the date-change watcher — when midnight passes while the app is open
+//  - enterApp() — when the user logs in
+// ============================================================
+function rolloverDailyPlanIfNeeded() {
+  try {
+    const u = currentUser();
+    if (!u || !u.dailyPlan || !u.dailyPlan.dailyPlan) return false;
+    const today = (typeof localDateStr === 'function') ? localDateStr() : null;
+    if (!today) return false;
+    const savedDay = u.dailyPlan.currentDayDate;
+    // No saved date yet (legacy plan) — just stamp today's date and bail.
+    // Don't reset anything on first touch.
+    if (!savedDay) {
+      u.dailyPlan.currentDayDate = today;
+      saveUser(store.session, u);
+      return false;
+    }
+    // Same day → no rollover needed.
+    if (savedDay === today) return false;
+    // ===== NEW DAY → reset the current day's workout progress =====
+    const cd = u.dailyPlan.currentDay || 0;
+    if (u.dailyPlan.dailyPlan[cd]) {
+      // Reset done flags on every workout of the current day
+      if (u.dailyPlan.dailyPlan[cd].workouts) {
+        u.dailyPlan.dailyPlan[cd].workouts.forEach(function(w) { w.done = false; });
+      }
+      // Reset the day's completed flag (so it can be re-completed today)
+      u.dailyPlan.dailyPlan[cd].completed = false;
+      u.dailyPlan.dailyPlan[cd].completedAt = null;
+    }
+    // Sync deState to match
+    deState.dailyPlan = u.dailyPlan.dailyPlan;
+    deState.currentDay = cd;
+    if (deState.dailyPlan[cd] && deState.dailyPlan[cd].workouts) {
+      deState.workouts = deState.dailyPlan[cd].workouts;
+    }
+    deState.currentWorkout = 0;
+    deState.restUntil = 0;
+    deState.restDone = false;
+    // Stamp today's date so we don't roll over again until tomorrow
+    u.dailyPlan.currentDayDate = today;
+    saveUser(store.session, u);
+    return true;  // signal that a rollover happened
+  } catch(e) { console.warn('rolloverDailyPlanIfNeeded error:', e); return false; }
 }
 function loadDailyPlan() {
   try {
@@ -5251,19 +5720,35 @@ function loadDailyPlan() {
     if (!u || !u.dailyPlan) return false;
     const p = u.dailyPlan;
     if (!p.dailyPlan || !p.dailyPlan.length) return false;
-    deState.muscles = p.muscles || [];
-    deState.numDays = p.numDays || 7;
-    deState.daysOfWeek = p.daysOfWeek || [];
-    deState.dailyPlan = p.dailyPlan;
-    deState.currentDay = Math.min(p.currentDay || 0, p.dailyPlan.length - 1);
-    deState.view = p.view || 'front';
+    // ===== Round 7: device-date-based daily rollover =====
+    // If the user's device date is different from when this day's workouts were
+    // last touched, reset the day's done flags so they start fresh today.
+    // (Called BEFORE we copy p into deState so deState picks up the reset state.)
+    try { rolloverDailyPlanIfNeeded(); } catch(e) {}
+    // Re-read after potential rollover (rollover mutates u.dailyPlan)
+    const p2 = u.dailyPlan || p;
+    deState.muscles = p2.muscles || [];
+    deState.numDays = p2.numDays || 7;
+    deState.daysOfWeek = p2.daysOfWeek || [];
+    deState.dailyPlan = p2.dailyPlan;
+    deState.currentDay = Math.min(p2.currentDay || 0, p2.dailyPlan.length - 1);
+    deState.view = p2.view || 'front';
     deState.workouts = deState.dailyPlan[deState.currentDay].workouts || [];
     // === TOP-UP: if the loaded plan has fewer workouts than the user's current
     // daily goal (e.g. plan was generated by an older version of the code that
     // only produced 5 workouts), top it up so the count matches the goal.
     // This fixes the "only 5 workouts" issue without forcing the user to
     // regenerate their plan from scratch.
-    const targetPerDay = (typeof getDailyGoalMinutes === 'function') ? Math.max(15, Math.min(60, getDailyGoalMinutes())) : 30;
+    //
+    // Round 7: target count now uses the rest-aware formula (matches generateWorkoutList):
+    //   N = (goalSecs + REST) / (PER_EXERCISE + REST), clamped to [8, 30].
+    // So old plans that had 5/15/30 workouts will be topped up to the new count
+    // (8/15/23/30 for 15/30/45/60-min goals respectively).
+    const REST_SECS_TU = 60, PER_EX_TU = 60;
+    const goalMinTU = (typeof getDailyGoalMinutes === 'function') ? Math.max(15, getDailyGoalMinutes()) : 15;
+    const goalSecsTU = goalMinTU * 60;
+    let targetPerDay = Math.round((goalSecsTU + REST_SECS_TU) / (PER_EX_TU + REST_SECS_TU));
+    targetPerDay = Math.max(8, Math.min(30, targetPerDay));
     if (deState.workouts.length < targetPerDay && deState.muscles.length > 0) {
       // Build the exercise pool from the user's selected muscles
       const pool = [];
@@ -5649,17 +6134,29 @@ function generateWorkoutList() {
     (WORKOUT_DB[m] || []).forEach(w => pool.push({ name: w, info: WORKOUT_INFO[w] || {muscle: m} }));
   });
   if (pool.length === 0) pool.push({ name: 'Full Body Circuit', info: {muscle: 'Full Body'} });
-  // === Per user spec (round 6): "the user has to at least workout for 15 minutes,
-  // you are adding 5 workouts only, make the number of workouts match the time the
-  // user can handle in 1 session as they said in the survey".
+  // === Per user spec (round 7): "add rests in the total session duration".
+  // The user's daily goal (e.g. 60 min) is the TOTAL session time INCLUDING rests.
+  // Each rest is 60s and happens BETWEEN workouts (so N-1 rests for N workouts).
+  // The per-exercise duration is capped at 60s.
   //
-  // perDay = EXACTLY the daily goal in minutes (15/30/45/60 → 15/30/45/60 workouts).
-  // Each exercise takes ≤ 60s, so N workouts ≈ N minutes — the plan matches the
-  // user's available session time exactly. Floor at 15 (user said min 15 min);
-  // cap at 60 so a 60-min goal doesn't produce an unmanageably long list.
-  // Pool cycles via modulo so consecutive days still feel fresh even with repeats.
+  // Math: totalSeconds = N × perExercise + (N-1) × restSecs
+  // With perExercise=60s and restSecs=60s: total = N×60 + (N-1)×60 = (2N-1)×60
+  // Solving for N: N = (totalSeconds/60 + 1) / 2 = (goalMin + 1) / 2
+  //
+  // Examples (perExercise=60s, rest=60s):
+  //   15-min goal → N=8 workouts  → 8×60 + 7×60 = 900s   = 15 min ✓
+  //   30-min goal → N=15 workouts → 15×60 + 14×60 = 1740s ≈ 29 min ✓
+  //   45-min goal → N=23 workouts → 23×60 + 22×60 = 2700s = 45 min ✓
+  //   60-min goal → N=30 workouts → 30×60 + 29×60 = 3540s ≈ 59 min ✓
+  //
+  // Floor at 8 (so even a tiny goal still gives a real workout), cap at 30.
   const dailyGoalMin = (typeof getDailyGoalMinutes === 'function') ? getDailyGoalMinutes() : 15;
-  const perDay = Math.max(15, Math.min(60, dailyGoalMin));
+  const REST_SECS = 60;
+  const PER_EXERCISE_SECS = 60;
+  const goalSecs = Math.max(15, dailyGoalMin) * 60;
+  // N = (goalSecs + REST_SECS) / (PER_EXERCISE_SECS + REST_SECS)
+  let perDay = Math.round((goalSecs + REST_SECS) / (PER_EXERCISE_SECS + REST_SECS));
+  perDay = Math.max(8, Math.min(30, perDay));
   deState.dailyPlan = [];
   for (let d = 0; d < deState.numDays; d++) {
     const dayWorkouts = [];
@@ -5930,28 +6427,32 @@ const WORKOUT_DURATION = {
   'Full Body Circuit': 60
 };
 function getWorkoutDuration(name) {
-  // === Per user spec (round 4): each exercise MUST NOT surpass 1 minute (60s).
-  // The user explicitly said "i dont want a user to plank for 10 minutes lol,
-  // each training shouldnt surpass 1 minute". So we hard-cap at 60s.
+  // === Per user spec (round 7): each exercise MUST NOT surpass 1 minute (60s),
+  // AND the 60s rest between exercises counts toward the total session duration.
   //
-  // To still hit the daily goal (15/30/45/60 min from the survey), generateWorkoutList()
-  // now produces MORE exercises per day (one per minute of daily goal, capped at 30).
-  // That way a 30-min daily goal = 30 exercises × 60s each = full 30 min, but no
-  // single exercise exceeds 1 minute.
+  // With generateWorkoutList() now producing N workouts where
+  //   N = (goalSecs + REST_SECS) / (PER_EXERCISE_SECS + REST_SECS),
+  // each exercise is 60s long, and the rest after it is 60s.
   //
-  // The fallback (when there's no daily plan yet, e.g. previewing a card
-  // before generation) uses the legacy per-exercise map below, also capped at 60s.
+  // The per-exercise DURATION (workout-only, no rest) is therefore 60s.
+  // The session logging in completeWorkout() adds the 60s rest separately
+  // so the dashboard progress bar correctly reflects total session time.
   const legacyMap = WORKOUT_DURATION[name] || 45;
   const legacy = Math.min(60, Math.max(30, legacyMap));
   try {
     const totalExercises = (deState.workouts && deState.workouts.length) || 0;
     if (totalExercises <= 0) return legacy; // no plan yet
-    const dailyGoalMinutes = (typeof getDailyGoalMinutes === 'function') ? getDailyGoalMinutes() : 30;
-    const totalSeconds = dailyGoalMinutes * 60;
-    // Per-exercise duration = total / numExercises. Floor at 30s, HARD CAP at 60s.
-    const perExercise = Math.max(30, Math.min(60, Math.round(totalSeconds / totalExercises)));
-    return perExercise;
+    // With the new generateWorkoutList() formula, each exercise is 60s.
+    // We still cap at 60s per the user's hard rule.
+    return 60;
   } catch(e) { return legacy; }
+}
+
+// Returns the rest duration (in seconds) that follows each exercise.
+// Used by completeWorkout() to add rest time to the logged session duration
+// so the dashboard progress bar reflects TOTAL session time (workout + rest).
+function getWorkoutRestSecs() {
+  return 60;
 }
 function openWorkoutDetail(index) {
   const w = deState.workouts[index];
@@ -6112,13 +6613,25 @@ function completeWorkout(index) {
     const plannedSecs = (typeof getWorkoutDuration === 'function')
       ? getWorkoutDuration(deState.workouts[index] ? deState.workouts[index].name : '')
       : 45;
+    // === Round 7: include the rest after each exercise in the logged duration,
+    // so the dashboard progress bar reflects the TOTAL session time (workout + rest).
+    // Per user spec: "add rests in the total session duration". The rest is 60s
+    // and happens between workouts — we attribute it to the exercise that just finished,
+    // except for the very last exercise of the day (no rest after the last one).
+    const restSecs = (typeof getWorkoutRestSecs === 'function') ? getWorkoutRestSecs() : 60;
+    const isLastExercise = (index >= deState.workouts.length - 1);
+    const totalSecs = plannedSecs + (isLastExercise ? 0 : restSecs);
     // Round to the nearest minute (min 1) so the bar moves visibly per exercise.
-    const minutes = Math.max(1, Math.round(plannedSecs / 60));
+    // Use Math.round so 60s workout + 60s rest = 120s = 2 min exactly.
+    const minutes = Math.max(1, Math.round(totalSecs / 60));
     // === Round 6: store calories too (MET × weight × duration) so the daily
     // activity panel + workout list popup can show today's kcal burnt. ===
+    // Calories are computed from the WORKOUT portion only (you don't burn extra
+    // calories during a rest), so use plannedSecs not totalSecs.
+    const workoutMinutesForCal = Math.max(1, Math.round(plannedSecs / 60));
     const cals = (typeof getWorkoutCalories === 'function')
       ? getWorkoutCalories(deState.workouts[index] ? deState.workouts[index].name : '')
-      : Math.round(minutes * 8);
+      : Math.round(workoutMinutesForCal * 8);
     u.sessions.push({
       sport: 'Daily Exercise',
       date: localDateStr(),
@@ -6142,9 +6655,13 @@ function completeWorkout(index) {
   workoutTimerStart = null;
 
   const ar = (store.lang === 'ar');
-  if (deState.currentWorkout >= deState.workouts.length) {
-    alert(ar ? 'أحسنت! لقد أكملت جميع التمارين.' : 'All workouts completed! Great job.');
-  }
+  // === Round 7: removed the alert() "All workouts completed!" popup. ===
+  // The user explicitly asked to remove the motivational popup when finishing
+  // a day and replace it with a cool animation. The cool animation
+  // (showGreatWorkPopup) now fires from finishDailyWorkout() when the user
+  // taps the "Finish Workout" button (which is the explicit "finish the day"
+  // action). When the user completes the LAST exercise but hasn't yet tapped
+  // "Finish Workout", we just enable the finish button — no popup.
   // Update finish button state when all workouts are done
   const finishBtn = document.getElementById('finish-workout-btn');
   if (finishBtn && deState.workouts.every(w => w.done)) {
@@ -6179,7 +6696,8 @@ function finishDailyWorkout() {
   const totalDays = (deState.dailyPlan && deState.dailyPlan.length) ? deState.dailyPlan.length : 0;
   if (!deState.dailyPlan || nextDay >= totalDays) {
     // Plan complete — start fresh
-    alert(ar ? '🎉 لقد أكملت جميع أيام خطتك! ستبدأ خطة جديدة.' : '🎉 You\'ve completed all days of your plan! You can generate a new one.');
+    // === Round 7: replaced the alert() with the cool "Great Work" animation. ===
+    showGreatWorkPopup({ planComplete: true });
     deState.step = 1; deState.muscles = []; deState.daysOfWeek = []; deState.workouts = [];
     deState.dailyPlan = null; deState.currentDay = 0; deState.initialized = false;
     clearDailyPlan();
@@ -6189,7 +6707,8 @@ function finishDailyWorkout() {
     deState.workouts = (deState.dailyPlan[nextDay].workouts || []).map(w => ({ name: w.name, info: w.info, done: false }));
     deState.currentWorkout = 0;
     saveDailyPlan();
-    alert(ar ? `أحسنت! انتقلت إلى اليوم ${nextDay + 1} من ${totalDays}.` : `Great job! You're now on Day ${nextDay + 1} of ${totalDays}.`);
+    // === Round 7: replaced the alert() with the cool "Great Work" animation. ===
+    showGreatWorkPopup({ day: nextDay + 1, totalDays: totalDays });
   }
   renderDailyExercise();
   renderHome();
@@ -7674,9 +8193,9 @@ function renderMyCoach() {
         <i class="fa-solid fa-user-tie" style="font-size:48px;color:var(--muted);opacity:.4;margin-bottom:14px;display:block;"></i>
         <h3 style="margin-bottom:8px;" data-ar="لا يوجد مدرب مرتبط">No coach linked yet</h3>
         <p style="color:var(--muted);font-size:.92rem;margin-bottom:16px;" data-ar="لربط حسابك بمدرب، أعطِ بريدك الإلكتروني لمدربك وأضِفه من تطبيق Volta Coach الخاص به.">To link your account with a coach, give your email to your coach so they can add you from their Volta Coach app.</p>
-        <div style="background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:10px;padding:12px 16px;display:inline-block;">
+        <div style="background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:10px;padding:12px 16px;display:inline-block;max-width:100%;overflow-wrap:anywhere;word-break:break-word;">
           <small style="color:var(--muted);" data-ar="بريدك الإلكتروني:">Your email:</small>
-          <b style="color:var(--accent);margin-left:6px;">${store.session}</b>
+          <b style="color:var(--accent);margin-left:6px;word-break:break-all;overflow-wrap:anywhere;">${store.session}</b>
         </div>
       </div>
     `;
@@ -7691,13 +8210,13 @@ function renderMyCoach() {
 
   let html = `
     <div class="panel">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;min-width:0;">
         <div style="width:50px;height:50px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;flex-shrink:0;">
           ${(linkedCoach.name || '?').charAt(0).toUpperCase()}
         </div>
-        <div>
-          <h3 style="margin:0;">${linkedCoach.name}</h3>
-          <small style="color:var(--muted);">${linkedCoach.email}</small>
+        <div style="min-width:0;flex:1;overflow:hidden;">
+          <h3 style="margin:0;word-break:break-word;overflow-wrap:anywhere;">${linkedCoach.name}</h3>
+          <small style="color:var(--muted);display:block;word-break:break-all;overflow-wrap:anywhere;max-width:100%;">${linkedCoach.email}</small>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px;">
@@ -8183,6 +8702,9 @@ function renderCoachMealsForUser() {
 
 // Log a coach-assigned meal into the user's own diet log (so it counts toward
 // today's calorie bar). Mirrors logAIMeal but reads from the coach meals store.
+// Round 7: block duplicate logging per day (same as logAIMeal) and removed the
+// trailing ✓ from the label (the big FontAwesome fa-check icon is the single
+// checkmark, per user spec).
 function logCoachMealForUser(mealName, btnIdx) {
   try {
     const allMeals = JSON.parse(localStorage.getItem(COACH_MEALS_KEY) || '{}');
@@ -8190,6 +8712,26 @@ function logCoachMealForUser(mealName, btnIdx) {
     const m = myMeals.find(x => x.name === mealName);
     if (!m) return;
     const log = getDietLog();
+    // === Round 7: BLOCK DUPLICATE COACH MEAL LOG PER DAY ===
+    const today = (typeof localDateStr === 'function') ? localDateStr() : null;
+    const alreadyLogged = log.some(function(x) {
+      return x.mealType === 'coach-assigned'
+        && x.date === today
+        && x.name === m.name;
+    });
+    if (alreadyLogged) {
+      const btn0 = document.getElementById('coach-log-meal-btn-' + btnIdx);
+      if (btn0) {
+        const ar0 = (store.lang === 'ar');
+        const ll0 = ar0 ? 'تم التسجيل' : 'Logged';   // no ✓ — icon is the checkmark
+        btn0.innerHTML = '<i class="fa-solid fa-check"></i> <span>' + ll0 + '</span>';
+        btn0.style.background = 'var(--green)';
+        btn0.style.color = '#fff';
+        btn0.disabled = true;
+        btn0.style.cursor = 'default';
+      }
+      return;
+    }
     log.push({
       id: Date.now(),
       name: m.name,
@@ -8210,7 +8752,7 @@ function logCoachMealForUser(mealName, btnIdx) {
     const btn = document.getElementById('coach-log-meal-btn-' + btnIdx);
     if (btn) {
       const ar = (store.lang === 'ar');
-      const loggedLabel = ar ? 'تم التسجيل ✓' : 'Logged ✓';
+      const loggedLabel = ar ? 'تم التسجيل' : 'Logged';   // no ✓ — icon is the checkmark
       btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>' + loggedLabel + '</span>';
       btn.style.background = 'var(--green)';
       btn.style.color = '#fff';
@@ -9548,6 +10090,11 @@ setupOfflineDetection();
     btn.title = 'AI Coach';
     btn.innerHTML = '<i class="fa-solid fa-comments"></i>';
     btn.addEventListener('click', function() {
+      // Sync the freshest user data to chatbase right before opening the chat
+      // so the AI coach always sees the user's current state (round 7).
+      try {
+        if (typeof syncChatbaseUser === 'function') syncChatbaseUser();
+      } catch(e) {}
       // Try chatbase's open() API first
       try {
         if (window.chatbase) { window.chatbase('open'); return; }
@@ -9567,6 +10114,59 @@ setupOfflineDetection();
   }
 })();
 
+// ============================================================
+// CHATBASE GREETING-BUBBLE SUPPRESSOR
+// The chatbase widget sometimes injects a "How can I help you?" greeting
+// bubble AFTER the page loads (async via embed.min.js). CSS hides the
+// known selectors, but chatbase occasionally changes class names. This
+// observer catches any new greeting-bubble DOM node chatbase injects
+// and hides it on the fly, so the custom #volta-ai-chat-btn stays the
+// ONLY chat trigger visible to the user.
+// ============================================================
+(function() {
+  function suppressChatbaseGreeting() {
+    try {
+      // Hide any chatbase element that isn't the actual chat window itself.
+      // The chat window (#chatbase-bubble-window) is opened on-demand by
+      // clicking our custom button, so we keep it visible.
+      const selectors = [
+        '#chatbase-bubble-button',
+        '#chatbase-message-bubbles',
+        '.chatbase-launcher',
+        '.chatbase-launcher-text',
+        '.chatbase-launcher-greeting',
+        '.chatbase-greeting',
+        '[class*="chatbase"][class*="greeting"]',
+        '[class*="chatbase"][class*="launcher"]:not(#chatbase-bubble-window)'
+      ];
+      selectors.forEach(function(sel) {
+        try {
+          document.querySelectorAll(sel).forEach(function(el) {
+            el.style.setProperty('display', 'none', 'important');
+            el.style.setProperty('visibility', 'hidden', 'important');
+            el.style.setProperty('opacity', '0', 'important');
+            el.style.setProperty('pointer-events', 'none', 'important');
+          });
+        } catch(e) {}
+      });
+    } catch(e) {}
+  }
+  // Run periodically for the first 30 seconds (chatbase loads async)
+  let suppressCount = 0;
+  const suppressInterval = setInterval(function() {
+    suppressChatbaseGreeting();
+    suppressCount++;
+    if (suppressCount >= 60) clearInterval(suppressInterval); // 60 * 500ms = 30s
+  }, 500);
+  // Also run on any DOM mutation (catches chatbase injection)
+  if (typeof MutationObserver !== 'undefined') {
+    try {
+      const obs = new MutationObserver(function() { suppressChatbaseGreeting(); });
+      obs.observe(document.documentElement || document.body, { childList: true, subtree: true });
+    } catch(e) {}
+  }
+})();
+
 // === Date-change watcher ===
 // Detects when the local date changes (e.g. midnight rollover while the app
 // is open) and re-renders the daily-exercise kcal popup + home dashboard so
@@ -9578,7 +10178,17 @@ setupOfflineDetection();
       const today = (typeof localDateStr === 'function') ? localDateStr() : null;
       if (today && lastDate && today !== lastDate) {
         lastDate = today;
-        // Date changed — refresh the daily-exercise kcal popup + home dashboard
+        // Date changed — roll over the daily exercise plan (reset done flags)
+        // so the user starts a fresh workout list for the new day.
+        try {
+          if (typeof rolloverDailyPlanIfNeeded === 'function') {
+            const rolled = rolloverDailyPlanIfNeeded();
+            if (rolled && typeof renderDailyExercise === 'function') {
+              renderDailyExercise();
+            }
+          }
+        } catch(e) {}
+        // Refresh the daily-exercise kcal popup + home dashboard + diet log
         if (typeof renderTodayKcalPopup === 'function') renderTodayKcalPopup();
         if (typeof renderHome === 'function') renderHome();
         if (typeof renderDietLog === 'function') renderDietLog();
