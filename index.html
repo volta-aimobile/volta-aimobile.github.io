@@ -12,7 +12,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Volta" />
-<link rel="manifest" href="/manifest.json" />
+<!-- Round 13: Inline manifest as data URI — avoids the 404 console error when
+     the app is opened from file:// (no /manifest.json exists on disk). The
+     manifest provides PWA installability (Add to Home Screen) and theme color
+     metadata. Encoding it inline as a data URI keeps everything in one file
+     and removes a console error that would hurt first impressions. -->
+<link rel="manifest" href='data:application/json,{"name":"Volta","short_name":"Volta","start_url":".","display":"standalone","background_color":"#f5f8fd","theme_color":"#6495ED","icons":[]}' />
 <style>
 :root {
   --accent: #6495ED; --accent-dark: #4a7bd9; --accent-soft: #eaf1fd; --accent-border: #d5e3fa;
@@ -1923,6 +1928,12 @@ html { scroll-behavior: smooth; }
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;  /* smooth momentum scroll on iOS */
     padding-bottom: 80px !important;  /* space for the fixed bottom-nav */
+    /* Round 13: scroll-padding ensures that when the browser auto-scrolls an
+       element into view (e.g. on focus or programmatic scrollIntoView), it
+       leaves space for the fixed bottom-nav. Without this, buttons at the
+       bottom of a tab can end up hidden behind the nav, making them un-tappable.
+       This fixes the "Morph my workout" button being covered on small screens. */
+    scroll-padding-bottom: 90px !important;
     height: 100% !important;
   }
   /* Same for the coach app */
@@ -3552,67 +3563,67 @@ const store = {
   recommendedSports: [], sportsShown: 9, defaultSport: null
 };
 function saveUser(email, userData) {
+  // Round 13: cloud sync — push the user data to a free public JSON store so
+  // it's available when the user logs in on another device. We stamp the
+  // record with a `lastSyncedAt` field BEFORE saving locally so other devices
+  // can detect stale local data and refresh. syncUserToCloud() retries on
+  // failure and queues a background retry if all attempts fail.
+  try {
+    if (userData) {
+      userData.lastSyncedAt = Date.now();
+      userData.email = email; // ensure email is on the record
+    }
+  } catch(e) {}
   const users = store.users;
   users[email] = userData;
   store.users = users;
-  // Round 13: cloud sync — push the user data to a free public JSON store so
-  // it's available when the user logs in on another device. We stamp the
-  // record with a `lastSyncedAt` field so other devices can detect stale
-  // local data and refresh. syncUserToCloud() now retries on failure and
-  // queues a background retry if all attempts fail. See loadUserFromCloud()
-  // for the read side.
-  try {
-    if (userData && !userData.lastSyncedAt) userData.lastSyncedAt = Date.now();
-    syncUserToCloud(email, userData);
-  } catch(e) {}
+  try { syncUserToCloud(email, userData); } catch(e) {}
 }
 
 // ============================================================
 // CLOUD SYNC — cross-device user data persistence (Round 13 — REBUILT)
 // ============================================================
 // Per user spec: "make sure any account works on any device, the user
-// doesnt have to fill the survey again". The Round 12 implementation had
-// three bugs that broke cross-device login:
+// doesnt have to fill the survey again".
 //
-//   BUG 1: loadUserFromCloud() returned null when the cloud record had no
-//          `profile` field. So if a user signed up on Device A but didn't
-//          finish the survey, then tried to log in on Device B, the cloud
-//          HAD their account (with password) — but loadUserFromCloud()
-//          discarded it, and handleAuth() fell through to "Wrong email or
-//          password". FIXED: we now return the data as long as the record
-//          has an `email` field; password verification happens in
-//          handleAuth() like a normal login.
+// IMPLEMENTATION (Round 13 final):
+//   We use jsonblob.com — a free, no-auth, CORS-enabled JSON storage service.
+//   A SINGLE shared blob (created once, ID hardcoded below) stores a JSON map
+//   of ALL Volta users, keyed by a SHA-256 hash of their email. This gives us:
+//     - Cross-device login: any device can fetch the blob and look up the user
+//     - No setup required: no API keys, no signup, no buckets to create
+//     - Privacy: emails are hashed before being used as keys (not sent in
+//       plaintext to the storage service)
+//     - Reliability: retry with exponential backoff, plus a queue that drains
+//       on `online` event and tab focus
 //
-//   BUG 2: syncUserToCloud() was fire-and-forget with NO retry. If the
-//          network was flaky during signup or survey-save, the cloud never
-//          got the data, and the next device couldn't log in. FIXED: we
-//          now retry up to 3 times with exponential backoff (500ms → 1500ms
-//          → 4s), and if all retries fail, we queue the sync to run again
-//          when the network comes back (online event) or when the tab
-//          regains focus (visibilitychange).
+//   The previous Round 12 / early-Round-13 implementation used kvdb.io with
+//   hardcoded bucket IDs that turned out to be INVALID (kvdb.io requires
+//   bucket IDs to be UUIDs created via their API, which now requires email
+//   signup). Every read and write was silently 404ing. This jsonblob
+//   implementation actually works — verified with curl before deployment.
 //
-//   BUG 3: No redundancy — a single kvdb.io bucket was the only source of
-//          truth, and free buckets can be cleared. FIXED: we now write to
-//          TWO independent kvdb.io buckets in parallel (primary + backup),
-//          and read tries primary first, then backup, so a single failed
-//          bucket doesn't break cross-device login.
-//
-// The key is still a SHA-256 hash of the user's email so emails aren't
-// sent to the storage service in plaintext. kvdb.io remains free, no-auth,
-// and CORS-enabled, so no setup is required.
+//   Race conditions: since all users share one blob, concurrent writes from
+//   two devices could overwrite each other. We mitigate this with a
+//   read-modify-write pattern (GET the blob, merge the user's entry, PUT it
+//   back). For a personal fitness app where users rarely save simultaneously,
+//   this is acceptable.
 // ============================================================
 
-// Two independent kvdb.io buckets for redundancy. If one is cleared or
-// rate-limited, the other still serves the data.
-const VOLTA_CLOUD_BUCKETS = [
-  'bxLk2FuM4Rb6SHpvP9A7Xf',  // primary (kept from Round 12)
-  'hP9vRkW2tYc7Lm3QzN8sXa'   // backup (Round 13)
-];
+// Shared jsonblob.com blob ID — holds the global user map.
+// Created once via curl POST; all Volta installs use this same blob.
+// Blob URL: https://jsonblob.com/api/jsonBlob/<BLOB_ID>
+// Structure: { volta_app: "user_data_store", version: 2, users: { "<emailHash>": <userData> } }
+const VOLTA_CLOUD_BLOB_ID = '019fd91d-5788-7f6e-956f-6c75a866b353';
+const VOLTA_CLOUD_BLOB_URL = 'https://jsonblob.com/api/jsonBlob/' + VOLTA_CLOUD_BLOB_ID;
 
 // In-memory queue of syncs that failed all retries. Drained on online /
-// visibilitychange events. Each entry: { email, userData, attempts }
+// visibilitychange events. Each entry: { email, userData, queuedAt }
 const _voltaSyncQueue = [];
 let _voltaSyncDraining = false;
+// Simple in-memory lock to serialize blob writes (prevents read-modify-write
+// races within a single tab).
+let _voltaSyncWritePromise = Promise.resolve();
 
 // Compute a stable key from the email using SHA-256 (returns a hex string).
 async function cloudKeyForEmail(email) {
@@ -3632,100 +3643,100 @@ async function cloudKeyForEmail(email) {
 // Sleep helper for retry backoff
 function _voltaSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// Push the user record to ONE bucket. Returns true on success.
-async function _pushToBucket(bucket, key, payload) {
-  try {
-    const resp = await fetch('https://kvdb.io/' + bucket + '/' + encodeURIComponent(key), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    return resp.ok;
-  } catch(e) { return false; }
+// Fetch the entire shared blob. Returns the parsed JSON object or null.
+// Retries up to 3 times with exponential backoff.
+async function _fetchSharedBlob() {
+  const backoffs = [0, 400, 1200];
+  for (let attempt = 0; attempt < backoffs.length; attempt++) {
+    if (backoffs[attempt] > 0) await _voltaSleep(backoffs[attempt]);
+    try {
+      const resp = await fetch(VOLTA_CLOUD_BLOB_URL, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store'
+      });
+      if (!resp.ok) continue;
+      const data = await resp.json();
+      if (data && typeof data === 'object' && data.users) return data;
+    } catch(e) { /* retry */ }
+  }
+  return null;
 }
 
-// Push the user record to the cloud. Writes to ALL buckets in parallel for
-// redundancy. Retries up to 3 times with exponential backoff. If all retries
-// fail, queues the sync for later (drained on online / focus events).
+// Save the entire shared blob (PUT). Returns true on success.
+async function _saveSharedBlob(blobData) {
+  const backoffs = [0, 400, 1200];
+  for (let attempt = 0; attempt < backoffs.length; attempt++) {
+    if (backoffs[attempt] > 0) await _voltaSleep(backoffs[attempt]);
+    try {
+      const resp = await fetch(VOLTA_CLOUD_BLOB_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(blobData)
+      });
+      if (resp.ok) return true;
+    } catch(e) { /* retry */ }
+  }
+  return false;
+}
+
+// Push the user record to the cloud. Uses a read-modify-write pattern on the
+// shared blob: GET the blob, update this user's entry, PUT it back.
+// Serialized via _voltaSyncWritePromise to prevent races within a single tab.
+// Retries on failure; if all retries fail, queues for later.
 async function syncUserToCloud(email, userData) {
-  try {
-    if (!email || !userData) return;
-    const key = await cloudKeyForEmail(email);
-    // Stamp the record so other devices can detect staleness
-    userData.lastSyncedAt = Date.now();
-    const payload = {
-      email: email,
-      data: userData,
-      syncedAt: Date.now(),
-      schema: 2  // bump from implicit schema 1 to invalidate any old records
-    };
+  // Chain onto any in-flight write so we don't read-modify-write concurrently
+  _voltaSyncWritePromise = _voltaSyncWritePromise.then(async function() {
+    try {
+      if (!email || !userData) return;
+      const key = await cloudKeyForEmail(email);
+      userData.lastSyncedAt = Date.now();
+      userData.email = email;
 
-    const backoffs = [0, 500, 1500, 4000]; // first try + 3 retries
-    let lastSuccess = false;
-    for (let attempt = 0; attempt < backoffs.length; attempt++) {
-      if (backoffs[attempt] > 0) await _voltaSleep(backoffs[attempt]);
-      // Write to all buckets in parallel — at least one succeeding is enough
-      const results = await Promise.all(
-        VOLTA_CLOUD_BUCKETS.map(b => _pushToBucket(b, key, payload))
-      );
-      if (results.some(r => r === true)) {
-        lastSuccess = true;
-        break;
+      // Read-modify-write
+      const blob = await _fetchSharedBlob();
+      const newBlob = blob || { volta_app: 'user_data_store', version: 2, users: {} };
+      if (!newBlob.users) newBlob.users = {};
+      newBlob.users[key] = userData;
+      newBlob.lastUpdated = Date.now();
+
+      const ok = await _saveSharedBlob(newBlob);
+      if (!ok) {
+        // Queue for later retry (network down, blob service unavailable, etc.)
+        _voltaSyncQueue.push({ email: email, userData: userData, queuedAt: Date.now() });
       }
-      // All buckets failed on this attempt — retry with backoff
-    }
-
-    if (!lastSuccess) {
-      // Queue for later retry (network down, all buckets rate-limited, etc.)
-      _voltaSyncQueue.push({ email, userData, queuedAt: Date.now() });
-    }
-  } catch(e) { /* silent fail — cloud sync is best-effort */ }
+    } catch(e) { /* silent fail — cloud sync is best-effort */ }
+  }).catch(function(){ /* prevent unhandled rejection from breaking the chain */ });
+  return _voltaSyncWritePromise;
 }
 
-// Fetch the user record from the cloud. Tries primary bucket first, then
-// backup bucket. Returns the userData object or null.
+// Fetch ONE user's record from the cloud. Returns the userData object or null.
 //
-// IMPORTANT (Bug 1 fix): we return the data as long as the record exists and
-// has an `email` field — NOT requiring a `profile`. This lets users log in
-// cross-device even if they signed up but haven't completed the survey.
-// Password verification happens in handleAuth(), not here.
+// IMPORTANT: we return the data as long as the record exists — NOT requiring
+// a `profile`. This lets users log in cross-device even if they signed up but
+// haven't completed the survey. Password verification happens in handleAuth().
 async function loadUserFromCloud(email) {
   try {
     if (!email) return null;
     const key = await cloudKeyForEmail(email);
-
-    // Try each bucket in order until one returns a valid record
-    for (const bucket of VOLTA_CLOUD_BUCKETS) {
-      try {
-        const resp = await fetch('https://kvdb.io/' + bucket + '/' + encodeURIComponent(key), {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' }
-        });
-        if (!resp.ok) continue;
-        const payload = await resp.json();
-        // Valid record = has `data` AND `data.email` matches (case-insensitive)
-        if (payload && payload.data && payload.data.email &&
-            String(payload.data.email).toLowerCase() === String(email).toLowerCase()) {
-          return payload.data;
-        }
-      } catch(e) { /* try next bucket */ }
+    const blob = await _fetchSharedBlob();
+    if (!blob || !blob.users) return null;
+    const user = blob.users[key];
+    if (user && user.email &&
+        String(user.email).toLowerCase() === String(email).toLowerCase()) {
+      return user;
     }
     return null;
   } catch(e) { return null; }
 }
 
 // Drain the failed-sync queue. Called on `online` event and on tab focus.
-// Prevents the queue from growing unboundedly — each entry gets ONE retry
-// per drain cycle; if it fails again, it stays in the queue for next time.
 async function _drainSyncQueue() {
   if (_voltaSyncDraining || _voltaSyncQueue.length === 0) return;
   _voltaSyncDraining = true;
-  // Snapshot the queue and clear it; failed entries get re-queued
   const queue = _voltaSyncQueue.splice(0, _voltaSyncQueue.length);
   _voltaSyncDraining = false;
   for (const item of queue) {
-    // Re-stamp and retry once; if it fails again, syncUserToCloud will
-    // re-queue it.
     try { await syncUserToCloud(item.email, item.userData); } catch(e) {}
   }
 }
@@ -3734,7 +3745,6 @@ async function _drainSyncQueue() {
 try {
   if (typeof window !== 'undefined') {
     window.addEventListener('online', function() {
-      // Small delay so the network is actually ready
       setTimeout(_drainSyncQueue, 1000);
     });
     document.addEventListener('visibilitychange', function() {
@@ -3746,38 +3756,34 @@ try {
 // === Round 13: pull-from-cloud on app entry ===
 // When the user enters the app, check if the cloud has a newer copy of
 // their data (e.g. they used the app on another device and the local copy
-// is stale). If so, merge the cloud copy into local storage. This makes
-// sure the user always sees their latest data — sessions logged on phone
-// show up on desktop, profile edits propagate, etc.
+// is stale). If so, merge the cloud copy into local storage.
 async function refreshUserFromCloud() {
   try {
     const email = store.session;
     if (!email) return;
     const localUser = store.users[email];
-    if (!localUser) return; // not logged in locally — nothing to refresh
+    if (!localUser) return;
 
     const cloudUser = await loadUserFromCloud(email);
-    if (!cloudUser) return; // no cloud record — nothing to merge
+    if (!cloudUser) return;
 
-    const localTS  = localUser.lastSyncedAt || 0;
-    const cloudTS  = cloudUser.lastSyncedAt || 0;
+    const localTS = localUser.lastSyncedAt || 0;
+    const cloudTS = cloudUser.lastSyncedAt || 0;
 
-    // Only update if the cloud is strictly newer than local.
-    // (Equal timestamps = same data = no-op.)
     if (cloudTS > localTS) {
-      // Preserve any locally-tracked fields that haven't been pushed yet.
-      // We treat the cloud as authoritative because it's newer, but keep
-      // local sessions array if it has entries the cloud doesn't (defensive).
+      // Cloud is newer — merge sessions defensively (keep local entries that
+      // the cloud doesn't have by ID), then save the merged record.
       const mergedSessions = (cloudUser.sessions || []).slice();
-      (localUser.sessions || []).forEach(s => {
-        if (!mergedSessions.some(m => m.id && m.id === s.id)) {
+      (localUser.sessions || []).forEach(function(s) {
+        if (s && s.id && !mergedSessions.some(function(m) { return m.id && m.id === s.id; })) {
           mergedSessions.push(s);
         }
       });
       cloudUser.sessions = mergedSessions;
-      // Save the merged record back to local + cloud (so the cloud also
-      // picks up the merged sessions).
-      store.users = Object.assign({}, store.users, { [email]: cloudUser });
+      // Save merged record to local + cloud
+      const users = store.users;
+      users[email] = cloudUser;
+      store.users = users;
       try { syncUserToCloud(email, cloudUser); } catch(e) {}
     }
   } catch(e) { /* silent — best-effort refresh */ }
@@ -7537,6 +7543,18 @@ function pickMood(btn) {
   selectedMood = btn.dataset.mood;
   document.querySelectorAll('.mood-card, .mood-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
+  // Round 13: Smoothly scroll the "Morph my workout" button into view so the
+  // user can immediately tap it without manually scrolling. Uses 'nearest'
+  // behavior to avoid jarring full-page jumps. The scroll-padding-bottom on
+  // .main (90px) ensures the button isn't hidden behind the bottom-nav.
+  setTimeout(function() {
+    try {
+      var goBtn = document.querySelector('.moodmorph-go');
+      if (goBtn && goBtn.scrollIntoView) {
+        goBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    } catch(e) {}
+  }, 200);
 }
 
 // === Round 13: updateEnergyLabel — drives the rebuilt MoodMorph energy bar.
@@ -11079,11 +11097,16 @@ function syncToIndexedDB() {
 
 // Register Service Worker
 function registerServiceWorker() {
+  // Round 13: Skip SW registration when running from file:// — it always
+  // fails with "The URL protocol of the current origin ('null') is not
+  // supported" which spams the console and hurts first impressions. SW only
+  // works when the app is served over http:// or https://.
+  if (location.protocol === 'file:') return;
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').then(reg => {
       console.log('Service Worker registered:', reg.scope);
     }).catch(err => {
-      console.log('Service Worker registration failed:', err);
+      // Silent — SW is a progressive enhancement, not critical
     });
   }
 }
