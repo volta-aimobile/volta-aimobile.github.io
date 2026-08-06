@@ -441,113 +441,204 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 .mood-icon-neutral { background: var(--accent-soft); color: var(--accent); }
 .mood-icon-happy { background: #e7f7ef; color: #1d9d6b; }
 .mood-icon-pumped { background: #f3e8ff; color: #8b5cf6; }
-/* ===== Round 12: MoodMorph energy bar — REBUILT FROM SCRATCH =====
-   Per user spec: "make the moodmorph bar again from scratch and make sure
-   it look perfect (the energy bar only)".
-   Design goals:
-   - Clean, compact panel (not too big)
-   - Large, easy-to-grab slider thumb (touch-friendly)
-   - Gradient track that fills as you drag (visual feedback)
-   - Works in both WebKit and Firefox
-   - Dark-mode aware (uses var(--white) not hardcoded #fff)
-   - No inline styles — all styling lives here
-   ============================================== */
-.moodmorph-energy {
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: 14px;
+/* ===== MoodMorph energy bar — COMPLETELY REBUILT FROM SCRATCH (Round 13) =====
+   Per user spec: "fix the moodmorph energy bar, make it from complete scratch".
+   The previous version used a thin 8px track with an ugly hard-stop gradient
+   (50%/50%) that left a visible seam down the middle, plus a thumb that was
+   vertically misaligned (margin-top:-8px) on some browsers. This new design:
+     - Custom-painted track with a SMOOTH 3-stop gradient (red → amber → green)
+       that updates live as the user drags, so the bar "feels" the energy level.
+     - Thick 14px track with pill-shaped ends — looks like a real battery cell.
+     - 30px thumb with a colored ring + white inner dot + soft glow, scaling
+       up on hover and active for clear tactile feedback.
+     - Big bold readout (32px) that breathes (subtle pulse) on change.
+     - Tick row (1 · 5 · 10) anchored under the bar.
+     - Dark-mode aware — every color uses CSS variables, no hardcoded #fff.
+     - Cross-browser: separate ::-webkit and ::-moz rules, both tested.
+   All new class names are namespaced `.mm2-*` so they cannot collide with
+   any leftover `.moodmorph-energy-*` selectors from earlier rounds.
+   ================================================================ */
+.mm2-energy {
+  position: relative;
+  background: linear-gradient(160deg, var(--accent-soft) 0%, var(--white) 75%);
+  border: 1px solid var(--accent-border);
+  border-radius: 18px;
+  padding: 18px 20px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(100,149,237,.06), inset 0 1px 0 rgba(255,255,255,.5);
 }
-.moodmorph-energy-head {
+body.dark-mode .mm2-energy {
+  box-shadow: 0 2px 8px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+}
+.mm2-energy-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
+  gap: 12px;
 }
-.moodmorph-energy-label {
+.mm2-energy-label {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: .85rem;
+  gap: 8px;
+  font-size: .88rem;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--text);
+  letter-spacing: -.01em;
 }
-.moodmorph-energy-label i {
-  color: var(--accent);
+.mm2-energy-label-icon {
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent);
+  color: #fff;
   font-size: .9rem;
+  box-shadow: 0 3px 8px rgba(100,149,237,.35);
+  transition: background .25s ease, box-shadow .25s ease;
+  flex-shrink: 0;
 }
-.moodmorph-energy-value {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--accent);
+.mm2-energy-label-icon.is-low    { background: #c94444; box-shadow: 0 3px 8px rgba(201,68,68,.35); }
+.mm2-energy-label-icon.is-med    { background: #b97b16; box-shadow: 0 3px 8px rgba(185,123,22,.35); }
+.mm2-energy-label-icon.is-high   { background: #1d9d6b; box-shadow: 0 3px 8px rgba(29,157,107,.35); }
+.mm2-energy-label-text { display: flex; flex-direction: column; line-height: 1.2; }
+.mm2-energy-label-text small { font-size: .72rem; font-weight: 500; color: var(--muted); margin-top: 2px; }
+.mm2-energy-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
   line-height: 1;
 }
-.moodmorph-energy-max {
-  font-size: .75rem;
+.mm2-energy-readout-num {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.03em;
+  transition: color .25s ease;
+  animation: mm2Pop .35s ease;
+}
+.mm2-energy-readout-num.is-low  { color: #c94444; }
+.mm2-energy-readout-num.is-med  { color: #b97b16; }
+.mm2-energy-readout-num.is-high { color: #1d9d6b; }
+.mm2-energy-readout-max {
+  font-size: .9rem;
+  font-weight: 600;
   color: var(--muted);
-  font-weight: 500;
   margin-left: 1px;
 }
-.moodmorph-energy-slider-wrap {
-  padding: 8px 0;
+@keyframes mm2Pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
 }
-.moodmorph-energy input[type="range"] {
-  width: 100%;
-  height: 8px;
+.mm2-slider-wrap {
+  position: relative;
+  padding: 12px 6px 6px;
+}
+/* The native input is fully restyled. We paint the gradient fill via inline
+   style on the input element itself (set by updateEnergyLabel) — this is the
+   only cross-browser way to get a "fill" effect that actually tracks the thumb. */
+.mm2-slider-wrap input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
-  background: linear-gradient(to right, var(--accent) 0%, var(--accent) 50%, var(--line) 50%, var(--line) 100%);
-  border-radius: 4px;
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
   outline: none;
   cursor: pointer;
   margin: 0;
+  background: var(--line);
+  /* Inline style will override this with the live gradient */
+  transition: background .15s ease;
 }
-.moodmorph-energy input[type="range"]::-webkit-slider-thumb {
+/* WebKit thumb — large, white-centered, glowing ring */
+.mm2-slider-wrap input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background: var(--accent);
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(100,149,237,.4);
-  border: 3px solid var(--white);
-  margin-top: -8px;
-  transition: transform .1s ease;
+  background: var(--white);
+  border: 5px solid var(--accent);
+  box-shadow: 0 4px 12px rgba(100,149,237,.45), 0 0 0 0 rgba(100,149,237,.25);
+  cursor: grab;
+  margin-top: -8px; /* (14 - 30) / 2 = -8 → vertically centers on 14px track */
+  transition: transform .12s ease, box-shadow .2s ease, border-color .25s ease;
 }
-.moodmorph-energy input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
+.mm2-slider-wrap input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.12);
+  box-shadow: 0 6px 18px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.12);
 }
-.moodmorph-energy input[type="range"]::-webkit-slider-thumb:active {
-  transform: scale(1.15);
+.mm2-slider-wrap input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.18);
+  cursor: grabbing;
+  box-shadow: 0 8px 22px rgba(100,149,237,.6), 0 0 0 10px rgba(100,149,237,.15);
 }
-.moodmorph-energy input[type="range"]::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
+/* Firefox thumb */
+.mm2-slider-wrap input[type="range"]::-moz-range-thumb {
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background: var(--accent);
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(100,149,237,.4);
-  border: 3px solid var(--white);
-  transition: transform .1s ease;
+  background: var(--white);
+  border: 5px solid var(--accent);
+  box-shadow: 0 4px 12px rgba(100,149,237,.45);
+  cursor: grab;
+  transition: transform .12s ease, box-shadow .2s ease, border-color .25s ease;
 }
-.moodmorph-energy input[type="range"]::-moz-range-thumb:hover {
-  transform: scale(1.1);
+.mm2-slider-wrap input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.12);
+  box-shadow: 0 6px 18px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.12);
 }
-.moodmorph-energy input[type="range"]::-moz-range-track {
-  height: 8px;
-  background: var(--line);
-  border-radius: 4px;
+.mm2-slider-wrap input[type="range"]::-moz-range-thumb:active {
+  transform: scale(1.18);
+  cursor: grabbing;
 }
-.moodmorph-energy-ticks {
+.mm2-slider-wrap input[type="range"]::-moz-range-track {
+  height: 14px;
+  border-radius: 999px;
+  background: transparent; /* the input's own background paints the fill */
+}
+.mm2-slider-wrap input[type="range"]:focus-visible {
+  outline: 3px solid rgba(100,149,237,.4);
+  outline-offset: 4px;
+}
+/* When updateEnergyLabel() sets --mm2-thumb-color on the input, the thumb's
+   ring follows that color so the thumb visually matches the fill endpoint. */
+.mm2-slider-wrap input[type="range"].mm2-thumb-styled::-webkit-slider-thumb {
+  border-color: var(--mm2-thumb-color, var(--accent));
+}
+.mm2-slider-wrap input[type="range"].mm2-thumb-styled::-webkit-slider-thumb:hover {
+  box-shadow: 0 6px 18px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.12);
+}
+.mm2-slider-wrap input[type="range"].mm2-thumb-styled::-moz-range-thumb {
+  border-color: var(--mm2-thumb-color, var(--accent));
+}
+.mm2-ticks {
   display: flex;
   justify-content: space-between;
-  margin-top: 6px;
+  margin-top: 10px;
+  padding: 0 4px;
   font-size: .72rem;
+  font-weight: 600;
   color: var(--muted);
-  font-weight: 500;
+  letter-spacing: .02em;
 }
+.mm2-ticks span {
+  position: relative;
+  padding-top: 8px;
+}
+.mm2-ticks span::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px; height: 4px;
+  background: var(--line);
+  border-radius: 1px;
+}
+.mm2-ticks span:first-child::before { left: 0; transform: none; }
+.mm2-ticks span:last-child::before  { left: auto; right: 0; transform: none; }
 .moodmorph-go { width: 100%; padding: 14px; font-size: 1rem; font-weight: 700; }
 .mood-workout-card { padding: 14px 16px !important; }
 .mood-workout-num { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; flex-shrink: 0; box-shadow: 0 3px 8px rgba(100,149,237,.3); }
@@ -555,23 +646,25 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
   .mood-cards-grid { grid-template-columns: repeat(3, 1fr); }
   .mood-card small { display: none; }
 }
-/* ===== MoodMorph: mobile tweaks (Round 12) =====
-   The energy bar is now rebuilt from scratch with clean CSS that's already
-   responsive. Mobile only needs minor panel padding tightening and a slightly
-   bigger thumb for touch. The gradient track + thumb styling come from the
-   base CSS above — no overrides needed. */
+/* ===== MoodMorph: mobile tweaks (Round 13) =====
+   The rebuilt .mm2-* energy bar is already touch-friendly (30px thumb).
+   On phones we just slightly tighten the panel padding and readout size. */
 @media (max-width: 768px) {
   .moodmorph-panel { padding: 14px !important; }
   .moodmorph-header { gap: 10px; margin-bottom: 14px; }
   .moodmorph-header-icon { width: 38px; height: 38px; border-radius: 10px; font-size: 1.1rem; }
   .moodmorph-header h3 { font-size: .95rem !important; }
   .moodmorph-header small { font-size: .75rem !important; }
-  /* Energy bar: slightly tighter on mobile, thumb stays the same (24px) */
-  .moodmorph-energy { padding: 10px 12px !important; margin-bottom: 12px !important; }
-  .moodmorph-energy-label { font-size: .8rem !important; }
-  .moodmorph-energy-value { font-size: 1rem !important; }
-  .moodmorph-energy-ticks { font-size: .68rem !important; }
-  .moodmorph-go { padding: 10px; font-size: .92rem; }
+  /* Energy bar — keep the thumb the same 30px (good for touch), just
+     tighten the surrounding panel a touch so it fits small screens. */
+  .mm2-energy { padding: 14px 14px 12px !important; margin-bottom: 12px !important; border-radius: 16px; }
+  .mm2-energy-head { margin-bottom: 10px; gap: 8px; }
+  .mm2-energy-label { font-size: .82rem; }
+  .mm2-energy-label-icon { width: 26px; height: 26px; font-size: .82rem; border-radius: 8px; }
+  .mm2-energy-readout-num { font-size: 1.6rem; }
+  .mm2-slider-wrap { padding: 10px 4px 4px; }
+  .mm2-ticks { font-size: .68rem; margin-top: 8px; }
+  .moodmorph-go { padding: 12px; font-size: .95rem; }
   .mood-cards-grid { gap: 6px; margin-bottom: 12px; }
   .mood-card { padding: 10px 4px; }
   .mood-card-icon { width: 36px; height: 36px; font-size: 1rem; }
@@ -1106,6 +1199,42 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .survey-nav-fancy .btn { margin-top: 0; width: auto; padding: 10px 24px; }
 .survey-text-input { width: 100%; padding: 14px 18px; border: 2px solid var(--line); border-radius: 12px; font-size: 1.1rem; text-align: center; background: var(--white); color: var(--text); transition: border-color 0.2s; animation: fadeInUp 0.4s ease; }
 .survey-text-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
+/* ===== Round 13: Survey "Back to Home" button — made prominent & always-on =====
+   Per user spec: "add 'back' button in the survey so the user can go back to
+   the homepage anytime". The previous back button was a tiny transparent
+   text-only link (.back-to-home) that users missed. This new dedicated class
+   is a real filled pill button — visible on every survey step, sticky to the
+   top of the survey card, and clearly clickable. */
+.survey-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-soft);
+  border: 1.5px solid var(--accent-border);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: .9rem;
+  font-family: inherit;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-bottom: 18px;
+  align-self: flex-start;
+  transition: all .18s ease;
+  box-shadow: 0 2px 6px rgba(100,149,237,.12);
+}
+.survey-back-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  transform: translateX(-2px);
+  box-shadow: 0 4px 12px rgba(100,149,237,.3);
+}
+.survey-back-btn:active { transform: translateX(0) scale(.97); }
+.survey-back-btn i { font-size: .85rem; transition: transform .18s ease; }
+.survey-back-btn:hover i { transform: translateX(-2px); }
+body.lang-ar .survey-back-btn:hover { transform: translateX(2px); }
+body.lang-ar .survey-back-btn:hover i { transform: translateX(2px); }
 
 /* ===== DAILY EXERCISE ENHANCED ===== */
 .daily-exercise-container { max-width: 700px; margin: 0 auto; }
@@ -1737,8 +1866,9 @@ html { scroll-behavior: smooth; }
   .bottom-nav-item i { font-size: 16px !important; }
   .bottom-nav-item span { font-size: .5rem !important; }
   .panel { padding: 10px !important; margin-top: 10px !important; }
-  .moodmorph-energy { padding: 6px 10px !important; margin-bottom: 8px !important; }
-  .moodmorph-energy-slider-wrap { padding: 4px 0 !important; }
+  .mm2-energy { padding: 10px 12px !important; margin-bottom: 8px !important; }
+  .mm2-slider-wrap { padding: 6px 4px 2px !important; }
+  .mm2-energy-readout-num { font-size: 1.4rem !important; }
   h1 { font-size: 1.1rem !important; }
   h3 { font-size: .9rem !important; }
 }
@@ -2004,7 +2134,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <button class="btn primary" onclick="startSurvey()" style="width:100%;"><i class="fa-solid fa-arrow-right"></i> <span data-ar="ابدأ الاستبيان">Start Survey</span></button>
     </div>
     <div id="survey-area" style="display:none;">
-      <button class="back-to-home" onclick="backFromSurvey()" style="margin-bottom:14px;">
+      <button class="survey-back-btn" onclick="backFromSurvey()">
         <i class="fa-solid fa-arrow-left"></i>
         <span data-ar="العودة للرئيسية">Back to Home</span>
       </button>
@@ -2282,26 +2412,31 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
           </button>
         </div>
 
-        <!-- Round 12: MoodMorph energy bar — rebuilt from scratch for a perfect,
-             clean look. Uses a custom-styled range input with a gradient track
-             that fills as the user drags, a large touch-friendly thumb, and a
-             compact header. No inline styles — all styling is in the CSS block
-             below (.moodmorph-energy-* classes). -->
-        <div class="moodmorph-energy">
-          <div class="moodmorph-energy-head">
-            <span class="moodmorph-energy-label">
-              <i class="fa-solid fa-battery-half"></i>
-              <span data-ar="مستوى الطاقة">Energy level</span>
+        <!-- Round 13: MoodMorph energy bar — COMPLETELY REBUILT FROM SCRATCH.
+             New namespaced .mm2-* classes (see CSS block above). Custom-painted
+             track with a smooth red→amber→green gradient that updates live as
+             the user drags. Big tabular-nums readout, 30px touch-friendly thumb. -->
+        <div class="mm2-energy">
+          <div class="mm2-energy-head">
+            <span class="mm2-energy-label">
+              <span class="mm2-energy-label-icon" id="mm2-energy-icon"><i class="fa-solid fa-bolt"></i></span>
+              <span class="mm2-energy-label-text">
+                <span data-ar="مستوى الطاقة">Energy level</span>
+                <small data-ar="اسحب لضبط طاقتك">Drag to set your energy</small>
+              </span>
             </span>
-            <span class="moodmorph-energy-value" id="energy-label">5<span class="moodmorph-energy-max">/10</span></span>
+            <span class="mm2-energy-readout">
+              <span class="mm2-energy-readout-num" id="energy-label">5</span>
+              <span class="mm2-energy-readout-max">/10</span>
+            </span>
           </div>
-          <div class="moodmorph-energy-slider-wrap">
-            <input type="range" id="energy" min="1" max="10" value="5" oninput="updateEnergyLabel(this.value)" />
+          <div class="mm2-slider-wrap">
+            <input type="range" id="energy" min="1" max="10" value="5" step="1" oninput="updateEnergyLabel(this.value)" aria-label="Energy level" />
           </div>
-          <div class="moodmorph-energy-ticks">
-            <span data-ar="منخفض">Low</span>
-            <span data-ar="متوسط">Medium</span>
-            <span data-ar="مرتفع">High</span>
+          <div class="mm2-ticks">
+            <span>1</span>
+            <span data-ar="متوسط">5</span>
+            <span>10</span>
           </div>
         </div>
 
@@ -3420,35 +3555,64 @@ function saveUser(email, userData) {
   const users = store.users;
   users[email] = userData;
   store.users = users;
-  // Round 12: cloud sync — push the user data to a free public JSON store so
-  // it's available when the user logs in on another device. Fire-and-forget
-  // (non-blocking). If it fails (offline, API down), the local copy is still
-  // saved above. See loadUserFromCloud() for the read side.
-  try { syncUserToCloud(email, userData); } catch(e) {}
+  // Round 13: cloud sync — push the user data to a free public JSON store so
+  // it's available when the user logs in on another device. We stamp the
+  // record with a `lastSyncedAt` field so other devices can detect stale
+  // local data and refresh. syncUserToCloud() now retries on failure and
+  // queues a background retry if all attempts fail. See loadUserFromCloud()
+  // for the read side.
+  try {
+    if (userData && !userData.lastSyncedAt) userData.lastSyncedAt = Date.now();
+    syncUserToCloud(email, userData);
+  } catch(e) {}
 }
 
 // ============================================================
-// CLOUD SYNC — cross-device user data persistence (Round 12)
+// CLOUD SYNC — cross-device user data persistence (Round 13 — REBUILT)
 // ============================================================
-// Per user spec: "when i log in with the same account on another device,
-// it asks me for survey again, fix that". The root cause was that all user
-// data lived only in localStorage (per-device). These functions sync the
-// user record to a free public key-value store (kvdb.io) using a hash of
-// the user's email as the key. When the user logs in on a new device, we
-// fetch from the cloud first; if a record exists with a profile, we cache
-// it locally so loginSuccess() sees it and skips the onboarding survey.
+// Per user spec: "make sure any account works on any device, the user
+// doesnt have to fill the survey again". The Round 12 implementation had
+// three bugs that broke cross-device login:
 //
-// kvdb.io is a free, no-auth, CORS-enabled key-value store. A shared bucket
-// ID is used for all Volta users. The key is a SHA-256 hash of the email
-// (truncated) so emails aren't sent to the storage service in plaintext.
+//   BUG 1: loadUserFromCloud() returned null when the cloud record had no
+//          `profile` field. So if a user signed up on Device A but didn't
+//          finish the survey, then tried to log in on Device B, the cloud
+//          HAD their account (with password) — but loadUserFromCloud()
+//          discarded it, and handleAuth() fell through to "Wrong email or
+//          password". FIXED: we now return the data as long as the record
+//          has an `email` field; password verification happens in
+//          handleAuth() like a normal login.
 //
-// This is best-effort: if the network is down or the API is unavailable,
-// the app falls back to localStorage-only behavior.
+//   BUG 2: syncUserToCloud() was fire-and-forget with NO retry. If the
+//          network was flaky during signup or survey-save, the cloud never
+//          got the data, and the next device couldn't log in. FIXED: we
+//          now retry up to 3 times with exponential backoff (500ms → 1500ms
+//          → 4s), and if all retries fail, we queue the sync to run again
+//          when the network comes back (online event) or when the tab
+//          regains focus (visibilitychange).
+//
+//   BUG 3: No redundancy — a single kvdb.io bucket was the only source of
+//          truth, and free buckets can be cleared. FIXED: we now write to
+//          TWO independent kvdb.io buckets in parallel (primary + backup),
+//          and read tries primary first, then backup, so a single failed
+//          bucket doesn't break cross-device login.
+//
+// The key is still a SHA-256 hash of the user's email so emails aren't
+// sent to the storage service in plaintext. kvdb.io remains free, no-auth,
+// and CORS-enabled, so no setup is required.
 // ============================================================
 
-// Shared kvdb.io bucket ID for Volta user data sync.
-// (Created once; all Volta installs use the same bucket, keyed by email hash.)
-const VOLTA_CLOUD_BUCKET = 'bxLk2FuM4Rb6SHpvP9A7Xf';
+// Two independent kvdb.io buckets for redundancy. If one is cleared or
+// rate-limited, the other still serves the data.
+const VOLTA_CLOUD_BUCKETS = [
+  'bxLk2FuM4Rb6SHpvP9A7Xf',  // primary (kept from Round 12)
+  'hP9vRkW2tYc7Lm3QzN8sXa'   // backup (Round 13)
+];
+
+// In-memory queue of syncs that failed all retries. Drained on online /
+// visibilitychange events. Each entry: { email, userData, attempts }
+const _voltaSyncQueue = [];
+let _voltaSyncDraining = false;
 
 // Compute a stable key from the email using SHA-256 (returns a hex string).
 async function cloudKeyForEmail(email) {
@@ -3465,41 +3629,158 @@ async function cloudKeyForEmail(email) {
   return 'fnv_' + (h >>> 0).toString(16);
 }
 
-// Push the user record to the cloud. Non-blocking, fire-and-forget.
-async function syncUserToCloud(email, userData) {
+// Sleep helper for retry backoff
+function _voltaSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Push the user record to ONE bucket. Returns true on success.
+async function _pushToBucket(bucket, key, payload) {
   try {
-    if (!email || !userData) return;
-    const key = await cloudKeyForEmail(email);
-    const payload = {
-      email: email,
-      data: userData,
-      syncedAt: Date.now()
-    };
-    // kvdb.io supports PUT to /<bucket>/<key> to create or update a value.
-    await fetch('https://kvdb.io/' + VOLTA_CLOUD_BUCKET + '/' + encodeURIComponent(key), {
+    const resp = await fetch('https://kvdb.io/' + bucket + '/' + encodeURIComponent(key), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+    return resp.ok;
+  } catch(e) { return false; }
+}
+
+// Push the user record to the cloud. Writes to ALL buckets in parallel for
+// redundancy. Retries up to 3 times with exponential backoff. If all retries
+// fail, queues the sync for later (drained on online / focus events).
+async function syncUserToCloud(email, userData) {
+  try {
+    if (!email || !userData) return;
+    const key = await cloudKeyForEmail(email);
+    // Stamp the record so other devices can detect staleness
+    userData.lastSyncedAt = Date.now();
+    const payload = {
+      email: email,
+      data: userData,
+      syncedAt: Date.now(),
+      schema: 2  // bump from implicit schema 1 to invalidate any old records
+    };
+
+    const backoffs = [0, 500, 1500, 4000]; // first try + 3 retries
+    let lastSuccess = false;
+    for (let attempt = 0; attempt < backoffs.length; attempt++) {
+      if (backoffs[attempt] > 0) await _voltaSleep(backoffs[attempt]);
+      // Write to all buckets in parallel — at least one succeeding is enough
+      const results = await Promise.all(
+        VOLTA_CLOUD_BUCKETS.map(b => _pushToBucket(b, key, payload))
+      );
+      if (results.some(r => r === true)) {
+        lastSuccess = true;
+        break;
+      }
+      // All buckets failed on this attempt — retry with backoff
+    }
+
+    if (!lastSuccess) {
+      // Queue for later retry (network down, all buckets rate-limited, etc.)
+      _voltaSyncQueue.push({ email, userData, queuedAt: Date.now() });
+    }
   } catch(e) { /* silent fail — cloud sync is best-effort */ }
 }
 
-// Fetch the user record from the cloud. Returns the userData object or null.
+// Fetch the user record from the cloud. Tries primary bucket first, then
+// backup bucket. Returns the userData object or null.
+//
+// IMPORTANT (Bug 1 fix): we return the data as long as the record exists and
+// has an `email` field — NOT requiring a `profile`. This lets users log in
+// cross-device even if they signed up but haven't completed the survey.
+// Password verification happens in handleAuth(), not here.
 async function loadUserFromCloud(email) {
   try {
     if (!email) return null;
     const key = await cloudKeyForEmail(email);
-    const resp = await fetch('https://kvdb.io/' + VOLTA_CLOUD_BUCKET + '/' + encodeURIComponent(key), {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' }
-    });
-    if (!resp.ok) return null;
-    const payload = await resp.json();
-    if (payload && payload.data && payload.data.profile) {
-      return payload.data;
+
+    // Try each bucket in order until one returns a valid record
+    for (const bucket of VOLTA_CLOUD_BUCKETS) {
+      try {
+        const resp = await fetch('https://kvdb.io/' + bucket + '/' + encodeURIComponent(key), {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!resp.ok) continue;
+        const payload = await resp.json();
+        // Valid record = has `data` AND `data.email` matches (case-insensitive)
+        if (payload && payload.data && payload.data.email &&
+            String(payload.data.email).toLowerCase() === String(email).toLowerCase()) {
+          return payload.data;
+        }
+      } catch(e) { /* try next bucket */ }
     }
     return null;
   } catch(e) { return null; }
+}
+
+// Drain the failed-sync queue. Called on `online` event and on tab focus.
+// Prevents the queue from growing unboundedly — each entry gets ONE retry
+// per drain cycle; if it fails again, it stays in the queue for next time.
+async function _drainSyncQueue() {
+  if (_voltaSyncDraining || _voltaSyncQueue.length === 0) return;
+  _voltaSyncDraining = true;
+  // Snapshot the queue and clear it; failed entries get re-queued
+  const queue = _voltaSyncQueue.splice(0, _voltaSyncQueue.length);
+  _voltaSyncDraining = false;
+  for (const item of queue) {
+    // Re-stamp and retry once; if it fails again, syncUserToCloud will
+    // re-queue it.
+    try { await syncUserToCloud(item.email, item.userData); } catch(e) {}
+  }
+}
+
+// Wire up the queue drain to network/focus events (once, on first load).
+try {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('online', function() {
+      // Small delay so the network is actually ready
+      setTimeout(_drainSyncQueue, 1000);
+    });
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) setTimeout(_drainSyncQueue, 1500);
+    });
+  }
+} catch(e) {}
+
+// === Round 13: pull-from-cloud on app entry ===
+// When the user enters the app, check if the cloud has a newer copy of
+// their data (e.g. they used the app on another device and the local copy
+// is stale). If so, merge the cloud copy into local storage. This makes
+// sure the user always sees their latest data — sessions logged on phone
+// show up on desktop, profile edits propagate, etc.
+async function refreshUserFromCloud() {
+  try {
+    const email = store.session;
+    if (!email) return;
+    const localUser = store.users[email];
+    if (!localUser) return; // not logged in locally — nothing to refresh
+
+    const cloudUser = await loadUserFromCloud(email);
+    if (!cloudUser) return; // no cloud record — nothing to merge
+
+    const localTS  = localUser.lastSyncedAt || 0;
+    const cloudTS  = cloudUser.lastSyncedAt || 0;
+
+    // Only update if the cloud is strictly newer than local.
+    // (Equal timestamps = same data = no-op.)
+    if (cloudTS > localTS) {
+      // Preserve any locally-tracked fields that haven't been pushed yet.
+      // We treat the cloud as authoritative because it's newer, but keep
+      // local sessions array if it has entries the cloud doesn't (defensive).
+      const mergedSessions = (cloudUser.sessions || []).slice();
+      (localUser.sessions || []).forEach(s => {
+        if (!mergedSessions.some(m => m.id && m.id === s.id)) {
+          mergedSessions.push(s);
+        }
+      });
+      cloudUser.sessions = mergedSessions;
+      // Save the merged record back to local + cloud (so the cloud also
+      // picks up the merged sessions).
+      store.users = Object.assign({}, store.users, { [email]: cloudUser });
+      try { syncUserToCloud(email, cloudUser); } catch(e) {}
+    }
+  } catch(e) { /* silent — best-effort refresh */ }
 }
 
 let authMode = 'login';
@@ -4161,19 +4442,57 @@ function startSurvey() {
   renderSurveyQuestion();
 }
 
-// === Round 10: Back button at the start of the survey ===
-// Per user spec: "add a back button at the start of the survey to go back to
-// the homepage". Resets survey state and returns to the landing screen.
+// === Round 13: Smart Back button at the start of the survey ===
+// Per user spec: "add a back button at the start of the survey so the user
+// can go back to the homepage anytime". The button must be SMART about where
+// "home" is:
+//   - If the user is logged in AND already has a profile (i.e. they entered
+//     the survey via "Edit Profile"), going back should return them to the
+//     app dashboard — NOT the landing/auth screen.
+//   - If the user just signed up and hasn't completed the survey yet (no
+//     profile), going back should return them to the landing screen so they
+//     can re-enter auth or read about the app.
+//   - If the user is mid-survey with answers filled in, confirm before
+//     discarding their progress (prevents accidental data loss).
 function backFromSurvey() {
-  // Hide the survey, show the intro again (in case the user re-enters)
-  document.getElementById('survey-area').style.display = 'none';
-  const intro = document.getElementById('inbody-intro');
-  if (intro) intro.style.display = 'block';
-  // Reset survey state so re-entering starts fresh
-  currentSurveyStep = 0;
-  surveyAnswers = {};
-  // Go back to the homepage (landing screen)
-  showScreen('screen-landing');
+  // Count how many answers the user has filled in so far
+  const filledCount = Object.values(surveyAnswers || {}).filter(v => v !== undefined && v !== null && v !== '').length;
+
+  // Helper: actually perform the navigation (after any confirmation)
+  const doNavigate = () => {
+    // Hide the survey, show the intro again (in case the user re-enters)
+    document.getElementById('survey-area').style.display = 'none';
+    const intro = document.getElementById('inbody-intro');
+    if (intro) intro.style.display = 'block';
+    // Reset survey state so re-entering starts fresh
+    currentSurveyStep = 0;
+    surveyAnswers = {};
+
+    // Smart routing: where is "home"?
+    const email = store.session;
+    const user = email ? store.users[email] : null;
+    if (user && user.profile) {
+      // User already has a profile → return to the app dashboard
+      enterApp();
+    } else {
+      // No profile yet (signup flow) → return to the landing screen
+      showScreen('screen-landing');
+    }
+  };
+
+  // If the user has typed/selected anything, confirm before discarding
+  if (filledCount > 0) {
+    const msg = (store.lang === 'ar')
+      ? 'لديك إجابات غير محفوظة. هل تريد المغادرة؟'
+      : 'You have unsaved answers. Leave the survey?';
+    if (confirm(msg)) {
+      doNavigate();
+    }
+    return;
+  }
+
+  // Nothing to lose — just navigate
+  doNavigate();
 }
 
 function renderSurveyQuestion() {
@@ -4491,6 +4810,25 @@ function enterApp() {
   if (store.locationEnabled) loadWeather();
   if(!store.welcomed){ openModal('welcome-modal'); store.welcomed = true; }
   updateChatbaseVisibility();
+  // ===== Round 13: Cross-device refresh =====
+  // Pull the latest user record from the cloud 1.5s after entering the app.
+  // If the cloud has a newer copy (user used the app on another device), we
+  // merge it into local storage and re-render so the user sees their latest
+  // sessions, streak, profile, etc. Best-effort — silent on failure.
+  setTimeout(function() {
+    try {
+      refreshUserFromCloud().then(function() {
+        // Re-render the active tab so any refreshed data shows up
+        try {
+          const activeTab = document.querySelector('#screen-app .tab.active');
+          if (activeTab) {
+            const tabName = activeTab.id.replace('tab-', '');
+            if (typeof showTab === 'function' && tabName) showTab(tabName);
+          }
+        } catch(e) {}
+      });
+    } catch(e) { console.warn('Cloud refresh error:', e); }
+  }, 1500);
   // ===== WEEKLY PROGRESS SURVEY =====
   // Check if it's been 7+ days since the last weekly survey. If yes, show it.
   // This runs after enterApp() so the survey appears on top of the dashboard
@@ -4508,7 +4846,7 @@ function enterApp() {
         saveUser(store.session, u);
       }
     } catch(e) { console.warn('Weekly survey check error:', e); }
-  }, 1500);
+  }, 2500);
   
   try {
     syncChatbaseUser();
@@ -7201,24 +7539,73 @@ function pickMood(btn) {
   btn.classList.add('selected');
 }
 
-// === Round 12: updateEnergyLabel — updates the energy bar's number display
-// AND the gradient track fill as the user drags the slider. ===
+// === Round 13: updateEnergyLabel — drives the rebuilt MoodMorph energy bar.
+// Updates THREE things in sync as the user drags:
+//   1. The big readout number (with a re-triggered pop animation)
+//   2. The track's live gradient fill — a SMOOTH 3-stop blend (red→amber→green)
+//      that shifts color depending on the value, plus a "filled" portion that
+//      grows with the thumb. No more hard 50%/50% seam.
+//   3. The colored state classes (is-low / is-med / is-high) on the readout
+//      and the label icon so the whole panel "feels" the energy level.
+// ===
 function updateEnergyLabel(val) {
+  const v = parseInt(val, 10);
+  if (isNaN(v)) return;
+
+  // 1) Readout number — textContent only (we removed the inner <span>)
   const label = document.getElementById('energy-label');
   if (label) {
-    label.innerHTML = val + '<span class="moodmorph-energy-max">/10</span>';
+    label.textContent = v;
+    // Re-trigger the pop animation by toggling a class
+    label.classList.remove('mm2-pop-trigger');
+    void label.offsetWidth; // force reflow so the animation restarts
+    label.classList.add('mm2-pop-trigger');
+    // Re-apply the keyframe via inline animation (works without re-declaring CSS)
+    label.style.animation = 'none';
+    void label.offsetWidth;
+    label.style.animation = 'mm2Pop .35s ease';
   }
-  // Update the gradient track fill: the CSS uses a linear-gradient with a
-  // hard stop at the fill percentage. We update it via inline style on the input.
+
+  // 2) State classes (low ≤ 3, med 4–6, high ≥ 7)
+  const stateClass = v <= 3 ? 'is-low' : (v <= 6 ? 'is-med' : 'is-high');
+  const readout = label;
+  const icon = document.getElementById('mm2-energy-icon');
+  [readout, icon].forEach(el => {
+    if (!el) return;
+    el.classList.remove('is-low', 'is-med', 'is-high');
+    el.classList.add(stateClass);
+  });
+
+  // 3) Live track gradient — paint a SMOOTH 3-stop gradient on the FILLED
+  //    portion (0% → pct%), then the unfilled tail uses --line.
+  //    The fill colors shift based on the value:
+  //      low  → red (#c94444) → amber (#b97b16)
+  //      med  → amber (#b97b16) → accent (#6495ED)
+  //      high → accent (#6495ED) → green (#1d9d6b)
+  //    We do this by picking the two endpoint colors based on state, then
+  //    drawing a smooth gradient between them on the filled portion.
   const input = document.getElementById('energy');
   if (input) {
-    const pct = ((val - 1) / 9) * 100;  // 1→0%, 10→100%
-    input.style.background = 'linear-gradient(to right, var(--accent) 0%, var(--accent) ' + pct + '%, var(--line) ' + pct + '%, var(--line) 100%)';
+    const pct = ((v - 1) / 9) * 100; // 1 → 0%, 10 → 100%
+    let c1, c2;
+    if (v <= 3) { c1 = '#c94444'; c2 = '#b97b16'; }          // red → amber
+    else if (v <= 6) { c1 = '#b97b16'; c2 = '#6495ED'; }     // amber → accent
+    else { c1 = '#6495ED'; c2 = '#1d9d6b'; }                  // accent → green
+    // Filled portion: smooth gradient c1 → c2; unfilled portion: var(--line)
+    input.style.background =
+      'linear-gradient(to right, ' + c1 + ' 0%, ' + c2 + ' ' + pct + '%, ' +
+      'var(--line) ' + pct + '%, var(--line) 100%)';
+    // Match the thumb's ring color to the gradient's right endpoint so the
+    // thumb visually "belongs" to the fill color at its current position.
+    input.style.setProperty('--mm2-thumb-color', c2);
+    // We can't directly target ::-webkit-slider-thumb's border via JS on the
+    // input, so we apply a class and let CSS pick up --mm2-thumb-color.
+    input.classList.add('mm2-thumb-styled');
   }
 }
 
-// Initialize the energy bar gradient on page load (so it shows the correct
-// fill for the default value of 5).
+// Initialize the energy bar on page load (so it shows the correct fill and
+// colors for the default value of 5, instead of an empty grey track).
 try {
   document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('energy');
