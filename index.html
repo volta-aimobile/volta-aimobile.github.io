@@ -2030,6 +2030,47 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
   #tab-profile { padding-bottom: 90px; }
   .profile-mobile-actions { margin-bottom: 12px; }
 }
+
+/* ===== Smartwatch (Web Bluetooth) panel =====
+   Local BLE integration with any heart-rate-peripheral smartwatch.
+   Self-contained: nothing else in the app depends on these classes. */
+.smartwatch-card { background: linear-gradient(135deg, var(--accent-soft) 0%, var(--white) 100%); border: 1px solid var(--accent-border); }
+.smartwatch-head { display:flex; align-items:center; gap:12px; margin-bottom: 10px; }
+.smartwatch-head .smartwatch-icon { width:44px; height:44px; border-radius:12px; background: var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 12px rgba(100,149,237,.3); flex-shrink:0; }
+.smartwatch-head h3 { margin:0; font-size:1rem; font-weight:700; }
+.smartwatch-head small { color: var(--muted); font-size:.82rem; }
+.smartwatch-status-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin: 8px 0 12px; font-size:.85rem; }
+.smartwatch-status-dot { width:10px; height:10px; border-radius:50%; background:var(--muted); flex-shrink:0; transition: background .25s ease, box-shadow .25s ease; }
+.smartwatch-status-dot.connected { background: var(--green); box-shadow: 0 0 0 4px rgba(34,197,94,.18); animation: hrPulse 1.6s infinite; }
+.smartwatch-status-dot.connecting { background: var(--amber); box-shadow: 0 0 0 4px rgba(245,158,11,.18); }
+.smartwatch-status-dot.error { background: var(--red); box-shadow: 0 0 0 4px rgba(239,68,68,.18); }
+@keyframes hrPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+.smartwatch-live-row { display:flex; gap:12px; flex-wrap:wrap; margin: 10px 0; }
+.smartwatch-metric { flex: 1 1 100px; min-width:100px; background: var(--bg); border:1px solid var(--line); border-radius:12px; padding: 12px; text-align:center; }
+.smartwatch-metric b { display:block; font-size: 1.55rem; font-weight:800; color: var(--accent); font-variant-numeric: tabular-nums; line-height:1.1; }
+.smartwatch-metric.hr b { color: var(--red); animation: heartbeat 1s ease-in-out infinite; }
+.smartwatch-metric.batt b { color: var(--green); }
+.smartwatch-metric small { display:block; font-size:.72rem; color: var(--muted); margin-top: 4px; font-weight:600; text-transform: uppercase; letter-spacing:.04em; }
+@keyframes heartbeat { 0%, 100% { transform: scale(1); } 14% { transform: scale(1.18); } 28% { transform: scale(1); } 42% { transform: scale(1.12); } 70% { transform: scale(1); } }
+.smartwatch-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top: 8px; }
+.smartwatch-actions .btn { margin: 0 !important; flex: 1 1 auto; min-width: 120px; }
+.smartwatch-device-info { font-size:.78rem; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+.smartwatch-unsupported { background: #fef3c7; border:1px solid #f59e0b; color: #92400e; padding: 10px 12px; border-radius: 10px; font-size:.82rem; margin-top: 8px; line-height:1.5; }
+.smartwatch-unsupported b { display:block; margin-bottom: 4px; }
+
+/* HR pill — small badge shown on Home tab when watch is connected */
+.hr-pill { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #fee2e2, #fecaca); border: 1px solid #f87171; color: #b91c1c; padding: 5px 12px; border-radius: 999px; font-size: .82rem; font-weight: 700; margin-left: 8px; vertical-align: middle; }
+.hr-pill .hr-pill-heart { font-size: .85rem; animation: heartbeat 1s ease-in-out infinite; }
+.hr-pill b { font-variant-numeric: tabular-nums; }
+
+/* HR overlay inside Live Session */
+.session-hr-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom: 24px; }
+.session-hr-pill { display:inline-flex; align-items:center; gap:8px; background: linear-gradient(135deg, #fee2e2, #fecaca); border:2px solid #ef4444; color:#b91c1c; padding: 8px 18px; border-radius: 999px; font-size: 1.4rem; font-weight: 800; }
+.session-hr-pill i { animation: heartbeat 1s ease-in-out infinite; }
+.session-hr-pill b { font-variant-numeric: tabular-nums; }
+.session-hr-pill small { font-size:.7rem; font-weight: 600; opacity:.7; }
+.session-hr-pill.disconnected { background: var(--bg); border-color: var(--line); color: var(--muted); }
+.session-hr-pill.disconnected i { animation: none; }
 </style>
 </head>
 <body>
@@ -2244,6 +2285,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
   <main class="main">
     <div id="tab-home" class="tab active">
       <h1 id="greeting" style="font-size:1.45rem;font-weight:700;">Welcome</h1>
+      <span class="hr-pill" id="home-hr-pill" style="display:none;"><i class="fa-solid fa-heart hr-pill-heart"></i> <b id="home-hr-value">--</b> <span data-ar="نبضة/د">bpm</span></span>
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="لمحة عن يومك اليوم.">Here's your snapshot for today.</p>
       <div class="cards-row">
         <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-weight-scale"></i></span><div><b id="stat-bmi">--</b><small><span data-ar="مؤشر كتلة الجسم">BMI</span> (<span id="stat-bmi-cat">--</span>)</small></div></div>
@@ -2559,6 +2601,8 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         </div>
       </div>
 
+
+
       <div class="panel">
         <h3><i class="fa-solid fa-bullseye"></i> <span data-ar="خطة هدف اللياقة">Fitness Goal Plan</span></h3>
         <div id="profile-goal-plan"></div>
@@ -2635,25 +2679,45 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
           <div class="toggle-group"><button class="toggle-btn active" id="loc-on-btn" onclick="setLoc(true)" data-ar="تشغيل">On</button><button class="toggle-btn" id="loc-off-btn" onclick="setLoc(false)" data-ar="إيقاف">Off</button></div>
         </div>
       </div>
-      <!-- ===== Google Fit API integration placeholder =====
-           Per user spec: "make the app connect to google fitness api to make it
-           connect to smartwatches and add its permission in 'settings' tab
-           (don't do it now, tell me how to do it when i tell you to continue
-           after you finish the other stuff)".
-           When the user says "continue", we'll wire this button up to the
-           Google Fit REST API. For now it's a disabled placeholder that shows
-           what's coming. -->
-      <div class="panel">
-        <div class="settings-row">
+      <!-- ===== Smartwatch (Web Bluetooth) panel =====
+           Self-contained: connect to any BLE HR smartwatch, stream live HR +
+           battery locally. No cloud, no OAuth. Falls back gracefully on
+           unsupported browsers (Safari, Firefox, iOS). -->
+      <div class="panel smartwatch-card" id="smartwatch-panel">
+        <div class="smartwatch-head">
+          <div class="smartwatch-icon"><i class="fa-solid fa-heart-pulse"></i></div>
           <div>
-            <b><i class="fa-solid fa-heart-pulse" style="color:var(--red);margin-right:6px;"></i> <span data-ar="اتصال Google Fit">Google Fit Connection</span></b>
-            <small data-ar="اربط ساعاتك الذكية (Wear OS / Apple Watch عبر Google Fit) لمزامنة بيانات النبض والخطوات والسعرات تلقائياً.">Link your smartwatch (Wear OS / Apple Watch via Google Fit) to sync heart rate, steps, and calories automatically.</small>
+            <h3 data-ar="ساعة ذكية">Smartwatch</h3>
+            <small data-ar="اتصل بساعتك عبر البلوتوث لقراءة نبض القلب حياً.">Connect your watch via Bluetooth to stream live heart rate.</small>
           </div>
-          <button class="btn ghost small" disabled style="opacity:.6;cursor:not-allowed;" title="Coming soon">
-            <i class="fa-solid fa-plug"></i> <span data-ar="قريباً">Coming Soon</span>
+        </div>
+        <div class="smartwatch-status-row">
+          <span class="smartwatch-status-dot" id="sw-status-dot"></span>
+          <span id="sw-status-text" data-ar="غير متصل">Not connected</span>
+        </div>
+        <div class="smartwatch-live-row" id="sw-metrics-row" style="display:none;">
+          <div class="smartwatch-metric hr">
+            <b id="sw-hr-value">--</b>
+            <small data-ar="نبض القلب">Heart Rate</small>
+          </div>
+          <div class="smartwatch-metric batt">
+            <b id="sw-batt-value">--%</b>
+            <small data-ar="البطارية">Battery</small>
+          </div>
+        </div>
+        <div class="smartwatch-actions">
+          <button class="btn primary" id="sw-connect-btn" onclick="VoltaWatch.connect()">
+            <i class="fa-solid fa-bluetooth"></i> <span data-ar="اتصل بالساعة">Connect Watch</span>
+          </button>
+          <button class="btn ghost" id="sw-disconnect-btn" onclick="VoltaWatch.disconnect()" style="display:none;">
+            <i class="fa-solid fa-bluetooth-b"></i> <span data-ar="قطع الاتصال">Disconnect</span>
           </button>
         </div>
-        <small style="display:block;color:var(--muted);font-size:.78rem;margin-top:8px;" data-ar="سيتم تفعيل تكامل Google Fit API عند الطلب. سيطلب الإذن منك عند تفعيله.">Google Fit API integration will be enabled on request. It will ask for your permission when activated.</small>
+        <div class="smartwatch-device-info" id="sw-device-info" style="display:none;"></div>
+        <div class="smartwatch-unsupported" id="sw-unsupported" style="display:none;">
+          <b data-ar="البلوتوث غير مدعوم في هذا المتصفح.">Bluetooth not supported in this browser.</b>
+          <span data-ar="جرّب Chrome أو Edge على الكمبيوتر، أو Chrome على أندرويد. Safari و Firefox غير مدعومين حالياً.">Try Chrome or Edge on desktop, or Chrome on Android. Safari and Firefox are not supported.</span>
+        </div>
       </div>
     </div>
   </main>
@@ -2723,6 +2787,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <h2 id="session-sport-name"></h2>
     <div id="session-timer" class="session-timer">00:00</div>
     <div id="session-calories" class="session-calories"><i class="fa-solid fa-fire"></i> 0 kcal</div>
+    <div class="session-hr-row" id="session-hr-row" style="display:none;"><div class="session-hr-pill" id="session-hr-pill"><i class="fa-solid fa-heart-pulse"></i> <b id="session-hr-value">--</b> <small data-ar="نبضة/د">bpm</small></div></div>
     <div class="session-actions">
       <button class="btn primary" onclick="stopLiveSession()"><i class="fa-solid fa-stop"></i> <span data-ar="إيقاف وتسجيل">Stop & Log</span></button>
       <button class="btn ghost" id="session-pause-btn" onclick="pauseLiveSession()"><i class="fa-solid fa-pause"></i> <span data-ar="إيقاف مؤقت (60ث)">Pause (60s)</span></button>
@@ -5972,6 +6037,7 @@ function remindMeForSport(name) {
 }
 
 function startLiveSession(name) {
+  try { if (window.VoltaWatch) VoltaWatch.onSessionStart(); } catch(_) {}
   if (sessionTimerInt) clearInterval(sessionTimerInt); if (pauseCountdownInt) clearInterval(pauseCountdownInt); isPaused = false;
   currentLogSport = name;
   currentLogIntensity = document.getElementById('pre-session-intensity').value;
@@ -5993,7 +6059,11 @@ function pauseSpotifyEmbed() { const iframe = document.querySelector('#session-p
 function resumeSpotifyEmbed() { const iframe = document.querySelector('#session-playlist-container iframe'); if (iframe) { try { iframe.contentWindow.postMessage({ type: 'play' }, '*'); } catch(e) {} } }
 function resumeLiveSession() { isPaused = false; sessionStart += 60000; resumeSpotifyEmbed(); document.getElementById('session-pause-btn').classList.remove('hidden'); document.getElementById('session-pause-timer').classList.remove('hidden'); }
 function exitSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--muted); font-weight:600;" data-ar="تم إنهاء الجلسة دون تسجيل.">Session exited without logging.</p>`; }
-function stopLiveSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); const elapsedMins = Math.max(1, Math.round((Date.now() - sessionStart) / 60000)); const cals = Math.round(elapsedMins * 8); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--green); font-weight:600;" data-ar="تم إيقاف الجلسة! المدة: ${elapsedMins} دقيقة، السعرات: ${cals} سعرة">Session stopped! Duration: ${elapsedMins}m, Calories: ${cals}kcal</p>`; const logger = document.getElementById('inline-logger'); logger.classList.remove('hidden'); logger.innerHTML = `<h4 style="margin-bottom:10px;" data-ar="تسجيل الجلسة: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}">Log Session: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}</h4><input type="date" id="log-date" required value="${localDateStr()}"><input type="number" id="log-duration" min="1" max="600" value="${elapsedMins}" required><select id="log-intensity" required><option value="Light" ${currentLogIntensity === 'Light' ? 'selected' : ''} data-ar="خفيف">Light</option><option value="Moderate" ${currentLogIntensity === 'Moderate' ? 'selected' : ''} data-ar="معتدل">Moderate</option><option value="Intense" ${currentLogIntensity === 'Intense' ? 'selected' : ''} data-ar="شديد">Intense</option></select><label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="ملاحظات">Notes</label><input type="text" id="log-note" placeholder="Notes (optional)" data-ar-ph="ملاحظات (اختياري)" style="width:100%;padding:10px 13px;border:1px solid var(--line);border-radius:10px;font-size:.92rem;"><button class="btn primary small" onclick="saveInlineSession()"><i class="fa-solid fa-check"></i> <span data-ar="حفظ الجلسة">Save Session</span></button>`; setTimeout(applyTranslations, 0); }
+function stopLiveSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); const elapsedMins = Math.max(1, Math.round((Date.now() - sessionStart) / 60000)); const cals = Math.round(elapsedMins * 8); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--green); font-weight:600;" data-ar="تم إيقاف الجلسة! المدة: ${elapsedMins} دقيقة، السعرات: ${cals} سعرة">Session stopped! Duration: ${elapsedMins}m, Calories: ${cals}kcal</p>`; const logger = document.getElementById('inline-logger'); logger.classList.remove('hidden'); try { _voltaLastHRStats = (window.VoltaWatch) ? VoltaWatch.onSessionEnd() : null; } catch(_) { _voltaLastHRStats = null; }
+  const _hrStatsHtml = (_voltaLastHRStats)
+    ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;padding:10px;background:linear-gradient(135deg,#fee2e2,#fecaca);border:1px solid #f87171;border-radius:10px;font-size:.85rem;"><span style="color:#b91c1c;font-weight:600;"><i class=\"fa-solid fa-heart-pulse\"></i> ${store.lang === 'ar' ? 'متوسط' : 'Avg'}: <b>${_voltaLastHRStats.avg}</b> ${store.lang === 'ar' ? 'نبضة/د' : 'bpm'}</span><span style="color:#b91c1c;font-weight:600;">${store.lang === 'ar' ? 'أعلى' : 'Max'}: <b>${_voltaLastHRStats.max}</b></span><span style="color:#b91c1c;font-weight:600;">${store.lang === 'ar' ? 'أدنى' : 'Min'}: <b>${_voltaLastHRStats.min || '--'}</b></span><span style="color:#b91c1c;font-weight:600;">${store.lang === 'ar' ? 'عينات' : 'Samples'}: <b>${_voltaLastHRStats.samples}</b></span></div>`
+    : '';
+  logger.innerHTML = `<h4 style="margin-bottom:10px;" data-ar="تسجيل الجلسة: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}">Log Session: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}</h4>${_hrStatsHtml}<input type="date" id="log-date" required value="${localDateStr()}"><input type="number" id="log-duration" min="1" max="600" value="${elapsedMins}" required><select id="log-intensity" required><option value="Light" ${currentLogIntensity === 'Light' ? 'selected' : ''} data-ar="خفيف">Light</option><option value="Moderate" ${currentLogIntensity === 'Moderate' ? 'selected' : ''} data-ar="معتدل">Moderate</option><option value="Intense" ${currentLogIntensity === 'Intense' ? 'selected' : ''} data-ar="شديد">Intense</option></select><label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="ملاحظات">Notes</label><input type="text" id="log-note" placeholder="Notes (optional)" data-ar-ph="ملاحظات (اختياري)" style="width:100%;padding:10px 13px;border:1px solid var(--line);border-radius:10px;font-size:.92rem;"><button class="btn primary small" onclick="saveInlineSession()"><i class="fa-solid fa-check"></i> <span data-ar="حفظ الجلسة">Save Session</span></button>`; setTimeout(applyTranslations, 0); }
 function getSessionStats() { const sessions = currentUser().sessions || []; const totalMin = sessions.reduce((a, s) => a + s.duration, 0); const weekAgo = Date.now() - 7 * 864e5; const weekMin = sessions.filter(s => new Date(s.date).getTime() >= weekAgo).reduce((a, s) => a + s.duration, 0); const perSport = {}; sessions.forEach(s => { perSport[s.sport] = (perSport[s.sport] || 0) + s.duration; }); const top = Object.entries(perSport).sort((a, b) => b[1] - a[1])[0]; return { total: sessions.length, totalMin, weekMin, top }; }
 // Sum of durations of all sessions logged TODAY (matches by LOCAL date string YYYY-MM-DD).
 // Uses localDateStr() so the comparison is against the user's local "today",
@@ -6090,7 +6160,369 @@ function setStopTraining(on) {
   } catch(e) { console.warn('setStopTraining error:', e); }
 }
 function renderTracker() { const stats = getSessionStats(); document.getElementById('tr-total').textContent = stats.total; document.getElementById('tr-minutes').textContent = stats.totalMin; document.getElementById('tr-week').textContent = stats.weekMin; document.getElementById('tr-top').textContent = stats.top ? getSportName(SPORTS.find(x=>x.name===stats.top[0])) : '--'; }
-function saveInlineSession() { const date = document.getElementById('log-date').value, duration = document.getElementById('log-duration').value, intensity = document.getElementById('log-intensity').value, note = document.getElementById('log-note').value.trim(); if(!date || !duration || !intensity) { alert('Please fill in date, duration, and intensity.'); return; } const u = currentUser(); if (!u.sessions) u.sessions = []; u.sessions.push({ sport: currentLogSport, date, duration: +duration, intensity, note }); saveUser(store.session, u); document.getElementById('inline-logger').innerHTML = `<p style="color:var(--green);font-weight:600;"><i class="fa-solid fa-check-circle"></i> <span data-ar="تم تسجيل الجلسة بنجاح!">Session logged successfully!</span></p>`; renderTracker(); renderHome(); checkDailyGoalReached(); setTimeout(applyTranslations, 0); }
+
+// =====================================================================
+// ===== VoltaWatch — local Web Bluetooth smartwatch integration =====
+// =====================================================================
+// Self-contained module. Connects to any BLE smartwatch that exposes the
+// standard Heart Rate service (UUID 0x180D) — that's ~99% of modern watches
+// (Apple Watch, Wear OS, Garmin, Fitbit, Mi Band, Polar, Wahoo, etc.).
+//
+// Features:
+//   - Connect / disconnect via the browser's native BLE device picker
+//   - Live heart rate (BPM) streamed from the watch
+//   - Live battery percentage (Battery Service 0x180F)
+//   - Auto-reconnect if the watch temporarily drops connection (1 retry)
+//   - Graceful fallback: if Web Bluetooth is unsupported (Safari, Firefox,
+//     iOS), the panel shows a clear message instead of a broken button.
+//   - Session recording: when a Live Session is started, HR samples are
+//     collected; on Stop & Log, the avg + max HR are attached to the
+//     saved session and shown in the success message.
+//
+// This module does NOT touch any other part of the app. If Web Bluetooth
+// is unavailable, every function degrades to a no-op or returns null.
+// =====================================================================
+const VoltaWatch = (function() {
+  const HR_SERVICE_UUID      = 0x180D;  // Heart Rate service
+  const HR_MEASUREMENT_UUID  = 0x2A37;  // Heart Rate Measurement characteristic
+  const BATT_SERVICE_UUID    = 0x180F;  // Battery service
+  const BATT_LEVEL_UUID      = 0x2A19;  // Battery Level characteristic
+
+  let device = null;
+  let server = null;
+  let hrCharacteristic = null;
+  let battCharacteristic = null;
+  let connected = false;
+  let connecting = false;
+  let currentHR = null;
+  let currentBatt = null;
+  let lastDisconnectWasManual = false;
+  let reconnectAttempts = 0;
+  const MAX_RECONNECT_ATTEMPTS = 1;
+
+  // Session HR tracking — populated when the user starts a Live Session.
+  let sessionActive = false;
+  let sessionHRSamples = [];   // array of { ts: number, hr: number }
+  let sessionHRMax = 0;
+  let sessionHRAvg = 0;
+  let sessionHRMin = 999;
+
+  function isSupported() {
+    return !!(navigator && navigator.bluetooth && typeof navigator.bluetooth.requestDevice === 'function');
+  }
+
+  function setStatus(state, msgKey, fallbackMsg) {
+    try {
+      const dot = document.getElementById('sw-status-dot');
+      const txt = document.getElementById('sw-status-text');
+      if (dot) {
+        dot.classList.remove('connected', 'connecting', 'error');
+        if (state) dot.classList.add(state);
+      }
+      if (txt) {
+        // Try to honor Arabic locale; if translation missing, use fallback.
+        const isAr = (window.store && store.lang === 'ar');
+        const arMap = {
+          'Not connected': 'غير متصل',
+          'Connecting…': 'جارٍ الاتصال…',
+          'Connected': 'متصل',
+          'Connection failed': 'فشل الاتصال',
+          'Disconnected': 'تم القطع',
+          'Reconnecting…': 'إعادة الاتصال…'
+        };
+        txt.textContent = isAr ? (arMap[fallbackMsg] || fallbackMsg) : fallbackMsg;
+        if (window.applyTranslations) {
+          // Set a data-ar attr so applyTranslations picks it up on the next pass.
+          txt.setAttribute('data-ar', arMap[fallbackMsg] || fallbackMsg);
+        }
+      }
+    } catch(e) { /* swallow */ }
+  }
+
+  function updateMetricsDisplay() {
+    try {
+      const hrEl   = document.getElementById('sw-hr-value');
+      const battEl = document.getElementById('sw-batt-value');
+      const row    = document.getElementById('sw-metrics-row');
+      if (row) row.style.display = (connected || currentHR != null) ? '' : 'none';
+      if (hrEl)   hrEl.textContent   = currentHR != null ? currentHR : '--';
+      if (battEl) battEl.textContent = currentBatt != null ? currentBatt + '%' : '--%';
+      // Mirror to Home tab pill
+      const pill      = document.getElementById('home-hr-pill');
+      const pillValue = document.getElementById('home-hr-value');
+      if (pill && pillValue) {
+        if (currentHR != null && connected) {
+          pill.style.display = 'inline-flex';
+          pillValue.textContent = currentHR;
+        } else {
+          pill.style.display = 'none';
+        }
+      }
+      // Mirror to Live Session overlay
+      const sessionRow  = document.getElementById('session-hr-row');
+      const sessionPill = document.getElementById('session-hr-pill');
+      const sessionVal  = document.getElementById('session-hr-value');
+      if (sessionRow && sessionVal) {
+        if (sessionActive && connected) {
+          sessionRow.style.display = '';
+          sessionVal.textContent = currentHR != null ? currentHR : '--';
+          if (sessionPill) sessionPill.classList.remove('disconnected');
+        } else if (sessionActive && !connected) {
+          // Show a "disconnected" state so the user knows the watch dropped.
+          sessionRow.style.display = '';
+          sessionVal.textContent = '--';
+          if (sessionPill) sessionPill.classList.add('disconnected');
+        }
+      }
+    } catch(e) { /* swallow */ }
+  }
+
+  function setButtons() {
+    try {
+      const connectBtn    = document.getElementById('sw-connect-btn');
+      const disconnectBtn = document.getElementById('sw-disconnect-btn');
+      const infoBox       = document.getElementById('sw-device-info');
+      const unsupported   = document.getElementById('sw-unsupported');
+
+      // If Web Bluetooth is unsupported, show the message and hide the connect button.
+      if (!isSupported()) {
+        if (connectBtn)    connectBtn.style.display    = 'none';
+        if (disconnectBtn) disconnectBtn.style.display = 'none';
+        if (unsupported)   unsupported.style.display   = 'block';
+        return;
+      }
+
+      // Supported: ensure the unsupported warning is hidden (covers the case
+      // where init() runs again after a runtime polyfill installs navigator.bluetooth).
+      if (unsupported) unsupported.style.display = 'none';
+
+      if (connected) {
+        if (connectBtn)    connectBtn.style.display    = 'none';
+        if (disconnectBtn) disconnectBtn.style.display = '';
+      } else {
+        if (connectBtn)    connectBtn.style.display    = '';
+        if (disconnectBtn) disconnectBtn.style.display = 'none';
+      }
+      if (infoBox && device) {
+        infoBox.style.display = 'block';
+        const isAr = (window.store && store.lang === 'ar');
+        const name = device.name || (isAr ? 'جهاز غير مسمى' : 'Unnamed device');
+        const id   = device.id   || '—';
+        infoBox.innerHTML = (isAr
+          ? `<b>الجهاز:</b> ${name}<br><b>المعرّف:</b> <code style="font-size:.72rem;word-break:break-all;">${id}</code>`
+          : `<b>Device:</b> ${name}<br><b>ID:</b> <code style="font-size:.72rem;word-break:break-all;">${id}</code>`);
+      }
+    } catch(e) { /* swallow */ }
+  }
+
+  // Parse a Heart Rate Measurement characteristic value.
+  // Spec: flags byte, then either 1 or 2 bytes of HR (depending on bit 0 of flags).
+  function parseHR(value) {
+    try {
+      const flags = value.getUint8(0);
+      const is16bit = (flags & 0x01) === 0x01;
+      const hr = is16bit ? value.getUint16(1, true) : value.getUint8(1);
+      return hr;
+    } catch(e) { return null; }
+  }
+
+  function handleHRChange(event) {
+    try {
+      const value = event.target.value;
+      const hr = parseHR(value);
+      if (hr != null && hr > 0 && hr < 255) {
+        currentHR = hr;
+        // Session recording
+        if (sessionActive) {
+          sessionHRSamples.push({ ts: Date.now(), hr: hr });
+          if (hr > sessionHRMax) sessionHRMax = hr;
+          if (hr < sessionHRMin) sessionHRMin = hr;
+          // Recompute avg (running mean to avoid huge arrays — though we keep samples too).
+          let sum = 0;
+          for (const s of sessionHRSamples) sum += s.hr;
+          sessionHRAvg = Math.round(sum / sessionHRSamples.length);
+        }
+        updateMetricsDisplay();
+      }
+    } catch(e) { /* swallow */ }
+  }
+
+  function handleBattChange(event) {
+    try {
+      const value = event.target.value;
+      currentBatt = value.getUint8(0);  // 0-100
+      updateMetricsDisplay();
+    } catch(e) { /* swallow */ }
+  }
+
+  function handleDisconnect() {
+    try {
+      connected = false;
+      connecting = false;
+      hrCharacteristic = null;
+      battCharacteristic = null;
+      // Don't clear currentHR immediately — keep the last reading visible briefly.
+      setStatus('', '', 'Disconnected');
+      setButtons();
+      updateMetricsDisplay();
+      // Auto-reconnect (1 attempt) if the disconnect was NOT manual.
+      if (!lastDisconnectWasManual && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+        reconnectAttempts++;
+        setStatus('connecting', '', 'Reconnecting…');
+        setTimeout(() => {
+          if (device && device.gatt) {
+            device.gatt.connect()
+              .then(() => { reconnectAttempts = 0; })
+              .catch(() => { setStatus('', '', 'Disconnected'); });
+          }
+        }, 1500);
+      }
+    } catch(e) { /* swallow */ }
+  }
+
+  async function connect() {
+    if (!isSupported()) {
+      setButtons();  // shows the unsupported message
+      return;
+    }
+    if (connected || connecting) return;
+    connecting = true;
+    lastDisconnectWasManual = false;
+    reconnectAttempts = 0;
+    setStatus('connecting', '', 'Connecting…');
+    try {
+      // Open the browser's native BLE device picker. We filter to devices
+      // that advertise the Heart Rate service. The user picks their watch.
+      device = await navigator.bluetooth.requestDevice({
+        filters: [{ services: [HR_SERVICE_UUID] }],
+        optionalServices: [BATT_SERVICE_UUID]
+      });
+      if (!device) {
+        connecting = false;
+        setStatus('', '', 'Not connected');
+        return;
+      }
+      device.addEventListener('gattserverdisconnected', handleDisconnect);
+      server = await device.gatt.connect();
+      // Get HR service + characteristic
+      const hrService = await server.getPrimaryService(HR_SERVICE_UUID);
+      hrCharacteristic = await hrService.getCharacteristic(HR_MEASUREMENT_UUID);
+      await hrCharacteristic.startNotifications();
+      hrCharacteristic.addEventListener('characteristicvaluechanged', handleHRChange);
+      // Try to get Battery service (optional — some watches don't expose it)
+      try {
+        const battService = await server.getPrimaryService(BATT_SERVICE_UUID);
+        battCharacteristic = await battService.getCharacteristic(BATT_LEVEL_UUID);
+        // Read initial battery value
+        const initialValue = await battCharacteristic.readValue();
+        currentBatt = initialValue.getUint8(0);
+        // Subscribe to battery changes (most watches don't push, but if they do, we'll catch it)
+        try {
+          await battCharacteristic.startNotifications();
+          battCharacteristic.addEventListener('characteristicvaluechanged', handleBattChange);
+        } catch(_) { /* not all batteries support notifications */ }
+      } catch(_) {
+        currentBatt = null;  // battery service unavailable — fine
+      }
+      connected = true;
+      connecting = false;
+      setStatus('connected', '', 'Connected');
+      setButtons();
+      updateMetricsDisplay();
+      // Friendly toast if we have the helper
+      if (typeof showVoltaToast === 'function') {
+        const isAr = (window.store && store.lang === 'ar');
+        showVoltaToast(isAr ? 'تم الاتصال بالساعة' : 'Watch connected', 'success');
+      }
+    } catch(e) {
+      connecting = false;
+      connected = false;
+      // The most common "error" is the user cancelling the device picker —
+      // that throws a NotFoundError. Don't scare them with "failed" status.
+      const msg = (e && e.name === 'NotFoundError') ? 'Not connected' : 'Connection failed';
+      setStatus(e && e.name === 'NotFoundError' ? '' : 'error', '', msg);
+      setButtons();
+      // Only log real errors to console (not user-cancel)
+      if (e && e.name !== 'NotFoundError') {
+        console.warn('VoltaWatch connect error:', e);
+      }
+    }
+  }
+
+  function disconnect() {
+    lastDisconnectWasManual = true;
+    try {
+      if (device && device.gatt && connected) {
+        device.gatt.disconnect();
+      }
+    } catch(_) { /* swallow */ }
+    connected = false;
+    connecting = false;
+    hrCharacteristic = null;
+    battCharacteristic = null;
+    currentHR = null;
+    currentBatt = null;
+    setStatus('', '', 'Not connected');
+    setButtons();
+    updateMetricsDisplay();
+    if (typeof showVoltaToast === 'function') {
+      const isAr = (window.store && store.lang === 'ar');
+      showVoltaToast(isAr ? 'تم قطع اتصال الساعة' : 'Watch disconnected', 'info');
+    }
+  }
+
+  // Called by the app when a Live Session starts.
+  function onSessionStart() {
+    sessionActive = true;
+    sessionHRSamples = [];
+    sessionHRMax = 0;
+    sessionHRAvg = 0;
+    sessionHRMin = 999;
+    updateMetricsDisplay();
+  }
+
+  // Called by the app when a Live Session ends. Returns HR stats or null.
+  function onSessionEnd() {
+    sessionActive = false;
+    if (sessionHRSamples.length === 0) return null;
+    const stats = {
+      avg: sessionHRAvg,
+      max: sessionHRMax,
+      min: (sessionHRMin === 999 ? null : sessionHRMin),
+      samples: sessionHRSamples.length,
+      duration: sessionHRSamples.length > 0
+        ? Math.round((sessionHRSamples[sessionHRSamples.length-1].ts - sessionHRSamples[0].ts) / 1000)
+        : 0
+    };
+    return stats;
+  }
+
+  function isConnected() { return connected; }
+  function getHR() { return currentHR; }
+  function getBattery() { return currentBatt; }
+
+  // Initialize UI state on page load.
+  function init() {
+    setButtons();  // shows the "unsupported" message if Web Bluetooth isn't available
+    setStatus('', '', 'Not connected');
+  }
+
+  // Run init when DOM is ready.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  return {
+    connect, disconnect, isConnected, getHR, getBattery,
+    onSessionStart, onSessionEnd, isSupported, init
+  };
+})();
+
+let _voltaLastHRStats = null;
+
+function saveInlineSession() { const date = document.getElementById('log-date').value, duration = document.getElementById('log-duration').value, intensity = document.getElementById('log-intensity').value, note = document.getElementById('log-note').value.trim(); if(!date || !duration || !intensity) { alert('Please fill in date, duration, and intensity.'); return; } const _hrStats = _voltaLastHRStats || null; _voltaLastHRStats = null; const u = currentUser(); if (!u.sessions) u.sessions = []; u.sessions.push({ sport: currentLogSport, date, duration: +duration, intensity, note, hrStats: _hrStats }); saveUser(store.session, u); document.getElementById('inline-logger').innerHTML = `<p style="color:var(--green);font-weight:600;"><i class="fa-solid fa-check-circle"></i> <span data-ar="تم تسجيل الجلسة بنجاح!">Session logged successfully!</span></p>`; renderTracker(); renderHome(); checkDailyGoalReached(); setTimeout(applyTranslations, 0); }
 function bumpStreak() {
   const u = currentUser();
   const today = new Date().toDateString();
