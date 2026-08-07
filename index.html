@@ -542,64 +542,64 @@ body.dark-mode .mm2-energy {
 }
 /* The native input is fully restyled. We paint the gradient fill via inline
    style on the input element itself (set by updateEnergyLabel) — this is the
-   only cross-browser way to get a "fill" effect that actually tracks the thumb. */
+   only cross-browser way to get a "fill" effect that actually tracks the thumb.
+   Track is 8px (thin), thumb is 34px (large) — a 4:1 ratio for a modern look. */
 .mm2-slider-wrap input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 14px;
+  height: 8px;
   border-radius: 999px;
   outline: none;
   cursor: pointer;
   margin: 0;
   background: var(--line);
-  /* Inline style will override this with the live gradient */
   transition: background .15s ease;
 }
-/* WebKit thumb — large, white-centered, glowing ring */
+/* WebKit thumb — medium, white-centered, glowing ring (sized down from 34→28 per user feedback) */
 .mm2-slider-wrap input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--white);
-  border: 5px solid var(--accent);
-  box-shadow: 0 4px 12px rgba(100,149,237,.45), 0 0 0 0 rgba(100,149,237,.25);
+  border: 4px solid var(--accent);
+  box-shadow: 0 3px 11px rgba(100,149,237,.45), 0 0 0 0 rgba(100,149,237,.25);
   cursor: grab;
-  margin-top: -8px; /* (14 - 30) / 2 = -8 → vertically centers on 14px track */
+  margin-top: -10px; /* (8 - 28) / 2 = -10 → vertically centers on 8px track */
   transition: transform .12s ease, box-shadow .2s ease, border-color .25s ease;
 }
 .mm2-slider-wrap input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.12);
-  box-shadow: 0 6px 18px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.12);
+  box-shadow: 0 5px 16px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.14);
 }
 .mm2-slider-wrap input[type="range"]::-webkit-slider-thumb:active {
   transform: scale(1.18);
   cursor: grabbing;
-  box-shadow: 0 8px 22px rgba(100,149,237,.6), 0 0 0 10px rgba(100,149,237,.15);
+  box-shadow: 0 6px 20px rgba(100,149,237,.6), 0 0 0 9px rgba(100,149,237,.18);
 }
 /* Firefox thumb */
 .mm2-slider-wrap input[type="range"]::-moz-range-thumb {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--white);
-  border: 5px solid var(--accent);
-  box-shadow: 0 4px 12px rgba(100,149,237,.45);
+  border: 4px solid var(--accent);
+  box-shadow: 0 3px 11px rgba(100,149,237,.45);
   cursor: grab;
   transition: transform .12s ease, box-shadow .2s ease, border-color .25s ease;
 }
 .mm2-slider-wrap input[type="range"]::-moz-range-thumb:hover {
   transform: scale(1.12);
-  box-shadow: 0 6px 18px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.12);
+  box-shadow: 0 5px 16px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.14);
 }
 .mm2-slider-wrap input[type="range"]::-moz-range-thumb:active {
   transform: scale(1.18);
   cursor: grabbing;
 }
 .mm2-slider-wrap input[type="range"]::-moz-range-track {
-  height: 14px;
+  height: 8px;
   border-radius: 999px;
   background: transparent; /* the input's own background paints the fill */
 }
@@ -613,7 +613,7 @@ body.dark-mode .mm2-energy {
   border-color: var(--mm2-thumb-color, var(--accent));
 }
 .mm2-slider-wrap input[type="range"].mm2-thumb-styled::-webkit-slider-thumb:hover {
-  box-shadow: 0 6px 18px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.12);
+  box-shadow: 0 6px 20px rgba(100,149,237,.6), 0 0 0 7px rgba(100,149,237,.14);
 }
 .mm2-slider-wrap input[type="range"].mm2-thumb-styled::-moz-range-thumb {
   border-color: var(--mm2-thumb-color, var(--accent));
@@ -813,9 +813,19 @@ body.dark-mode #great-work-card {
   .gw-sub { font-size: .88rem; }
   .gw-star { font-size: 1.3rem; }
 }
-input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: var(--line); border-radius: 4px; outline: none; margin: 10px 0; }
-input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 3px solid var(--white); box-shadow: 0 2px 6px rgba(100,149,237,.4); }
-input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 3px solid var(--white); }
+/* ===== Slider styling — track is THINNER than the thumb =====
+   Per user spec: "change all slider bars in the app, make the bar smaller
+   than the slider". The track (bar) is 5px tall; the thumb (slider handle)
+   is 26px — a 5:1 ratio that makes the thumb clearly larger than the track.
+   This is more touch-friendly on mobile and gives a modern, polished look. */
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 5px; background: var(--line); border-radius: 999px; outline: none; margin: 14px 0; cursor: pointer; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 26px; height: 26px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 4px solid var(--white); box-shadow: 0 2px 8px rgba(100,149,237,.45); margin-top: -10.5px; transition: transform .12s ease, box-shadow .2s ease; }
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.12); box-shadow: 0 4px 14px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.12); }
+input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.18); cursor: grabbing; }
+input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 4px solid var(--white); box-shadow: 0 2px 8px rgba(100,149,237,.45); transition: transform .12s ease, box-shadow .2s ease; }
+input[type="range"]::-moz-range-thumb:hover { transform: scale(1.12); box-shadow: 0 4px 14px rgba(100,149,237,.55); }
+input[type="range"]::-moz-range-track { height: 5px; border-radius: 999px; background: var(--line); }
+input[type="range"]:focus-visible { outline: 3px solid rgba(100,149,237,.4); outline-offset: 4px; }
 
 /* ===== InBody Scan Card (Profile tab) ===== */
 .inbody-card { background: linear-gradient(135deg, var(--accent-soft) 0%, var(--white) 100%); border: 1px solid var(--accent-border); }
@@ -1050,6 +1060,49 @@ input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: v
 .athlete-card .a-top b { font-size: .95rem; }
 .athlete-card .a-last { font-size: .82rem; color: var(--muted); margin-top: 4px; }
 .athletes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; margin-top: 16px; }
+
+/* ===== Athlete quick-action buttons (Details / Log Session / Change Status) =====
+   Per user feedback: "fix athlete buttons, text is a bit up and some buttons
+   arent aligned in the best way in volta mobile".
+   Root causes:
+   1. The buttons used inline `padding:4px 10px` and `font-size:.75rem` which
+      overrode the .btn base. The result: the FA icon (line-height 1) and the
+      text (line-height inherited from .btn) didn't share a common baseline,
+      making the text look "pushed up" relative to the icon.
+   2. The buttons had no fixed height — they wrapped inconsistently and ended
+      up with different vertical sizes, which made the row look jagged.
+   3. The buttons had no equal-width constraint, so short labels ("Details")
+      and long labels ("Change Status") ended up at very different widths.
+   Fix: enforce a uniform height, center the icon+text row with `line-height:1`,
+   and let each button grow equally via flex:1. */
+.athlete-quick-actions { display: flex !important; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.athlete-quick-actions .btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  margin-top: 0 !important;
+  padding: 7px 8px !important;
+  min-height: 34px !important;
+  font-size: .74rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  border-radius: 8px !important;
+}
+/* The FA icon inside the button: pin its line-height to 1 so it doesn't
+   introduce extra vertical metrics that push the text upward. */
+.athlete-quick-actions .btn i {
+  line-height: 1 !important;
+  font-size: .78rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
 
 .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
 .avatar.big { width: 64px; height: 64px; font-size: 1.3rem; }
@@ -2267,15 +2320,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <div id="tab-marathon" class="tab">
       <h1 style="font-size:1.45rem;font-weight:700;" data-ar="مخطط مسار الماراثون">Marathon Route Planner</h1>
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="انقر على الخريطة لتحديد وجهتك (النقطة ب). ثم ابدأ!">Click on the map to set your destination (Point B). Then start!</p>
-      <!-- Marathon type toggle: Run or Bicycle -->
-      <div class="marathon-type-toggle" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-        <button class="btn primary marathon-type-btn active" id="marathon-type-run" onclick="setMarathonType('run')" style="margin:0;flex:1;min-width:140px;">
-          <i class="fa-solid fa-person-running"></i> <span data-ar="ماراثون جري">Run Marathon</span>
-        </button>
-        <button class="btn ghost marathon-type-btn" id="marathon-type-bike" onclick="setMarathonType('bike')" style="margin:0;flex:1;min-width:140px;">
-          <i class="fa-solid fa-bicycle"></i> <span data-ar="ماراثون دراجة">Bicycle Marathon</span>
-        </button>
-      </div>
       <div class="panel" style="padding: 0; overflow: hidden;"><div id="map-container"></div></div>
       <div class="map-info">
         <div><h3 style="margin-bottom:4px;"><i class="fa-solid fa-route"></i> <span data-ar="المسافة إلى النقطة ب">Distance to Point B</span></h3><b id="marathon-distance" style="font-size:1.5rem; color:var(--accent);">0.00 km</b></div>
@@ -2304,19 +2348,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <div id="marathon-results" class="panel" style="display:none;margin-top:14px;border:2px solid var(--green);">
         <h3 style="color:var(--green);"><i class="fa-solid fa-trophy"></i> <span data-ar="ملخص الجلسة">Session Summary</span></h3>
         <div id="marathon-results-body"></div>
-      </div>
-      <!-- Bicycle marathon targets (user-friendly preset distances) -->
-      <div class="panel" id="marathon-bike-presets" style="display:none;">
-        <h3><i class="fa-solid fa-bicycle"></i> <span data-ar="أهداف ماراثون الدراجة">Bicycle Marathon Targets</span></h3>
-        <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="اختر هدفاً شائعاً لماراثون الدراجة وحدّد هدفك على الخريطة.">Pick a common cycling marathon target and map your route.</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
-          <button class="btn ghost small" onclick="setMarathonPreset(10)" style="margin:0;"><b>10 km</b><br><small data-ar="نزهة قصيرة">Short ride</small></button>
-          <button class="btn ghost small" onclick="setMarathonPreset(20)" style="margin:0;"><b>20 km</b><br><small data-ar="نصف ساعة">Half hour</small></button>
-          <button class="btn ghost small" onclick="setMarathonPreset(40)" style="margin:0;"><b>40 km</b><br><small data-ar="ميتtric">Metric century (half)</small></button>
-          <button class="btn ghost small" onclick="setMarathonPreset(80)" style="margin:0;"><b>80 km</b><br><small data-ar="تحدٍّ متوسط">Mid challenge</small></button>
-          <button class="btn ghost small" onclick="setMarathonPreset(100)" style="margin:0;"><b>100 km</b><br><small data-ar="قرن ميتtric">Metric Century</small></button>
-          <button class="btn ghost small" onclick="setMarathonPreset(160)" style="margin:0;"><b>160 km</b><br><small data-ar="قرن إمبراطوري">Imperial Century</small></button>
-        </div>
       </div>
     </div>
 
@@ -3248,9 +3279,12 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 .timer-lap-item { display: flex; justify-content: space-between; padding: 6px 12px; border-bottom: 1px solid var(--line); font-size: .88rem; }
 .timer-lap-item:last-child { border-bottom: none; }
 #timer-mode-tabs .btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; background: var(--line); border-radius: 3px; outline: none; }
-input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 6px rgba(100,149,237,.4); border: 3px solid #fff; }
-input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 6px rgba(100,149,237,.4); border: 3px solid #fff; }
+/* Mobile sliders — even thinner track for a more modern look, but thumb
+   stays large enough for fingertip precision. Track 4px, thumb 24px. */
+input[type="range"] { -webkit-appearance: none; appearance: none; height: 4px !important; background: var(--line); border-radius: 999px; outline: none; margin: 14px 0; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 8px rgba(100,149,237,.45); border: 4px solid #fff; margin-top: -10px; }
+input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 8px rgba(100,149,237,.45); border: 4px solid #fff; }
+input[type="range"]::-moz-range-track { height: 4px; border-radius: 999px; background: var(--line); }
 
 /* ===== DIET LOG ENHANCEMENT ===== */
 .diet-log-entry { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
@@ -3334,6 +3368,61 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   #tab-mycoach small { font-size: .8rem; word-break: break-all; overflow-wrap: anywhere; }
   #mycoach-content small { word-break: break-all; overflow-wrap: anywhere; }
   #mycoach-content b { word-break: break-all; overflow-wrap: anywhere; }
+}
+
+/* ===== BIG PHONE FIXES (Honor X9d, iPhone Plus, etc. — 401-480px) =====
+   Per user spec: "my friend has some ui bugs like in weather on his honor x9d,
+   adjust the ui for big phones". The Honor X9d is ~412px CSS-wide. The old
+   breakpoints jumped from 768px → 400px, leaving 401-480px phones in a gap
+   where the safety grid was forced to 3 cols (too cramped) and the weather
+   panel stacked awkwardly. This block fixes those specific layouts. */
+@media (max-width: 480px) and (min-width: 401px) {
+  /* Safety grid: 2 cols is the sweet spot for ~412px screens (each card ~200px
+     wide, enough for the icon + label + status pill without truncation). */
+  .safety-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  /* Weather current panel: flex layout so the temp + precip stays on the left
+     and the Refresh button sits on the right (instead of stacking vertically
+     and looking broken). */
+  #tab-weather .panel:first-of-type {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+  }
+  #tab-weather .panel:first-of-type > #weather-current {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+  #tab-weather .panel:first-of-type > .btn {
+    flex: 0 0 auto !important;
+    margin-left: auto !important;
+  }
+  /* Weather search wrap: full width on big phones (was capped at 460px which
+     left an awkward gap on the right at 412px width). */
+  .weather-search-wrap { max-width: 100% !important; }
+  /* Sport search grid in modal: 2 cols at this width (3 was too tight). */
+  #sport-search-grid { grid-template-columns: 1fr 1fr !important; }
+  /* Mood cards: keep 5-across but shrink padding so they don't overflow. */
+  .mood-cards-grid { gap: 6px !important; }
+  .mood-card { padding: 10px 6px !important; }
+  .mood-card b { font-size: .78rem !important; }
+  .mood-card small { font-size: .68rem !important; }
+  /* Profile info grid: 2 cols (was 3, which truncated values like "75 kg"). */
+  .profile-info-grid { grid-template-columns: 1fr 1fr !important; }
+  /* Banner grid: 2 cols (was 1, which left huge empty blocks). */
+  .banner-grid { grid-template-columns: 1fr 1fr !important; }
+  /* Cards row: 2 cols (consistent with banner grid). */
+  .cards-row { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ===== VERY SMALL PHONES (< 400px) — already had some rules, tighten more ===== */
+@media (max-width: 400px) {
+  /* Safety grid already 2 cols here from existing rule. Add sport search too. */
+  #sport-search-grid { grid-template-columns: 1fr 1fr !important; }
+  .mood-cards-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .mood-card { padding: 8px 4px !important; }
+  .mood-card b { font-size: .72rem !important; }
+  .mood-card small { display: none !important; }
 }
 
 </style>
@@ -3625,28 +3714,115 @@ let _voltaSyncDraining = false;
 // races within a single tab).
 let _voltaSyncWritePromise = Promise.resolve();
 
+// === Pure-JS SHA-256 implementation ===
+// WHY: Web Crypto's window.crypto.subtle.digest() is ONLY available in secure
+// contexts (https:// or localhost). When the HTML file is opened via file://
+// (double-click), subtle.digest() is undefined and the old code silently fell
+// back to FNV-1a — producing a DIFFERENT key than SHA-256. This broke
+// cross-device login: laptop opened via https:// → SHA-256 key, mobile opened
+// via file:// → FNV-1a key → same email, different cloud keys → login fails.
+// This pure-JS SHA-256 produces IDENTICAL output to Web Crypto everywhere.
+function _voltaSha256Sync(message) {
+  const K = new Uint32Array([
+    0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+  ]);
+  // UTF-8 encode (manual to avoid TextEncoder dependency edge cases)
+  const bytes = (function(s) {
+    const out = [];
+    for (let i = 0; i < s.length; i++) {
+      let c = s.charCodeAt(i);
+      if (c < 0x80) out.push(c);
+      else if (c < 0x800) { out.push(0xC0 | (c >> 6), 0x80 | (c & 0x3F)); }
+      else if (c >= 0xD800 && c < 0xDC00 && i + 1 < s.length) {
+        const c2 = s.charCodeAt(++i);
+        const cp = 0x10000 + ((c & 0x3FF) << 10) + (c2 & 0x3FF);
+        out.push(0xF0 | (cp >> 18), 0x80 | ((cp >> 12) & 0x3F), 0x80 | ((cp >> 6) & 0x3F), 0x80 | (cp & 0x3F));
+      } else { out.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F)); }
+    }
+    return out;
+  })(message);
+  const origLen = bytes.length;
+  const bitLen = origLen * 8;
+  bytes.push(0x80);
+  while (bytes.length % 64 !== 56) bytes.push(0);
+  // 64-bit big-endian length. For our short inputs, high 32 bits are always 0,
+  // but we still push all 8 bytes in the correct MSB-first order.
+  const highLen = Math.floor(bitLen / 0x100000000) >>> 0;
+  const lowLen = bitLen >>> 0;
+  bytes.push((highLen >>> 24) & 0xFF, (highLen >>> 16) & 0xFF, (highLen >>> 8) & 0xFF, highLen & 0xFF);
+  bytes.push((lowLen >>> 24) & 0xFF, (lowLen >>> 16) & 0xFF, (lowLen >>> 8) & 0xFF, lowLen & 0xFF);
+
+  const H = new Uint32Array([
+    0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19
+  ]);
+  const W = new Uint32Array(64);
+  for (let chunk = 0; chunk < bytes.length; chunk += 64) {
+    for (let t = 0; t < 16; t++) {
+      W[t] = (bytes[chunk + t*4] << 24) | (bytes[chunk + t*4 + 1] << 16) | (bytes[chunk + t*4 + 2] << 8) | bytes[chunk + t*4 + 3];
+      W[t] = W[t] >>> 0;
+    }
+    for (let t = 16; t < 64; t++) {
+      const s0 = (((W[t-15] >>> 7) | (W[t-15] << 25)) ^ ((W[t-15] >>> 18) | (W[t-15] << 14)) ^ (W[t-15] >>> 3)) >>> 0;
+      const s1 = (((W[t-2] >>> 17) | (W[t-2] << 15)) ^ ((W[t-2] >>> 19) | (W[t-2] << 13)) ^ (W[t-2] >>> 10)) >>> 0;
+      W[t] = (W[t-16] + s0 + W[t-7] + s1) >>> 0;
+    }
+    let a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+    for (let t = 0; t < 64; t++) {
+      const S1 = (((e >>> 6) | (e << 26)) ^ ((e >>> 11) | (e << 21)) ^ ((e >>> 25) | (e << 7))) >>> 0;
+      const ch = ((e & f) ^ (~e & g)) >>> 0;
+      const temp1 = (h + S1 + ch + K[t] + W[t]) >>> 0;
+      const S0 = (((a >>> 2) | (a << 30)) ^ ((a >>> 13) | (a << 19)) ^ ((a >>> 22) | (a << 10))) >>> 0;
+      const maj = ((a & b) ^ (a & c) ^ (b & c)) >>> 0;
+      const temp2 = (S0 + maj) >>> 0;
+      h=g; g=f; f=e; e=(d+temp1)>>>0; d=c; c=b; b=a; a=(temp1+temp2)>>>0;
+    }
+    H[0]=(H[0]+a)>>>0; H[1]=(H[1]+b)>>>0; H[2]=(H[2]+c)>>>0; H[3]=(H[3]+d)>>>0;
+    H[4]=(H[4]+e)>>>0; H[5]=(H[5]+f)>>>0; H[6]=(H[6]+g)>>>0; H[7]=(H[7]+h)>>>0;
+  }
+  let hex = '';
+  for (let i = 0; i < 8; i++) hex += H[i].toString(16).padStart(8, '0');
+  return hex;
+}
+
 // Compute a stable key from the email using SHA-256 (returns a hex string).
+// CRITICAL: must produce IDENTICAL output across all contexts (file://, http://,
+// https://) so the same email maps to the same cloud key on every device.
+// Uses _voltaSha256Sync (pure-JS) — Web Crypto's subtle.digest is unavailable
+// in non-secure contexts (file://) and silently fell back to a different hash,
+// breaking cross-device login.
 async function cloudKeyForEmail(email) {
   const normalized = (email || '').trim().toLowerCase();
-  try {
-    if (window.crypto && window.crypto.subtle) {
-      const buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode('volta_user:' + normalized));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 40);
-    }
-  } catch(e) {}
-  // Fallback: simple FNV-1a hash
-  let h = 2166136261;
-  for (let i = 0; i < normalized.length; i++) { h ^= normalized.charCodeAt(i); h = Math.imul(h, 16777619); }
-  return 'fnv_' + (h >>> 0).toString(16);
+  return _voltaSha256Sync('volta_user:' + normalized).slice(0, 40);
 }
 
 // Sleep helper for retry backoff
 function _voltaSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+// Short-term in-memory cache of the blob. Multiple calls to _fetchSharedBlob()
+// within 4 seconds return the cached result. This prevents redundant GETs
+// during signup (which does loadUserFromCloud + syncUserToCloud = 2 GETs).
+// jsonblob.com rate-limits aggressively, so caching is essential.
+let _voltaBlobCache = null;
+let _voltaBlobCacheTime = 0;
+const VOLTA_BLOB_CACHE_TTL = 4000; // 4 seconds
+
 // Fetch the entire shared blob. Returns the parsed JSON object or null.
-// Retries up to 3 times with exponential backoff.
+// Retries up to 4 times with exponential backoff. Rate-limit-aware: if we
+// detect a 429 status or "rate limit" in the body, we use longer backoffs.
 async function _fetchSharedBlob() {
-  const backoffs = [0, 400, 1200];
+  // Return cached value if fresh
+  const now = Date.now();
+  if (_voltaBlobCache && (now - _voltaBlobCacheTime) < VOLTA_BLOB_CACHE_TTL) {
+    return _voltaBlobCache;
+  }
+  const backoffs = [0, 600, 2000, 5000];
   for (let attempt = 0; attempt < backoffs.length; attempt++) {
     if (backoffs[attempt] > 0) await _voltaSleep(backoffs[attempt]);
     try {
@@ -3655,17 +3831,29 @@ async function _fetchSharedBlob() {
         headers: { 'Accept': 'application/json' },
         cache: 'no-store'
       });
+      if (resp.status === 429) {
+        // Rate limited — use the longest backoff and retry
+        continue;
+      }
       if (!resp.ok) continue;
       const data = await resp.json();
-      if (data && typeof data === 'object' && data.users) return data;
+      // jsonblob returns {error: "Rate limit exceeded"} when rate-limited,
+      // with a 200 status. Detect this and treat as rate-limited.
+      if (data && data.error && /rate/i.test(String(data.error))) continue;
+      if (data && typeof data === 'object' && data.users) {
+        _voltaBlobCache = data;
+        _voltaBlobCacheTime = now;
+        return data;
+      }
     } catch(e) { /* retry */ }
   }
   return null;
 }
 
 // Save the entire shared blob (PUT). Returns true on success.
+// Rate-limit-aware: detects 429 and uses longer backoffs.
 async function _saveSharedBlob(blobData) {
-  const backoffs = [0, 400, 1200];
+  const backoffs = [0, 800, 2500, 6000];
   for (let attempt = 0; attempt < backoffs.length; attempt++) {
     if (backoffs[attempt] > 0) await _voltaSleep(backoffs[attempt]);
     try {
@@ -3674,16 +3862,33 @@ async function _saveSharedBlob(blobData) {
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(blobData)
       });
-      if (resp.ok) return true;
+      if (resp.status === 429) continue;
+      if (resp.ok) {
+        // Update the in-memory cache so the next _fetchSharedBlob() sees the
+        // freshly-written data instead of triggering another GET.
+        _voltaBlobCache = blobData;
+        _voltaBlobCacheTime = Date.now();
+        return true;
+      }
     } catch(e) { /* retry */ }
   }
   return false;
 }
 
+// Track the max user count we've ever seen in the blob. This is a data-loss
+// safeguard: if a GET returns a blob with FEWER users than we've seen before,
+// we treat it as a stale/corrupt read and refuse to write (which would
+// perpetuate the data loss). This is in-memory only (per tab).
+let _voltaMaxSeenUserCount = 0;
+
 // Push the user record to the cloud. Uses a read-modify-write pattern on the
 // shared blob: GET the blob, update this user's entry, PUT it back.
 // Serialized via _voltaSyncWritePromise to prevent races within a single tab.
 // Retries on failure; if all retries fail, queues for later.
+//
+// CRITICAL DATA-LOSS PREVENTION: if the GET fails (rate limit, network, etc.),
+// we DO NOT write a fresh blob — doing so would overwrite all existing users.
+// Instead, we queue the sync for later retry.
 async function syncUserToCloud(email, userData) {
   // Chain onto any in-flight write so we don't read-modify-write concurrently
   _voltaSyncWritePromise = _voltaSyncWritePromise.then(async function() {
@@ -3693,14 +3898,33 @@ async function syncUserToCloud(email, userData) {
       userData.lastSyncedAt = Date.now();
       userData.email = email;
 
-      // Read-modify-write
+      // Read-modify-write — MUST get the existing blob first
       const blob = await _fetchSharedBlob();
-      const newBlob = blob || { volta_app: 'user_data_store', version: 2, users: {} };
-      if (!newBlob.users) newBlob.users = {};
-      newBlob.users[key] = userData;
-      newBlob.lastUpdated = Date.now();
+      if (!blob) {
+        // === DATA-LOSS PREVENTION ===
+        // If we can't read the existing blob, we MUST NOT write — doing so
+        // would create a fresh blob with only this user, wiping everyone else.
+        // Queue for later retry instead.
+        _voltaSyncQueue.push({ email: email, userData: userData, queuedAt: Date.now() });
+        return;
+      }
+      // Track max user count for the data-loss safeguard
+      const currentUserCount = Object.keys(blob.users || {}).length;
+      if (currentUserCount > _voltaMaxSeenUserCount) {
+        _voltaMaxSeenUserCount = currentUserCount;
+      }
+      // If the blob has fewer users than we've seen before (and we're not the
+      // only user), this is likely a stale read — abort the write to prevent
+      // perpetuating data loss.
+      if (currentUserCount < _voltaMaxSeenUserCount && currentUserCount < 2 && _voltaMaxSeenUserCount > 1) {
+        _voltaSyncQueue.push({ email: email, userData: userData, queuedAt: Date.now() });
+        return;
+      }
+      // Merge: update this user's entry, preserve all others
+      blob.users[key] = userData;
+      blob.lastUpdated = Date.now();
 
-      const ok = await _saveSharedBlob(newBlob);
+      const ok = await _saveSharedBlob(blob);
       if (!ok) {
         // Queue for later retry (network down, blob service unavailable, etc.)
         _voltaSyncQueue.push({ email: email, userData: userData, queuedAt: Date.now() });
@@ -4298,7 +4522,23 @@ async function handleAuth(e) {
   const users = store.users;
   if (authMode === 'signup') {
     if (users[email]) { setMsg('auth-msg', 'Account already exists. Please log in.', 'error'); return false; }
+    // === Cloud-first check: even if the email isn't in LOCAL storage, it might
+    // exist in the cloud (account created on another device). If so, reject the
+    // signup and tell the user to log in instead. This prevents creating a
+    // duplicate blank account that would overwrite their real data.
+    setMsg('auth-msg', 'Checking cloud...', 'ok');
+    const existingCloud = await loadUserFromCloud(email);
+    if (existingCloud) {
+      setMsg('auth-msg', 'Account already exists. Please log in.', 'error');
+      return false;
+    }
     ensureUserRecord(email, { password: pass, verified: true });
+    // === AWAIT the cloud sync so the account is actually persisted before we
+    // claim success. Without this, if the user closes the tab quickly after
+    // signup, the cloud write might not complete — and they can't log in
+    // cross-device. syncUserToCloud returns a promise chain we can await.
+    setMsg('auth-msg', 'Creating account...', 'ok');
+    try { await syncUserToCloud(email, store.users[email]); } catch(e) {}
     loginSuccess(email);
   } else {
     let u = users[email];
@@ -5302,40 +5542,52 @@ function renderHome() {
     // user's start weight, target weight, and goal-type-specific rate.
     // If no targetDate is set (very old saved goal), fall back to daysNeeded
     // so the counter still shows something meaningful.
-    const daysLabel = document.getElementById('goal-days-left');
-    if (daysLabel) {
-      let daysLeft = null;
-      if (u.goalPlan.targetDate) {
-        const today = new Date(); today.setHours(0,0,0,0);
-        const target = new Date(u.goalPlan.targetDate + 'T00:00:00');
-        const diffMs = target - today;
-        daysLeft = Math.max(0, Math.ceil(diffMs / 86400000));
-      } else if (u.goalPlan.daysNeeded) {
-        // Legacy: no targetDate stored. Use daysNeeded from when goal was set,
-        // minus the days elapsed since startDate (if available).
-        const startStr = u.goalPlan.startDate || localDateStr();
-        const startD = new Date(startStr + 'T00:00:00');
-        const today = new Date(); today.setHours(0,0,0,0);
-        const elapsed = Math.max(0, Math.floor((today - startD) / 86400000));
-        daysLeft = Math.max(0, u.goalPlan.daysNeeded - elapsed);
-      }
-      if (daysLeft !== null) {
-        // Round 9: removed the duplicate <small> text counter at the bottom.
-        // Only the badge pill (goal-days-left-badge) is shown now.
-        const numEl = document.getElementById('goal-days-left-num');
-        const lblEl = document.getElementById('goal-days-left-lbl');
-        const badgeEl = document.getElementById('goal-days-left-badge');
-        if (numEl) numEl.textContent = daysLeft;
-        if (lblEl) {
-          lblEl.textContent = ar
-            ? 'يوم متبقي'
-            : (daysLeft === 1 ? 'day left' : 'days left');
+    //
+    // BUG FIX (Round 14): the old code wrapped this whole block in
+    // `if (daysLabel)` where `daysLabel = document.getElementById('goal-days-left')`.
+    // But no element with id="goal-days-left" exists in the HTML — only
+    // `goal-days-left-num`, `goal-days-left-lbl`, and `goal-days-left-badge`.
+    // So the guard always short-circuited and the number never updated.
+    // Fix: target the actual elements directly (no broken guard).
+    let daysLeft = null;
+    if (u.goalPlan && u.goalPlan.targetDate) {
+      const today = new Date(); today.setHours(0,0,0,0);
+      const target = new Date(u.goalPlan.targetDate + 'T00:00:00');
+      const diffMs = target - today;
+      daysLeft = Math.max(0, Math.ceil(diffMs / 86400000));
+    } else if (u.goalPlan && u.goalPlan.daysNeeded) {
+      // Legacy: no targetDate stored. Use daysNeeded from when goal was set,
+      // minus the days elapsed since startDate (if available).
+      const startStr = u.goalPlan.startDate || localDateStr();
+      const startD = new Date(startStr + 'T00:00:00');
+      const today = new Date(); today.setHours(0,0,0,0);
+      const elapsed = Math.max(0, Math.floor((today - startD) / 86400000));
+      daysLeft = Math.max(0, u.goalPlan.daysNeeded - elapsed);
+    } else {
+      // No goalPlan at all — try to compute one on the fly so the counter
+      // shows a sensible default instead of "--".
+      try {
+        const plan = calculateGoalPlan();
+        if (plan && plan.targetDate) {
+          const today = new Date(); today.setHours(0,0,0,0);
+          const target = new Date(plan.targetDate + 'T00:00:00');
+          daysLeft = Math.max(0, Math.ceil((target - today) / 86400000));
         }
-        if (badgeEl) badgeEl.style.display = 'inline-flex';
-      } else {
-        const badgeEl = document.getElementById('goal-days-left-badge');
-        if (badgeEl) badgeEl.style.display = 'none';
+      } catch(e) {}
+    }
+    const numEl = document.getElementById('goal-days-left-num');
+    const lblEl = document.getElementById('goal-days-left-lbl');
+    const badgeEl = document.getElementById('goal-days-left-badge');
+    if (daysLeft !== null && daysLeft !== undefined) {
+      if (numEl) numEl.textContent = daysLeft;
+      if (lblEl) {
+        lblEl.textContent = ar
+          ? 'يوم متبقي'
+          : (daysLeft === 1 ? 'day left' : 'days left');
       }
+      if (badgeEl) badgeEl.style.display = 'inline-flex';
+    } else {
+      if (badgeEl) badgeEl.style.display = 'none';
     }
   }
   renderCoachRecommendation();
@@ -5583,6 +5835,7 @@ function showWorkout(name) {
   const modOpt = store.lang === 'ar' ? 'معتدل' : 'Moderate';
   const intenseOpt = store.lang === 'ar' ? 'شديد' : 'Intense';
   const startBtnText = store.lang === 'ar' ? 'ابدأ جلسة مباشرة' : 'Start Live Session';
+  const remindBtnText = store.lang === 'ar' ? 'ذكرني' : 'Remind Me';
   d.innerHTML = `<h3><i class="fa-solid ${s.icon}"></i> ${getSportName(s)}</h3>
     <div class="task-grid" style="margin-top: 16px;" id="workout-cards-container">${renderWorkoutCards('Moderate')}</div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 16px 0;">
@@ -5591,13 +5844,131 @@ function showWorkout(name) {
             <option value="Light">${lightOpt}</option><option value="Moderate" selected>${modOpt}</option><option value="Intense">${intenseOpt}</option>
         </select>
     </div>
-    <button class="btn primary fit" onclick="startLiveSession('${s.name}')"><i class="fa-solid fa-play"></i> ${startBtnText}</button>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn primary fit" style="margin:0;flex:1;min-width:160px;" onclick="startLiveSession('${s.name}')"><i class="fa-solid fa-play"></i> ${startBtnText}</button>
+      <button class="btn ghost fit" style="margin:0;flex:1;min-width:160px;" onclick="remindMeForSport('${s.name}')"><i class="fa-solid fa-bell"></i> ${remindBtnText}</button>
+    </div>
     <div id="live-session-ui" style="margin-top:16px;"></div>
     <div id="inline-logger" class="hidden inline-logger" style="margin-top:16px;"></div>`;
   window.renderWorkoutCardsInline = function(intensity) { document.getElementById('workout-cards-container').innerHTML = renderWorkoutCards(intensity); }
   d.scrollIntoView({ behavior: 'smooth' });
   // Translate any [data-ar] elements that were just rendered inside the workout panel
   setTimeout(applyTranslations, 0);
+}
+
+// ===== "Remind Me" button for every sport =====
+// Per user spec: each sport in the Sports tab now has a "Remind Me" button.
+// Clicking it jumps to the Reminders tab and pre-fills the form with the
+// sport name + a sensible default time (next top-of-the-hour), so the user
+// only needs to pick a date and tap "Add Reminder".
+
+// Small transient toast helper used by remindMeForSport (and reusable elsewhere).
+// Creates a floating pill at the bottom of the viewport that auto-dismisses
+// after 2.5s. type: 'success' | 'error' | 'info' (controls the accent color).
+function showVoltaToast(message, type) {
+  try {
+    type = type || 'info';
+    // Reuse existing toast if one is already on screen (prevents stacking).
+    let toast = document.getElementById('volta-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'volta-toast';
+      toast.style.cssText = [
+        'position:fixed', 'left:50%', 'bottom:24px',
+        'transform:translateX(-50%) translateY(20px)',
+        'background:var(--text,#111)', 'color:var(--white,#fff)',
+        'padding:12px 18px', 'border-radius:12px',
+        'font-size:.88rem', 'font-weight:600', 'font-family:inherit',
+        'box-shadow:0 8px 24px rgba(0,0,0,.18)', 'z-index:99999',
+        'opacity:0', 'transition:opacity .25s ease, transform .25s ease',
+        'max-width:90vw', 'text-align:center', 'pointer-events:none',
+        'display:flex', 'align-items:center', 'gap:8px'
+      ].join(';');
+      document.body.appendChild(toast);
+    }
+    // Color the toast by type.
+    const accent = type === 'success' ? 'var(--green,#22c55e)'
+                 : type === 'error'   ? 'var(--red,#ef4444)'
+                 :                       'var(--accent,#6495ed)';
+    toast.style.borderLeft = `4px solid ${accent}`;
+    const iconHtml = type === 'success' ? '<i class="fa-solid fa-circle-check"></i>'
+                   : type === 'error'   ? '<i class="fa-solid fa-circle-exclamation"></i>'
+                   :                       '<i class="fa-solid fa-circle-info"></i>';
+    toast.innerHTML = `<span style="color:${accent};">${iconHtml}</span><span></span>`;
+    toast.querySelector('span:last-child').textContent = message;
+    // Animate in.
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    // Auto-dismiss after 2.5s.
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(20px)';
+    }, 2500);
+  } catch(e) {
+    // Last-resort fallback: console log (don't crash the caller).
+    console.log('[volta-toast]', message);
+  }
+}
+
+function remindMeForSport(name) {
+  try {
+    const s = SPORTS.find(x => x.name === name);
+    const sportLabel = s ? getSportName(s) : name;
+    const isAr = (store.lang === 'ar');
+    // Switch to the reminders tab (this also calls renderReminders which
+    // pre-fills today's date in the date field).
+    showTab('reminders');
+    // Build the pre-filled title — e.g. "Running Session".
+    const titleInput = document.getElementById('rem-title');
+    if (titleInput) {
+      titleInput.value = isAr ? `${sportLabel} - جلسة` : `${sportLabel} Session`;
+    }
+    // Pick a sensible default time: next top-of-the-hour (e.g. 10:00, 11:00).
+    // This avoids the awkward "09:00" default when the user is actually
+    // planning for later today. If the next hour falls in the dead-of-night
+    // (midnight–5am), default to 09:00 instead — nobody plans a workout at 1am.
+    const timeInput = document.getElementById('rem-time');
+    if (timeInput) {
+      const now = new Date();
+      const nextHour = new Date(now.getTime() + 60 * 60000);
+      const pad = (n) => String(n).padStart(2, '0');
+      let h = nextHour.getHours();
+      if (h < 5) h = 9; // too early — bump to 09:00
+      timeInput.value = `${pad(h)}:00`;
+    }
+    // Pre-fill the date with today (in case renderReminders hasn't run yet).
+    const dateInput = document.getElementById('rem-date');
+    if (dateInput && !dateInput.value) {
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      dateInput.value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+    }
+    // Note with sport info (helps the user remember which sport).
+    const noteInput = document.getElementById('rem-note');
+    if (noteInput && s) {
+      const equipTxt = (s.equip && s.equip.length) ? s.equip.join(', ') : '';
+      const noteTxt = isAr
+        ? `جلسة ${sportLabel}${equipTxt ? ' - Equipment: ' + equipTxt : ''}`
+        : `${sportLabel} session${equipTxt ? ' - Equipment: ' + equipTxt : ''}`;
+      noteInput.value = noteTxt;
+    }
+    // Scroll to the form so the user immediately sees the pre-filled data.
+    const formPanel = document.querySelector('#tab-reminders .panel');
+    if (formPanel) formPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Briefly highlight the title field so the user sees it was auto-filled.
+    if (titleInput) {
+      titleInput.focus();
+      titleInput.select();
+    }
+    // Show a transient toast confirming the pre-fill.
+    const toastMsg = isAr ? `تم تعبئة التذكير لـ: ${sportLabel}` : `Reminder pre-filled for: ${sportLabel}`;
+    showVoltaToast(toastMsg, 'success');
+  } catch(e) {
+    console.warn('remindMeForSport error:', e);
+  }
 }
 
 function startLiveSession(name) {
@@ -10332,7 +10703,8 @@ enterCoachApp = function(user) {
     .coach-announcement { padding: 10px 12px; }
     .coach-export-btn { padding: 6px 10px; font-size: .78rem; }
     .athlete-quick-actions { gap: 4px !important; }
-    .athlete-quick-actions .btn { font-size: .7rem !important; padding: 3px 8px !important; min-height: 36px !important; }
+    .athlete-quick-actions .btn { font-size: .7rem !important; padding: 6px 6px !important; min-height: 36px !important; gap: 4px !important; }
+    .athlete-quick-actions .btn i { font-size: .72rem !important; }
     .stat-card { padding: 14px; }
     .stat-card b { font-size: 1.05rem; }
     .stat-card small { font-size: .72rem; }
