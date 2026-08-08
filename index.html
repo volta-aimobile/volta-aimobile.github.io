@@ -5152,12 +5152,22 @@ function enterApp() {
       const now = Date.now();
       const sevenDays = 7 * 24 * 60 * 60 * 1000;
       if (now - lastWeekly >= sevenDays) {
+        // Close the welcome modal first so the user only sees ONE modal
+        // at a time (the weekly survey), not two stacked on top of each
+        // other. This fixes "weekly survey doesn't popup on new account"
+        // — the survey was actually showing, but it was hidden behind /
+        // confused with the welcome modal.
+        try { closeModal('welcome-modal'); } catch(_){}
         showWeeklyProgressSurvey();
-        u.lastWeeklySurvey = now;
-        saveUser(store.session, u);
+        // NOTE: lastWeeklySurvey is intentionally NOT set here. It is
+        // only set in saveWeeklySurvey() — i.e. when the user actually
+        // fills in the form and clicks "Save & Continue". This way:
+        //   - If the user dismisses the survey (X), it will popup again
+        //     next time they enter the app, until they actually fill it in.
+        //   - Once they fill it in, it won't popup for another 7 days.
       }
     } catch(e) { console.warn('Weekly survey check error:', e); }
-  }, 2500);
+  }, 3500);
   
   try {
     syncChatbaseUser();
@@ -6742,6 +6752,11 @@ function saveWeeklySurvey() {
     if (!isNaN(weight) && weight >= 30 && weight <= 300) {
       u.profile.weight = weight;
     }
+    // Mark the weekly survey as completed for this week. This is the
+    // ONLY place lastWeeklySurvey is set — so the survey keeps popup up
+    // (on subsequent app entries) until the user actually saves their
+    // answers. Once saved, it won't popup for another 7 days.
+    u.lastWeeklySurvey = Date.now();
     // Append this weekly entry to a history array on the user record
     if (!u.weeklySurveyHistory) u.weeklySurveyHistory = [];
     u.weeklySurveyHistory.push({
@@ -8296,6 +8311,39 @@ function completeWorkout(index) {
     finishBtn.disabled = false;
     finishBtn.style.opacity = '1';
     finishBtn.style.cursor = 'pointer';
+  }
+  // === AUTO-FIRE the great-work animation when ALL workouts of the day
+  // are done. ===
+  // Per user spec: "i want to see the daily exercise animation when you
+  // finish the plan". Previously the animation only fired when the user
+  // manually clicked the "Finish Daily Workout" button. But the user
+  // typically completes the last workout INSIDE the workout-detail-modal
+  // and doesn't realize they need to close it and then click "Finish" —
+  // so they never see the animation.
+  //
+  // Now we:
+  //   1. Close the workout-detail-modal (so the user sees the daily tab)
+  //   2. Wait 1200ms for the user to see the "all done" state
+  //   3. Auto-call finishDailyWorkout() which fires the great-work popup
+  //      ("PLAN COMPLETE!" on the last day, "Day X of Y" otherwise)
+  if (deState.workouts.every(w => w.done) && !window._autoFinishScheduled) {
+    window._autoFinishScheduled = true;
+    try { closeWorkoutDetail(); } catch(e) {}
+    // Scroll to the finish button so the user sees it
+    try {
+      const fb = document.getElementById('finish-workout-btn');
+      if (fb && fb.scrollIntoView) fb.scrollIntoView({behavior:'smooth', block:'center'});
+    } catch(e) {}
+    setTimeout(function() {
+      window._autoFinishScheduled = false;
+      try {
+        // Double-check that all workouts are still done (user might have
+        // reset the plan in the meantime)
+        if (deState.workouts && deState.workouts.length > 0 && deState.workouts.every(w => w.done)) {
+          finishDailyWorkout();
+        }
+      } catch(e) { console.warn('Auto-finishDailyWorkout error:', e); }
+    }, 1200);
   }
 }
 function closeWorkoutDetail() {
