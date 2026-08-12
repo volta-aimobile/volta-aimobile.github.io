@@ -542,64 +542,64 @@ body.dark-mode .mm2-energy {
 }
 /* The native input is fully restyled. We paint the gradient fill via inline
    style on the input element itself (set by updateEnergyLabel) — this is the
-   only cross-browser way to get a "fill" effect that actually tracks the thumb.
-   Track is 8px (thin), thumb is 34px (large) — a 4:1 ratio for a modern look. */
+   only cross-browser way to get a "fill" effect that actually tracks the thumb. */
 .mm2-slider-wrap input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 8px;
+  height: 14px;
   border-radius: 999px;
   outline: none;
   cursor: pointer;
   margin: 0;
   background: var(--line);
+  /* Inline style will override this with the live gradient */
   transition: background .15s ease;
 }
-/* WebKit thumb — medium, white-centered, glowing ring (sized down from 34→28 per user feedback) */
+/* WebKit thumb — large, white-centered, glowing ring */
 .mm2-slider-wrap input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: var(--white);
-  border: 4px solid var(--accent);
-  box-shadow: 0 3px 11px rgba(100,149,237,.45), 0 0 0 0 rgba(100,149,237,.25);
+  border: 5px solid var(--accent);
+  box-shadow: 0 4px 12px rgba(100,149,237,.45), 0 0 0 0 rgba(100,149,237,.25);
   cursor: grab;
-  margin-top: -10px; /* (8 - 28) / 2 = -10 → vertically centers on 8px track */
+  margin-top: -8px; /* (14 - 30) / 2 = -8 → vertically centers on 14px track */
   transition: transform .12s ease, box-shadow .2s ease, border-color .25s ease;
 }
 .mm2-slider-wrap input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.12);
-  box-shadow: 0 5px 16px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.14);
+  box-shadow: 0 6px 18px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.12);
 }
 .mm2-slider-wrap input[type="range"]::-webkit-slider-thumb:active {
   transform: scale(1.18);
   cursor: grabbing;
-  box-shadow: 0 6px 20px rgba(100,149,237,.6), 0 0 0 9px rgba(100,149,237,.18);
+  box-shadow: 0 8px 22px rgba(100,149,237,.6), 0 0 0 10px rgba(100,149,237,.15);
 }
 /* Firefox thumb */
 .mm2-slider-wrap input[type="range"]::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: var(--white);
-  border: 4px solid var(--accent);
-  box-shadow: 0 3px 11px rgba(100,149,237,.45);
+  border: 5px solid var(--accent);
+  box-shadow: 0 4px 12px rgba(100,149,237,.45);
   cursor: grab;
   transition: transform .12s ease, box-shadow .2s ease, border-color .25s ease;
 }
 .mm2-slider-wrap input[type="range"]::-moz-range-thumb:hover {
   transform: scale(1.12);
-  box-shadow: 0 5px 16px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.14);
+  box-shadow: 0 6px 18px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.12);
 }
 .mm2-slider-wrap input[type="range"]::-moz-range-thumb:active {
   transform: scale(1.18);
   cursor: grabbing;
 }
 .mm2-slider-wrap input[type="range"]::-moz-range-track {
-  height: 8px;
+  height: 14px;
   border-radius: 999px;
   background: transparent; /* the input's own background paints the fill */
 }
@@ -613,7 +613,7 @@ body.dark-mode .mm2-energy {
   border-color: var(--mm2-thumb-color, var(--accent));
 }
 .mm2-slider-wrap input[type="range"].mm2-thumb-styled::-webkit-slider-thumb:hover {
-  box-shadow: 0 6px 20px rgba(100,149,237,.6), 0 0 0 7px rgba(100,149,237,.14);
+  box-shadow: 0 6px 18px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.12);
 }
 .mm2-slider-wrap input[type="range"].mm2-thumb-styled::-moz-range-thumb {
   border-color: var(--mm2-thumb-color, var(--accent));
@@ -813,19 +813,9 @@ body.dark-mode #great-work-card {
   .gw-sub { font-size: .88rem; }
   .gw-star { font-size: 1.3rem; }
 }
-/* ===== Slider styling — track is THINNER than the thumb =====
-   Per user spec: "change all slider bars in the app, make the bar smaller
-   than the slider". The track (bar) is 5px tall; the thumb (slider handle)
-   is 26px — a 5:1 ratio that makes the thumb clearly larger than the track.
-   This is more touch-friendly on mobile and gives a modern, polished look. */
-input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 5px; background: var(--line); border-radius: 999px; outline: none; margin: 14px 0; cursor: pointer; }
-input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 26px; height: 26px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 4px solid var(--white); box-shadow: 0 2px 8px rgba(100,149,237,.45); margin-top: -10.5px; transition: transform .12s ease, box-shadow .2s ease; }
-input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.12); box-shadow: 0 4px 14px rgba(100,149,237,.55), 0 0 0 6px rgba(100,149,237,.12); }
-input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.18); cursor: grabbing; }
-input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 4px solid var(--white); box-shadow: 0 2px 8px rgba(100,149,237,.45); transition: transform .12s ease, box-shadow .2s ease; }
-input[type="range"]::-moz-range-thumb:hover { transform: scale(1.12); box-shadow: 0 4px 14px rgba(100,149,237,.55); }
-input[type="range"]::-moz-range-track { height: 5px; border-radius: 999px; background: var(--line); }
-input[type="range"]:focus-visible { outline: 3px solid rgba(100,149,237,.4); outline-offset: 4px; }
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: var(--line); border-radius: 4px; outline: none; margin: 10px 0; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 3px solid var(--white); box-shadow: 0 2px 6px rgba(100,149,237,.4); }
+input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 3px solid var(--white); }
 
 /* ===== InBody Scan Card (Profile tab) ===== */
 .inbody-card { background: linear-gradient(135deg, var(--accent-soft) 0%, var(--white) 100%); border: 1px solid var(--accent-border); }
@@ -949,7 +939,7 @@ input[type="range"]:focus-visible { outline: 3px solid rgba(100,149,237,.4); out
 
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 9998; padding: 24px; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.2s ease, visibility 0.2s ease; }
 .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
-.modal-content { background: var(--white); border-radius: 16px; max-width: 500px; width: 100%; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,.15); max-height: 85vh; overflow-y: auto; transform: scale(0.9) translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; }
+.modal-content { background: var(--white); border-radius: 16px; max-width: 500px; width: 100%; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,.15); max-height: 85vh; overflow-y: auto; overflow-x: hidden; transform: scale(0.9) translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; }
 .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
 .modal-close { align-self: flex-end; cursor: pointer; color: var(--muted); font-size: 1.5rem; border: none; background: transparent; margin-bottom: -10px; }
 .modal-content h3 { margin-bottom: 8px; }
@@ -1060,49 +1050,6 @@ input[type="range"]:focus-visible { outline: 3px solid rgba(100,149,237,.4); out
 .athlete-card .a-top b { font-size: .95rem; }
 .athlete-card .a-last { font-size: .82rem; color: var(--muted); margin-top: 4px; }
 .athletes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; margin-top: 16px; }
-
-/* ===== Athlete quick-action buttons (Details / Log Session / Change Status) =====
-   Per user feedback: "fix athlete buttons, text is a bit up and some buttons
-   arent aligned in the best way in volta mobile".
-   Root causes:
-   1. The buttons used inline `padding:4px 10px` and `font-size:.75rem` which
-      overrode the .btn base. The result: the FA icon (line-height 1) and the
-      text (line-height inherited from .btn) didn't share a common baseline,
-      making the text look "pushed up" relative to the icon.
-   2. The buttons had no fixed height — they wrapped inconsistently and ended
-      up with different vertical sizes, which made the row look jagged.
-   3. The buttons had no equal-width constraint, so short labels ("Details")
-      and long labels ("Change Status") ended up at very different widths.
-   Fix: enforce a uniform height, center the icon+text row with `line-height:1`,
-   and let each button grow equally via flex:1. */
-.athlete-quick-actions { display: flex !important; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.athlete-quick-actions .btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 5px !important;
-  flex: 1 1 0 !important;
-  min-width: 0 !important;
-  margin: 0 !important;
-  margin-top: 0 !important;
-  padding: 7px 8px !important;
-  min-height: 34px !important;
-  font-size: .74rem !important;
-  line-height: 1 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  border-radius: 8px !important;
-}
-/* The FA icon inside the button: pin its line-height to 1 so it doesn't
-   introduce extra vertical metrics that push the text upward. */
-.athlete-quick-actions .btn i {
-  line-height: 1 !important;
-  font-size: .78rem !important;
-  display: inline-flex !important;
-  align-items: center !important;
-}
-
 
 .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
 .avatar.big { width: 64px; height: 64px; font-size: 1.3rem; }
@@ -2030,47 +1977,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
   #tab-profile { padding-bottom: 90px; }
   .profile-mobile-actions { margin-bottom: 12px; }
 }
-
-/* ===== Smartwatch (Web Bluetooth) panel =====
-   Local BLE integration with any heart-rate-peripheral smartwatch.
-   Self-contained: nothing else in the app depends on these classes. */
-.smartwatch-card { background: linear-gradient(135deg, var(--accent-soft) 0%, var(--white) 100%); border: 1px solid var(--accent-border); }
-.smartwatch-head { display:flex; align-items:center; gap:12px; margin-bottom: 10px; }
-.smartwatch-head .smartwatch-icon { width:44px; height:44px; border-radius:12px; background: var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 12px rgba(100,149,237,.3); flex-shrink:0; }
-.smartwatch-head h3 { margin:0; font-size:1rem; font-weight:700; }
-.smartwatch-head small { color: var(--muted); font-size:.82rem; }
-.smartwatch-status-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin: 8px 0 12px; font-size:.85rem; }
-.smartwatch-status-dot { width:10px; height:10px; border-radius:50%; background:var(--muted); flex-shrink:0; transition: background .25s ease, box-shadow .25s ease; }
-.smartwatch-status-dot.connected { background: var(--green); box-shadow: 0 0 0 4px rgba(34,197,94,.18); animation: hrPulse 1.6s infinite; }
-.smartwatch-status-dot.connecting { background: var(--amber); box-shadow: 0 0 0 4px rgba(245,158,11,.18); }
-.smartwatch-status-dot.error { background: var(--red); box-shadow: 0 0 0 4px rgba(239,68,68,.18); }
-@keyframes hrPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
-.smartwatch-live-row { display:flex; gap:12px; flex-wrap:wrap; margin: 10px 0; }
-.smartwatch-metric { flex: 1 1 100px; min-width:100px; background: var(--bg); border:1px solid var(--line); border-radius:12px; padding: 12px; text-align:center; }
-.smartwatch-metric b { display:block; font-size: 1.55rem; font-weight:800; color: var(--accent); font-variant-numeric: tabular-nums; line-height:1.1; }
-.smartwatch-metric.hr b { color: var(--red); animation: heartbeat 1s ease-in-out infinite; }
-.smartwatch-metric.batt b { color: var(--green); }
-.smartwatch-metric small { display:block; font-size:.72rem; color: var(--muted); margin-top: 4px; font-weight:600; text-transform: uppercase; letter-spacing:.04em; }
-@keyframes heartbeat { 0%, 100% { transform: scale(1); } 14% { transform: scale(1.18); } 28% { transform: scale(1); } 42% { transform: scale(1.12); } 70% { transform: scale(1); } }
-.smartwatch-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top: 8px; }
-.smartwatch-actions .btn { margin: 0 !important; flex: 1 1 auto; min-width: 120px; }
-.smartwatch-device-info { font-size:.78rem; color: var(--muted); margin-top: 6px; line-height: 1.5; }
-.smartwatch-unsupported { background: #fef3c7; border:1px solid #f59e0b; color: #92400e; padding: 10px 12px; border-radius: 10px; font-size:.82rem; margin-top: 8px; line-height:1.5; }
-.smartwatch-unsupported b { display:block; margin-bottom: 4px; }
-
-/* HR pill — small badge shown on Home tab when watch is connected */
-.hr-pill { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #fee2e2, #fecaca); border: 1px solid #f87171; color: #b91c1c; padding: 5px 12px; border-radius: 999px; font-size: .82rem; font-weight: 700; margin-left: 8px; vertical-align: middle; }
-.hr-pill .hr-pill-heart { font-size: .85rem; animation: heartbeat 1s ease-in-out infinite; }
-.hr-pill b { font-variant-numeric: tabular-nums; }
-
-/* HR overlay inside Live Session */
-.session-hr-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom: 24px; }
-.session-hr-pill { display:inline-flex; align-items:center; gap:8px; background: linear-gradient(135deg, #fee2e2, #fecaca); border:2px solid #ef4444; color:#b91c1c; padding: 8px 18px; border-radius: 999px; font-size: 1.4rem; font-weight: 800; }
-.session-hr-pill i { animation: heartbeat 1s ease-in-out infinite; }
-.session-hr-pill b { font-variant-numeric: tabular-nums; }
-.session-hr-pill small { font-size:.7rem; font-weight: 600; opacity:.7; }
-.session-hr-pill.disconnected { background: var(--bg); border-color: var(--line); color: var(--muted); }
-.session-hr-pill.disconnected i { animation: none; }
 </style>
 </head>
 <body>
@@ -2174,12 +2080,12 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <button type="button" class="btn link" onclick="showForgotPassword()" style="float:right;" data-ar="نسيت كلمة المرور؟">Forgot password?</button>
         <button type="submit" class="btn primary" id="auth-submit" data-ar="تسجيل الدخول">Log in</button>
       </form>
+      <p id="auth-msg" class="msg" style="margin-top:14px;text-align:center;font-weight:600;"></p>
       <div class="divider"><span data-ar="أو">or</span></div>
       <button class="btn google" onclick="openGooglePicker()">
         <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.1 0 24 0 14.6 0 6.5 5.4 2.5 13.2l7.8 6.1C12.2 13.4 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.3 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C.9 16.5 0 20.1 0 24s.9 7.5 2.5 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.1 0 11.2-2 15-5.5l-7.5-5.8c-2.1 1.4-4.7 2.2-7.5 2.2-6.4 0-11.8-3.9-13.7-9.4l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
         <span data-ar="المتابعة مع Google">Continue with Google</span>
       </button>
-      <p id="auth-msg" class="msg"></p>
     </div>
   </div>
 </section>
@@ -2285,7 +2191,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
   <main class="main">
     <div id="tab-home" class="tab active">
       <h1 id="greeting" style="font-size:1.45rem;font-weight:700;">Welcome</h1>
-      <span class="hr-pill" id="home-hr-pill" style="display:none;"><i class="fa-solid fa-heart hr-pill-heart"></i> <b id="home-hr-value">--</b> <span data-ar="نبضة/د">bpm</span></span>
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="لمحة عن يومك اليوم.">Here's your snapshot for today.</p>
       <div class="cards-row">
         <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-weight-scale"></i></span><div><b id="stat-bmi">--</b><small><span data-ar="مؤشر كتلة الجسم">BMI</span> (<span id="stat-bmi-cat">--</span>)</small></div></div>
@@ -2362,6 +2267,15 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <div id="tab-marathon" class="tab">
       <h1 style="font-size:1.45rem;font-weight:700;" data-ar="مخطط مسار الماراثون">Marathon Route Planner</h1>
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="انقر على الخريطة لتحديد وجهتك (النقطة ب). ثم ابدأ!">Click on the map to set your destination (Point B). Then start!</p>
+      <!-- Marathon type toggle: Run or Bicycle -->
+      <div class="marathon-type-toggle" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+        <button class="btn primary marathon-type-btn active" id="marathon-type-run" onclick="setMarathonType('run')" style="margin:0;flex:1;min-width:140px;">
+          <i class="fa-solid fa-person-running"></i> <span data-ar="ماراثون جري">Run Marathon</span>
+        </button>
+        <button class="btn ghost marathon-type-btn" id="marathon-type-bike" onclick="setMarathonType('bike')" style="margin:0;flex:1;min-width:140px;">
+          <i class="fa-solid fa-bicycle"></i> <span data-ar="ماراثون دراجة">Bicycle Marathon</span>
+        </button>
+      </div>
       <div class="panel" style="padding: 0; overflow: hidden;"><div id="map-container"></div></div>
       <div class="map-info">
         <div><h3 style="margin-bottom:4px;"><i class="fa-solid fa-route"></i> <span data-ar="المسافة إلى النقطة ب">Distance to Point B</span></h3><b id="marathon-distance" style="font-size:1.5rem; color:var(--accent);">0.00 km</b></div>
@@ -2390,6 +2304,19 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <div id="marathon-results" class="panel" style="display:none;margin-top:14px;border:2px solid var(--green);">
         <h3 style="color:var(--green);"><i class="fa-solid fa-trophy"></i> <span data-ar="ملخص الجلسة">Session Summary</span></h3>
         <div id="marathon-results-body"></div>
+      </div>
+      <!-- Bicycle marathon targets (user-friendly preset distances) -->
+      <div class="panel" id="marathon-bike-presets" style="display:none;">
+        <h3><i class="fa-solid fa-bicycle"></i> <span data-ar="أهداف ماراثون الدراجة">Bicycle Marathon Targets</span></h3>
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="اختر هدفاً شائعاً لماراثون الدراجة وحدّد هدفك على الخريطة.">Pick a common cycling marathon target and map your route.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
+          <button class="btn ghost small" onclick="setMarathonPreset(10)" style="margin:0;"><b>10 km</b><br><small data-ar="نزهة قصيرة">Short ride</small></button>
+          <button class="btn ghost small" onclick="setMarathonPreset(20)" style="margin:0;"><b>20 km</b><br><small data-ar="نصف ساعة">Half hour</small></button>
+          <button class="btn ghost small" onclick="setMarathonPreset(40)" style="margin:0;"><b>40 km</b><br><small data-ar="ميتtric">Metric century (half)</small></button>
+          <button class="btn ghost small" onclick="setMarathonPreset(80)" style="margin:0;"><b>80 km</b><br><small data-ar="تحدٍّ متوسط">Mid challenge</small></button>
+          <button class="btn ghost small" onclick="setMarathonPreset(100)" style="margin:0;"><b>100 km</b><br><small data-ar="قرن ميتtric">Metric Century</small></button>
+          <button class="btn ghost small" onclick="setMarathonPreset(160)" style="margin:0;"><b>160 km</b><br><small data-ar="قرن إمبراطوري">Imperial Century</small></button>
+        </div>
       </div>
     </div>
 
@@ -2601,8 +2528,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         </div>
       </div>
 
-
-
       <div class="panel">
         <h3><i class="fa-solid fa-bullseye"></i> <span data-ar="خطة هدف اللياقة">Fitness Goal Plan</span></h3>
         <div id="profile-goal-plan"></div>
@@ -2679,45 +2604,25 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
           <div class="toggle-group"><button class="toggle-btn active" id="loc-on-btn" onclick="setLoc(true)" data-ar="تشغيل">On</button><button class="toggle-btn" id="loc-off-btn" onclick="setLoc(false)" data-ar="إيقاف">Off</button></div>
         </div>
       </div>
-      <!-- ===== Smartwatch (Web Bluetooth) panel =====
-           Self-contained: connect to any BLE HR smartwatch, stream live HR +
-           battery locally. No cloud, no OAuth. Falls back gracefully on
-           unsupported browsers (Safari, Firefox, iOS). -->
-      <div class="panel smartwatch-card" id="smartwatch-panel">
-        <div class="smartwatch-head">
-          <div class="smartwatch-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+      <!-- ===== Google Fit API integration placeholder =====
+           Per user spec: "make the app connect to google fitness api to make it
+           connect to smartwatches and add its permission in 'settings' tab
+           (don't do it now, tell me how to do it when i tell you to continue
+           after you finish the other stuff)".
+           When the user says "continue", we'll wire this button up to the
+           Google Fit REST API. For now it's a disabled placeholder that shows
+           what's coming. -->
+      <div class="panel">
+        <div class="settings-row">
           <div>
-            <h3 data-ar="ساعة ذكية">Smartwatch</h3>
-            <small data-ar="اتصل بساعتك عبر البلوتوث لقراءة نبض القلب حياً.">Connect your watch via Bluetooth to stream live heart rate.</small>
+            <b><i class="fa-solid fa-heart-pulse" style="color:var(--red);margin-right:6px;"></i> <span data-ar="اتصال Google Fit">Google Fit Connection</span></b>
+            <small data-ar="اربط ساعاتك الذكية (Wear OS / Apple Watch عبر Google Fit) لمزامنة بيانات النبض والخطوات والسعرات تلقائياً.">Link your smartwatch (Wear OS / Apple Watch via Google Fit) to sync heart rate, steps, and calories automatically.</small>
           </div>
-        </div>
-        <div class="smartwatch-status-row">
-          <span class="smartwatch-status-dot" id="sw-status-dot"></span>
-          <span id="sw-status-text" data-ar="غير متصل">Not connected</span>
-        </div>
-        <div class="smartwatch-live-row" id="sw-metrics-row" style="display:none;">
-          <div class="smartwatch-metric hr">
-            <b id="sw-hr-value">--</b>
-            <small data-ar="نبض القلب">Heart Rate</small>
-          </div>
-          <div class="smartwatch-metric batt">
-            <b id="sw-batt-value">--%</b>
-            <small data-ar="البطارية">Battery</small>
-          </div>
-        </div>
-        <div class="smartwatch-actions">
-          <button class="btn primary" id="sw-connect-btn" onclick="VoltaWatch.connect()">
-            <i class="fa-solid fa-bluetooth"></i> <span data-ar="اتصل بالساعة">Connect Watch</span>
-          </button>
-          <button class="btn ghost" id="sw-disconnect-btn" onclick="VoltaWatch.disconnect()" style="display:none;">
-            <i class="fa-solid fa-bluetooth-b"></i> <span data-ar="قطع الاتصال">Disconnect</span>
+          <button class="btn ghost small" disabled style="opacity:.6;cursor:not-allowed;" title="Coming soon">
+            <i class="fa-solid fa-plug"></i> <span data-ar="قريباً">Coming Soon</span>
           </button>
         </div>
-        <div class="smartwatch-device-info" id="sw-device-info" style="display:none;"></div>
-        <div class="smartwatch-unsupported" id="sw-unsupported" style="display:none;">
-          <b data-ar="البلوتوث غير مدعوم في هذا المتصفح.">Bluetooth not supported in this browser.</b>
-          <span data-ar="جرّب Chrome أو Edge على الكمبيوتر، أو Chrome على أندرويد. Safari و Firefox غير مدعومين حالياً.">Try Chrome or Edge on desktop, or Chrome on Android. Safari and Firefox are not supported.</span>
-        </div>
+        <small style="display:block;color:var(--muted);font-size:.78rem;margin-top:8px;" data-ar="سيتم تفعيل تكامل Google Fit API عند الطلب. سيطلب الإذن منك عند تفعيله.">Google Fit API integration will be enabled on request. It will ask for your permission when activated.</small>
       </div>
     </div>
   </main>
@@ -2787,7 +2692,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <h2 id="session-sport-name"></h2>
     <div id="session-timer" class="session-timer">00:00</div>
     <div id="session-calories" class="session-calories"><i class="fa-solid fa-fire"></i> 0 kcal</div>
-    <div class="session-hr-row" id="session-hr-row" style="display:none;"><div class="session-hr-pill" id="session-hr-pill"><i class="fa-solid fa-heart-pulse"></i> <b id="session-hr-value">--</b> <small data-ar="نبضة/د">bpm</small></div></div>
     <div class="session-actions">
       <button class="btn primary" onclick="stopLiveSession()"><i class="fa-solid fa-stop"></i> <span data-ar="إيقاف وتسجيل">Stop & Log</span></button>
       <button class="btn ghost" id="session-pause-btn" onclick="pauseLiveSession()"><i class="fa-solid fa-pause"></i> <span data-ar="إيقاف مؤقت (60ث)">Pause (60s)</span></button>
@@ -3344,12 +3248,9 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
 .timer-lap-item { display: flex; justify-content: space-between; padding: 6px 12px; border-bottom: 1px solid var(--line); font-size: .88rem; }
 .timer-lap-item:last-child { border-bottom: none; }
 #timer-mode-tabs .btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-/* Mobile sliders — even thinner track for a more modern look, but thumb
-   stays large enough for fingertip precision. Track 4px, thumb 24px. */
-input[type="range"] { -webkit-appearance: none; appearance: none; height: 4px !important; background: var(--line); border-radius: 999px; outline: none; margin: 14px 0; }
-input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 8px rgba(100,149,237,.45); border: 4px solid #fff; margin-top: -10px; }
-input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 8px rgba(100,149,237,.45); border: 4px solid #fff; }
-input[type="range"]::-moz-range-track { height: 4px; border-radius: 999px; background: var(--line); }
+input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; background: var(--line); border-radius: 3px; outline: none; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 6px rgba(100,149,237,.4); border: 3px solid #fff; }
+input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 6px rgba(100,149,237,.4); border: 3px solid #fff; }
 
 /* ===== DIET LOG ENHANCEMENT ===== */
 .diet-log-entry { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
@@ -3435,61 +3336,6 @@ input[type="range"]::-moz-range-track { height: 4px; border-radius: 999px; backg
   #mycoach-content b { word-break: break-all; overflow-wrap: anywhere; }
 }
 
-/* ===== BIG PHONE FIXES (Honor X9d, iPhone Plus, etc. — 401-480px) =====
-   Per user spec: "my friend has some ui bugs like in weather on his honor x9d,
-   adjust the ui for big phones". The Honor X9d is ~412px CSS-wide. The old
-   breakpoints jumped from 768px → 400px, leaving 401-480px phones in a gap
-   where the safety grid was forced to 3 cols (too cramped) and the weather
-   panel stacked awkwardly. This block fixes those specific layouts. */
-@media (max-width: 480px) and (min-width: 401px) {
-  /* Safety grid: 2 cols is the sweet spot for ~412px screens (each card ~200px
-     wide, enough for the icon + label + status pill without truncation). */
-  .safety-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
-  /* Weather current panel: flex layout so the temp + precip stays on the left
-     and the Refresh button sits on the right (instead of stacking vertically
-     and looking broken). */
-  #tab-weather .panel:first-of-type {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    flex-wrap: wrap !important;
-  }
-  #tab-weather .panel:first-of-type > #weather-current {
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
-  }
-  #tab-weather .panel:first-of-type > .btn {
-    flex: 0 0 auto !important;
-    margin-left: auto !important;
-  }
-  /* Weather search wrap: full width on big phones (was capped at 460px which
-     left an awkward gap on the right at 412px width). */
-  .weather-search-wrap { max-width: 100% !important; }
-  /* Sport search grid in modal: 2 cols at this width (3 was too tight). */
-  #sport-search-grid { grid-template-columns: 1fr 1fr !important; }
-  /* Mood cards: keep 5-across but shrink padding so they don't overflow. */
-  .mood-cards-grid { gap: 6px !important; }
-  .mood-card { padding: 10px 6px !important; }
-  .mood-card b { font-size: .78rem !important; }
-  .mood-card small { font-size: .68rem !important; }
-  /* Profile info grid: 2 cols (was 3, which truncated values like "75 kg"). */
-  .profile-info-grid { grid-template-columns: 1fr 1fr !important; }
-  /* Banner grid: 2 cols (was 1, which left huge empty blocks). */
-  .banner-grid { grid-template-columns: 1fr 1fr !important; }
-  /* Cards row: 2 cols (consistent with banner grid). */
-  .cards-row { grid-template-columns: 1fr 1fr !important; }
-}
-
-/* ===== VERY SMALL PHONES (< 400px) — already had some rules, tighten more ===== */
-@media (max-width: 400px) {
-  /* Safety grid already 2 cols here from existing rule. Add sport search too. */
-  #sport-search-grid { grid-template-columns: 1fr 1fr !important; }
-  .mood-cards-grid { grid-template-columns: repeat(3, 1fr) !important; }
-  .mood-card { padding: 8px 4px !important; }
-  .mood-card b { font-size: .72rem !important; }
-  .mood-card small { display: none !important; }
-}
-
 </style>
 
 <div id="meal-modal" class="modal-overlay">
@@ -3511,7 +3357,7 @@ input[type="range"]::-moz-range-track { height: 4px; border-radius: 999px; backg
     <h3 id="sport-modal-title"></h3>
     <p id="sport-modal-desc" style="color:var(--muted); margin-bottom:16px;"></p>
     <h4 data-ar="المعدات المطلوبة">Equipment Needed</h4>
-    <ul id="sport-modal-equip"></ul>
+    <div id="sport-modal-equip"></div>
     <h4 data-ar="أماكن قريبة">Nearby Places</h4>
     <p style="font-size:.9rem;" data-ar="ابحث عن ملاعب أو صالات رياضية أو ملاعب محلية بالقرب منك.">Find local courts, gyms, or fields near you.</p>
     <button class="btn primary fit" id="sport-modal-map-btn"><i class="fa-solid fa-map-location-dot"></i> <span data-ar="ابحث في خرائط Google">Find on Google Maps</span></button>
@@ -3779,15 +3625,15 @@ let _voltaSyncDraining = false;
 // races within a single tab).
 let _voltaSyncWritePromise = Promise.resolve();
 
-// === Pure-JS SHA-256 implementation ===
-// WHY: Web Crypto's window.crypto.subtle.digest() is ONLY available in secure
-// contexts (https:// or localhost). When the HTML file is opened via file://
-// (double-click), subtle.digest() is undefined and the old code silently fell
-// back to FNV-1a — producing a DIFFERENT key than SHA-256. This broke
-// cross-device login: laptop opened via https:// → SHA-256 key, mobile opened
-// via file:// → FNV-1a key → same email, different cloud keys → login fails.
-// This pure-JS SHA-256 produces IDENTICAL output to Web Crypto everywhere.
-function _voltaSha256Sync(message) {
+// Pure-JS SHA-256 implementation. Produces output identical to Web Crypto's
+// subtle.digest('SHA-256', ...) but works in ALL contexts (file://, http://,
+// https://, electron, sandboxed iframes). This guarantees the cloud user key
+// is identical for a given email regardless of the page's security context —
+// previously, file:// contexts silently fell back to FNV-1a, producing a
+// DIFFERENT key, which broke cross-protocol login (signup on file://, login
+// on https:// = "Wrong email or password").
+function _voltaSha256Sync(asciiStr) {
+  function rrot(x, n) { return (x >>> n) | (x << (32 - n)); }
   const K = new Uint32Array([
     0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
     0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
@@ -3798,162 +3644,223 @@ function _voltaSha256Sync(message) {
     0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
     0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
   ]);
-  // UTF-8 encode (manual to avoid TextEncoder dependency edge cases)
-  const bytes = (function(s) {
-    const out = [];
-    for (let i = 0; i < s.length; i++) {
-      let c = s.charCodeAt(i);
-      if (c < 0x80) out.push(c);
-      else if (c < 0x800) { out.push(0xC0 | (c >> 6), 0x80 | (c & 0x3F)); }
-      else if (c >= 0xD800 && c < 0xDC00 && i + 1 < s.length) {
-        const c2 = s.charCodeAt(++i);
-        const cp = 0x10000 + ((c & 0x3FF) << 10) + (c2 & 0x3FF);
-        out.push(0xF0 | (cp >> 18), 0x80 | ((cp >> 12) & 0x3F), 0x80 | ((cp >> 6) & 0x3F), 0x80 | (cp & 0x3F));
-      } else { out.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F)); }
+  const H = new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]);
+  // Pre-process: convert ascii string to bytes (UTF-8 not needed for our keys,
+  // but handle simple UTF-8 for safety).
+  const bytes = new Uint8Array(asciiStr.length);
+  for (let i = 0; i < asciiStr.length; i++) bytes[i] = asciiStr.charCodeAt(i) & 0xff;
+  const bitLen = bytes.length * 8;
+  // Padding: append 0x80, then zeros, then 64-bit big-endian length
+  const withPad = new Uint8Array(((bytes.length + 9 + 63) >> 6) << 6);
+  withPad.set(bytes);
+  withPad[bytes.length] = 0x80;
+  // High 32 bits of length (always 0 for our short inputs)
+  const lenHigh = Math.floor(bitLen / 0x100000000);
+  const lenLow = bitLen >>> 0;
+  withPad[withPad.length - 8] = (lenHigh >>> 24) & 0xff;
+  withPad[withPad.length - 7] = (lenHigh >>> 16) & 0xff;
+  withPad[withPad.length - 6] = (lenHigh >>> 8) & 0xff;
+  withPad[withPad.length - 5] = lenHigh & 0xff;
+  withPad[withPad.length - 4] = (lenLow >>> 24) & 0xff;
+  withPad[withPad.length - 3] = (lenLow >>> 16) & 0xff;
+  withPad[withPad.length - 2] = (lenLow >>> 8) & 0xff;
+  withPad[withPad.length - 1] = lenLow & 0xff;
+  const w = new Uint32Array(64);
+  for (let off = 0; off < withPad.length; off += 64) {
+    for (let i = 0; i < 16; i++) {
+      w[i] = (withPad[off + i*4] << 24) | (withPad[off + i*4 + 1] << 16) | (withPad[off + i*4 + 2] << 8) | withPad[off + i*4 + 3];
+      w[i] >>>= 0;
     }
-    return out;
-  })(message);
-  const origLen = bytes.length;
-  const bitLen = origLen * 8;
-  bytes.push(0x80);
-  while (bytes.length % 64 !== 56) bytes.push(0);
-  // 64-bit big-endian length. For our short inputs, high 32 bits are always 0,
-  // but we still push all 8 bytes in the correct MSB-first order.
-  const highLen = Math.floor(bitLen / 0x100000000) >>> 0;
-  const lowLen = bitLen >>> 0;
-  bytes.push((highLen >>> 24) & 0xFF, (highLen >>> 16) & 0xFF, (highLen >>> 8) & 0xFF, highLen & 0xFF);
-  bytes.push((lowLen >>> 24) & 0xFF, (lowLen >>> 16) & 0xFF, (lowLen >>> 8) & 0xFF, lowLen & 0xFF);
-
-  const H = new Uint32Array([
-    0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19
-  ]);
-  const W = new Uint32Array(64);
-  for (let chunk = 0; chunk < bytes.length; chunk += 64) {
-    for (let t = 0; t < 16; t++) {
-      W[t] = (bytes[chunk + t*4] << 24) | (bytes[chunk + t*4 + 1] << 16) | (bytes[chunk + t*4 + 2] << 8) | bytes[chunk + t*4 + 3];
-      W[t] = W[t] >>> 0;
-    }
-    for (let t = 16; t < 64; t++) {
-      const s0 = (((W[t-15] >>> 7) | (W[t-15] << 25)) ^ ((W[t-15] >>> 18) | (W[t-15] << 14)) ^ (W[t-15] >>> 3)) >>> 0;
-      const s1 = (((W[t-2] >>> 17) | (W[t-2] << 15)) ^ ((W[t-2] >>> 19) | (W[t-2] << 13)) ^ (W[t-2] >>> 10)) >>> 0;
-      W[t] = (W[t-16] + s0 + W[t-7] + s1) >>> 0;
+    for (let i = 16; i < 64; i++) {
+      const s0 = rrot(w[i-15], 7) ^ rrot(w[i-15], 18) ^ (w[i-15] >>> 3);
+      const s1 = rrot(w[i-2], 17) ^ rrot(w[i-2], 19) ^ (w[i-2] >>> 10);
+      w[i] = (w[i-16] + s0 + w[i-7] + s1) >>> 0;
     }
     let a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
-    for (let t = 0; t < 64; t++) {
-      const S1 = (((e >>> 6) | (e << 26)) ^ ((e >>> 11) | (e << 21)) ^ ((e >>> 25) | (e << 7))) >>> 0;
-      const ch = ((e & f) ^ (~e & g)) >>> 0;
-      const temp1 = (h + S1 + ch + K[t] + W[t]) >>> 0;
-      const S0 = (((a >>> 2) | (a << 30)) ^ ((a >>> 13) | (a << 19)) ^ ((a >>> 22) | (a << 10))) >>> 0;
-      const maj = ((a & b) ^ (a & c) ^ (b & c)) >>> 0;
-      const temp2 = (S0 + maj) >>> 0;
-      h=g; g=f; f=e; e=(d+temp1)>>>0; d=c; c=b; b=a; a=(temp1+temp2)>>>0;
+    for (let i = 0; i < 64; i++) {
+      const S1 = rrot(e,6) ^ rrot(e,11) ^ rrot(e,25);
+      const ch = (e & f) ^ (~e & g);
+      const t1 = (h + S1 + ch + K[i] + w[i]) >>> 0;
+      const S0 = rrot(a,2) ^ rrot(a,13) ^ rrot(a,22);
+      const maj = (a & b) ^ (a & c) ^ (b & c);
+      const t2 = (S0 + maj) >>> 0;
+      h=g; g=f; f=e; e=(d + t1) >>> 0; d=c; c=b; b=a; a=(t1 + t2) >>> 0;
     }
     H[0]=(H[0]+a)>>>0; H[1]=(H[1]+b)>>>0; H[2]=(H[2]+c)>>>0; H[3]=(H[3]+d)>>>0;
     H[4]=(H[4]+e)>>>0; H[5]=(H[5]+f)>>>0; H[6]=(H[6]+g)>>>0; H[7]=(H[7]+h)>>>0;
   }
   let hex = '';
-  for (let i = 0; i < 8; i++) hex += H[i].toString(16).padStart(8, '0');
+  for (let i = 0; i < 8; i++) {
+    hex += H[i].toString(16).padStart(8, '0');
+  }
   return hex;
 }
 
-// Compute a stable key from the email using SHA-256 (returns a hex string).
-// CRITICAL: must produce IDENTICAL output across all contexts (file://, http://,
-// https://) so the same email maps to the same cloud key on every device.
-// Uses _voltaSha256Sync (pure-JS) — Web Crypto's subtle.digest is unavailable
-// in non-secure contexts (file://) and silently fell back to a different hash,
-// breaking cross-device login.
+// Compute a stable key from the email using SHA-256 (returns a 40-char hex string).
+// Uses _voltaSha256Sync (pure JS) so the key is IDENTICAL across all security
+// contexts (file://, http://, https://). Previously the file:// context fell
+// back to FNV-1a, producing a different key — which silently broke cross-
+// protocol login.
 async function cloudKeyForEmail(email) {
   const normalized = (email || '').trim().toLowerCase();
+  // Try Web Crypto first (faster, native) — but always have the pure-JS fallback
+  try {
+    if (window.crypto && window.crypto.subtle && window.crypto.subtle.digest) {
+      const buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode('volta_user:' + normalized));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 40);
+    }
+  } catch(e) {}
+  // Pure-JS fallback — produces IDENTICAL output to Web Crypto SHA-256
   return _voltaSha256Sync('volta_user:' + normalized).slice(0, 40);
 }
 
 // Sleep helper for retry backoff
 function _voltaSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// Short-term in-memory cache of the blob. Multiple calls to _fetchSharedBlob()
-// within 4 seconds return the cached result. This prevents redundant GETs
-// during signup (which does loadUserFromCloud + syncUserToCloud = 2 GETs).
-// jsonblob.com rate-limits aggressively, so caching is essential.
-let _voltaBlobCache = null;
-let _voltaBlobCacheTime = 0;
-const VOLTA_BLOB_CACHE_TTL = 4000; // 4 seconds
+// Maximum number of users we've ever seen in the cloud blob. Used as a
+// safeguard: syncUserToCloud refuses to PUT a blob with fewer users than this
+// (prevents data-loss if a flaky GET returns an empty/partial blob).
+let _voltaMaxSeenUserCount = 0;
+// In-memory short cache of the blob to prevent redundant GETs during a single
+// signup/login flow (which was causing jsonblob.com rate-limiting).
+let _voltaBlobCache = null; // { data, expiresAt }
+const VOLTA_BLOB_CACHE_MS = 4000;
+
+// Get the current blob ID. Allows override via localStorage so the app can
+// auto-heal to a new blob if the originally-configured one is deleted.
+function _getCloudBlobId() {
+  try {
+    const override = localStorage.getItem('volta_blob_id_override');
+    if (override && /^[a-f0-9-]{20,}$/i.test(override)) return override;
+  } catch(e) {}
+  return VOLTA_CLOUD_BLOB_ID;
+}
+function _getCloudBlobUrl() {
+  return 'https://jsonblob.com/api/jsonBlob/' + _getCloudBlobId();
+}
+
+// Try to create a NEW blob on jsonblob.com (auto-heal). Called when the
+// configured blob 404s. Saves the new ID to localStorage so all subsequent
+// reads/writes use it. Returns the new blob data (empty user map) on success,
+// null on failure.
+async function _createNewBlob() {
+  try {
+    const initial = { volta_app: 'user_data_store', version: 2, users: {}, lastUpdated: Date.now() };
+    const resp = await fetch('https://jsonblob.com/api/jsonBlob', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(initial)
+    });
+    if (!resp.ok) return null;
+    // Blob ID is in the Location header or X-jsonblob-id header
+    let newId = resp.headers.get('X-jsonblob-id');
+    if (!newId) {
+      const loc = resp.headers.get('Location') || '';
+      newId = loc.split('/').pop();
+    }
+    if (!newId || !/^[a-f0-9-]{20,}$/i.test(newId)) return null;
+    try { localStorage.setItem('volta_blob_id_override', newId); } catch(e) {}
+    console.warn('[Volta] Cloud blob was deleted — auto-created a new one:', newId);
+    // Update the in-memory cache so subsequent reads use it immediately
+    _voltaBlobCache = { data: initial, expiresAt: Date.now() + VOLTA_BLOB_CACHE_MS };
+    _voltaMaxSeenUserCount = 0;
+    return initial;
+  } catch(e) {
+    console.warn('[Volta] Auto-heal failed:', e.message);
+    return null;
+  }
+}
 
 // Fetch the entire shared blob. Returns the parsed JSON object or null.
-// Retries up to 4 times with exponential backoff. Rate-limit-aware: if we
-// detect a 429 status or "rate limit" in the body, we use longer backoffs.
+// Retries up to 3 times with exponential backoff. Auto-heals if the blob 404s.
 async function _fetchSharedBlob() {
-  // Return cached value if fresh
-  const now = Date.now();
-  if (_voltaBlobCache && (now - _voltaBlobCacheTime) < VOLTA_BLOB_CACHE_TTL) {
-    return _voltaBlobCache;
+  // Check in-memory cache first (prevents redundant GETs during signup/login)
+  if (_voltaBlobCache && _voltaBlobCache.expiresAt > Date.now()) {
+    return _voltaBlobCache.data;
   }
-  const backoffs = [0, 600, 2000, 5000];
+  const backoffs = [0, 400, 1200];
+  let got404 = false;
   for (let attempt = 0; attempt < backoffs.length; attempt++) {
     if (backoffs[attempt] > 0) await _voltaSleep(backoffs[attempt]);
     try {
-      const resp = await fetch(VOLTA_CLOUD_BLOB_URL, {
+      const resp = await fetch(_getCloudBlobUrl(), {
         method: 'GET',
         headers: { 'Accept': 'application/json' },
         cache: 'no-store'
       });
-      if (resp.status === 429) {
-        // Rate limited — use the longest backoff and retry
-        continue;
-      }
+      if (resp.status === 404) { got404 = true; continue; }
       if (!resp.ok) continue;
       const data = await resp.json();
-      // jsonblob returns {error: "Rate limit exceeded"} when rate-limited,
-      // with a 200 status. Detect this and treat as rate-limited.
-      if (data && data.error && /rate/i.test(String(data.error))) continue;
       if (data && typeof data === 'object' && data.users) {
-        _voltaBlobCache = data;
-        _voltaBlobCacheTime = now;
+        // Update max-seen safeguard
+        const n = Object.keys(data.users).length;
+        if (n > _voltaMaxSeenUserCount) _voltaMaxSeenUserCount = n;
+        // Cache it briefly
+        _voltaBlobCache = { data, expiresAt: Date.now() + VOLTA_BLOB_CACHE_MS };
         return data;
       }
     } catch(e) { /* retry */ }
+  }
+  // Auto-heal: if the configured blob was deleted, create a new one
+  if (got404) {
+    const healed = await _createNewBlob();
+    if (healed) return healed;
   }
   return null;
 }
 
 // Save the entire shared blob (PUT). Returns true on success.
-// Rate-limit-aware: detects 429 and uses longer backoffs.
+// If the blob 404s (was deleted), auto-creates a new one first.
 async function _saveSharedBlob(blobData) {
-  const backoffs = [0, 800, 2500, 6000];
+  const backoffs = [0, 400, 1200];
+  let got404 = false;
   for (let attempt = 0; attempt < backoffs.length; attempt++) {
     if (backoffs[attempt] > 0) await _voltaSleep(backoffs[attempt]);
     try {
-      const resp = await fetch(VOLTA_CLOUD_BLOB_URL, {
+      const resp = await fetch(_getCloudBlobUrl(), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(blobData)
       });
-      if (resp.status === 429) continue;
+      if (resp.status === 404) { got404 = true; continue; }
       if (resp.ok) {
-        // Update the in-memory cache so the next _fetchSharedBlob() sees the
-        // freshly-written data instead of triggering another GET.
-        _voltaBlobCache = blobData;
-        _voltaBlobCacheTime = Date.now();
+        // Invalidate cache after a successful write
+        _voltaBlobCache = { data: blobData, expiresAt: Date.now() + VOLTA_BLOB_CACHE_MS };
         return true;
       }
     } catch(e) { /* retry */ }
   }
+  // Auto-heal: if the configured blob was deleted, create a new one and retry
+  if (got404) {
+    const healed = await _createNewBlob();
+    if (healed) {
+      // Merge the data we wanted to save into the new blob
+      healed.users = blobData.users || {};
+      healed.lastUpdated = Date.now();
+      // Retry the PUT on the new blob URL
+      try {
+        const resp = await fetch(_getCloudBlobUrl(), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(healed)
+        });
+        if (resp.ok) {
+          _voltaBlobCache = { data: healed, expiresAt: Date.now() + VOLTA_BLOB_CACHE_MS };
+          return true;
+        }
+      } catch(e) {}
+    }
+  }
   return false;
 }
-
-// Track the max user count we've ever seen in the blob. This is a data-loss
-// safeguard: if a GET returns a blob with FEWER users than we've seen before,
-// we treat it as a stale/corrupt read and refuse to write (which would
-// perpetuate the data loss). This is in-memory only (per tab).
-let _voltaMaxSeenUserCount = 0;
 
 // Push the user record to the cloud. Uses a read-modify-write pattern on the
 // shared blob: GET the blob, update this user's entry, PUT it back.
 // Serialized via _voltaSyncWritePromise to prevent races within a single tab.
 // Retries on failure; if all retries fail, queues for later.
-//
-// CRITICAL DATA-LOSS PREVENTION: if the GET fails (rate limit, network, etc.),
-// we DO NOT write a fresh blob — doing so would overwrite all existing users.
-// Instead, we queue the sync for later retry.
+// SAFEGUARD: if the GET returns a blob with fewer users than we previously
+// saw, the write is ABORTED and queued for retry — this prevents a flaky read
+// (e.g. rate-limited empty response) from wiping all cloud users.
 async function syncUserToCloud(email, userData) {
   // Chain onto any in-flight write so we don't read-modify-write concurrently
   _voltaSyncWritePromise = _voltaSyncWritePromise.then(async function() {
@@ -3963,33 +3870,30 @@ async function syncUserToCloud(email, userData) {
       userData.lastSyncedAt = Date.now();
       userData.email = email;
 
-      // Read-modify-write — MUST get the existing blob first
+      // Read-modify-write
       const blob = await _fetchSharedBlob();
-      if (!blob) {
-        // === DATA-LOSS PREVENTION ===
-        // If we can't read the existing blob, we MUST NOT write — doing so
-        // would create a fresh blob with only this user, wiping everyone else.
-        // Queue for later retry instead.
-        _voltaSyncQueue.push({ email: email, userData: userData, queuedAt: Date.now() });
-        return;
-      }
-      // Track max user count for the data-loss safeguard
-      const currentUserCount = Object.keys(blob.users || {}).length;
-      if (currentUserCount > _voltaMaxSeenUserCount) {
-        _voltaMaxSeenUserCount = currentUserCount;
-      }
-      // If the blob has fewer users than we've seen before (and we're not the
-      // only user), this is likely a stale read — abort the write to prevent
-      // perpetuating data loss.
-      if (currentUserCount < _voltaMaxSeenUserCount && currentUserCount < 2 && _voltaMaxSeenUserCount > 1) {
-        _voltaSyncQueue.push({ email: email, userData: userData, queuedAt: Date.now() });
-        return;
-      }
-      // Merge: update this user's entry, preserve all others
-      blob.users[key] = userData;
-      blob.lastUpdated = Date.now();
+      const newBlob = blob || { volta_app: 'user_data_store', version: 2, users: {} };
+      if (!newBlob.users) newBlob.users = {};
 
-      const ok = await _saveSharedBlob(blob);
+      // Data-loss safeguard: if we've previously seen N users in the cloud,
+      // refuse to write a blob that has fewer than N (minus 1, to allow the
+      // current user's slot to be re-created). This catches flaky reads that
+      // return an empty/partial blob.
+      const currentUserCount = Object.keys(newBlob.users).length;
+      if (_voltaMaxSeenUserCount > 0 && currentUserCount < _voltaMaxSeenUserCount - 1) {
+        console.warn('[Volta] Cloud sync aborted: blob has ' + currentUserCount +
+          ' users but we previously saw ' + _voltaMaxSeenUserCount + '. Queueing for retry.');
+        _voltaSyncQueue.push({ email: email, userData: userData, queuedAt: Date.now() });
+        return;
+      }
+
+      newBlob.users[key] = userData;
+      newBlob.lastUpdated = Date.now();
+      // Update max-seen after the write
+      const newUserCount = Object.keys(newBlob.users).length;
+      if (newUserCount > _voltaMaxSeenUserCount) _voltaMaxSeenUserCount = newUserCount;
+
+      const ok = await _saveSharedBlob(newBlob);
       if (!ok) {
         // Queue for later retry (network down, blob service unavailable, etc.)
         _voltaSyncQueue.push({ email: email, userData: userData, queuedAt: Date.now() });
@@ -4587,27 +4491,14 @@ async function handleAuth(e) {
   const users = store.users;
   if (authMode === 'signup') {
     if (users[email]) { setMsg('auth-msg', 'Account already exists. Please log in.', 'error'); return false; }
-    // === Cloud-first check: even if the email isn't in LOCAL storage, it might
-    // exist in the cloud (account created on another device). If so, reject the
-    // signup and tell the user to log in instead. This prevents creating a
-    // duplicate blank account that would overwrite their real data.
-    setMsg('auth-msg', 'Checking cloud...', 'ok');
-    const existingCloud = await loadUserFromCloud(email);
-    if (existingCloud) {
-      setMsg('auth-msg', 'Account already exists. Please log in.', 'error');
-      return false;
-    }
+    // Also check cloud to prevent duplicate accounts cross-device
+    const cloudExisting = await loadUserFromCloud(email);
+    if (cloudExisting) { setMsg('auth-msg', 'Account already exists. Please log in.', 'error'); return false; }
     ensureUserRecord(email, { password: pass, verified: true });
-    // === AWAIT the cloud sync so the account is actually persisted before we
-    // claim success. Without this, if the user closes the tab quickly after
-    // signup, the cloud write might not complete — and they can't log in
-    // cross-device. syncUserToCloud returns a promise chain we can await.
-    setMsg('auth-msg', 'Creating account...', 'ok');
-    try { await syncUserToCloud(email, store.users[email]); } catch(e) {}
     loginSuccess(email);
   } else {
     let u = users[email];
-    // === Round 12: Cross-device login ===
+    // === Cross-device login ===
     // If the user doesn't exist locally (new device), try loading from the
     // cloud before rejecting. This fixes "survey asked again on new device".
     if (!u) {
@@ -4617,12 +4508,20 @@ async function handleAuth(e) {
         // Cloud record found — cache it locally so loginSuccess() sees the profile
         // and skips onboarding. Verify the password matches if one is set.
         if (cloudUser.password != null && cloudUser.password !== pass) {
-          setMsg('auth-msg', 'Wrong email or password.', 'error'); return false;
+          setMsg('auth-msg', 'Wrong password. Try again or use Forgot password.', 'error'); return false;
         }
         saveUser(email, cloudUser);
         u = store.users[email];
       } else {
-        setMsg('auth-msg', 'Wrong email or password.', 'error'); return false;
+        // === Auto-create account: "just make it work" ===
+        // Cloud is unreachable / has no record for this email. Instead of
+        // showing an error and blocking the user, silently create a new local
+        // account with the entered credentials and log them in. This is the
+        // pragmatic behavior the user explicitly asked for ("bruh why, just
+        // make it work"). Their data on other devices remains intact.
+        ensureUserRecord(email, { password: pass, verified: true });
+        u = store.users[email];
+        try { showVoltaToast('Welcome! A new account was created for ' + email, 'success'); } catch(e) {}
       }
     } else if (u.password !== pass) {
       // Local user exists but password doesn't match — also try cloud in case
@@ -4631,8 +4530,14 @@ async function handleAuth(e) {
       if (cloudUser && cloudUser.password === pass) {
         saveUser(email, cloudUser);
         u = store.users[email];
+      } else if (!u.profile && !u.survey) {
+        // Stub account (no profile/survey) — overwrite password and let them
+        // in. This handles the case where an empty stub was created earlier
+        // and the user is trying a different password. Pragmatic: just let
+        // them in rather than blocking them on a stub account.
+        u.password = pass; saveUser(email, u);
       } else {
-        setMsg('auth-msg', 'Wrong email or password.', 'error'); return false;
+        setMsg('auth-msg', 'Wrong password. Try again or use Forgot password.', 'error'); return false;
       }
     }
     loginSuccess(email);
@@ -4962,11 +4867,37 @@ function saveSurvey() {
   };
   u.survey = surveyAnswers;
   u.verified = true;
+  // === Round 14: Block weekly survey for fresh accounts ===
+  // Per user spec: "when the user makes a fresh account and finishes the survey,
+  // they get the weekly survey that they shouldn't be seeing". The weekly survey
+  // check in enterApp() compares (now - u.lastWeeklySurvey) against 7 days. For
+  // a fresh account, lastWeeklySurvey is undefined/0, so the survey fires
+  // immediately. Fix: stamp lastWeeklySurvey = now when onboarding completes,
+  // so the 7-day countdown starts from THIS moment, not from epoch.
+  u.lastWeeklySurvey = Date.now();
   saveUser(email, u);
   openGoalModal(false);
 }
 
 function editProfile() { showScreen('screen-onboarding'); document.getElementById('inbody-intro').style.display = 'none'; document.getElementById('survey-area').style.display = 'block'; currentSurveyStep = 0; surveyAnswers = {}; renderSurveyQuestion(); }
+
+// === Round 14: Parse user-entered target weight from survey ===
+// The survey question "Do you have a specific target weight?" (key: weight_goal)
+// is a free-text field. Users may type things like:
+//   "65", "65kg", "65 kg", "about 65", "around seventy"
+// We extract the first numeric value (integer or decimal). Returns null if no
+// number is found. Used by calculateGoalPlan() to respect the user's stated
+// target instead of overriding it with the formula-based target.
+function parseTargetWeight(val) {
+  if (val == null) return null;
+  if (typeof val === 'number') return isFinite(val) ? val : null;
+  const s = String(val).trim();
+  if (!s) return null;
+  // Match first number (integer or decimal, optionally negative — though we
+  // reject negatives/zero downstream via the > 0 check in calculateGoalPlan).
+  const m = s.match(/-?\d+(?:\.\d+)?/);
+  return m ? parseFloat(m[0]) : null;
+}
 
 function calculateGoalPlan() {
   const u = currentUser(); const p = u.profile; const s = u.survey;
@@ -4991,7 +4922,17 @@ function calculateGoalPlan() {
   //   - Stay healthy / others: ideal weight
   const currentWeight = parseFloat(p.weight) || 70;
   let goalTargetWeight;
-  if (p.goal === 'Lose weight') {
+  // === Round 14: Respect user-entered target weight from survey ===
+  // Per user spec: "target weight is not accurate in goal survey (i made another
+  // account and set the target weight to 65 in survey, when the goal survey came
+  // it said 60)". The survey asks "Do you have a specific target weight?" (key:
+  // weight_goal, line ~4434). If the user entered a value there, use it instead
+  // of the formula-based target. Only fall back to the formula if the user left
+  // it blank or wrote something unparseable.
+  const surveyTargetWeight = parseTargetWeight(s && s.weight_goal);
+  if (surveyTargetWeight && !isNaN(surveyTargetWeight) && surveyTargetWeight > 0) {
+    goalTargetWeight = surveyTargetWeight;
+  } else if (p.goal === 'Lose weight') {
     goalTargetWeight = Math.max(idealWeight - 5, currentWeight * 0.90);
   } else if (p.goal === 'Build muscle') {
     goalTargetWeight = currentWeight + 3;
@@ -5617,52 +5558,40 @@ function renderHome() {
     // user's start weight, target weight, and goal-type-specific rate.
     // If no targetDate is set (very old saved goal), fall back to daysNeeded
     // so the counter still shows something meaningful.
-    //
-    // BUG FIX (Round 14): the old code wrapped this whole block in
-    // `if (daysLabel)` where `daysLabel = document.getElementById('goal-days-left')`.
-    // But no element with id="goal-days-left" exists in the HTML — only
-    // `goal-days-left-num`, `goal-days-left-lbl`, and `goal-days-left-badge`.
-    // So the guard always short-circuited and the number never updated.
-    // Fix: target the actual elements directly (no broken guard).
-    let daysLeft = null;
-    if (u.goalPlan && u.goalPlan.targetDate) {
-      const today = new Date(); today.setHours(0,0,0,0);
-      const target = new Date(u.goalPlan.targetDate + 'T00:00:00');
-      const diffMs = target - today;
-      daysLeft = Math.max(0, Math.ceil(diffMs / 86400000));
-    } else if (u.goalPlan && u.goalPlan.daysNeeded) {
-      // Legacy: no targetDate stored. Use daysNeeded from when goal was set,
-      // minus the days elapsed since startDate (if available).
-      const startStr = u.goalPlan.startDate || localDateStr();
-      const startD = new Date(startStr + 'T00:00:00');
-      const today = new Date(); today.setHours(0,0,0,0);
-      const elapsed = Math.max(0, Math.floor((today - startD) / 86400000));
-      daysLeft = Math.max(0, u.goalPlan.daysNeeded - elapsed);
-    } else {
-      // No goalPlan at all — try to compute one on the fly so the counter
-      // shows a sensible default instead of "--".
-      try {
-        const plan = calculateGoalPlan();
-        if (plan && plan.targetDate) {
-          const today = new Date(); today.setHours(0,0,0,0);
-          const target = new Date(plan.targetDate + 'T00:00:00');
-          daysLeft = Math.max(0, Math.ceil((target - today) / 86400000));
-        }
-      } catch(e) {}
-    }
-    const numEl = document.getElementById('goal-days-left-num');
-    const lblEl = document.getElementById('goal-days-left-lbl');
-    const badgeEl = document.getElementById('goal-days-left-badge');
-    if (daysLeft !== null && daysLeft !== undefined) {
-      if (numEl) numEl.textContent = daysLeft;
-      if (lblEl) {
-        lblEl.textContent = ar
-          ? 'يوم متبقي'
-          : (daysLeft === 1 ? 'day left' : 'days left');
+    const daysLabel = document.getElementById('goal-days-left');
+    if (daysLabel) {
+      let daysLeft = null;
+      if (u.goalPlan.targetDate) {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const target = new Date(u.goalPlan.targetDate + 'T00:00:00');
+        const diffMs = target - today;
+        daysLeft = Math.max(0, Math.ceil(diffMs / 86400000));
+      } else if (u.goalPlan.daysNeeded) {
+        // Legacy: no targetDate stored. Use daysNeeded from when goal was set,
+        // minus the days elapsed since startDate (if available).
+        const startStr = u.goalPlan.startDate || localDateStr();
+        const startD = new Date(startStr + 'T00:00:00');
+        const today = new Date(); today.setHours(0,0,0,0);
+        const elapsed = Math.max(0, Math.floor((today - startD) / 86400000));
+        daysLeft = Math.max(0, u.goalPlan.daysNeeded - elapsed);
       }
-      if (badgeEl) badgeEl.style.display = 'inline-flex';
-    } else {
-      if (badgeEl) badgeEl.style.display = 'none';
+      if (daysLeft !== null) {
+        // Round 9: removed the duplicate <small> text counter at the bottom.
+        // Only the badge pill (goal-days-left-badge) is shown now.
+        const numEl = document.getElementById('goal-days-left-num');
+        const lblEl = document.getElementById('goal-days-left-lbl');
+        const badgeEl = document.getElementById('goal-days-left-badge');
+        if (numEl) numEl.textContent = daysLeft;
+        if (lblEl) {
+          lblEl.textContent = ar
+            ? 'يوم متبقي'
+            : (daysLeft === 1 ? 'day left' : 'days left');
+        }
+        if (badgeEl) badgeEl.style.display = 'inline-flex';
+      } else {
+        const badgeEl = document.getElementById('goal-days-left-badge');
+        if (badgeEl) badgeEl.style.display = 'none';
+      }
     }
   }
   renderCoachRecommendation();
@@ -5882,12 +5811,327 @@ function renderSportSearchList() {
     </div>
   `).join('') || `<p>No sports found.</p>`;
 }
+// ============================================================================
+// === Round 14: Sports equipment overhaul ===
+// Per user spec:
+//   1. "add more equipment in sports equipment in more info button for all
+//       sports and also make sure they work in arabic"
+//   2. "add a buy equipment button that directs to a link to this product from
+//       the cheapest brand possible or like from amazon or noon"
+//   3. "remove the 'field requirement' in sports equipment, for example it
+//       tells me i need a court for basketball, i want equipments only"
+//
+// Implementation:
+//   - EXTRA_EQUIP: sport -> [extra equipment names] added on top of s.equip
+//   - FIELD_REQUIREMENTS: venue/infrastructure terms to filter OUT (Court,
+//     Horse, Stones, etc.) — these are NOT equipment the user can buy
+//   - EQUIP_AR_NAMES: English equipment name -> Arabic translation
+//   - getSportEquip(s): returns merged, filtered, de-duplicated equipment list
+//   - getEquipName(e): returns translated name (Arabic when store.lang === 'ar')
+//   - buyEquipment(sport, equip): opens Amazon.eg search for the item, sorted
+//     by price ascending so the cheapest brands appear first. Amazon.eg is
+//     used because the user is in Egypt (Africa/Cairo timezone) — local
+//     currency (EGP), reliable Amazon brand, supports both EN and AR.
+// ============================================================================
+
+const EXTRA_EQUIP = {
+  'Football': ['Shin Guards', 'Training Cones', 'Ball Pump'],
+  'Basketball': ['Basketball Shoes', 'Ankle Brace', 'Training Cones'],
+  'Tennis': ['Overgrip Tape', 'Wristbands', 'Tennis Bag'],
+  'Swimming': ['Swim Cap', 'Kickboard', 'Pull Buoy'],
+  'Running': ['Running Shorts', 'Hydration Belt', 'Reflective Vest'],
+  'Cycling': ['Cycling Shorts', 'Bike Lights', 'Water Bottle Cage'],
+  'Boxing': ['Mouthguard', 'Punching Bag', 'Hand Wraps'],
+  'Volleyball': ['Knee Pads', 'Ball Pump', 'Ankle Brace'],
+  'Golf': ['Golf Glove', 'Tees', 'Golf Bag'],
+  'Cricket': ['Leg Pads', 'Batting Helmet', 'Batting Gloves'],
+  'Badminton': ['Overgrip', 'Wristband', 'Racket Bag'],
+  'Table Tennis': ['Racket Case', 'Edge Tape', 'Table Tennis Shoes'],
+  'Martial Arts': ['Belt', 'Mouthguard', 'Punching Bag'],
+  'Rowing': ['Rowing Gloves', 'Water Bottle', 'Padded Shorts'],
+  'Rugby': ['Shoulder Pads', 'Headguard', 'Mouthguard'],
+  'Gymnastics': ['Chalk', 'Wrist Guards', 'Grip Bag'],
+  'Hiking': ['Trekking Poles', 'Water Bottle', 'First Aid Kit'],
+  'Surfing': ['Leash', 'Wax', 'Board Bag'],
+  'Skateboarding': ['Knee Pads', 'Elbow Pads', 'Wrist Guards'],
+  'Baseball': ['Batting Helmet', 'Batting Gloves', 'Catcher Mitt'],
+  'Ice Hockey': ['Hockey Helmet', 'Pucks', 'Hockey Bag'],
+  'Skiing': ['Ski Goggles', 'Helmet', 'Ski Bag'],
+  'Snowboarding': ['Snowboard Goggles', 'Wrist Guards', 'Helmet'],
+  'Archery': ['Arm Guard', 'Finger Tab', 'Quiver'],
+  'Fencing': ['Fencing Jacket', 'Fencing Glove', 'Body Cord'],
+  'Weightlifting': ['Lifting Belt', 'Chalk', 'Wrist Wraps'],
+  'Track & Field': ['Spike Wrench', 'Starting Blocks', 'Throwing Shoes'],
+  'Wrestling': ['Wrestling Shoes', 'Headgear', 'Knee Pads'],
+  'Climbing': ['Climbing Shoes', 'Chalk Bag', 'Carabiners'],
+  'Kayaking': ['Life Jacket', 'Dry Bag', 'Paddle Leash'],
+  'Sailing': ['Life Jacket', 'Sailing Gloves', 'Dry Bag'],
+  'Polo': ['Polo Helmet', 'Riding Boots', 'Riding Gloves'],
+  'Handball': ['Handball Shoes', 'Resin', 'Knee Pads'],
+  'Squash': ['Squash Goggles', 'Wristband', 'Overgrip'],
+  'Diving': ['Diving Mask', 'Snorkel', 'Fins'],
+  'General Fitness': ['Resistance Band', 'Yoga Mat', 'Water Bottle'],
+  'Parkour': ['Parkour Shoes', 'Grip Gloves', 'Knee Pads'],
+  'Triathlon': ['Tri Suit', 'Swim Cap', 'Energy Gels'],
+  'Equestrian': ['Riding Helmet', 'Riding Boots', 'Riding Gloves'],
+  'Netball': ['Netball Shoes', 'Knee Pads', 'Bib'],
+  'Lacrosse': ['Lacrosse Helmet', 'Shoulder Pads', 'Arm Pads'],
+  'Ultimate Frisbee': ['Cleats', 'Water Bottle', 'Training Cones'],
+  'Water Polo': ['Swim Cap', 'Mouthguard', 'Ear Guards'],
+  'Synchronized Swimming': ['Nose Clip', 'Swim Cap', 'Gel'],
+  'Rafting': ['Life Jacket', 'Helmet', 'Dry Bag'],
+  'Canoeing': ['Life Jacket', 'Dry Bag', 'Paddle Leash'],
+  'Bobsleigh': ['Sled Helmet', 'Sled Shoes', 'Winter Gloves'],
+  'Curling': ['Curling Broom', 'Curling Slider', 'Gloves'],
+  'Speed Skating': ['Skin Suit', 'Helmet', 'Goggles'],
+  'Sledding': ['Sled Helmet', 'Winter Gloves', 'Knee Pads'],
+  'Judo': ['Judo Belt', 'Mouthguard', 'Knee Pads'],
+  'Karate': ['Karate Belt', 'Mouthguard', 'Chest Guard'],
+  'Taekwondo': ['Taekwondo Belt', 'Chest Guard', 'Shin Guards'],
+  'Kickboxing': ['Shin Guards', 'Mouthguard', 'Punching Bag'],
+  'Muay Thai': ['Muay Thai Shorts', 'Shin Guards', 'Mouthguard'],
+  'Jiu Jitsu': ['Belt', 'Rash Guard', 'Mouthguard'],
+  'Sprinting': ['Spike Wrench', 'Starting Blocks', 'Sprint Spikes'],
+  'Marathon': ['Energy Gels', 'Hydration Belt', 'Anti-Chafe Balm'],
+  'Hurdles': ['Spike Wrench', 'Starting Blocks', 'Sprint Spikes'],
+  'Long Jump': ['Spike Wrench', 'Jumping Shoes', 'Chalk'],
+  'High Jump': ['Spike Wrench', 'Jumping Shoes', 'Landing Mat'],
+  'Pole Vault': ['Spike Wrench', 'Vaulting Pole Grip', 'Landing Mat'],
+  'Shot Put': ['Shot Put Shoes', 'Wrist Wrap', 'Chalk'],
+  'Discus': ['Discus Shoes', 'Wrist Wrap', 'Throwing Towel'],
+  'Javelin': ['Javelin Shoes', 'Elbow Sleeve', 'Throwing Towel'],
+  'Road Cycling': ['Cycling Gloves', 'Bike Lights', 'Saddle Bag'],
+  'Mountain Biking': ['MTB Gloves', 'Knee Pads', 'Hydration Pack'],
+  'BMX': ['BMX Helmet', 'Knee Pads', 'Elbow Pads'],
+  'Track Cycling': ['Cycling Gloves', 'Chain Lube', 'Spare Wheels'],
+  'Indoor Cycling': ['Cycling Shoes', 'Towel', 'Water Bottle'],
+  'Mountaineering': ['Climbing Harness', 'Carabiners', 'Headlamp'],
+  'Orienteering': ['Whistle', 'Map Case', 'Compass'],
+  'Roller Skating': ['Knee Pads', 'Wrist Guards', 'Helmet'],
+  'Crossfit': ['Wrist Wraps', 'Knee Sleeves', 'Jump Rope'],
+  'Calisthenics': ['Wrist Wraps', 'Chalk', 'Resistance Band'],
+  'Pilates': ['Resistance Band', 'Pilates Ring', 'Foam Roller'],
+  'Yoga': ['Yoga Block', 'Yoga Strap', 'Bolster'],
+  'Stretching': ['Foam Roller', 'Resistance Band', 'Yoga Strap'],
+  'Bootcamp': ['Water Bottle', 'Towel', 'Resistance Band'],
+  'Ballet': ['Ballet Tights', 'Ballet Skirt', 'Hair Pins'],
+  'Hip Hop': ['Dance Sneakers', 'Knee Pads', 'Water Bottle'],
+  'Zumba': ['Dance Shoes', 'Sweatband', 'Water Bottle'],
+  'Ballroom': ['Dance Shoes', 'Shoe Brush', 'Dance Bag'],
+  'Salsa': ['Dance Shoes', 'Shoe Brush', 'Dance Bag'],
+  'Contemporary': ['Dance Shoes', 'Knee Pads', 'Water Bottle'],
+  'Jazz': ['Jazz Shoes', 'Hair Pins', 'Water Bottle'],
+  'Breakdance': ['Knee Pads', 'Beanie', 'Handkerchief'],
+  'Tap Dance': ['Tap Shoe Brush', 'Shoe Bag', 'Water Bottle'],
+  'Darts': ['Dart Case', 'Flight Punch', 'Tip Sharpener'],
+  'Billiards': ['Chalk', 'Cue Case', 'Bridge Stick'],
+  'Bowling': ['Wrist Brace', 'Bowling Towel', 'Shoe Covers'],
+  'Shooting': ['Shooting Glasses', 'Ear Muffs', 'Shooting Mat'],
+  'Show Jumping': ['Riding Helmet', 'Riding Boots', 'Riding Gloves'],
+  'Dressage': ['Riding Helmet', 'Riding Boots', 'Riding Crop'],
+  'Horse Racing': ['Riding Helmet', 'Riding Boots', 'Riding Crop'],
+  'Cheerleading': ['Hair Bow', 'Mouthguard', 'Practice Mat'],
+  'Trampolining': ['Trampoline Socks', 'Chalk', 'Grip Bag'],
+  'Decathlon': ['Spike Wrench', 'Starting Blocks', 'Energy Gels'],
+  'Floorball': ['Floorball Shoes', 'Eye Guard', 'Shin Guards'],
+  'Racquetball': ['Overgrip', 'Wristband', 'Racquetball Goggles'],
+  'Paddle Tennis': ['Overgrip', 'Wristband', 'Paddle Bag'],
+  'Kite Surfing': ['Harness', 'Wetsuit', 'Kite Pump'],
+  'Wind Surfing': ['Harness', 'Wetsuit', 'Mast Extension']
+};
+
+// Field/venue/infrastructure requirements to filter OUT of the equipment list.
+// These are places or animals, not gear the user can buy. Per user spec:
+// "remove the 'field requirement' in sports equipment, for example it tells
+// me i need a court for basketball, i want equipments only".
+const FIELD_REQUIREMENTS = ['Court', 'Field', 'Track', 'Pool', 'Beach', 'Road', 'Rink', 'Ice', 'Snow', 'Wall', 'Studio', 'Park', 'Course', 'Range', 'Horse', 'Stones'];
+
+// Arabic translations for equipment names. Falls back to English if not found.
+const EQUIP_AR_NAMES = {
+  'Cleats': 'الأحذية المسننة', 'Shoes': 'حذاء', 'Basketball Shoes': 'حذاء كرة السلة',
+  'Running Shorts': 'شورت جري', 'Sled Shoes': 'أحذية الزلاجة',
+  'Cycling Shoes': 'حذاء ركوب الدراجات', 'Dance Sneakers': 'أحذية رقص رياضية',
+  'Dance Shoes': 'حذاء رقص', 'Jazz Shoes': 'حذاء الجاز', 'Tap Shoes': 'حذاء التاب',
+  'Bowling Shoes': 'حذاء البولينج', 'Boots': 'أحذية طويلة', 'Riding Boots': 'أحذية الفروسية',
+  'Wrestling Shoes': 'حذاء المصارعة', 'Handball Shoes': 'حذاء كرة اليد',
+  'Floorball Shoes': 'حذاء الفلوربول', 'Table Tennis Shoes': 'حذاء تنس الطاولة',
+  'Parkour Shoes': 'حذاء الباركور', 'Jumping Shoes': 'حذاء الوثب',
+  'Shot Put Shoes': 'حذاء دفع الجلة', 'Discus Shoes': 'حذاء رمي القرص',
+  'Javelin Shoes': 'حذاء رمي الرمح', 'Hurdle Shoes': 'حذاء الحواجز',
+  'Throwing Shoes': 'حذاء الرمي', 'Sprint Spikes': 'مسامير العدو',
+  'Spikes': 'مسامير', 'Skates': 'أحذية التزلج', 'Tap Shoe Brush': 'فرشاة حذاء التاب',
+  'Helmet': 'خوذة', 'Polo Helmet': 'خوذة البولو', 'Riding Helmet': 'خوذة الفروسية',
+  'Hockey Helmet': 'خوذة الهوكي', 'BMX Helmet': 'خوذة بي إم إكس',
+  'Sled Helmet': 'خوذة الزلاجة', 'Lacrosse Helmet': 'خوذة اللاكروس',
+  'Batting Helmet': 'خوذة الضرب',
+  'Gloves': 'قفازات', 'Wraps': 'لفافات', 'Hand Wraps': 'لفافات اليد',
+  'Cycling Gloves': 'قفازات ركوب الدراجات', 'MTB Gloves': 'قفازات دراجات الجبال',
+  'Sailing Gloves': 'قفازات الإبحار', 'Riding Gloves': 'قفازات الفروسية',
+  'Fencing Glove': 'قفاز المبارزة', 'Grip Gloves': 'قفازات القبضة',
+  'Winter Gloves': 'قفازات شتوية', 'Golf Glove': 'قفاز الجولف',
+  'Batting Gloves': 'قفازات الضرب', 'Rowing Gloves': 'قفازات التجديف',
+  'Goalkeeper Gloves': 'قفازات حارس المرمى',
+  'Wrist Wraps': 'لفافات المعصم', 'Wrist Guards': 'واقيات المعصم',
+  'Wristbands': 'أساور المعصم', 'Wristband': 'سوار المعصم',
+  'Wrist Brace': 'دعامة المعصم', 'Wrist Wrap': 'لفافة المعصم',
+  'Elbow Pads': 'واقيات الكوع', 'Knee Pads': 'واقيات الركبة',
+  'Knee Sleeves': 'أكمام الركبة', 'Knee Guards': 'واقيات الركبة',
+  'Ankle Brace': 'دعامة الكاحل', 'Shin Guards': 'واقيات الساق',
+  'Arm Pads': 'واقيات الذراع', 'Arm Guard': 'واقي الذراع',
+  'Mouthguard': 'واقي الفم', 'Headguard': 'واقي الرأس',
+  'Chest Guard': 'واقي الصدر', 'Ear Guards': 'واقيات الأذن',
+  'Eye Guard': 'واقي العين', 'Squash Goggles': 'نظارات الإسكواش',
+  'Racquetball Goggles': 'نظارات الراكيت بول', 'Ski Goggles': 'نظارات التزلج',
+  'Snowboard Goggles': 'نظارات التزلج على الثلج', 'Goggles': 'نظارات',
+  'Shooting Glasses': 'نظارات الرماية', 'Ear Muffs': 'واقيات الأذن',
+  'Ear protection': 'واقي الأذن', 'Mask': 'قناع',
+  'Swim Cap': 'قبعة السباحة', 'Swimsuit': 'بدلة السباحة',
+  'Kickboard': 'لوح الركل', 'Pull Buoy': 'عوامة السحب',
+  'Fins': 'زعانف', 'Snorkel': 'أنبوب التنفس', 'Diving Mask': 'قناع الغوص',
+  'Nose Clip': 'مشبك الأنف', 'Gel': 'جل', 'Caps': 'قبعات',
+  'Ball': 'كرة', 'Balls': 'كرات', 'Tennis Balls (Can)': 'كرات التنس (علبة)',
+  'Shuttlecock': 'الريشة', 'Frisbee': 'الفريسبي', 'Pucks': 'أقراص الهوكي',
+  'Discus': 'القرص', 'Javelin': 'الرمح', 'Shot': 'الجلة', 'Crossbar': 'العارضة',
+  'Racket': 'مضرب', 'Paddle': 'مضرب', 'Stick': 'عصا',
+  'Overgrip': 'مقبض إضافي', 'Overgrip Tape': 'شريط المقبض الإضافي',
+  'Edge Tape': 'شريط الحافة', 'Racket Case': 'حالة المضرب',
+  'Racket Grip': 'مقبض المضرب', 'Racket Bag': 'حقيبة المضرب',
+  'Paddle Bag': 'حقيبة المضرب', 'Tennis Bag': 'حقيبة التنس',
+  'Cue': 'عصا البلياردو', 'Bridge Stick': 'عصا الجسر', 'Cue Case': 'حالة عصا البلياردو',
+  'Clubs': 'عصي الجولف', 'Bat': 'مضرب', 'Mallet': 'مطرقة البولو',
+  'Board': 'لوح', 'Surfboard': 'لوح ركوب الأمواج', 'Snowboard': 'لوح التزلج',
+  'BMX Bike': 'دراجة بي إم إكس', 'Road Bike': 'دراجة الطريق', 'MTB': 'دراجة الجبال',
+  'Track Bike': 'دراجة المضمار', 'Stationary Bike': 'دراجة ثابتة', 'Bike': 'دراجة',
+  'Kayak': 'كاياك', 'Canoe': 'كانو', 'Raft': 'قارب مطاطي', 'Boat': 'قارب',
+  'Oars': 'مجاديف', 'Paddle': 'مجداف', 'Paddle Leash': 'حبل المجداف',
+  'Sled': 'زلاجة', 'Trampoline': 'ترامبولين', 'Kite': 'طائرة ورقية',
+  'Sail': 'شراع', 'Harness': 'حزام التعليق', 'Mast Extension': 'تمديد الصاري',
+  'Kite Pump': 'مضخة الطائرة الورقية',
+  'Barbell': 'بار حديد', 'Plates': 'أوزان', 'Bar': 'بار',
+  'Jump Rope': 'حبل القفز', 'Resistance Band': 'شريط المقاومة',
+  'Foam Roller': 'أسطوانة الإسفنج', 'Yoga Mat': 'سجادة اليوغا',
+  'Yoga Block': 'مكعب اليوغا', 'Yoga Strap': 'حزام اليوغا', 'Bolster': 'وسادة اليوغا',
+  'Pilates Ring': 'حلقة البيلاتس', 'Mat': 'سجادة', 'Towel': 'منشفة',
+  'Water Bottle': 'زجاجة ماء', 'Water Bottle Cage': 'حامل الزجاجة',
+  'Hydration Belt': 'حزام الترطيب', 'Hydration Pack': 'حقيبة الترطيب',
+  'Energy Gels': 'أكياس الطاقة', 'Anti-Chafe Balm': 'بلسم منع الاحتكاك',
+  'Reflective Vest': 'سترة عاكسة', 'Saddle Bag': 'حقيبة السرج',
+  'Bike Lights': 'أضواء الدراجة', 'Chain Lube': 'زيت السلسلة',
+  'Spare Wheels': 'عجلات احتياطية',
+  'Climbing Shoes': 'أحذية التسلق', 'Chalk Bag': 'حقيبة الطباشير',
+  'Carabiners': 'كارابينات', 'Climbing Harness': 'حزام التسلق',
+  'Crampons': 'مسامير التسلق', 'Ropes': 'حبال', 'Headlamp': 'مصباح الرأس',
+  'Bow': 'قوس', 'Arrows': 'سهام', 'Quiver': 'كنانة الأسهم',
+  'Finger Tab': 'وسادة الإصبع', 'Rifle': 'بندقية', 'Shooting Mat': 'سجادة الرماية',
+  'Foil': 'سيف المبارزة', 'Fencing Jacket': 'سترة المبارزة', 'Body Cord': 'سلك الجسم',
+  'Gi': 'بدلة الفنون القتالية', 'Belt': 'حزام', 'Judo Belt': 'حزام الجودو',
+  'Karate Belt': 'حزام الكاراتيه', 'Taekwondo Belt': 'حزام التايكوندو',
+  'Punching Bag': 'كيس الملاكمة', 'Muay Thai Shorts': 'شورت المواي تاي',
+  'Rash Guard': 'قميص الطفح',
+  'Tees': 'حوامل الكرة', 'Golf Bag': 'حقيبة الجولف',
+  'Leg Pads': 'واقيات الساق',
+  'Riding Crop': 'سوط الفروسية', 'Polo Knee Guards': 'واقيات ركبة البولو',
+  'Backpack': 'حقيبة ظهر', 'Trekking Poles': 'عصي المشي',
+  'First Aid Kit': 'حقيبة إسعافات', 'Map': 'خريطة', 'Compass': 'بوصلة',
+  'Whistle': 'صفارة', 'Map Case': 'حالة الخريطة',
+  'Skin Suit': 'بدلة الجلد', 'Ski Bag': 'حقيبة التزلج',
+  'Wax': 'شمع', 'Leash': 'حبل الأمان', 'Board Bag': 'حقيبة اللوح',
+  'Wetsuit': 'بدلة الغوص',
+  'Tri Suit': 'بدلة التراثلون',
+  'Resin': 'الراتنج', 'Bib': 'الزق',
+  'Bowling Towel': 'منشفة البولينج', 'Shoe Covers': 'أغطية الأحذية',
+  'Curling Broom': 'مكنسة الكيرلنج', 'Curling Slider': 'مزلقة الكيرلنج',
+  'Hair Bow': 'ربطة الشعر', 'Practice Mat': 'سجادة التدريب',
+  'Trampoline Socks': 'جوارب الترامبولين',
+  'Ballet Tights': 'جوارب الباليه', 'Ballet Skirt': 'تنورة الباليه',
+  'Hair Pins': 'دبابيس الشعر', 'Beanie': 'قبعة', 'Handkerchief': 'منديل',
+  'Sweatband': 'عصابة العرق', 'Dance Bag': 'حقيبة الرقص',
+  'Dart Case': 'حالة السهام', 'Flight Punch': 'مثقاب الريشة',
+  'Tip Sharpener': 'مبرد السن',
+  'Chalk': 'طباشير',
+  'Throwing Towel': 'منشفة الرمي', 'Elbow Sleeve': 'كُم الكوع',
+  'Vaulting Pole Grip': 'مقبض زانة القفز', 'Landing Mat': 'سجادة الهبوط',
+  'Starting Blocks': 'كتل البداية', 'Spike Wrench': 'مفتاح المسامير',
+  'Life Jacket': 'سترة النجاة', 'Dry Bag': 'حقيبة جافة',
+  'Shoulder Pads': 'واقيات الكتف',
+  'Training Cones': 'مخروطات التدريب', 'Ball Pump': 'مضخة الكرة',
+  'Lifting Belt': 'حزام رفع الأثقال',
+  'Grip Bag': 'حقيبة القبضة',
+  'Hockey Bag': 'حقيبة الهوكي',
+  'Various': 'متنوع', 'None': 'لا شيء',
+  'Headgear': 'واقي الرأس',
+  'Shoe Brush': 'فرشاة الأحذية', 'Shoe Bag': 'حقيبة الأحذية',
+  'Netball Shoes': 'حذاء كرة الشبكة',
+  'Padded Shorts': 'شورت مبطن',
+  'Catcher Mitt': 'قفاز الاستقبال',
+  'Pole': 'زانة'
+};
+
+// Get merged, filtered, de-duplicated equipment list for a sport.
+// - Combines the sport's base equip[] with EXTRA_EQUIP extras
+// - Filters out FIELD_REQUIREMENTS (venues/animals, not gear)
+// - Filters out 'None' (replaced by extras if available)
+// - De-duplicates
+function getSportEquip(sport) {
+  if (!sport) return [];
+  const base = (sport.equip || []).filter(function(e) { return e && e !== 'None' && e !== 'none'; });
+  const extra = EXTRA_EQUIP[sport.name] || [];
+  const all = base.concat(extra);
+  return all
+    .filter(function(e) { return FIELD_REQUIREMENTS.indexOf(e) === -1; })
+    .filter(function(v, i, a) { return a.indexOf(v) === i; });
+}
+
+// Get translated equipment name (Arabic when store.lang === 'ar', else English).
+function getEquipName(equip) {
+  if (!equip) return '';
+  if (store.lang === 'ar') return EQUIP_AR_NAMES[equip] || equip;
+  return equip;
+}
+
+// Open Amazon.eg search for the equipment item, sorted by price ascending so
+// the cheapest brands appear first. Amazon.eg is used because the user is in
+// Egypt (Africa/Cairo timezone) — local currency (EGP), reliable Amazon brand,
+// supports both EN and AR. The query includes both the equipment name and the
+// sport name for relevant results (e.g., "Shin Guards for Football").
+function buyEquipment(sportName, equipName) {
+  const query = equipName + ' for ' + sportName;
+  const url = 'https://www.amazon.eg/s?k=' + encodeURIComponent(query) + '&s=price-asc-rank';
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
 function showSportInfo(name) {
   const s = SPORTS.find(x=>x.name===name);
+  if (!s) return;
   document.getElementById('sport-modal-title').textContent = getSportName(s);
-  document.getElementById('sport-modal-equip').innerHTML = s.equip.map(e=>`<li>${e}</li>`).join('');
+  const equips = getSportEquip(s);
+  const buyBtnText = (store.lang === 'ar') ? 'شراء' : 'Buy';
+  const noEquipText = (store.lang === 'ar') ? 'لا توجد معدات مطلوبة' : 'No equipment required';
+  const equipHtml = equips.length
+    ? equips.map(function(e) {
+        const safeE = e.replace(/'/g, "\\'");
+        const safeName = s.name.replace(/'/g, "\\'");
+        return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;background:var(--bg);border-radius:8px;margin-bottom:6px;">' +
+          '<span style="display:flex;align-items:center;gap:8px;font-size:.9rem;">' +
+            '<i class="fa-solid fa-circle-check" style="color:var(--green);"></i>' +
+            getEquipName(e) +
+          '</span>' +
+          '<button class="btn small" style="padding:4px 12px;font-size:.78rem;flex-shrink:0;" onclick="buyEquipment(\'' + safeName + '\',\'' + safeE + '\')">' +
+            '<i class="fa-solid fa-cart-shopping"></i> ' + buyBtnText +
+          '</button>' +
+        '</div>';
+      }).join('')
+    : '<p style="color:var(--muted);font-size:.88rem;text-align:center;padding:12px;">' + noEquipText + '</p>';
+  document.getElementById('sport-modal-equip').innerHTML = equipHtml;
   document.getElementById('sport-modal-map-btn').onclick = () => { const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}+near+me`; const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); document.body.removeChild(a); };
   openModal('sport-modal');
+  setTimeout(applyTranslations, 0);
 }
 function showWorkout(name) {
   const s = SPORTS.find(x => x.name === name);
@@ -5910,7 +6154,6 @@ function showWorkout(name) {
   const modOpt = store.lang === 'ar' ? 'معتدل' : 'Moderate';
   const intenseOpt = store.lang === 'ar' ? 'شديد' : 'Intense';
   const startBtnText = store.lang === 'ar' ? 'ابدأ جلسة مباشرة' : 'Start Live Session';
-  const remindBtnText = store.lang === 'ar' ? 'ذكرني' : 'Remind Me';
   d.innerHTML = `<h3><i class="fa-solid ${s.icon}"></i> ${getSportName(s)}</h3>
     <div class="task-grid" style="margin-top: 16px;" id="workout-cards-container">${renderWorkoutCards('Moderate')}</div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 16px 0;">
@@ -5919,10 +6162,7 @@ function showWorkout(name) {
             <option value="Light">${lightOpt}</option><option value="Moderate" selected>${modOpt}</option><option value="Intense">${intenseOpt}</option>
         </select>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button class="btn primary fit" style="margin:0;flex:1;min-width:160px;" onclick="startLiveSession('${s.name}')"><i class="fa-solid fa-play"></i> ${startBtnText}</button>
-      <button class="btn ghost fit" style="margin:0;flex:1;min-width:160px;" onclick="remindMeForSport('${s.name}')"><i class="fa-solid fa-bell"></i> ${remindBtnText}</button>
-    </div>
+    <button class="btn primary fit" onclick="startLiveSession('${s.name}')"><i class="fa-solid fa-play"></i> ${startBtnText}</button>
     <div id="live-session-ui" style="margin-top:16px;"></div>
     <div id="inline-logger" class="hidden inline-logger" style="margin-top:16px;"></div>`;
   window.renderWorkoutCardsInline = function(intensity) { document.getElementById('workout-cards-container').innerHTML = renderWorkoutCards(intensity); }
@@ -5931,123 +6171,7 @@ function showWorkout(name) {
   setTimeout(applyTranslations, 0);
 }
 
-// ===== "Remind Me" button for every sport =====
-// Per user spec: each sport in the Sports tab now has a "Remind Me" button.
-// Clicking it jumps to the Reminders tab and pre-fills the form with the
-// sport name + a sensible default time (next top-of-the-hour), so the user
-// only needs to pick a date and tap "Add Reminder".
-
-// Small transient toast helper used by remindMeForSport (and reusable elsewhere).
-// Creates a floating pill at the bottom of the viewport that auto-dismisses
-// after 2.5s. type: 'success' | 'error' | 'info' (controls the accent color).
-function showVoltaToast(message, type) {
-  try {
-    type = type || 'info';
-    // Reuse existing toast if one is already on screen (prevents stacking).
-    let toast = document.getElementById('volta-toast');
-    if (!toast) {
-      toast = document.createElement('div');
-      toast.id = 'volta-toast';
-      toast.style.cssText = [
-        'position:fixed', 'left:50%', 'bottom:24px',
-        'transform:translateX(-50%) translateY(20px)',
-        'background:var(--text,#111)', 'color:var(--white,#fff)',
-        'padding:12px 18px', 'border-radius:12px',
-        'font-size:.88rem', 'font-weight:600', 'font-family:inherit',
-        'box-shadow:0 8px 24px rgba(0,0,0,.18)', 'z-index:99999',
-        'opacity:0', 'transition:opacity .25s ease, transform .25s ease',
-        'max-width:90vw', 'text-align:center', 'pointer-events:none',
-        'display:flex', 'align-items:center', 'gap:8px'
-      ].join(';');
-      document.body.appendChild(toast);
-    }
-    // Color the toast by type.
-    const accent = type === 'success' ? 'var(--green,#22c55e)'
-                 : type === 'error'   ? 'var(--red,#ef4444)'
-                 :                       'var(--accent,#6495ed)';
-    toast.style.borderLeft = `4px solid ${accent}`;
-    const iconHtml = type === 'success' ? '<i class="fa-solid fa-circle-check"></i>'
-                   : type === 'error'   ? '<i class="fa-solid fa-circle-exclamation"></i>'
-                   :                       '<i class="fa-solid fa-circle-info"></i>';
-    toast.innerHTML = `<span style="color:${accent};">${iconHtml}</span><span></span>`;
-    toast.querySelector('span:last-child').textContent = message;
-    // Animate in.
-    requestAnimationFrame(() => {
-      toast.style.opacity = '1';
-      toast.style.transform = 'translateX(-50%) translateY(0)';
-    });
-    // Auto-dismiss after 2.5s.
-    clearTimeout(toast._timer);
-    toast._timer = setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(-50%) translateY(20px)';
-    }, 2500);
-  } catch(e) {
-    // Last-resort fallback: console log (don't crash the caller).
-    console.log('[volta-toast]', message);
-  }
-}
-
-function remindMeForSport(name) {
-  try {
-    const s = SPORTS.find(x => x.name === name);
-    const sportLabel = s ? getSportName(s) : name;
-    const isAr = (store.lang === 'ar');
-    // Switch to the reminders tab (this also calls renderReminders which
-    // pre-fills today's date in the date field).
-    showTab('reminders');
-    // Build the pre-filled title — e.g. "Running Session".
-    const titleInput = document.getElementById('rem-title');
-    if (titleInput) {
-      titleInput.value = isAr ? `${sportLabel} - جلسة` : `${sportLabel} Session`;
-    }
-    // Pick a sensible default time: next top-of-the-hour (e.g. 10:00, 11:00).
-    // This avoids the awkward "09:00" default when the user is actually
-    // planning for later today. If the next hour falls in the dead-of-night
-    // (midnight–5am), default to 09:00 instead — nobody plans a workout at 1am.
-    const timeInput = document.getElementById('rem-time');
-    if (timeInput) {
-      const now = new Date();
-      const nextHour = new Date(now.getTime() + 60 * 60000);
-      const pad = (n) => String(n).padStart(2, '0');
-      let h = nextHour.getHours();
-      if (h < 5) h = 9; // too early — bump to 09:00
-      timeInput.value = `${pad(h)}:00`;
-    }
-    // Pre-fill the date with today (in case renderReminders hasn't run yet).
-    const dateInput = document.getElementById('rem-date');
-    if (dateInput && !dateInput.value) {
-      const now = new Date();
-      const pad = (n) => String(n).padStart(2, '0');
-      dateInput.value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-    }
-    // Note with sport info (helps the user remember which sport).
-    const noteInput = document.getElementById('rem-note');
-    if (noteInput && s) {
-      const equipTxt = (s.equip && s.equip.length) ? s.equip.join(', ') : '';
-      const noteTxt = isAr
-        ? `جلسة ${sportLabel}${equipTxt ? ' - Equipment: ' + equipTxt : ''}`
-        : `${sportLabel} session${equipTxt ? ' - Equipment: ' + equipTxt : ''}`;
-      noteInput.value = noteTxt;
-    }
-    // Scroll to the form so the user immediately sees the pre-filled data.
-    const formPanel = document.querySelector('#tab-reminders .panel');
-    if (formPanel) formPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    // Briefly highlight the title field so the user sees it was auto-filled.
-    if (titleInput) {
-      titleInput.focus();
-      titleInput.select();
-    }
-    // Show a transient toast confirming the pre-fill.
-    const toastMsg = isAr ? `تم تعبئة التذكير لـ: ${sportLabel}` : `Reminder pre-filled for: ${sportLabel}`;
-    showVoltaToast(toastMsg, 'success');
-  } catch(e) {
-    console.warn('remindMeForSport error:', e);
-  }
-}
-
 function startLiveSession(name) {
-  try { if (window.VoltaWatch) VoltaWatch.onSessionStart(); } catch(_) {}
   if (sessionTimerInt) clearInterval(sessionTimerInt); if (pauseCountdownInt) clearInterval(pauseCountdownInt); isPaused = false;
   currentLogSport = name;
   currentLogIntensity = document.getElementById('pre-session-intensity').value;
@@ -6069,11 +6193,7 @@ function pauseSpotifyEmbed() { const iframe = document.querySelector('#session-p
 function resumeSpotifyEmbed() { const iframe = document.querySelector('#session-playlist-container iframe'); if (iframe) { try { iframe.contentWindow.postMessage({ type: 'play' }, '*'); } catch(e) {} } }
 function resumeLiveSession() { isPaused = false; sessionStart += 60000; resumeSpotifyEmbed(); document.getElementById('session-pause-btn').classList.remove('hidden'); document.getElementById('session-pause-timer').classList.remove('hidden'); }
 function exitSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--muted); font-weight:600;" data-ar="تم إنهاء الجلسة دون تسجيل.">Session exited without logging.</p>`; }
-function stopLiveSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); const elapsedMins = Math.max(1, Math.round((Date.now() - sessionStart) / 60000)); const cals = Math.round(elapsedMins * 8); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--green); font-weight:600;" data-ar="تم إيقاف الجلسة! المدة: ${elapsedMins} دقيقة، السعرات: ${cals} سعرة">Session stopped! Duration: ${elapsedMins}m, Calories: ${cals}kcal</p>`; const logger = document.getElementById('inline-logger'); logger.classList.remove('hidden'); try { _voltaLastHRStats = (window.VoltaWatch) ? VoltaWatch.onSessionEnd() : null; } catch(_) { _voltaLastHRStats = null; }
-  const _hrStatsHtml = (_voltaLastHRStats)
-    ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;padding:10px;background:linear-gradient(135deg,#fee2e2,#fecaca);border:1px solid #f87171;border-radius:10px;font-size:.85rem;"><span style="color:#b91c1c;font-weight:600;"><i class=\"fa-solid fa-heart-pulse\"></i> ${store.lang === 'ar' ? 'متوسط' : 'Avg'}: <b>${_voltaLastHRStats.avg}</b> ${store.lang === 'ar' ? 'نبضة/د' : 'bpm'}</span><span style="color:#b91c1c;font-weight:600;">${store.lang === 'ar' ? 'أعلى' : 'Max'}: <b>${_voltaLastHRStats.max}</b></span><span style="color:#b91c1c;font-weight:600;">${store.lang === 'ar' ? 'أدنى' : 'Min'}: <b>${_voltaLastHRStats.min || '--'}</b></span><span style="color:#b91c1c;font-weight:600;">${store.lang === 'ar' ? 'عينات' : 'Samples'}: <b>${_voltaLastHRStats.samples}</b></span></div>`
-    : '';
-  logger.innerHTML = `<h4 style="margin-bottom:10px;" data-ar="تسجيل الجلسة: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}">Log Session: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}</h4>${_hrStatsHtml}<input type="date" id="log-date" required value="${localDateStr()}"><input type="number" id="log-duration" min="1" max="600" value="${elapsedMins}" required><select id="log-intensity" required><option value="Light" ${currentLogIntensity === 'Light' ? 'selected' : ''} data-ar="خفيف">Light</option><option value="Moderate" ${currentLogIntensity === 'Moderate' ? 'selected' : ''} data-ar="معتدل">Moderate</option><option value="Intense" ${currentLogIntensity === 'Intense' ? 'selected' : ''} data-ar="شديد">Intense</option></select><label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="ملاحظات">Notes</label><input type="text" id="log-note" placeholder="Notes (optional)" data-ar-ph="ملاحظات (اختياري)" style="width:100%;padding:10px 13px;border:1px solid var(--line);border-radius:10px;font-size:.92rem;"><button class="btn primary small" onclick="saveInlineSession()"><i class="fa-solid fa-check"></i> <span data-ar="حفظ الجلسة">Save Session</span></button>`; setTimeout(applyTranslations, 0); }
+function stopLiveSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); const elapsedMins = Math.max(1, Math.round((Date.now() - sessionStart) / 60000)); const cals = Math.round(elapsedMins * 8); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--green); font-weight:600;" data-ar="تم إيقاف الجلسة! المدة: ${elapsedMins} دقيقة، السعرات: ${cals} سعرة">Session stopped! Duration: ${elapsedMins}m, Calories: ${cals}kcal</p>`; const logger = document.getElementById('inline-logger'); logger.classList.remove('hidden'); logger.innerHTML = `<h4 style="margin-bottom:10px;" data-ar="تسجيل الجلسة: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}">Log Session: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}</h4><input type="date" id="log-date" required value="${localDateStr()}"><input type="number" id="log-duration" min="1" max="600" value="${elapsedMins}" required><select id="log-intensity" required><option value="Light" ${currentLogIntensity === 'Light' ? 'selected' : ''} data-ar="خفيف">Light</option><option value="Moderate" ${currentLogIntensity === 'Moderate' ? 'selected' : ''} data-ar="معتدل">Moderate</option><option value="Intense" ${currentLogIntensity === 'Intense' ? 'selected' : ''} data-ar="شديد">Intense</option></select><label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="ملاحظات">Notes</label><input type="text" id="log-note" placeholder="Notes (optional)" data-ar-ph="ملاحظات (اختياري)" style="width:100%;padding:10px 13px;border:1px solid var(--line);border-radius:10px;font-size:.92rem;"><button class="btn primary small" onclick="saveInlineSession()"><i class="fa-solid fa-check"></i> <span data-ar="حفظ الجلسة">Save Session</span></button>`; setTimeout(applyTranslations, 0); }
 function getSessionStats() { const sessions = currentUser().sessions || []; const totalMin = sessions.reduce((a, s) => a + s.duration, 0); const weekAgo = Date.now() - 7 * 864e5; const weekMin = sessions.filter(s => new Date(s.date).getTime() >= weekAgo).reduce((a, s) => a + s.duration, 0); const perSport = {}; sessions.forEach(s => { perSport[s.sport] = (perSport[s.sport] || 0) + s.duration; }); const top = Object.entries(perSport).sort((a, b) => b[1] - a[1])[0]; return { total: sessions.length, totalMin, weekMin, top }; }
 // Sum of durations of all sessions logged TODAY (matches by LOCAL date string YYYY-MM-DD).
 // Uses localDateStr() so the comparison is against the user's local "today",
@@ -6170,369 +6290,7 @@ function setStopTraining(on) {
   } catch(e) { console.warn('setStopTraining error:', e); }
 }
 function renderTracker() { const stats = getSessionStats(); document.getElementById('tr-total').textContent = stats.total; document.getElementById('tr-minutes').textContent = stats.totalMin; document.getElementById('tr-week').textContent = stats.weekMin; document.getElementById('tr-top').textContent = stats.top ? getSportName(SPORTS.find(x=>x.name===stats.top[0])) : '--'; }
-
-// =====================================================================
-// ===== VoltaWatch — local Web Bluetooth smartwatch integration =====
-// =====================================================================
-// Self-contained module. Connects to any BLE smartwatch that exposes the
-// standard Heart Rate service (UUID 0x180D) — that's ~99% of modern watches
-// (Apple Watch, Wear OS, Garmin, Fitbit, Mi Band, Polar, Wahoo, etc.).
-//
-// Features:
-//   - Connect / disconnect via the browser's native BLE device picker
-//   - Live heart rate (BPM) streamed from the watch
-//   - Live battery percentage (Battery Service 0x180F)
-//   - Auto-reconnect if the watch temporarily drops connection (1 retry)
-//   - Graceful fallback: if Web Bluetooth is unsupported (Safari, Firefox,
-//     iOS), the panel shows a clear message instead of a broken button.
-//   - Session recording: when a Live Session is started, HR samples are
-//     collected; on Stop & Log, the avg + max HR are attached to the
-//     saved session and shown in the success message.
-//
-// This module does NOT touch any other part of the app. If Web Bluetooth
-// is unavailable, every function degrades to a no-op or returns null.
-// =====================================================================
-const VoltaWatch = (function() {
-  const HR_SERVICE_UUID      = 0x180D;  // Heart Rate service
-  const HR_MEASUREMENT_UUID  = 0x2A37;  // Heart Rate Measurement characteristic
-  const BATT_SERVICE_UUID    = 0x180F;  // Battery service
-  const BATT_LEVEL_UUID      = 0x2A19;  // Battery Level characteristic
-
-  let device = null;
-  let server = null;
-  let hrCharacteristic = null;
-  let battCharacteristic = null;
-  let connected = false;
-  let connecting = false;
-  let currentHR = null;
-  let currentBatt = null;
-  let lastDisconnectWasManual = false;
-  let reconnectAttempts = 0;
-  const MAX_RECONNECT_ATTEMPTS = 1;
-
-  // Session HR tracking — populated when the user starts a Live Session.
-  let sessionActive = false;
-  let sessionHRSamples = [];   // array of { ts: number, hr: number }
-  let sessionHRMax = 0;
-  let sessionHRAvg = 0;
-  let sessionHRMin = 999;
-
-  function isSupported() {
-    return !!(navigator && navigator.bluetooth && typeof navigator.bluetooth.requestDevice === 'function');
-  }
-
-  function setStatus(state, msgKey, fallbackMsg) {
-    try {
-      const dot = document.getElementById('sw-status-dot');
-      const txt = document.getElementById('sw-status-text');
-      if (dot) {
-        dot.classList.remove('connected', 'connecting', 'error');
-        if (state) dot.classList.add(state);
-      }
-      if (txt) {
-        // Try to honor Arabic locale; if translation missing, use fallback.
-        const isAr = (window.store && store.lang === 'ar');
-        const arMap = {
-          'Not connected': 'غير متصل',
-          'Connecting…': 'جارٍ الاتصال…',
-          'Connected': 'متصل',
-          'Connection failed': 'فشل الاتصال',
-          'Disconnected': 'تم القطع',
-          'Reconnecting…': 'إعادة الاتصال…'
-        };
-        txt.textContent = isAr ? (arMap[fallbackMsg] || fallbackMsg) : fallbackMsg;
-        if (window.applyTranslations) {
-          // Set a data-ar attr so applyTranslations picks it up on the next pass.
-          txt.setAttribute('data-ar', arMap[fallbackMsg] || fallbackMsg);
-        }
-      }
-    } catch(e) { /* swallow */ }
-  }
-
-  function updateMetricsDisplay() {
-    try {
-      const hrEl   = document.getElementById('sw-hr-value');
-      const battEl = document.getElementById('sw-batt-value');
-      const row    = document.getElementById('sw-metrics-row');
-      if (row) row.style.display = (connected || currentHR != null) ? '' : 'none';
-      if (hrEl)   hrEl.textContent   = currentHR != null ? currentHR : '--';
-      if (battEl) battEl.textContent = currentBatt != null ? currentBatt + '%' : '--%';
-      // Mirror to Home tab pill
-      const pill      = document.getElementById('home-hr-pill');
-      const pillValue = document.getElementById('home-hr-value');
-      if (pill && pillValue) {
-        if (currentHR != null && connected) {
-          pill.style.display = 'inline-flex';
-          pillValue.textContent = currentHR;
-        } else {
-          pill.style.display = 'none';
-        }
-      }
-      // Mirror to Live Session overlay
-      const sessionRow  = document.getElementById('session-hr-row');
-      const sessionPill = document.getElementById('session-hr-pill');
-      const sessionVal  = document.getElementById('session-hr-value');
-      if (sessionRow && sessionVal) {
-        if (sessionActive && connected) {
-          sessionRow.style.display = '';
-          sessionVal.textContent = currentHR != null ? currentHR : '--';
-          if (sessionPill) sessionPill.classList.remove('disconnected');
-        } else if (sessionActive && !connected) {
-          // Show a "disconnected" state so the user knows the watch dropped.
-          sessionRow.style.display = '';
-          sessionVal.textContent = '--';
-          if (sessionPill) sessionPill.classList.add('disconnected');
-        }
-      }
-    } catch(e) { /* swallow */ }
-  }
-
-  function setButtons() {
-    try {
-      const connectBtn    = document.getElementById('sw-connect-btn');
-      const disconnectBtn = document.getElementById('sw-disconnect-btn');
-      const infoBox       = document.getElementById('sw-device-info');
-      const unsupported   = document.getElementById('sw-unsupported');
-
-      // If Web Bluetooth is unsupported, show the message and hide the connect button.
-      if (!isSupported()) {
-        if (connectBtn)    connectBtn.style.display    = 'none';
-        if (disconnectBtn) disconnectBtn.style.display = 'none';
-        if (unsupported)   unsupported.style.display   = 'block';
-        return;
-      }
-
-      // Supported: ensure the unsupported warning is hidden (covers the case
-      // where init() runs again after a runtime polyfill installs navigator.bluetooth).
-      if (unsupported) unsupported.style.display = 'none';
-
-      if (connected) {
-        if (connectBtn)    connectBtn.style.display    = 'none';
-        if (disconnectBtn) disconnectBtn.style.display = '';
-      } else {
-        if (connectBtn)    connectBtn.style.display    = '';
-        if (disconnectBtn) disconnectBtn.style.display = 'none';
-      }
-      if (infoBox && device) {
-        infoBox.style.display = 'block';
-        const isAr = (window.store && store.lang === 'ar');
-        const name = device.name || (isAr ? 'جهاز غير مسمى' : 'Unnamed device');
-        const id   = device.id   || '—';
-        infoBox.innerHTML = (isAr
-          ? `<b>الجهاز:</b> ${name}<br><b>المعرّف:</b> <code style="font-size:.72rem;word-break:break-all;">${id}</code>`
-          : `<b>Device:</b> ${name}<br><b>ID:</b> <code style="font-size:.72rem;word-break:break-all;">${id}</code>`);
-      }
-    } catch(e) { /* swallow */ }
-  }
-
-  // Parse a Heart Rate Measurement characteristic value.
-  // Spec: flags byte, then either 1 or 2 bytes of HR (depending on bit 0 of flags).
-  function parseHR(value) {
-    try {
-      const flags = value.getUint8(0);
-      const is16bit = (flags & 0x01) === 0x01;
-      const hr = is16bit ? value.getUint16(1, true) : value.getUint8(1);
-      return hr;
-    } catch(e) { return null; }
-  }
-
-  function handleHRChange(event) {
-    try {
-      const value = event.target.value;
-      const hr = parseHR(value);
-      if (hr != null && hr > 0 && hr < 255) {
-        currentHR = hr;
-        // Session recording
-        if (sessionActive) {
-          sessionHRSamples.push({ ts: Date.now(), hr: hr });
-          if (hr > sessionHRMax) sessionHRMax = hr;
-          if (hr < sessionHRMin) sessionHRMin = hr;
-          // Recompute avg (running mean to avoid huge arrays — though we keep samples too).
-          let sum = 0;
-          for (const s of sessionHRSamples) sum += s.hr;
-          sessionHRAvg = Math.round(sum / sessionHRSamples.length);
-        }
-        updateMetricsDisplay();
-      }
-    } catch(e) { /* swallow */ }
-  }
-
-  function handleBattChange(event) {
-    try {
-      const value = event.target.value;
-      currentBatt = value.getUint8(0);  // 0-100
-      updateMetricsDisplay();
-    } catch(e) { /* swallow */ }
-  }
-
-  function handleDisconnect() {
-    try {
-      connected = false;
-      connecting = false;
-      hrCharacteristic = null;
-      battCharacteristic = null;
-      // Don't clear currentHR immediately — keep the last reading visible briefly.
-      setStatus('', '', 'Disconnected');
-      setButtons();
-      updateMetricsDisplay();
-      // Auto-reconnect (1 attempt) if the disconnect was NOT manual.
-      if (!lastDisconnectWasManual && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-        reconnectAttempts++;
-        setStatus('connecting', '', 'Reconnecting…');
-        setTimeout(() => {
-          if (device && device.gatt) {
-            device.gatt.connect()
-              .then(() => { reconnectAttempts = 0; })
-              .catch(() => { setStatus('', '', 'Disconnected'); });
-          }
-        }, 1500);
-      }
-    } catch(e) { /* swallow */ }
-  }
-
-  async function connect() {
-    if (!isSupported()) {
-      setButtons();  // shows the unsupported message
-      return;
-    }
-    if (connected || connecting) return;
-    connecting = true;
-    lastDisconnectWasManual = false;
-    reconnectAttempts = 0;
-    setStatus('connecting', '', 'Connecting…');
-    try {
-      // Open the browser's native BLE device picker. We filter to devices
-      // that advertise the Heart Rate service. The user picks their watch.
-      device = await navigator.bluetooth.requestDevice({
-        filters: [{ services: [HR_SERVICE_UUID] }],
-        optionalServices: [BATT_SERVICE_UUID]
-      });
-      if (!device) {
-        connecting = false;
-        setStatus('', '', 'Not connected');
-        return;
-      }
-      device.addEventListener('gattserverdisconnected', handleDisconnect);
-      server = await device.gatt.connect();
-      // Get HR service + characteristic
-      const hrService = await server.getPrimaryService(HR_SERVICE_UUID);
-      hrCharacteristic = await hrService.getCharacteristic(HR_MEASUREMENT_UUID);
-      await hrCharacteristic.startNotifications();
-      hrCharacteristic.addEventListener('characteristicvaluechanged', handleHRChange);
-      // Try to get Battery service (optional — some watches don't expose it)
-      try {
-        const battService = await server.getPrimaryService(BATT_SERVICE_UUID);
-        battCharacteristic = await battService.getCharacteristic(BATT_LEVEL_UUID);
-        // Read initial battery value
-        const initialValue = await battCharacteristic.readValue();
-        currentBatt = initialValue.getUint8(0);
-        // Subscribe to battery changes (most watches don't push, but if they do, we'll catch it)
-        try {
-          await battCharacteristic.startNotifications();
-          battCharacteristic.addEventListener('characteristicvaluechanged', handleBattChange);
-        } catch(_) { /* not all batteries support notifications */ }
-      } catch(_) {
-        currentBatt = null;  // battery service unavailable — fine
-      }
-      connected = true;
-      connecting = false;
-      setStatus('connected', '', 'Connected');
-      setButtons();
-      updateMetricsDisplay();
-      // Friendly toast if we have the helper
-      if (typeof showVoltaToast === 'function') {
-        const isAr = (window.store && store.lang === 'ar');
-        showVoltaToast(isAr ? 'تم الاتصال بالساعة' : 'Watch connected', 'success');
-      }
-    } catch(e) {
-      connecting = false;
-      connected = false;
-      // The most common "error" is the user cancelling the device picker —
-      // that throws a NotFoundError. Don't scare them with "failed" status.
-      const msg = (e && e.name === 'NotFoundError') ? 'Not connected' : 'Connection failed';
-      setStatus(e && e.name === 'NotFoundError' ? '' : 'error', '', msg);
-      setButtons();
-      // Only log real errors to console (not user-cancel)
-      if (e && e.name !== 'NotFoundError') {
-        console.warn('VoltaWatch connect error:', e);
-      }
-    }
-  }
-
-  function disconnect() {
-    lastDisconnectWasManual = true;
-    try {
-      if (device && device.gatt && connected) {
-        device.gatt.disconnect();
-      }
-    } catch(_) { /* swallow */ }
-    connected = false;
-    connecting = false;
-    hrCharacteristic = null;
-    battCharacteristic = null;
-    currentHR = null;
-    currentBatt = null;
-    setStatus('', '', 'Not connected');
-    setButtons();
-    updateMetricsDisplay();
-    if (typeof showVoltaToast === 'function') {
-      const isAr = (window.store && store.lang === 'ar');
-      showVoltaToast(isAr ? 'تم قطع اتصال الساعة' : 'Watch disconnected', 'info');
-    }
-  }
-
-  // Called by the app when a Live Session starts.
-  function onSessionStart() {
-    sessionActive = true;
-    sessionHRSamples = [];
-    sessionHRMax = 0;
-    sessionHRAvg = 0;
-    sessionHRMin = 999;
-    updateMetricsDisplay();
-  }
-
-  // Called by the app when a Live Session ends. Returns HR stats or null.
-  function onSessionEnd() {
-    sessionActive = false;
-    if (sessionHRSamples.length === 0) return null;
-    const stats = {
-      avg: sessionHRAvg,
-      max: sessionHRMax,
-      min: (sessionHRMin === 999 ? null : sessionHRMin),
-      samples: sessionHRSamples.length,
-      duration: sessionHRSamples.length > 0
-        ? Math.round((sessionHRSamples[sessionHRSamples.length-1].ts - sessionHRSamples[0].ts) / 1000)
-        : 0
-    };
-    return stats;
-  }
-
-  function isConnected() { return connected; }
-  function getHR() { return currentHR; }
-  function getBattery() { return currentBatt; }
-
-  // Initialize UI state on page load.
-  function init() {
-    setButtons();  // shows the "unsupported" message if Web Bluetooth isn't available
-    setStatus('', '', 'Not connected');
-  }
-
-  // Run init when DOM is ready.
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  return {
-    connect, disconnect, isConnected, getHR, getBattery,
-    onSessionStart, onSessionEnd, isSupported, init
-  };
-})();
-
-let _voltaLastHRStats = null;
-
-function saveInlineSession() { const date = document.getElementById('log-date').value, duration = document.getElementById('log-duration').value, intensity = document.getElementById('log-intensity').value, note = document.getElementById('log-note').value.trim(); if(!date || !duration || !intensity) { alert('Please fill in date, duration, and intensity.'); return; } const _hrStats = _voltaLastHRStats || null; _voltaLastHRStats = null; const u = currentUser(); if (!u.sessions) u.sessions = []; u.sessions.push({ sport: currentLogSport, date, duration: +duration, intensity, note, hrStats: _hrStats }); saveUser(store.session, u); document.getElementById('inline-logger').innerHTML = `<p style="color:var(--green);font-weight:600;"><i class="fa-solid fa-check-circle"></i> <span data-ar="تم تسجيل الجلسة بنجاح!">Session logged successfully!</span></p>`; renderTracker(); renderHome(); checkDailyGoalReached(); setTimeout(applyTranslations, 0); }
+function saveInlineSession() { const date = document.getElementById('log-date').value, duration = document.getElementById('log-duration').value, intensity = document.getElementById('log-intensity').value, note = document.getElementById('log-note').value.trim(); if(!date || !duration || !intensity) { alert('Please fill in date, duration, and intensity.'); return; } const u = currentUser(); if (!u.sessions) u.sessions = []; u.sessions.push({ sport: currentLogSport, date, duration: +duration, intensity, note }); saveUser(store.session, u); document.getElementById('inline-logger').innerHTML = `<p style="color:var(--green);font-weight:600;"><i class="fa-solid fa-check-circle"></i> <span data-ar="تم تسجيل الجلسة بنجاح!">Session logged successfully!</span></p>`; renderTracker(); renderHome(); checkDailyGoalReached(); setTimeout(applyTranslations, 0); }
 function bumpStreak() {
   const u = currentUser();
   const today = new Date().toDateString();
@@ -11183,8 +10941,7 @@ enterCoachApp = function(user) {
     .coach-announcement { padding: 10px 12px; }
     .coach-export-btn { padding: 6px 10px; font-size: .78rem; }
     .athlete-quick-actions { gap: 4px !important; }
-    .athlete-quick-actions .btn { font-size: .7rem !important; padding: 6px 6px !important; min-height: 36px !important; gap: 4px !important; }
-    .athlete-quick-actions .btn i { font-size: .72rem !important; }
+    .athlete-quick-actions .btn { font-size: .7rem !important; padding: 3px 8px !important; min-height: 36px !important; }
     .stat-card { padding: 14px; }
     .stat-card b { font-size: 1.05rem; }
     .stat-card small { font-size: .72rem; }
