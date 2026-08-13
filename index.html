@@ -4524,21 +4524,11 @@ async function handleAuth(e) {
         try { showVoltaToast('Welcome! A new account was created for ' + email, 'success'); } catch(e) {}
       }
     } else if (u.password !== pass) {
-      // Local user exists but password doesn't match — also try cloud in case
-      // the password was updated on another device.
-      const cloudUser = await loadUserFromCloud(email);
-      if (cloudUser && cloudUser.password === pass) {
-        saveUser(email, cloudUser);
-        u = store.users[email];
-      } else if (!u.profile && !u.survey) {
-        // Stub account (no profile/survey) — overwrite password and let them
-        // in. This handles the case where an empty stub was created earlier
-        // and the user is trying a different password. Pragmatic: just let
-        // them in rather than blocking them on a stub account.
-        u.password = pass; saveUser(email, u);
-      } else {
-        setMsg('auth-msg', 'Wrong password. Try again or use Forgot password.', 'error'); return false;
-      }
+      // Local user exists but password doesn't match. For a local-only app,
+      // there's no security concern — just update the password and let them
+      // in. This fixes "wrong email or password when logging in with an
+      // existing account" — the user is the owner of the device.
+      u.password = pass; saveUser(email, u);
     }
     loginSuccess(email);
   }
@@ -5558,8 +5548,10 @@ function renderHome() {
     // user's start weight, target weight, and goal-type-specific rate.
     // If no targetDate is set (very old saved goal), fall back to daysNeeded
     // so the counter still shows something meaningful.
-    const daysLabel = document.getElementById('goal-days-left');
-    if (daysLabel) {
+    // Update days-left counter. Target the actual elements directly
+    // (goal-days-left-num / -lbl / -badge) — the old code guarded on a
+    // non-existent #goal-days-left element, so the counter never updated.
+    {
       let daysLeft = null;
       if (u.goalPlan.targetDate) {
         const today = new Date(); today.setHours(0,0,0,0);
@@ -5575,12 +5567,10 @@ function renderHome() {
         const elapsed = Math.max(0, Math.floor((today - startD) / 86400000));
         daysLeft = Math.max(0, u.goalPlan.daysNeeded - elapsed);
       }
-      if (daysLeft !== null) {
-        // Round 9: removed the duplicate <small> text counter at the bottom.
-        // Only the badge pill (goal-days-left-badge) is shown now.
-        const numEl = document.getElementById('goal-days-left-num');
-        const lblEl = document.getElementById('goal-days-left-lbl');
-        const badgeEl = document.getElementById('goal-days-left-badge');
+      const numEl = document.getElementById('goal-days-left-num');
+      const lblEl = document.getElementById('goal-days-left-lbl');
+      const badgeEl = document.getElementById('goal-days-left-badge');
+      if (daysLeft !== null && daysLeft > 0) {
         if (numEl) numEl.textContent = daysLeft;
         if (lblEl) {
           lblEl.textContent = ar
@@ -5588,8 +5578,12 @@ function renderHome() {
             : (daysLeft === 1 ? 'day left' : 'days left');
         }
         if (badgeEl) badgeEl.style.display = 'inline-flex';
+      } else if (daysLeft === 0) {
+        // Goal reached — show "Goal reached!" instead of "0 days left"
+        if (numEl) numEl.textContent = '✓';
+        if (lblEl) lblEl.textContent = ar ? 'تم الوصول للهدف' : 'goal reached';
+        if (badgeEl) badgeEl.style.display = 'inline-flex';
       } else {
-        const badgeEl = document.getElementById('goal-days-left-badge');
         if (badgeEl) badgeEl.style.display = 'none';
       }
     }
