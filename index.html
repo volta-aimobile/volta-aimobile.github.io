@@ -2280,10 +2280,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <div class="map-info">
         <div><h3 style="margin-bottom:4px;"><i class="fa-solid fa-route"></i> <span data-ar="المسافة إلى النقطة ب">Distance to Point B</span></h3><b id="marathon-distance" style="font-size:1.5rem; color:var(--accent);">0.00 km</b></div>
         <div><h3 style="margin-bottom:4px;"><i class="fa-solid fa-stopwatch"></i> <span data-ar="المؤقت">Timer</span></h3><b id="marathon-timer" style="font-size:1.5rem; color:var(--green);">00:00:00</b></div>
-        <div><h3 style="margin-bottom:4px;"><i class="fa-solid fa-gauge-high"></i> <span data-ar="السرعة">Speed</span></h3><b id="marathon-speed" style="font-size:1.5rem; color:var(--amber);">0.0 km/h</b></div>
-        <!-- New: calories burnt + pace + progress toward target -->
         <div><h3 style="margin-bottom:4px;"><i class="fa-solid fa-fire"></i> <span data-ar="السعرات">Calories</span></h3><b id="marathon-calories" style="font-size:1.5rem; color:var(--red);">0 kcal</b></div>
-        <div><h3 style="margin-bottom:4px;"><i class="fa-solid fa-shoe-prints"></i> <span data-ar="السرعة">Pace</span></h3><b id="marathon-pace" style="font-size:1.5rem; color:var(--accent);">--:-- /km</b></div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn primary" id="marathon-start-btn" onclick="startMarathon()" style="margin:0;flex:1;min-width:90px;"><i class="fa-solid fa-play"></i> <span data-ar="ابدأ">Start</span></button>
           <button class="btn ghost" id="marathon-pause-btn" onclick="togglePauseMarathon()" style="margin:0;flex:1;min-width:90px;display:none;"><i class="fa-solid fa-pause"></i> <span data-ar="إيقاف مؤقت">Pause</span></button>
@@ -2604,26 +2601,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
           <div class="toggle-group"><button class="toggle-btn active" id="loc-on-btn" onclick="setLoc(true)" data-ar="تشغيل">On</button><button class="toggle-btn" id="loc-off-btn" onclick="setLoc(false)" data-ar="إيقاف">Off</button></div>
         </div>
       </div>
-      <!-- ===== Google Fit API integration placeholder =====
-           Per user spec: "make the app connect to google fitness api to make it
-           connect to smartwatches and add its permission in 'settings' tab
-           (don't do it now, tell me how to do it when i tell you to continue
-           after you finish the other stuff)".
-           When the user says "continue", we'll wire this button up to the
-           Google Fit REST API. For now it's a disabled placeholder that shows
-           what's coming. -->
-      <div class="panel">
-        <div class="settings-row">
-          <div>
-            <b><i class="fa-solid fa-heart-pulse" style="color:var(--red);margin-right:6px;"></i> <span data-ar="اتصال Google Fit">Google Fit Connection</span></b>
-            <small data-ar="اربط ساعاتك الذكية (Wear OS / Apple Watch عبر Google Fit) لمزامنة بيانات النبض والخطوات والسعرات تلقائياً.">Link your smartwatch (Wear OS / Apple Watch via Google Fit) to sync heart rate, steps, and calories automatically.</small>
-          </div>
-          <button class="btn ghost small" disabled style="opacity:.6;cursor:not-allowed;" title="Coming soon">
-            <i class="fa-solid fa-plug"></i> <span data-ar="قريباً">Coming Soon</span>
-          </button>
-        </div>
-        <small style="display:block;color:var(--muted);font-size:.78rem;margin-top:8px;" data-ar="سيتم تفعيل تكامل Google Fit API عند الطلب. سيطلب الإذن منك عند تفعيله.">Google Fit API integration will be enabled on request. It will ask for your permission when activated.</small>
-      </div>
+      <!-- ===== Google Fit API integration placeholder REMOVED per user spec ===== -->
     </div>
   </main>
 </section>
@@ -3319,6 +3297,12 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
 @media (max-width: 480px) {
   #timer-display { font-size: 3rem !important; }
   .sessions-table { display: block; overflow-x: auto; }
+}
+
+/* Hide Bicycle Marathon option + presets on phone (user spec — running only on mobile) */
+@media (max-width: 768px) {
+  #marathon-type-bike { display: none !important; }
+  #marathon-bike-presets { display: none !important; }
 }
 
 /* Fix auth coach fields not showing on mobile */
@@ -6175,7 +6159,7 @@ function startLiveSession(name) {
   document.getElementById('session-timer').textContent = "00:00";
   document.getElementById('session-calories').innerHTML = '<i class="fa-solid fa-fire"></i> 0 kcal';
   const playlistId = getRandomPlaylist(name);
-  document.getElementById('session-playlist-container').innerHTML = `<h3 style="font-size: 1rem; margin-bottom: 10px; color: var(--text);"><i class="fa-solid fa-music"></i> <span data-ar="قائمة التشغيل الموصى بها">Recommended Playlist</span></h3><iframe style="border-radius:12px;" src="https://open.spotify.com/embed/playlist/${playlistId}" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+  document.getElementById('session-playlist-container').innerHTML = `<h3 style="font-size: 1rem; margin-bottom: 10px; color: var(--text);"><i class="fa-solid fa-music"></i> <span data-ar="قائمة التشغيل الموصى بها">Recommended Playlist</span></h3><iframe style="border-radius:12px;" src="https://open.spotify.com/embed/playlist/${playlistId}" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>${!navigator.onLine ? '<p style="margin-top:8px;font-size:.78rem;color:var(--amber);"><i class="fa-solid fa-wifi"></i> <span data-ar="أنت غير متصل — قد لا تحمل قائمة التشغيل حتى تعود للاتصال.">You\'re offline — the playlist may not load until you reconnect.</span></p>' : ''}`;
   document.getElementById('session-pause-btn').classList.remove('hidden');
   document.getElementById('session-pause-timer').classList.add('hidden');
   document.getElementById('session-overlay').classList.add('active');
@@ -8276,10 +8260,20 @@ function stopMeditation() { if (meditationBreathInt) clearInterval(meditationBre
 function initMap() {
   if (map) { map.invalidateSize(); return; }
   map = L.map('map-container').setView([51.505, -0.09], 13); 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  // Offline-friendly tile layer. When online, tiles are fetched from OSM and
+  // cached by the browser's HTTP cache for offline reuse. When offline, the
+  // browser serves cached tiles automatically; missing tiles just render grey.
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    crossOrigin: true
+  }).addTo(map);
   const locCache = store.locCache;
-  if (locCache) { map.setView([locCache.lat, locCache.lon], 13); mapMarkerA = L.marker([locCache.lat, locCache.lon]).addTo(map).bindPopup('Point A (You)').openPopup(); } 
-  else if (store.locationEnabled && navigator.geolocation) {
+  // Prefer last-known location (works offline). Fall back to live geolocation
+  // only when online AND no cached location is available.
+  if (locCache) {
+    map.setView([locCache.lat, locCache.lon], 13);
+    mapMarkerA = L.marker([locCache.lat, locCache.lon]).addTo(map).bindPopup('Point A (You)').openPopup();
+  } else if (store.locationEnabled && navigator.geolocation && navigator.onLine) {
     navigator.geolocation.getCurrentPosition(pos => {
       const lat = pos.coords.latitude, lon = pos.coords.longitude;
       store.locCache = { lat, lon, time: Date.now() };
@@ -8289,6 +8283,10 @@ function initMap() {
       console.warn('Map geolocation error:', err.message);
       map.setView([0,0], 2);
     }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+  } else {
+    // Offline + no cached location: show a neutral world view and let the user
+    // pan/click manually. Distance calc still works between any two clicked points.
+    map.setView([0,0], 2);
   }
   map.on('click', function(e) {
     if (mapMarkerB) map.removeLayer(mapMarkerB);
@@ -8360,30 +8358,13 @@ function startMarathon() {
     const s = (elapsed % 60).toString().padStart(2, '0');
     const timerEl = document.getElementById('marathon-timer');
     if (timerEl) timerEl.textContent = `${h}:${m}:${s}`;
-    // Live speed (km/h) = distance / elapsed hours
-    const elapsedHours = elapsed / 3600;
-    const speed = (elapsedHours > 0 && marathonDist > 0) ? (marathonDist / elapsedHours) : 0;
-    const speedEl = document.getElementById('marathon-speed');
-    if (speedEl) speedEl.textContent = speed.toFixed(1) + ' km/h';
-    // Pace (min:sec per km) = elapsed seconds / distance
-    const paceEl = document.getElementById('marathon-pace');
-    if (paceEl) {
-      if (marathonDist > 0 && elapsed > 0) {
-        const paceSec = Math.floor(elapsed / marathonDist);
-        const pm = Math.floor(paceSec / 60).toString().padStart(2, '0');
-        const ps = (paceSec % 60).toString().padStart(2, '0');
-        paceEl.textContent = `${pm}:${ps} /km`;
-      } else {
-        paceEl.textContent = '--:-- /km';
-      }
-    }
     // Calories burnt: MET × weight(kg) × hours
     // MET values: Cycling ~7.5 (moderate), Running ~9.8 (moderate)
     const met = (marathonType === 'bike') ? 7.5 : 9.8;
     const u = currentUser();
     const weightKg = (u && u.profile && u.profile.weight) ? u.profile.weight : 70;
-    const hours = elapsedHours;
-    const kcal = Math.round(met * weightKg * hours);
+    const elapsedHours = elapsed / 3600;
+    const kcal = Math.round(met * weightKg * elapsedHours);
     const calEl = document.getElementById('marathon-calories');
     if (calEl) calEl.textContent = kcal + ' kcal';
     marathonLastCalories = kcal;
@@ -8458,19 +8439,13 @@ function stopMarathon() {
     const m = Math.floor((elapsedSecs % 3600) / 60);
     const s = elapsedSecs % 60;
     const timeStr = (h > 0 ? h + 'h ' : '') + m + 'm ' + s + 's';
-    const avgSpeed = (elapsedSecs > 0 && marathonDist > 0) ? (marathonDist / (elapsedSecs / 3600)).toFixed(1) : '0.0';
-    const paceSec = (marathonDist > 0) ? Math.floor(elapsedSecs / marathonDist) : 0;
-    const paceStr = (paceSec > 0) ? Math.floor(paceSec / 60) + ':' + String(paceSec % 60).padStart(2, '0') + ' /km' : '--:-- /km';
     const targetRow = marathonTargetDist > 0
-      ? `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);"><span><i class="fa-solid fa-bullseye" style="color:var(--accent);margin-right:6px;"></i>${ar ? 'الهدف' : 'Target'}</span><b>${marathonTargetDist} km</b></div>
-         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);"><span><i class="fa-solid fa-percent" style="color:var(--accent);margin-right:6px;"></i>${ar ? 'اكتمل' : 'Completed'}</span><b>${Math.min(100, Math.round((marathonDist / marathonTargetDist) * 100))}%</b></div>`
+      ? `<div class="athlete-session-entry"><div><b>${marathonTargetDist} km</b> <span style="color:var(--muted);">· ${ar ? 'الهدف' : 'Target'}</span></div><span class="date">${Math.min(100, Math.round((marathonDist / marathonTargetDist) * 100))}% ${ar ? 'اكتمل' : 'completed'}</span></div>`
       : '';
     resultsBody.innerHTML = `
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);"><span><i class="fa-solid fa-route" style="color:var(--accent);margin-right:6px;"></i>${ar ? 'المسافة' : 'Distance'}</span><b>${marathonDist.toFixed(2)} km</b></div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);"><span><i class="fa-solid fa-stopwatch" style="color:var(--green);margin-right:6px;"></i>${ar ? 'الوقت' : 'Time'}</span><b>${timeStr}</b></div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);"><span><i class="fa-solid fa-gauge-high" style="color:var(--amber);margin-right:6px;"></i>${ar ? 'متوسط السرعة' : 'Avg Speed'}</span><b>${avgSpeed} km/h</b></div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);"><span><i class="fa-solid fa-shoe-prints" style="color:var(--accent);margin-right:6px;"></i>${ar ? 'السرعة' : 'Pace'}</span><b>${paceStr}</b></div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);"><span><i class="fa-solid fa-fire" style="color:var(--red);margin-right:6px;"></i>${ar ? 'السعرات المحروقة' : 'Calories Burnt'}</span><b>${finalCalories} kcal</b></div>
+      <div class="athlete-session-entry"><div><b>${marathonDist.toFixed(2)} km</b> <span style="color:var(--muted);">· ${ar ? 'المسافة' : 'Distance'}</span></div><span class="date">${ar ? 'المسافة' : 'Distance'}</span></div>
+      <div class="athlete-session-entry"><div><b>${timeStr}</b> <span style="color:var(--muted);">· ${ar ? 'الوقت' : 'Time'}</span></div><span class="date">${ar ? 'المدة' : 'Duration'}</span></div>
+      <div class="athlete-session-entry"><div><b>${finalCalories} kcal</b> <span style="color:var(--muted);">· ${ar ? 'السعرات' : 'Calories'}</span></div><span class="date"><i class="fa-solid fa-fire" style="font-size:.65rem;color:var(--red);"></i> ${ar ? 'محروقة' : 'burnt'}</span></div>
       ${targetRow}
       <p style="text-align:center;color:var(--green);font-weight:600;margin-top:12px;"><i class="fa-solid fa-circle-check"></i> ${ar ? 'تم تسجيل الجلسة في المتتبع!' : 'Session logged to tracker!'}</p>
     `;
@@ -8484,10 +8459,6 @@ function stopMarathon() {
   // Reset UI
   const timerEl = document.getElementById('marathon-timer');
   if (timerEl) timerEl.textContent = '00:00:00';
-  const speedEl = document.getElementById('marathon-speed');
-  if (speedEl) speedEl.textContent = '0.0 km/h';
-  const paceEl = document.getElementById('marathon-pace');
-  if (paceEl) paceEl.textContent = '--:-- /km';
   const calEl = document.getElementById('marathon-calories');
   if (calEl) calEl.textContent = '0 kcal';
   const pauseBtn = document.getElementById('marathon-pause-btn');
@@ -11717,13 +11688,20 @@ function registerServiceWorker() {
 // Offline/Online detection
 function setupOfflineDetection() {
   const banner = document.getElementById('offline-banner');
+  let offlineHideTimer = null;
   function updateOnlineStatus() {
-    if (banner) {
-      if (!navigator.onLine) {
-        banner.classList.add('visible');
-      } else {
+    if (!banner) return;
+    if (!navigator.onLine) {
+      banner.classList.add('visible');
+      // Auto-hide after 2 seconds — the banner was never meant to stay forever
+      // (the user can keep using the app offline; data is saved locally).
+      if (offlineHideTimer) clearTimeout(offlineHideTimer);
+      offlineHideTimer = setTimeout(function() {
         banner.classList.remove('visible');
-      }
+      }, 2000);
+    } else {
+      if (offlineHideTimer) { clearTimeout(offlineHideTimer); offlineHideTimer = null; }
+      banner.classList.remove('visible');
     }
   }
   window.addEventListener('online', updateOnlineStatus);
