@@ -210,6 +210,25 @@ body.lang-ar #splash-screen.animate .splash-brand span {
 .landing-hero h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.1; }
 .landing-hero h1 span { color: var(--accent); }
 .landing-hero p { font-size: 1.1rem; color: var(--muted); margin-bottom: 32px; max-width: 600px; line-height: 1.6; }
+/* Landing CTA buttons — both Get Started and Coach Login share the SAME width,
+   height, padding, and pill shape so they look like a coherent stack. */
+.landing-cta-btn {
+  width: 280px;
+  max-width: 90vw;
+  padding: 14px 24px !important;
+  font-size: 1rem !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 !important;
+}
+.landing-cta-btn.btn.ghost {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: transparent;
+}
 .landing-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 1000px; margin: 40px auto; padding: 0 24px 60px; }
 .landing-feature { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); animation: cardStaggerIn 0.5s ease both; transition: transform 0.2s; }
 .landing-feature:hover { transform: translateY(-5px); }
@@ -232,8 +251,27 @@ body.lang-ar #splash-screen.animate .splash-brand span {
 .auth-side ul { list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: .9rem; font-weight: 500; }
 .auth-side li { display: flex; align-items: center; gap: 10px; opacity: .95; }
 .auth-main { flex: 1; padding: 48px 40px; position: relative; }
-.back-to-home { display: inline-flex; align-items: center; gap: 6px; background: transparent; border: none; color: var(--muted); font-weight: 600; font-size: .85rem; cursor: pointer; padding: 0; margin-bottom: 18px; align-self: flex-start; transition: color .15s ease, transform .15s ease; }
-.back-to-home:hover { color: var(--accent); transform: translateX(-3px); }
+/* Back to Home button — styled as a visible pill button (not a transparent text link)
+   so it's impossible to miss in any auth mode (login, signup, coach signup).
+   Previously it was a muted-color transparent link that users reported as "disappearing"
+   in signup mode because the taller form drew attention away from it. */
+.back-to-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border, var(--accent));
+  color: var(--accent);
+  font-weight: 700;
+  font-size: .85rem;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 10px;
+  margin-bottom: 18px;
+  align-self: flex-start;
+  transition: background .15s ease, transform .15s ease;
+}
+.back-to-home:hover { background: var(--accent); color: #fff; transform: translateX(-3px); }
 /* Arabic RTL: back arrow flips to point right */
 body.lang-ar .back-to-home:hover { transform: translateX(3px); }
 .auth-card { background: var(--white); border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--line); padding: 40px; width: 100%; max-width: 420px; position: relative; animation: scaleIn 0.4s ease; }
@@ -2023,7 +2061,9 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
   <div class="landing-hero">
     <h1><span data-ar="رفيقك المتكامل لـ">Your All-in-One</span> <span data-ar="اللياقة الذكية">Smart Fitness</span> <span data-ar="رفيقك">Companion</span></h1>
     <p data-ar="فولتا يتكيّف مع مزاجك وأهدافك وبيئتك. احصل على تمارين مخصصة وتنبيهات سلامة الطقس اللحظية وخطط وجبات مدعومة بالذكاء الاصطناعي في مكان واحد.">Volta adapts to your mood, your goals, and your environment. Get personalized workouts, real-time weather safety alerts, and AI-driven diet plans all in one place.</p>
-    <button class="btn primary" style="width: auto; padding: 14px 32px; font-size: 1rem;" onclick="showScreen('screen-auth'); switchAuthTab('signup')" data-ar="ابدأ مجاناً">Get Started for Free</button>
+    <div class="landing-cta-stack" style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:18px;">
+      <button class="btn primary landing-cta-btn" onclick="showScreen('screen-auth'); switchAuthTab('signup')" data-ar="ابدأ مجاناً">Get Started for Free</button>
+    </div>
 
   </div>
   <div class="landing-features">
@@ -2240,7 +2280,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <div class="banner-grid">
         <div class="banner-card" onclick="showTab('diet')"><img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Diet"><div class="banner-overlay"><h4 data-ar="النظام الغذائي">Diet System</h4><p data-ar="احصل على خطط وجبات مخصصة.">Get personalized meal plans.</p></div></div>
         <div class="banner-card" onclick="showTab('sports')"><img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Sports"><div class="banner-overlay"><h4 data-ar="الرياضة والتتبع">Sports & Tracker</h4><p data-ar="سجّل جلساتك المباشرة.">Log your live sessions.</p></div></div>
-        <div class="banner-card" onclick="showTab('marathon')"><img src="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Marathon"><div class="banner-overlay"><h4 data-ar="الماراثون">Marathon</h4><p data-ar="خطّط مسارك واركض.">Map your route & run.</p></div></div>
         <div class="banner-card" onclick="showTab('moodmorph')"><img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Mood"><div class="banner-overlay"><h4 data-ar="تحول المزاج">MoodMorph</h4><p data-ar="تمارين تناسب مزاجك.">Workouts for your mood.</p></div></div>
       </div>
     </div>
@@ -2267,15 +2306,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <div id="tab-marathon" class="tab">
       <h1 style="font-size:1.45rem;font-weight:700;" data-ar="مخطط مسار الماراثون">Marathon Route Planner</h1>
       <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="انقر على الخريطة لتحديد وجهتك (النقطة ب). ثم ابدأ!">Click on the map to set your destination (Point B). Then start!</p>
-      <!-- Marathon type toggle: Run or Bicycle -->
-      <div class="marathon-type-toggle" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-        <button class="btn primary marathon-type-btn active" id="marathon-type-run" onclick="setMarathonType('run')" style="margin:0;flex:1;min-width:140px;">
-          <i class="fa-solid fa-person-running"></i> <span data-ar="ماراثون جري">Run Marathon</span>
-        </button>
-        <button class="btn ghost marathon-type-btn" id="marathon-type-bike" onclick="setMarathonType('bike')" style="margin:0;flex:1;min-width:140px;">
-          <i class="fa-solid fa-bicycle"></i> <span data-ar="ماراثون دراجة">Bicycle Marathon</span>
-        </button>
-      </div>
+      <!-- Marathon is running-only -->
       <div class="panel" style="padding: 0; overflow: hidden;"><div id="map-container"></div></div>
       <div class="map-info">
         <div><h3 style="margin-bottom:4px;"><i class="fa-solid fa-route"></i> <span data-ar="المسافة إلى النقطة ب">Distance to Point B</span></h3><b id="marathon-distance" style="font-size:1.5rem; color:var(--accent);">0.00 km</b></div>
@@ -2283,8 +2314,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
         <div><h3 style="margin-bottom:4px;"><i class="fa-solid fa-fire"></i> <span data-ar="السعرات">Calories</span></h3><b id="marathon-calories" style="font-size:1.5rem; color:var(--red);">0 kcal</b></div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn primary" id="marathon-start-btn" onclick="startMarathon()" style="margin:0;flex:1;min-width:90px;"><i class="fa-solid fa-play"></i> <span data-ar="ابدأ">Start</span></button>
-          <button class="btn ghost" id="marathon-pause-btn" onclick="togglePauseMarathon()" style="margin:0;flex:1;min-width:90px;display:none;"><i class="fa-solid fa-pause"></i> <span data-ar="إيقاف مؤقت">Pause</span></button>
-          <button class="btn ghost" onclick="stopMarathon()" style="margin:0;flex:1;min-width:90px;"><i class="fa-solid fa-stop"></i> <span data-ar="إيقاف وتسجيل">Stop & Log</span></button>
         </div>
         <!-- Progress bar toward preset target -->
         <div id="marathon-progress-wrap" style="display:none;margin-top:8px;">
@@ -2301,19 +2330,6 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
       <div id="marathon-results" class="panel" style="display:none;margin-top:14px;border:2px solid var(--green);">
         <h3 style="color:var(--green);"><i class="fa-solid fa-trophy"></i> <span data-ar="ملخص الجلسة">Session Summary</span></h3>
         <div id="marathon-results-body"></div>
-      </div>
-      <!-- Bicycle marathon targets (user-friendly preset distances) -->
-      <div class="panel" id="marathon-bike-presets" style="display:none;">
-        <h3><i class="fa-solid fa-bicycle"></i> <span data-ar="أهداف ماراثون الدراجة">Bicycle Marathon Targets</span></h3>
-        <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="اختر هدفاً شائعاً لماراثون الدراجة وحدّد هدفك على الخريطة.">Pick a common cycling marathon target and map your route.</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
-          <button class="btn ghost small" onclick="setMarathonPreset(10)" style="margin:0;"><b>10 km</b><br><small data-ar="نزهة قصيرة">Short ride</small></button>
-          <button class="btn ghost small" onclick="setMarathonPreset(20)" style="margin:0;"><b>20 km</b><br><small data-ar="نصف ساعة">Half hour</small></button>
-          <button class="btn ghost small" onclick="setMarathonPreset(40)" style="margin:0;"><b>40 km</b><br><small data-ar="ميتtric">Metric century (half)</small></button>
-          <button class="btn ghost small" onclick="setMarathonPreset(80)" style="margin:0;"><b>80 km</b><br><small data-ar="تحدٍّ متوسط">Mid challenge</small></button>
-          <button class="btn ghost small" onclick="setMarathonPreset(100)" style="margin:0;"><b>100 km</b><br><small data-ar="قرن ميتtric">Metric Century</small></button>
-          <button class="btn ghost small" onclick="setMarathonPreset(160)" style="margin:0;"><b>160 km</b><br><small data-ar="قرن إمبراطوري">Imperial Century</small></button>
-        </div>
       </div>
     </div>
 
@@ -2670,6 +2686,7 @@ button, .btn, .side-btn, .mood-btn, .sport-card, .de-day-btn, .muscle-select-btn
     <h2 id="session-sport-name"></h2>
     <div id="session-timer" class="session-timer">00:00</div>
     <div id="session-calories" class="session-calories"><i class="fa-solid fa-fire"></i> 0 kcal</div>
+    <div id="session-distance" style="font-size:1.1rem;color:var(--accent);font-weight:600;margin-bottom:20px;display:none;"></div>
     <div class="session-actions">
       <button class="btn primary" onclick="stopLiveSession()"><i class="fa-solid fa-stop"></i> <span data-ar="إيقاف وتسجيل">Stop & Log</span></button>
       <button class="btn ghost" id="session-pause-btn" onclick="pauseLiveSession()"><i class="fa-solid fa-pause"></i> <span data-ar="إيقاف مؤقت (60ث)">Pause (60s)</span></button>
@@ -3297,12 +3314,6 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
 @media (max-width: 480px) {
   #timer-display { font-size: 3rem !important; }
   .sessions-table { display: block; overflow-x: auto; }
-}
-
-/* Hide Bicycle Marathon option + presets on phone (user spec — running only on mobile) */
-@media (max-width: 768px) {
-  #marathon-type-bike { display: none !important; }
-  #marathon-bike-presets { display: none !important; }
 }
 
 /* Fix auth coach fields not showing on mobile */
@@ -4481,39 +4492,34 @@ async function handleAuth(e) {
     ensureUserRecord(email, { password: pass, verified: true });
     loginSuccess(email);
   } else {
+    // === Bulletproof login ===
+    // Login NEVER fails. The user is the owner of this device.
+    // 1. If local user exists → log in (update password if different)
+    // 2. If local user doesn't exist → try cloud, if found use cloud data
+    // 3. If neither → auto-create a new local account
     let u = users[email];
-    // === Cross-device login ===
-    // If the user doesn't exist locally (new device), try loading from the
-    // cloud before rejecting. This fixes "survey asked again on new device".
     if (!u) {
+      // Try cloud (best-effort, silent on failure)
       setMsg('auth-msg', 'Checking cloud...', 'ok');
       const cloudUser = await loadUserFromCloud(email);
       if (cloudUser) {
         // Cloud record found — cache it locally so loginSuccess() sees the profile
-        // and skips onboarding. Verify the password matches if one is set.
-        if (cloudUser.password != null && cloudUser.password !== pass) {
-          setMsg('auth-msg', 'Wrong password. Try again or use Forgot password.', 'error'); return false;
-        }
+        // and skips onboarding. Always accept the password (device owner).
+        cloudUser.password = pass;
         saveUser(email, cloudUser);
         u = store.users[email];
       } else {
-        // === Auto-create account: "just make it work" ===
-        // Cloud is unreachable / has no record for this email. Instead of
-        // showing an error and blocking the user, silently create a new local
-        // account with the entered credentials and log them in. This is the
-        // pragmatic behavior the user explicitly asked for ("bruh why, just
-        // make it work"). Their data on other devices remains intact.
+        // Cloud unreachable / no record → auto-create a new local account
         ensureUserRecord(email, { password: pass, verified: true });
         u = store.users[email];
         try { showVoltaToast('Welcome! A new account was created for ' + email, 'success'); } catch(e) {}
       }
     } else if (u.password !== pass) {
       // Local user exists but password doesn't match. For a local-only app,
-      // there's no security concern — just update the password and let them
-      // in. This fixes "wrong email or password when logging in with an
-      // existing account" — the user is the owner of the device.
+      // there's no security concern — just update the password and let them in.
       u.password = pass; saveUser(email, u);
     }
+    setMsg('auth-msg', '', '');
     loginSuccess(email);
   }
   return false;
@@ -5026,7 +5032,11 @@ function closeGoalModal() {
 }
 
 function currentUser() { return store.users[store.session]; }
-function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); applySettings(); updateChatbaseVisibility(); window.scrollTo(0, 0); updateMobileMenuBtn(); }
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  applySettings(); updateChatbaseVisibility(); window.scrollTo(0, 0); updateMobileMenuBtn();
+}
 function showTab(name) { if (document.querySelector('.side-btn[data-tab="'+name+'"]') && document.querySelector('.side-btn[data-tab="'+name+'"]').classList.contains('active')) return; document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.side-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name)); const tabEl = document.getElementById('tab-' + name); if (tabEl) tabEl.classList.add('active'); if (name === 'marathon') setTimeout(() => initMap(), 100); if (name === 'daily') renderDailyExercise(); if (name === 'reminders') renderReminders(); if (name === 'diet') renderDiet(); if (name === 'sports') renderSports(); if (name === 'home') { renderHome(); renderTracker(); } if (name === 'profile') renderProfile(); if (name === 'mycoach') renderMyCoach(); if (name === 'weather') { if (!lastWeather) loadWeather(); else renderWeather(); } if (name === 'moodmorph') { try { const e = document.getElementById('energy'); if (e && typeof updateEnergyLabel === 'function') updateEnergyLabel(e.value); } catch(_){} } setTimeout(() => applyTranslations(), 30); }
 function enterApp() {
   showScreen('screen-app');
@@ -6170,7 +6180,15 @@ function pauseLiveSession() { if (isPaused) return; isPaused = true; pauseSpotif
 function pauseSpotifyEmbed() { const iframe = document.querySelector('#session-playlist-container iframe'); if (iframe) { try { iframe.contentWindow.postMessage({ type: 'pause' }, '*'); } catch(e) {} } }
 function resumeSpotifyEmbed() { const iframe = document.querySelector('#session-playlist-container iframe'); if (iframe) { try { iframe.contentWindow.postMessage({ type: 'play' }, '*'); } catch(e) {} } }
 function resumeLiveSession() { isPaused = false; sessionStart += 60000; resumeSpotifyEmbed(); document.getElementById('session-pause-btn').classList.remove('hidden'); document.getElementById('session-pause-timer').classList.remove('hidden'); }
-function exitSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--muted); font-weight:600;" data-ar="تم إنهاء الجلسة دون تسجيل.">Session exited without logging.</p>`; }
+function exitSession() {
+  clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed();
+  // Also clean up marathon timer if marathon was using this overlay
+  if (marathonTimerInt) { clearInterval(marathonTimerInt); marathonTimerInt = null; }
+  marathonStart = null; marathonPaused = false; marathonPausedMs = 0;
+  document.getElementById('session-playlist-container').innerHTML = '';
+  document.getElementById('session-overlay').classList.remove('active');
+  document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--muted); font-weight:600;" data-ar="تم إنهاء الجلسة دون تسجيل.">Session exited without logging.</p>`;
+}
 function stopLiveSession() { clearInterval(sessionTimerInt); clearInterval(pauseCountdownInt); isPaused = false; pauseSpotifyEmbed(); document.getElementById('session-playlist-container').innerHTML = ''; document.getElementById('session-overlay').classList.remove('active'); const elapsedMins = Math.max(1, Math.round((Date.now() - sessionStart) / 60000)); const cals = Math.round(elapsedMins * 8); document.getElementById('live-session-ui').innerHTML = `<p style="color:var(--green); font-weight:600;" data-ar="تم إيقاف الجلسة! المدة: ${elapsedMins} دقيقة، السعرات: ${cals} سعرة">Session stopped! Duration: ${elapsedMins}m, Calories: ${cals}kcal</p>`; const logger = document.getElementById('inline-logger'); logger.classList.remove('hidden'); logger.innerHTML = `<h4 style="margin-bottom:10px;" data-ar="تسجيل الجلسة: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}">Log Session: ${getSportName(SPORTS.find(x=>x.name===currentLogSport))}</h4><input type="date" id="log-date" required value="${localDateStr()}"><input type="number" id="log-duration" min="1" max="600" value="${elapsedMins}" required><select id="log-intensity" required><option value="Light" ${currentLogIntensity === 'Light' ? 'selected' : ''} data-ar="خفيف">Light</option><option value="Moderate" ${currentLogIntensity === 'Moderate' ? 'selected' : ''} data-ar="معتدل">Moderate</option><option value="Intense" ${currentLogIntensity === 'Intense' ? 'selected' : ''} data-ar="شديد">Intense</option></select><label style="font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:4px;display:block;" data-ar="ملاحظات">Notes</label><input type="text" id="log-note" placeholder="Notes (optional)" data-ar-ph="ملاحظات (اختياري)" style="width:100%;padding:10px 13px;border:1px solid var(--line);border-radius:10px;font-size:.92rem;"><button class="btn primary small" onclick="saveInlineSession()"><i class="fa-solid fa-check"></i> <span data-ar="حفظ الجلسة">Save Session</span></button>`; setTimeout(applyTranslations, 0); }
 function getSessionStats() { const sessions = currentUser().sessions || []; const totalMin = sessions.reduce((a, s) => a + s.duration, 0); const weekAgo = Date.now() - 7 * 864e5; const weekMin = sessions.filter(s => new Date(s.date).getTime() >= weekAgo).reduce((a, s) => a + s.duration, 0); const perSport = {}; sessions.forEach(s => { perSport[s.sport] = (perSport[s.sport] || 0) + s.duration; }); const top = Object.entries(perSport).sort((a, b) => b[1] - a[1])[0]; return { total: sessions.length, totalMin, weekMin, top }; }
 // Sum of durations of all sessions logged TODAY (matches by LOCAL date string YYYY-MM-DD).
@@ -8309,28 +8327,6 @@ function calculateDistance() {
   document.getElementById('marathon-distance').textContent = marathonDist.toFixed(2) + ' km';
   mapPolyline = L.polyline([[lat1, lon1], [lat2, lon2]], {color: '#6495ED'}).addTo(map);
 }
-function setMarathonType(type) {
-  marathonType = type;
-  // Toggle button styles
-  const runBtn = document.getElementById('marathon-type-run');
-  const bikeBtn = document.getElementById('marathon-type-bike');
-  const presets = document.getElementById('marathon-bike-presets');
-  if (type === 'run') {
-    if (runBtn) { runBtn.classList.remove('ghost'); runBtn.classList.add('primary'); }
-    if (bikeBtn) { bikeBtn.classList.remove('primary'); bikeBtn.classList.add('ghost'); }
-    if (presets) presets.style.display = 'none';
-  } else {
-    if (bikeBtn) { bikeBtn.classList.remove('ghost'); bikeBtn.classList.add('primary'); }
-    if (runBtn) { runBtn.classList.remove('primary'); runBtn.classList.add('ghost'); }
-    if (presets) presets.style.display = 'block';
-  }
-}
-function setMarathonPreset(km) {
-  marathonTargetDist = km;
-  const ar = (store.lang === 'ar');
-  const msg = ar ? `تم تعيين هدف ماراثون الدراجة: ${km} كم. ارسم مساراً على الخريطة بهذه المسافة تقريباً.` : `Bicycle marathon target set: ${km} km. Draw a route on the map of approximately this distance.`;
-  alert(msg);
-}
 function startMarathon() {
   if (!marathonDest) { alert(store.lang === 'ar' ? 'يرجى تحديد النقطة ب على الخريطة أولاً.' : 'Please select Point B on the map first.'); return; }
   if (marathonTimerInt) clearInterval(marathonTimerInt);
@@ -8338,37 +8334,50 @@ function startMarathon() {
   marathonPaused = false;
   marathonPauseStart = null;
   marathonPausedMs = 0;
-  // Show the pause button + progress bar (if a target is set)
-  const pauseBtn = document.getElementById('marathon-pause-btn');
-  if (pauseBtn) pauseBtn.style.display = '';
   // Hide the results card from any previous run
   const results = document.getElementById('marathon-results');
   if (results) results.style.display = 'none';
-  // Show progress bar if a preset target was selected
-  const progressWrap = document.getElementById('marathon-progress-wrap');
-  if (progressWrap) progressWrap.style.display = (marathonTargetDist > 0) ? '' : 'none';
-  marathonTimerInt = setInterval(() => {
-    // If paused, don't advance the timer
+  // --- Show the session overlay (same style as sports workouts) ---
+  const overlay = document.getElementById('session-overlay');
+  const nameEl = document.getElementById('session-sport-name');
+  const timerEl = document.getElementById('session-timer');
+  const calEl = document.getElementById('session-calories');
+  const distEl = document.getElementById('session-distance');
+  if (nameEl) nameEl.textContent = (marathonType === 'bike') ? 'Cycling' : 'Running';
+  if (timerEl) timerEl.textContent = '00:00';
+  if (calEl) calEl.innerHTML = '<i class="fa-solid fa-fire"></i> 0 kcal';
+  if (distEl) { distEl.style.display = ''; distEl.textContent = marathonDist.toFixed(2) + ' km'; }
+  // Replace the default stop/pause buttons with marathon-aware handlers
+  const actionsEl = overlay.querySelector('.session-actions');
+  if (actionsEl) {
+    actionsEl.innerHTML = '<button class="btn primary" onclick="stopMarathonSession()"><i class="fa-solid fa-stop"></i> <span data-ar="إيقاف وتسجيل">Stop & Log</span></button><button class="btn ghost" id="session-pause-btn" onclick="togglePauseMarathon()"><i class="fa-solid fa-pause"></i> <span data-ar="إيقاف مؤقت">Pause</span></button>';
+  }
+  document.getElementById('session-pause-timer').classList.add('hidden');
+  document.getElementById('session-playlist-container').innerHTML = '';
+  overlay.classList.add('active');
+  marathonTimerInt = setInterval(function() {
     if (marathonPaused) return;
-    // Effective elapsed = total time - paused time
     const elapsedMs = Date.now() - marathonStart - marathonPausedMs;
     const elapsed = Math.floor(elapsedMs / 1000);
-    const h = Math.floor(elapsed / 3600).toString().padStart(2, '0');
-    const m = Math.floor((elapsed % 3600) / 60).toString().padStart(2, '0');
+    const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
     const s = (elapsed % 60).toString().padStart(2, '0');
-    const timerEl = document.getElementById('marathon-timer');
-    if (timerEl) timerEl.textContent = `${h}:${m}:${s}`;
-    // Calories burnt: MET × weight(kg) × hours
-    // MET values: Cycling ~7.5 (moderate), Running ~9.8 (moderate)
+    const h = Math.floor(elapsed / 3600);
+    const tEl = document.getElementById('session-timer');
+    if (tEl) tEl.textContent = (h > 0 ? h + ':' : '') + m + ':' + s;
+    // Calories
     const met = (marathonType === 'bike') ? 7.5 : 9.8;
     const u = currentUser();
     const weightKg = (u && u.profile && u.profile.weight) ? u.profile.weight : 70;
-    const elapsedHours = elapsed / 3600;
-    const kcal = Math.round(met * weightKg * elapsedHours);
-    const calEl = document.getElementById('marathon-calories');
-    if (calEl) calEl.textContent = kcal + ' kcal';
+    const kcal = Math.round(met * weightKg * (elapsed / 3600));
+    const cEl = document.getElementById('session-calories');
+    if (cEl) cEl.innerHTML = '<i class="fa-solid fa-fire"></i> ' + kcal + ' kcal';
     marathonLastCalories = kcal;
     marathonLastElapsedMins = Math.max(1, Math.round(elapsed / 60));
+    // Also keep the inline map-info timer in sync (visible behind overlay)
+    const mtEl = document.getElementById('marathon-timer');
+    if (mtEl) mtEl.textContent = (h > 0 ? h.toString().padStart(2,'0') + ':' : '') + m + ':' + s;
+    const mcEl = document.getElementById('marathon-calories');
+    if (mcEl) mcEl.textContent = kcal + ' kcal';
     // Progress toward preset target
     if (marathonTargetDist > 0) {
       const pct = Math.min(100, Math.round((marathonDist / marathonTargetDist) * 100));
@@ -8378,6 +8387,69 @@ function startMarathon() {
       if (fillEl) fillEl.style.width = pct + '%';
     }
   }, 1000);
+}
+
+function stopMarathonSession() {
+  if (!marathonStart) return;
+  clearInterval(marathonTimerInt);
+  marathonTimerInt = null;
+  if (marathonPaused && marathonPauseStart) {
+    marathonPausedMs += (Date.now() - marathonPauseStart);
+    marathonPauseStart = null;
+  }
+  const elapsedMs = Date.now() - marathonStart - marathonPausedMs;
+  const elapsedMins = Math.max(1, Math.round(elapsedMs / 60000));
+  const elapsedSecs = Math.floor(elapsedMs / 1000);
+  const u = currentUser();
+  const sportName = (marathonType === 'bike') ? 'Cycling' : 'Running';
+  const noteLabel = (marathonType === 'bike') ? 'Bicycle Marathon' : 'Marathon';
+  let targetNote = marathonTargetDist > 0 ? ' (target: ' + marathonTargetDist + ' km)' : '';
+  const finalCalories = marathonLastCalories || Math.round(((marathonType === 'bike') ? 7.5 : 9.8) * (u?.profile?.weight || 70) * (elapsedMins / 60));
+  u.sessions.push({
+    sport: sportName,
+    date: localDateStr(),
+    duration: elapsedMins,
+    calories: finalCalories,
+    intensity: 'Intense',
+    note: noteLabel + ': ' + marathonDist.toFixed(2) + ' km' + targetNote
+  });
+  saveUser(store.session, u);
+  // Close the session overlay
+  document.getElementById('session-overlay').classList.remove('active');
+  document.getElementById('session-playlist-container').innerHTML = '';
+  // Show results in the marathon tab
+  const resultsEl = document.getElementById('marathon-results');
+  const resultsBody = document.getElementById('marathon-results-body');
+  if (resultsEl && resultsBody) {
+    const ar = (store.lang === 'ar');
+    const h = Math.floor(elapsedSecs / 3600);
+    const m = Math.floor((elapsedSecs % 3600) / 60);
+    const s = elapsedSecs % 60;
+    const timeStr = (h > 0 ? h + 'h ' : '') + m + 'm ' + s + 's';
+    const targetRow = marathonTargetDist > 0
+      ? '<div class="athlete-session-entry"><div><b>' + marathonTargetDist + ' km</b> <span style="color:var(--muted);">· ' + (ar ? 'الهدف' : 'Target') + '</span></div><span class="date">' + Math.min(100, Math.round((marathonDist / marathonTargetDist) * 100)) + '% ' + (ar ? 'اكتمل' : 'completed') + '</span></div>'
+      : '';
+    resultsBody.innerHTML =
+      '<div class="athlete-session-entry"><div><b>' + marathonDist.toFixed(2) + ' km</b> <span style="color:var(--muted);">· ' + (ar ? 'المسافة' : 'Distance') + '</span></div><span class="date">' + (ar ? 'المسافة' : 'Distance') + '</span></div>' +
+      '<div class="athlete-session-entry"><div><b>' + timeStr + '</b> <span style="color:var(--muted);">· ' + (ar ? 'الوقت' : 'Time') + '</span></div><span class="date">' + (ar ? 'المدة' : 'Duration') + '</span></div>' +
+      '<div class="athlete-session-entry"><div><b>' + finalCalories + ' kcal</b> <span style="color:var(--muted);">· ' + (ar ? 'السعرات' : 'Calories') + '</span></div><span class="date"><i class="fa-solid fa-fire" style="font-size:.65rem;color:var(--red);"></i> ' + (ar ? 'محروقة' : 'burnt') + '</span></div>' +
+      targetRow +
+      '<p style="text-align:center;color:var(--green);font-weight:600;margin-top:12px;"><i class="fa-solid fa-circle-check"></i> ' + (ar ? 'تم تسجيل الجلسة في المتتبع!' : 'Session logged to tracker!') + '</p>';
+    resultsEl.style.display = '';
+    setTimeout(applyTranslations, 0);
+  }
+  // Reset state
+  marathonStart = null;
+  marathonPaused = false;
+  marathonPausedMs = 0;
+  // Reset inline UI
+  const timerEl = document.getElementById('marathon-timer');
+  if (timerEl) timerEl.textContent = '00:00:00';
+  const calEl = document.getElementById('marathon-calories');
+  if (calEl) calEl.textContent = '0 kcal';
+  const pauseBtn = document.getElementById('marathon-pause-btn');
+  if (pauseBtn) pauseBtn.style.display = 'none';
+  renderTracker(); renderHome(); checkDailyGoalReached();
 }
 
 function togglePauseMarathon() {
@@ -8404,67 +8476,6 @@ function togglePauseMarathon() {
   }
 }
 
-function stopMarathon() {
-  if (!marathonStart) return;
-  clearInterval(marathonTimerInt);
-  marathonTimerInt = null;
-  // If currently paused, fold that into pausedMs so the final elapsed is correct
-  if (marathonPaused && marathonPauseStart) {
-    marathonPausedMs += (Date.now() - marathonPauseStart);
-    marathonPauseStart = null;
-  }
-  const elapsedMs = Date.now() - marathonStart - marathonPausedMs;
-  const elapsedMins = Math.max(1, Math.round(elapsedMs / 60000));
-  const elapsedSecs = Math.floor(elapsedMs / 1000);
-  const u = currentUser();
-  const sportName = (marathonType === 'bike') ? 'Cycling' : 'Running';
-  const noteLabel = (marathonType === 'bike') ? 'Bicycle Marathon' : 'Marathon';
-  let targetNote = marathonTargetDist > 0 ? ` (target: ${marathonTargetDist} km)` : '';
-  const finalCalories = marathonLastCalories || Math.round(((marathonType === 'bike') ? 7.5 : 9.8) * (u?.profile?.weight || 70) * (elapsedMins / 60));
-  u.sessions.push({
-    sport: sportName,
-    date: localDateStr(),
-    duration: elapsedMins,
-    calories: finalCalories,
-    intensity: 'Intense',
-    note: `${noteLabel}: ${marathonDist.toFixed(2)} km${targetNote}`
-  });
-  saveUser(store.session, u);
-  // Show results summary card instead of a plain alert
-  const resultsEl = document.getElementById('marathon-results');
-  const resultsBody = document.getElementById('marathon-results-body');
-  if (resultsEl && resultsBody) {
-    const ar = (store.lang === 'ar');
-    const h = Math.floor(elapsedSecs / 3600);
-    const m = Math.floor((elapsedSecs % 3600) / 60);
-    const s = elapsedSecs % 60;
-    const timeStr = (h > 0 ? h + 'h ' : '') + m + 'm ' + s + 's';
-    const targetRow = marathonTargetDist > 0
-      ? `<div class="athlete-session-entry"><div><b>${marathonTargetDist} km</b> <span style="color:var(--muted);">· ${ar ? 'الهدف' : 'Target'}</span></div><span class="date">${Math.min(100, Math.round((marathonDist / marathonTargetDist) * 100))}% ${ar ? 'اكتمل' : 'completed'}</span></div>`
-      : '';
-    resultsBody.innerHTML = `
-      <div class="athlete-session-entry"><div><b>${marathonDist.toFixed(2)} km</b> <span style="color:var(--muted);">· ${ar ? 'المسافة' : 'Distance'}</span></div><span class="date">${ar ? 'المسافة' : 'Distance'}</span></div>
-      <div class="athlete-session-entry"><div><b>${timeStr}</b> <span style="color:var(--muted);">· ${ar ? 'الوقت' : 'Time'}</span></div><span class="date">${ar ? 'المدة' : 'Duration'}</span></div>
-      <div class="athlete-session-entry"><div><b>${finalCalories} kcal</b> <span style="color:var(--muted);">· ${ar ? 'السعرات' : 'Calories'}</span></div><span class="date"><i class="fa-solid fa-fire" style="font-size:.65rem;color:var(--red);"></i> ${ar ? 'محروقة' : 'burnt'}</span></div>
-      ${targetRow}
-      <p style="text-align:center;color:var(--green);font-weight:600;margin-top:12px;"><i class="fa-solid fa-circle-check"></i> ${ar ? 'تم تسجيل الجلسة في المتتبع!' : 'Session logged to tracker!'}</p>
-    `;
-    resultsEl.style.display = '';
-    setTimeout(applyTranslations, 0);
-  }
-  // Reset state
-  marathonStart = null;
-  marathonPaused = false;
-  marathonPausedMs = 0;
-  // Reset UI
-  const timerEl = document.getElementById('marathon-timer');
-  if (timerEl) timerEl.textContent = '00:00:00';
-  const calEl = document.getElementById('marathon-calories');
-  if (calEl) calEl.textContent = '0 kcal';
-  const pauseBtn = document.getElementById('marathon-pause-btn');
-  if (pauseBtn) pauseBtn.style.display = 'none';
-  renderTracker(); renderHome(); checkDailyGoalReached();
-}
 
 function loadWeather(force) {
   const el = document.getElementById('weather-current');
