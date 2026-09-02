@@ -1,0 +1,717 @@
+/* ════════════════════════════════════════════════════════════════════
+   VOLTA — SPORTS-VIBES THEME  (design layer)
+   Loaded LAST (after volta.css + volta-animations.css).
+   RULES OF THIS THEME:
+   • TEXTS: 100% unchanged — same copy, same elements.
+   • COLORS: 100% unchanged — all palette vars stay exactly as defined
+     in volta.css (#6495ED blue, ink, muted, green, amber, red...).
+   • WHAT CHANGES: typography (Oswald / Barlow / Barlow Condensed),
+     shapes (athletic slanted buttons & badges), sporty accents
+     (skewed underline stripes, jersey-style numerals).
+   • RTL-safe: slants/italics auto-disable for Arabic [dir="rtl"].
+   ════════════════════════════════════════════════════════════════════ */
+
+
+/* ── 1. Font system ────────────────────────────────────────────────── */
+* {
+  font-family: 'Barlow', 'Inter', system-ui, sans-serif;
+}
+
+h1, h2, h3, .brand span, .auth-card h2, .modal-content h3, .card-title {
+  font-family: 'Oswald', 'Inter', system-ui, sans-serif;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: .4px;
+}
+
+h4, h5 {
+  font-family: 'Oswald', 'Inter', system-ui, sans-serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: .3px;
+}
+
+/* Panel titles get a skewed sport stripe underneath */
+.panel h3, .modal-content h3 {
+  position: relative;
+  padding-bottom: 8px;
+}
+.panel h3::after, .modal-content h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 44px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  transform: skewX(-24deg);
+}
+
+
+/* ── 2. Jersey-style numerals (big stat numbers) ───────────────────── */
+.stat-card b,
+#mobile-kcal-num,
+#session-timer,
+#session-calories,
+.map-stat b,
+.goal-progress-header b,
+.goal-progress-header span:last-child {
+  font-family: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: .5px;
+}
+.stat-card b { font-size: 1.75rem; line-height: 1.1; }
+#mobile-kcal-num { letter-spacing: 1px; }
+#session-timer { letter-spacing: 2px; }
+
+
+/* ── 3. Athletic slanted buttons & badges ──────────────────────────── */
+.btn,
+.goal-days-left-badge,
+.landing-cta-btn {
+  transform: skewX(-8deg);
+  border-radius: 8px;
+  font-family: 'Oswald', 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: .6px;
+}
+.btn > *, .landing-cta-btn > * { display: inline-block; }
+
+/* keep press feedback from animations layer working with the slant */
+.btn:active { transform: skewX(-8deg) scale(.96); }
+
+/* Slant straightens on hover for a nice "set" effect */
+.btn:hover { transform: skewX(-4deg); }
+
+
+/* ── 4. Landing hero — sport headline + speed stripes ──────────────── */
+.landing-hero h1 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.landing-nav .brand span {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+.landing-hero {
+  position: relative;
+}
+.landing-hero::before {
+  content: "";
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  width: 380px;
+  height: 72px;
+  transform: translateX(-50%) skewX(-18deg);
+  background: repeating-linear-gradient(
+    -55deg,
+    var(--accent-soft) 0 10px,
+    transparent 10px 22px
+  );
+  opacity: .6;
+  pointer-events: none;
+  border-radius: 10px;
+}
+
+
+/* ── 5. App chrome — sidebar / bottom-nav / headers ────────────────── */
+.sidebar .brand span {
+  font-family: 'Oswald', 'Inter', system-ui, sans-serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: .5px;
+}
+.side-btn span {
+  font-family: 'Barlow', 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: .2px;
+}
+.bottom-nav-item {
+  font-family: 'Barlow', 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+.bottom-nav-item.active {
+  transform: skewX(-6deg);
+  border-radius: 10px;
+}
+.main > h1 {
+  font-size: 1.6rem !important;
+  font-weight: 700 !important;
+  position: relative;
+  padding-bottom: 6px;
+  margin-bottom: 2px;
+}
+.main > h1::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 56px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  transform: skewX(-24deg);
+}
+
+
+/* ── 6. Sport cards / feature cards get angled top accent ──────────── */
+.sport-card::before,
+.landing-feature::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), transparent 70%);
+  transform: skewX(-30deg) translateX(-6px);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.sport-card:hover::before,
+.landing-feature:hover::before { opacity: 1; }
+.sport-card, .landing-feature { position: relative; overflow: hidden; }
+
+
+/* ── 7. Chips (macro pills, badges) slanted like relay batons ──────── */
+.meal-macro-chip, .chip, .badge,
+#today-kcal-burnt-row {
+  border-radius: 8px;
+}
+#today-kcal-burnt-row { transform: skewX(-4deg); border-left-width: 5px; }
+
+
+/* ── 8. Auth & modals — italic condensed titles, slanted primary CTA ─ */
+.auth-card h2 { font-size: 1.7rem; }
+.auth-card .btn.primary, .modal-content .btn.primary {
+  width: 100%;
+}
+
+
+/* ── 9. RTL (Arabic) safety — no italics/slants on RTL text ────────── */
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5,
+[dir="rtl"] .brand span, [dir="rtl"] .stat-card b, [dir="rtl"] #session-timer,
+[dir="rtl"] #mobile-kcal-num {
+  font-style: normal;
+  letter-spacing: 0;
+}
+[dir="rtl"] .btn, [dir="rtl"] .goal-days-left-badge,
+[dir="rtl"] .landing-cta-btn, [dir="rtl"] #today-kcal-burnt-row,
+[dir="rtl"] .bottom-nav-item.active {
+  transform: none;
+}
+[dir="rtl"] .btn:hover { transform: none; }
+[dir="rtl"] .btn:active { transform: scale(.96); }
+
+
+/* ── 10. Reduced-motion: keep the static slants, drop transitions ──── */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .btn:hover { transition: none; }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   11. WEATHER TAB — "GAME-DAY FORECAST" redesign
+   Pure design layer: same texts, same data-ar strings, same palette.
+   What changes: stage framing, jersey-style temperature numeral,
+   overlap hero card, baton status pills, chamfered sport tiles,
+   slanted icon chips, finish-line tape accents.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── 11a. Title zone: broadcast headline with slanted stripe ──────── */
+#tab-weather > h1 {
+  position: relative;
+  padding-bottom: 9px;
+}
+#tab-weather > h1::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 58px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  transform: skewX(-24deg);
+}
+
+/* ── 11b. Sky stage: framed broadcast window with corner flag ─────── */
+#tab-weather .weather-cloud-container {
+  position: relative;
+  z-index: 1;              /* trap animated children in own context */
+  height: 236px;
+  border-radius: 14px;
+  overflow: hidden;        /* neat frame: birds/rain stay inside */
+}
+/* corner flag wedge (day & night pop) */
+#tab-weather .weather-cloud-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 72px;
+  height: 44px;
+  background: var(--accent);
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  opacity: .92;
+  z-index: 7;
+  pointer-events: none;
+}
+/* finish-line tape along the bottom edge */
+#tab-weather .weather-cloud-container::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 7px;
+  background: repeating-linear-gradient(
+    -55deg,
+    var(--accent) 0 10px,
+    transparent 10px 20px
+  );
+  opacity: .85;
+  z-index: 7;
+  pointer-events: none;
+}
+
+/* ── 11c. Temperature hero — jersey numeral overlapping the stage ─── */
+#tab-weather .weather-temp-card {
+  position: relative;
+  z-index: 8;
+  display: inline-block;
+  margin-top: -40px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--accent);
+  border-radius: 12px;
+  padding: 15px 34px 17px;
+  box-shadow: var(--shadow);
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+}
+#tab-weather #weather-current h3 {
+  font-family: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
+  font-size: 2.6rem;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: .5px;
+  line-height: 1;
+  margin: 0;
+}
+/* speed dashes under the numeral (pure geometry, no text) */
+#tab-weather .weather-temp-card::after {
+  content: "";
+  display: block;
+  width: 64px;
+  height: 3px;
+  margin: 10px auto 0;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    -55deg,
+    var(--accent) 0 6px,
+    transparent 6px 11px
+  );
+}
+
+/* ── 11d. Search lane: track-rail input ───────────────────────────── */
+#tab-weather .weather-search-wrap {
+  border-left: 4px solid var(--accent);
+  padding-left: 8px;
+}
+#tab-weather .weather-search-wrap input {
+  font-family: 'Barlow', 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+}
+#tab-weather .weather-search-wrap input::placeholder {
+  color: var(--muted);
+  font-style: italic;
+}
+#tab-weather .weather-search-wrap input {
+  border-radius: 10px;
+}
+
+/* ── 11e. Safety grid: chamfered jersey tiles + baton pills ───────── */
+#tab-weather .safety-grid { gap: 12px; }
+#tab-weather .safety-item {
+  position: relative;
+  overflow: hidden;
+  padding-top: 18px;
+  padding-bottom: 14px;
+  /* diagonal jersey shoulder cut, top-right corner */
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+}
+/* angled top accent stripe (always-on here, subtle) */
+#tab-weather .safety-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -8%;
+  width: 74%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  transform: skewX(-30deg);
+}
+/* hover keeps transform-only language used across the app */
+#tab-weather .safety-item:hover { transform: translateY(-4px); }
+/* icon chip: relay-baton slant, glyph stays upright */
+#tab-weather .safety-item .s-icon {
+  transform: skewX(-8deg);
+  border-radius: 9px;
+}
+#tab-weather .safety-item .s-icon i { transform: skewX(8deg); }
+/* sport name: italic condensed-energy weight */
+#tab-weather .safety-item b {
+  font-family: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+/* status pill: angle-cut sides = baton look, glyphs untouched */
+#tab-weather .macro-pill {
+  font-family: 'Oswald', 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: .5px;
+  border-radius: 6px;
+  padding: 5px 14px;
+  clip-path: polygon(7% 0, 100% 0, 93% 100%, 0 100%);
+}
+
+/* ── 11f. Phones (≤768px): beat volta.css's !important layer ──────── */
+@media (max-width: 768px) {
+  #tab-weather .weather-cloud-container { height: 218px !important; }
+  #tab-weather .weather-temp-card {
+    background: var(--white) !important;
+    border: 1px solid var(--line) !important;
+    border-left: 5px solid var(--accent) !important;
+    border-radius: 12px !important;
+    padding: 13px 26px 15px !important;
+    box-shadow: var(--shadow) !important;
+    margin-top: -38px !important;
+  }
+  #tab-weather #weather-current h3 { font-size: 2.35rem !important; }
+  #tab-weather .safety-grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)) !important; }
+  #tab-weather .safety-item b { font-size: .95rem; }
+  #tab-weather .macro-pill { font-size: .72rem; letter-spacing: .4px; }
+}
+
+/* very narrow phones (~320px): tighter numerals, single-lane grid */
+@media (max-width: 360px) {
+  #tab-weather .weather-cloud-container { height: 196px !important; }
+  #tab-weather .weather-temp-card { padding: 12px 22px 14px !important; margin-top: -34px !important; }
+  #tab-weather #weather-current h3 { font-size: 2.05rem !important; }
+  #tab-weather .safety-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
+}
+
+/* ── 11g. RTL guards (Arabic): no italics/slants/tracking on glyphs ─ */
+body.lang-ar #tab-weather > h1,
+body.lang-ar #tab-weather #weather-current h3,
+body.lang-ar #tab-weather .safety-item b,
+[dir="rtl"] #tab-weather > h1,
+[dir="rtl"] #tab-weather #weather-current h3,
+[dir="rtl"] #tab-weather .safety-item b {
+  font-style: normal;
+  letter-spacing: 0;
+}
+body.lang-ar #tab-weather .weather-search-wrap input::placeholder,
+[dir="rtl"] #tab-weather .weather-search-wrap input::placeholder {
+  font-style: normal;
+}
+body.lang-ar #tab-weather .safety-item .s-icon,
+[dir="rtl"] #tab-weather .safety-item .s-icon {
+  transform: none;
+}
+body.lang-ar #tab-weather .safety-item .s-icon i,
+[dir="rtl"] #tab-weather .safety-item .s-icon i {
+  transform: none;
+}
+body.lang-ar #tab-weather .macro-pill,
+[dir="rtl"] #tab-weather .macro-pill {
+  letter-spacing: 0;
+}
+
+/* ── 11h. Reduced motion: static shapes persist, no extra motion ──── */
+@media (prefers-reduced-motion: reduce) {
+  #tab-weather .safety-item,
+  #tab-weather .safety-item:hover { transition: none; transform: none; }
+}
+
+/* ── 11i. Cloud models support: clear the legacy pill behind the
+          layered-puff SVGs (js/volta-clouds.js) so nothing ghosts
+          through around the new cloud silhouettes ─────────────────── */
+.weather-clouds-row .weather-cloud {
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   12. APP HYGIENE — native-app feel: NO horizontal scrolling
+   NOTE: `overflow-x: hidden` on html/body BREAKS position:sticky for
+   the desktop sidebar (it scrolls away with the page). We use
+   `overflow-x: clip` (supported in all modern browsers), which stops
+   horizontal scrolling WITHOUT creating a scroll container — so the
+   sticky sidebar keeps working. `hidden` is kept as a legacy fallback.
+   ════════════════════════════════════════════════════════════════════ */
+html, body {
+  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100%;
+}
+#screen-landing, #screen-auth { overflow-x: clip; }
+.main { overflow-x: hidden; }
+/* hero speed-stripes: never wider than the viewport */
+.landing-hero::before { width: min(380px, 94vw); }
+
+
+/* ════════════════════════════════════════════════════════════════════
+   13. DASHBOARD RING — extra stats (calories eaten + minutes trained)
+   Markup: .mobile-kcal-extra inside .mobile-kcal-center (index.html).
+   Same palette; condensed jersey numerals to match the ring number.
+   ════════════════════════════════════════════════════════════════════ */
+#mobile-kcal-ring .mobile-kcal-extra {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--line);
+}
+#mobile-kcal-ring .ring-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .58rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+#mobile-kcal-ring .ring-mini i {
+  color: var(--accent);
+  font-size: .66rem;
+}
+#mobile-kcal-ring .ring-mini b {
+  font-family: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
+  font-size: .9rem;
+  font-weight: 800;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1;
+}
+#mobile-kcal-ring .ring-mini-sep {
+  width: 1px;
+  height: 12px;
+  background: var(--line);
+}
+body.lang-ar #mobile-kcal-ring .ring-mini,
+[dir="rtl"] #mobile-kcal-ring .ring-mini {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   14. WEATHER SKY — one dedicated animation per circumstance
+   Uses only colors already present in each element's original style.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* 14a. SUNNY / CLEAR DAY — static sunburst rays (glow removed) ─────── */
+#tab-weather .weather-sun { overflow: visible; }
+#tab-weather .weather-sun::after {
+  content: "";
+  position: absolute;
+  inset: -26px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 165, 0, .55) 0deg 7deg,
+    transparent 7deg 30deg
+  );
+  -webkit-mask: radial-gradient(circle, transparent 56%, #000 57%);
+  mask: radial-gradient(circle, transparent 56%, #000 57%);
+  pointer-events: none;
+}
+/* no birds on the sunny sky (user request) — they stay for cloudy */
+.weather-day .weather-birds { display: none !important; }
+.weather-day.weather-cloudy .weather-birds { display: block !important; }
+
+/* 14b. RAINY — full-stage rain + lightning flash ─────────────────────*/
+#tab-weather .weather-rain {
+  position: absolute;
+  inset: 0;
+  top: 0;
+  left: 0;
+  transform: none;
+  width: 100%;
+  height: 100%;
+}
+@keyframes rainDrop {
+  0%   { transform: translateY(-10px); opacity: 0; }
+  12%  { opacity: 1; }
+  82%  { opacity: 1; }
+  100% { transform: translateY(215px); opacity: 0; }
+}
+#tab-weather .weather-rain .weather-rain-drop { height: 15px; }
+#tab-weather .weather-rain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, .8);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: vLightning 7.5s linear infinite;
+}
+@keyframes vLightning {
+  0%, 90.5% { opacity: 0; }
+  91%  { opacity: .45; }
+  92%  { opacity: 0; }
+  93.5% { opacity: .7; }
+  94.5% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* 14c. SNOWY — gentle pendulum sway while falling ────────────────────*/
+@keyframes snowFall {
+  0%   { transform: translate(0, -6px) rotate(0deg); opacity: 0; }
+  12%  { opacity: 1; }
+  30%  { transform: translate(7px, 58px) rotate(90deg); }
+  55%  { transform: translate(-5px, 118px) rotate(190deg); }
+  80%  { transform: translate(6px, 178px) rotate(290deg); }
+  100% { transform: translate(0, 218px) rotate(360deg); opacity: 0; }
+}
+
+/* 14d. CLOUDY — wind streaks sweeping across the stage ───────────────*/
+.weather-clouds-row { position: relative; }
+.weather-cloudy .weather-clouds-row::before,
+.weather-cloudy .weather-clouds-row::after {
+  content: "";
+  position: absolute;
+  height: 2px;
+  width: 64px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .75), transparent);
+  pointer-events: none;
+  z-index: 4;
+}
+.weather-cloudy .weather-clouds-row::before {
+  top: 34%;
+  left: 0;
+  animation: vWind 4.5s linear infinite;
+}
+.weather-cloudy .weather-clouds-row::after {
+  top: 58%;
+  left: 0;
+  width: 44px;
+  animation: vWind 6s 1.6s linear infinite;
+}
+@keyframes vWind {
+  0%   { transform: translateX(-90px); opacity: 0; }
+  18%  { opacity: .9; }
+  82%  { opacity: .9; }
+  100% { transform: translateX(calc(100vw)); opacity: 0; }
+}
+
+/* 14e. NIGHT — moon is a static crisp disc now (breathing glow removed) */
+
+/* 14f. Reduced motion: switch off the remaining sky theatrics ────────*/
+@media (prefers-reduced-motion: reduce) {
+  #tab-weather .weather-rain::after,
+  .weather-cloudy .weather-clouds-row::before,
+  .weather-cloudy .weather-clouds-row::after { animation: none; opacity: 0; }
+}
+
+
+/* ── 15. Bottom-nav glider — REMOVED (Round 10) ── */
+/* The skewed sliding pill (#bottom-nav-glider) was removed per user request
+   ("remove the diagonal animation from the screen bar on phone"). Buttons
+   paint their own .active background instantly again — see volta-redesign.css.
+   The #bottom-nav-glider element no longer exists in index.html. */
+
+
+/* ── 16. Dashboard plan MINI card + plan popup polish ───────────────── */
+/* The plan used to render as a huge panel on the dashboard; per user spec
+   it is now a compact one-row card (full details live in Daily Exercise). */
+.plan-mini-panel { padding: 14px 16px !important; }
+.plan-mini-panel h3 { font-size: 1rem !important; }
+.plan-mini-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.plan-mini-row .plan-mini-info { display: flex; flex-direction: column; min-width: 0; }
+.plan-mini-row .plan-mini-info b { font-size: .9rem; color: var(--text); }
+.plan-mini-row .plan-mini-info small { color: var(--muted); font-size: .76rem; }
+.plan-mini-row .plan-mini-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.plan-mini-row .btn { width: auto !important; padding: 6px 12px !important; font-size: .78rem !important; }
+/* Extra details on the mini card (user request: "add few more details") */
+.plan-mini-today {
+  margin-top: 10px;
+  font-size: .78rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.plan-mini-today i { color: var(--amber); font-size: .8rem; }
+.plan-mini-today b { color: var(--text); font-weight: 700; }
+.plan-mini-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.plan-mini-chips .plan-stat-pill { font-size: .72rem; padding: 4px 10px; }
+
+/* ── "My Plan" popup: friendlier day cards ─────────────────────────── */
+/* 7 workouts visible per day + "+N more" expander (user request) */
+.plan-day-name-wrap { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.plan-day-count {
+  font-size: .68rem;
+  color: var(--muted);
+  font-weight: 700;
+  background: var(--white);
+  border: 1px solid var(--line);
+  padding: 1px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.plan-more-toggle {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: .75rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.plan-more-toggle:hover { background: var(--accent); color: #fff; border-style: solid; }
+.plan-more-toggle:active { transform: scale(.96); }
+
+/* ── "Train This Plan" button: BIGGER + sticky ─────────────────────── */
+/* Always visible at the bottom of the scrolling plan popup (user request) */
+#plan-view-use-btn.plan-train-btn {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  width: 100%;
+  min-height: 58px;
+  padding: 15px 22px;
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: .02em;
+  border-radius: 16px;
+  margin-top: 18px;
+  box-shadow: 0 4px 14px rgba(26, 34, 51, .16);
+}
+@media (max-width: 380px) {
+  #plan-view-use-btn.plan-train-btn { font-size: 1.02rem; min-height: 54px; padding: 13px 16px; }
+}

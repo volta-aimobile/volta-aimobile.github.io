@@ -1,0 +1,247 @@
+/* ════════════════════════════════════════════════════════════════════
+   VOLTA — ANIMATION ENHANCEMENT LAYER
+   Purely additive polish loaded AFTER volta.css.
+   • Zero layout/text/color changes — uses the exact site palette
+     (--accent #6495ED is untouched everywhere).
+   • Only animates transform / opacity → GPU-friendly, mobile smooth.
+   • Hidden states are gated behind html.v-js (set by volta-animations.js)
+     so the site stays fully usable if this file loads alone.
+   • Fully disabled under prefers-reduced-motion.
+   ════════════════════════════════════════════════════════════════════ */
+
+
+/* ── 1. Scroll-in reveal (below-the-fold panels/cards) ─────────────── */
+/* SHARPNESS: no will-change here — a lingering will-change keeps the
+   element on a GPU layer, which kills subpixel text antialiasing
+   (blurry text on Windows). The transition releases cleanly. */
+html.v-js .v-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .55s cubic-bezier(.22, 1, .36, 1),
+              transform .55s cubic-bezier(.22, 1, .36, 1);
+}
+html.v-js .v-reveal.v-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── 2. Tab switch — diagonal glide, INSTANT start ─────────────────── */
+/* Per user request: the animation must begin the MOMENT the tab button is
+   pressed — no perceived lag. Kept the praised square→diagonal→settle
+   character, but compressed: shorter duration, near-zero stagger (starts
+   on the very first frame, tail children ≤ .09s behind). */
+@keyframes vSlideDiag {
+  0% {
+    opacity: 0;
+    transform: translate3d(-20px, 25px, 0) scale(.982);
+    animation-timing-function: cubic-bezier(.22, 1, .36, 1);
+  }
+  45% {
+    opacity: 1;
+    transform: translate3d(-3px, 4px, 0) scale(1.01);
+    animation-timing-function: cubic-bezier(.45, 0, .25, 1);
+  }
+  80% {
+    transform: translate3d(1px, -2px, 0) scale(.9985);
+    animation-timing-function: cubic-bezier(.22, 1, .36, 1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+/* SHARPNESS FIX: fill-mode is now `backwards` (was `both`) and the
+   will-change hint is GONE. `both` kept transform:translate3d(0,0,0)
+   applied forever, pinning every panel on a compositor layer →
+   grayscale text rendering → the global "blurry text" report.
+   `backwards` still holds the hidden first frame during the stagger
+   delay, then releases the layer so text renders with full subpixel AA. */
+html.v-js .tab.active > * {
+  animation: vSlideDiag .45s backwards;
+}
+html.v-js .tab.active > *:nth-child(1) { animation-delay: 0s; }
+html.v-js .tab.active > *:nth-child(2) { animation-delay: .015s; }
+html.v-js .tab.active > *:nth-child(3) { animation-delay: .03s; }
+html.v-js .tab.active > *:nth-child(4) { animation-delay: .045s; }
+html.v-js .tab.active > *:nth-child(5) { animation-delay: .06s; }
+html.v-js .tab.active > *:nth-child(6) { animation-delay: .07s; }
+html.v-js .tab.active > *:nth-child(7) { animation-delay: .08s; }
+html.v-js .tab.active > *:nth-child(8) { animation-delay: .09s; }
+html.v-js .tab.active > :nth-child(n+9) { animation-delay: .09s; }
+
+
+/* ── 3. Card micro-interactions (neutral crisp shadows — no glows) ─── */
+.stat-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-border);
+  box-shadow: 0 6px 14px rgba(26, 34, 51, .12);
+}
+.stat-icon { transition: transform .28s cubic-bezier(.34, 1.56, .64, 1); }
+.stat-card:hover .stat-icon { transform: scale(1.15) rotate(-6deg); }
+
+.banner-card img { transition: transform .6s cubic-bezier(.22, 1, .36, 1); }
+.banner-card:hover img { transform: scale(1.08); }
+.banner-card:hover { transform: translateY(-4px); box-shadow: 0 6px 16px rgba(26, 34, 51, .14); }
+
+.sport-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+  box-shadow: 0 6px 14px rgba(26, 34, 51, .12);
+}
+
+.sidebar .side-btn i { transition: transform .2s ease; }
+.sidebar .side-btn:not(.active):hover i { transform: scale(1.15); }
+
+
+/* ── 4. Mobile bottom-nav — SLIDING SQUARE GLIDER (Round 15 → R18) ── */
+/* Round 18 update per user request: the highlight is a PROPER SQUARE
+   (rounded rectangle) — the old diagonal/skewed slant is gone on every
+   screen, LTR and RTL. The square highlight SLIDES under the active item
+   with a springy overshoot. Instant start: placement runs on pointerdown CAPTURE —
+   before the tab even switches. The pill element (.v-nav-glider) is
+   created by volta-animations.js, so if that file fails to load
+   everything below stays inert and the classic per-button highlight
+   keeps working (html.v-nav-glider-on is never set). */
+html.v-nav-glider-on #bottom-nav .bottom-nav-items { position: relative; }
+html.v-nav-glider-on #bottom-nav .bottom-nav-item { z-index: 1; }
+/* The glider paints the active highlight — the button's own background
+   would double-paint under the skewed pill, so it goes transparent while
+   the glider is live. */
+html.v-nav-glider-on #bottom-nav .bottom-nav-item.active {
+  background: transparent !important;
+}
+.v-nav-glider {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: 56px;
+  height: calc(100% - 8px);
+  border-radius: 15px; /* matches the nav item radius — a proper square highlight */
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  box-shadow: 0 2px 8px rgba(26, 34, 51, .08);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transform: translateX(0); /* Round 18: no more skewX — square highlight on all screens */
+  transition: transform .34s cubic-bezier(.3, 1.35, .45, 1),
+              width .34s cubic-bezier(.3, 1.35, .45, 1),
+              opacity .18s ease;
+  will-change: transform;
+}
+body.dark-mode .v-nav-glider {
+  background: rgba(100, 149, 237, .16);
+  box-shadow: none;
+}
+/* RTL: JS mirrors the translateX math from real rects (direction-proof);
+   the highlight is the same square shape in both directions. */
+body.lang-ar .v-nav-glider { border-radius: 15px; }
+
+
+/* ── 4b. Workout-complete celebration (Round 15, #5) ───────────────── */
+/* Overlay + checkmark pop + confetti particles. The particles themselves
+   are animated with the Web Animations API from volta-animations.js
+   (window.voltaCelebrate) — purely decorative, pointer-events none. */
+#v-celebrate {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  overflow: hidden;
+}
+#v-celebrate .v-confetti {
+  position: absolute;
+  top: -14px;
+  will-change: transform, opacity;
+}
+#v-celebrate .v-check {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 92px;
+  height: 92px;
+  margin: -46px 0 0 -46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #4a7bd9);
+  box-shadow: 0 10px 30px rgba(74, 123, 217, .45),
+              0 0 0 10px rgba(100, 149, 237, .12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 42px;
+  animation: vCheckPop .95s cubic-bezier(.34, 1.56, .64, 1) forwards;
+}
+@keyframes vCheckPop {
+  0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+  45%  { transform: scale(1.15) rotate(4deg); opacity: 1; }
+  70%  { transform: scale(.97) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+
+/* ── 5. Buttons — press feedback + tap ripple ──────────────────────── */
+.btn {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(.96); }
+.btn .v-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: rgba(255, 255, 255, .5);
+  transform: scale(0);
+  animation: vRipple .6s ease-out forwards;
+}
+.btn .v-ripple.tinted { background: rgba(100, 149, 237, .3); }
+@keyframes vRipple {
+  to { transform: scale(2.6); opacity: 0; }
+}
+
+
+/* ── 6. Progress bars — springy fill (light-sweep shine removed) ───── */
+.goal-progress-bar-fill {
+  transition: width .9s cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+
+/* ── 7. Stat numbers pop on change (class toggled by JS count-up) ──── */
+.v-pop { animation: vNumPop .38s cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes vNumPop {
+  40% { transform: scale(1.22); }
+}
+.stat-card b, #today-kcal-burnt, #mobile-kcal-num { display: inline-block; }
+
+
+/* ── 8. Modals — clean overlay, crisp neutral shadow (no frost/glow) ─ */
+.modal-overlay { transition: opacity .2s ease, visibility .2s ease; }
+.modal-overlay.active .modal-content {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .22);
+}
+
+
+/* ── 10. Accessibility: keyboard focus rings ───────────────────────── */
+.btn:focus-visible,
+.side-btn:focus-visible,
+.bottom-nav-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+
+/* ── 11. Respect reduced-motion users ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html.v-js .v-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  html.v-js .tab.active > *,
+  .bottom-nav-item.active,
+  .v-pop {
+    animation: none !important;
+  }
+  .stat-card:hover, .banner-card:hover, .sport-card:hover { transform: none; }
+}

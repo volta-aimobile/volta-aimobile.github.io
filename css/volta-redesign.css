@@ -1,0 +1,1106 @@
+/* ============================================================
+   VOLTA REDESIGN LAYER (v17)
+   ============================================================
+   Loads LAST (after volta.css / volta-animations.css /
+   volta-sport-theme.css) so it wins the cascade.
+
+   Contents:
+     1.  Bigger base typography + Arabic font (Cairo)
+     2.  Dashboard hero (snapshot header)
+     3.  Dashboard stat cards (2x2)
+     4.  Activity rings (3-ring Apple-style)
+     5.  Goal progress row
+     6.  Section heads + plan cards (workout/diet)
+     7.  Weekly activity chart + coach recommendation
+     8.  Feature cards
+     9.  New bottom navigation bar + more sheet
+     10. Streaks tab (report card, heatmap, charts, history, badges)
+     11. Custom workout builder
+     12. Settings additions (units / notifications / data)
+     13. Animations
+     14. Responsive + RTL
+   ============================================================ */
+
+/* ============================================================
+   1. BIGGER BASE TYPOGRAPHY + ARABIC FONT
+   ============================================================ */
+html { font-size: 17px; }
+@media (max-width: 768px) { html { font-size: 16.5px; } }
+@media (max-width: 360px) { html { font-size: 16px; } }
+
+/* Arabic webfont — Cairo (vendored, unicode-range arabic) */
+body.lang-ar,
+body.lang-ar input,
+body.lang-ar select,
+body.lang-ar textarea,
+body.lang-ar button {
+  font-family: 'Cairo', 'Barlow', 'Inter', system-ui, sans-serif;
+}
+body.lang-ar h1, body.lang-ar h2, body.lang-ar h3, body.lang-ar h4 {
+  font-family: 'Cairo', 'Barlow', 'Inter', system-ui, sans-serif;
+  letter-spacing: 0;
+}
+
+/* Slightly larger icons */
+i.fa-solid, i.fa-regular { font-size: 19px; }
+
+/* Bigger primary headings (override sport-theme pins) */
+#screen-app .main > h1 { font-size: 1.95rem !important; letter-spacing: -0.01em; }
+#screen-app .panel h3 { font-size: 1.06rem; }
+.btn { font-size: 1rem; }
+input, select, textarea { font-size: 1rem; }
+label { font-size: .9rem; }
+
+/* ============================================================
+   2. DASHBOARD HERO
+   ============================================================ */
+.dash-hero {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 20px 22px 18px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  animation: panelSlideIn .45s ease backwards;
+}
+.dash-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(-55deg,
+      transparent 0 26px,
+      rgba(100,149,237,.045) 26px 30px);
+  pointer-events: none;
+}
+.dash-hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: .68rem; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--accent-dark);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  padding: 5px 12px; border-radius: 999px;
+  margin-bottom: 14px;
+  animation: fadeIn .5s ease backwards;
+}
+.dash-hero-eyebrow i { font-size: .72rem; }
+.dash-hero-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  position: relative;
+}
+.dash-hero-id { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.dash-avatar {
+  width: 56px; height: 56px; flex-shrink: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  color: #fff; font-weight: 800; font-size: 1.15rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  letter-spacing: .02em;
+  box-shadow: 0 6px 14px rgba(74,123,217,.35);
+}
+.dash-hero-idtext h1 {
+  margin: 0; font-size: 1.75rem; line-height: 1.15; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .01em;
+}
+body.lang-ar .dash-hero-idtext h1 { text-transform: none; letter-spacing: 0; }
+.dash-hero-idtext p { margin: 2px 0 0; color: var(--muted); font-size: .95rem; }
+.dash-hero-date { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.dash-date-chip {
+  font-size: .78rem; font-weight: 800; letter-spacing: .1em;
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  padding: 7px 13px; border-radius: 999px;
+  white-space: nowrap;
+}
+body.lang-ar .dash-date-chip { letter-spacing: 0; }
+.dash-day-ghost {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-style: italic; font-weight: 800;
+  font-size: 4.6rem; line-height: .85;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--accent-border);
+  opacity: .9;
+  user-select: none;
+}
+
+/* ============================================================
+   3. DASHBOARD STAT CARDS (2x2 / 4-col)
+   ============================================================ */
+.dash-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.dash-stats-grid.sk-grid { grid-template-columns: repeat(4, 1fr); }
+.dash-stat-card {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 16px 16px 14px;
+  overflow: hidden;
+  animation: cardStaggerIn .5s ease backwards;
+  transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease;
+}
+.dash-stat-card:nth-child(1) { animation-delay: .03s; }
+.dash-stat-card:nth-child(2) { animation-delay: .09s; }
+.dash-stat-card:nth-child(3) { animation-delay: .15s; }
+.dash-stat-card:nth-child(4) { animation-delay: .21s; }
+.dash-stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(26,34,51,.12); }
+.dash-stat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: var(--accent);
+}
+.dash-stat-card.sc-water::before  { background: #38bdf8; }
+.dash-stat-card.sc-streak::before { background: var(--green); }
+.dash-stat-card.sc-mins::before   { background: #8b5cf6; }
+.dash-stat-card { display: flex; flex-direction: column; gap: 10px; }
+.dash-stat-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); color: var(--accent-dark);
+  font-size: 1.05rem;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.dash-stat-card.sc-water .dash-stat-icon  { background: rgba(56,189,248,.14); color: #0284c7; }
+.dash-stat-card.sc-streak .dash-stat-icon { background: var(--green-bg); color: var(--green); }
+.dash-stat-card.sc-mins .dash-stat-icon   { background: rgba(139,92,246,.13); color: #7c3aed; }
+.dash-stat-card:hover .dash-stat-icon { transform: scale(1.12) rotate(-4deg); }
+.dash-stat-body b {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-style: italic; font-weight: 800;
+  font-size: 2rem; line-height: 1;
+  color: var(--text);
+}
+.dash-stat-body small {
+  display: block; margin-top: 5px;
+  font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted);
+}
+body.lang-ar .dash-stat-body small { letter-spacing: 0; text-transform: none; font-size: .8rem; }
+
+/* ============================================================
+   4. ACTIVITY RINGS (3-ring)
+   ============================================================ */
+.dash-rings-panel {
+  display: flex; align-items: center; gap: 26px;
+  border-radius: 20px;
+  animation: panelSlideIn .5s ease backwards; animation-delay: .12s;
+}
+.dash-rings-wrap {
+  position: relative; width: 208px; height: 208px; flex-shrink: 0;
+  margin-inline: auto;
+}
+.dash-rings-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.dash-rings-svg circle { fill: none; }
+.ring-track { stroke: var(--line); opacity: .55; }
+.ring-track.t1 { stroke-width: 13; }
+.ring-track.t2 { stroke-width: 13; }
+.ring-track.t3 { stroke-width: 13; }
+.ring-val {
+  stroke-width: 13; stroke-linecap: round;
+  transition: stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1);
+}
+.ring-val.v1 { stroke: var(--accent-dark); }
+.ring-val.v2 { stroke: var(--green); }
+.ring-val.v3 { stroke: #38bdf8; }
+html.v-js .ring-val.v1 { filter: drop-shadow(0 0 5px rgba(74,123,217,.35)); }
+html.v-js .ring-val.v2 { filter: drop-shadow(0 0 5px rgba(29,157,107,.3)); }
+html.v-js .ring-val.v3 { filter: drop-shadow(0 0 5px rgba(56,189,248,.3)); }
+.dash-rings-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.dash-rings-center b {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-style: italic; font-weight: 800; font-size: 2.5rem; line-height: 1;
+  color: var(--text);
+}
+.dash-rings-center span {
+  margin-top: 3px; font-size: .62rem; font-weight: 800;
+  letter-spacing: .12em; color: var(--muted); text-transform: uppercase;
+}
+body.lang-ar .dash-rings-center span { letter-spacing: 0; text-transform: none; font-size: .72rem; }
+.dash-rings-info { flex: 1; min-width: 0; }
+.dash-rings-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: .72rem; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--accent-dark);
+  margin-bottom: 4px;
+}
+body.lang-ar .dash-rings-eyebrow { letter-spacing: 0; text-transform: none; }
+.dash-rings-eyebrow i { font-size: .78rem; }
+.dash-rings-title {
+  font-size: 1.22rem !important; font-weight: 800; margin: 2px 0 12px;
+  text-transform: uppercase; letter-spacing: .02em; line-height: 1.3;
+}
+body.lang-ar .dash-rings-title { text-transform: none; letter-spacing: 0; }
+.dash-rings-title b { color: var(--accent-dark); }
+/* The rings-panel h3 is a full sentence ("TODAY'S ACTIVITY GOAL: …"), so the
+   sport-theme's decorative 44px stripe under every .panel h3 lands exactly
+   under the word "TODAY" and reads as a stray blue underline (user-reported
+   bug). Kill the stripe for this title only — regular panel titles keep it. */
+.dash-rings-title::after { content: none !important; display: none !important; }
+.rings-goal-bar { height: 12px; border-radius: 999px; overflow: hidden; }
+.dash-rings-sub {
+  margin: 10px 0 0; color: var(--muted); font-size: .9rem; line-height: 1.5;
+}
+.dash-rings-sub b { color: var(--accent-dark); font-size: 1.02rem; }
+.dash-rings-legend {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 7px 16px;
+  margin-top: 14px;
+}
+.ring-lg {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .72rem; font-weight: 800; letter-spacing: .08em;
+  color: var(--muted); text-transform: uppercase;
+}
+body.lang-ar .ring-lg { letter-spacing: 0; text-transform: none; }
+.ring-lg i {
+  width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+  font-style: normal;
+}
+.ring-lg.lg1 i { background: var(--accent-dark); }
+.ring-lg.lg2 i { background: var(--green); }
+.ring-lg.lg3 i { background: #38bdf8; }
+.ring-lg b { color: var(--text); font-size: .86rem; }
+/* FontAwesome legend icons (utensils / dumbbell) must NOT inherit the 10px
+   dot box — they were visually crushed against their labels. Give them auto
+   size and a clear gap so the dumbbell sits comfortably before "TRAIN". */
+.ring-lg i.fa-solid {
+  width: auto; height: auto; border-radius: 0; background: none;
+  font-size: .82rem; color: var(--muted);
+  margin-inline-end: 4px;
+}
+.ring-lg.ring-sep { width: 1px; height: 18px; background: var(--line); padding: 0; margin: 0 2px; }
+
+/* ===== DAILY TAB — PLAN ACTIONS TOOLBAR =====
+   Replaces the old full "Custom Workout Builder" panel: three compact
+   buttons (View Current Plan / Start a New Plan / Custom Builder). */
+.daily-toolbar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.daily-toolbar .btn { flex: 0 1 auto; }
+
+/* ============================================================
+   5. GOAL PROGRESS ROW
+   ============================================================ */
+.goal-progress-panel { border-radius: 20px; animation-delay: .18s; }
+.dash-goal-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.dash-goal-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-style: italic; font-weight: 700;
+  font-size: 1.18rem; letter-spacing: .02em; color: var(--text);
+  display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+body.lang-ar .dash-goal-label { font-family: 'Cairo', sans-serif; font-style: normal; letter-spacing: 0; }
+.dash-goal-label i { color: var(--accent-dark); font-size: 1rem; }
+.dash-goal-label b { color: var(--accent-dark); }
+.goal-progress-panel .goal-progress-bar-bg { height: 12px; }
+.goal-progress-panel .goal-progress-bar-bg .goal-progress-bar-fill {
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+}
+.dash-goal-pct {
+  display: block; text-align: right; margin-top: 7px;
+  font-size: .8rem; font-weight: 800; color: var(--accent-dark);
+  letter-spacing: .06em;
+}
+.goal-days-left-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-soft); color: var(--accent-dark);
+  border: 1px solid var(--accent-border);
+  border-radius: 999px; padding: 6px 14px;
+  font-size: .8rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  white-space: nowrap;
+}
+body.lang-ar .goal-days-left-badge { letter-spacing: 0; text-transform: none; }
+.goal-days-left-badge b { font-size: .95rem; }
+
+/* ============================================================
+   6. SECTION HEADS + PLAN CARDS
+   ============================================================ */
+.dash-section-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 12px; margin: 26px 0 12px;
+  animation: fadeIn .5s ease backwards;
+}
+.dash-section-headtext .dash-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: .7rem; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--accent-dark);
+}
+body.lang-ar .dash-section-headtext .dash-eyebrow { letter-spacing: 0; text-transform: none; }
+.dash-section-headtext .dash-eyebrow i { font-size: .78rem; }
+.dash-section-headtext h2 {
+  margin: 2px 0 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-style: italic; font-weight: 800;
+  font-size: 1.55rem; letter-spacing: .02em; color: var(--text);
+  text-transform: uppercase;
+}
+body.lang-ar .dash-section-headtext h2 {
+  font-family: 'Cairo', sans-serif; font-style: normal;
+  text-transform: none; letter-spacing: 0; font-size: 1.35rem;
+}
+.dash-regen-btn { flex-shrink: 0; }
+.dash-panel-title {
+  font-size: 1.02rem !important; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .06em;
+}
+body.lang-ar .dash-panel-title { text-transform: none; letter-spacing: 0; }
+
+/* -- Workout plan card -- */
+.plan-week-grid { display: grid; gap: 12px; }
+.plan-split-card {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: 18px; overflow: hidden; box-shadow: var(--shadow);
+  animation: cardStaggerIn .5s ease backwards;
+}
+.plan-split-card + .plan-split-card { animation-delay: .08s; }
+.plan-split-head {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 11px 15px;
+  color: #fff;
+}
+.plan-split-head.ph-workout { background: linear-gradient(120deg, #1a2233 0%, #2a3a55 100%); }
+.plan-split-head.ph-diet    { background: linear-gradient(120deg, var(--accent-dark) 0%, var(--accent) 100%); }
+.plan-split-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-style: italic; font-weight: 800; font-size: 1.12rem;
+  letter-spacing: .04em; text-transform: uppercase;
+}
+body.lang-ar .plan-split-title { font-family: 'Cairo', sans-serif; font-style: normal; text-transform: none; }
+.plan-split-stats { display: flex; gap: 16px; margin-inline-start: auto; flex-wrap: wrap; }
+.plan-split-stat { text-align: center; }
+.plan-split-stat b {
+  display: block; font-family: 'Barlow Condensed', sans-serif;
+  font-style: italic; font-weight: 800; font-size: 1.12rem; line-height: 1;
+}
+body.lang-ar .plan-split-stat b { font-style: normal; }
+.plan-split-stat span {
+  font-size: .58rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; opacity: .82;
+}
+body.lang-ar .plan-split-stat span { letter-spacing: 0; text-transform: none; font-size: .64rem; }
+/* ── Round 18: COMPACT plan rows (user request: "make all workouts take
+   less space so it becomes smaller") — tighter paddings, smaller chips,
+   smaller day headers. One day at a time + compact rows = a much shorter
+   dashboard card. ── */
+.plan-day-row {
+  padding: 9px 15px;
+  border-top: 1px solid var(--line);
+  animation: fadeIn .4s ease backwards;
+}
+.plan-day-row:first-of-type { border-top: 0; }
+.plan-day-head {
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.plan-day-name {
+  font-weight: 800; font-size: .84rem; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--text);
+}
+body.lang-ar .plan-day-name { letter-spacing: 0; text-transform: none; }
+.plan-focus-chip {
+  font-size: .58rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--accent-dark); background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  padding: 2px 8px; border-radius: 999px;
+}
+body.lang-ar .plan-focus-chip { letter-spacing: 0; text-transform: none; }
+.plan-day-kcal {
+  margin-inline-start: auto; font-size: .66rem; font-weight: 800;
+  color: var(--muted);
+}
+.plan-ex-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;
+}
+.plan-ex-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: .74rem; font-weight: 600; color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 9px; padding: 4px 8px;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+.plan-ex-chip i { color: var(--accent); font-size: .6rem; }
+.plan-ex-chip:hover { border-color: var(--accent); transform: translateY(-1px); }
+.plan-hiit-note {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 6px; font-size: .7rem; font-weight: 700; color: var(--accent-dark);
+}
+.plan-hiit-note i { font-size: .7rem; }
+.plan-meal-row { padding: 9px 15px; border-top: 1px solid var(--line); }
+.plan-meal-head {
+  display: flex; align-items: center; gap: 7px; margin-bottom: 6px;
+}
+.plan-meal-name {
+  font-weight: 800; font-size: .84rem; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--text);
+}
+body.lang-ar .plan-meal-name { letter-spacing: 0; text-transform: none; }
+.plan-meal-kcal {
+  margin-inline-start: auto;
+  font-size: .68rem; font-weight: 800; letter-spacing: .06em;
+  color: var(--accent-dark); background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  padding: 3px 10px; border-radius: 999px;
+}
+.plan-food-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+.plan-food-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: .84rem; font-weight: 600; color: var(--text);
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: 10px; padding: 7px 11px;
+}
+.plan-food-chip i { color: var(--green); font-size: .68rem; }
+.plan-water-note {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 18px; border-top: 1px solid var(--line);
+  font-size: .82rem; font-weight: 700; color: #0284c7; width: 100%;
+}
+.plan-empty-note { padding: 14px 18px; color: var(--muted); font-size: .9rem; }
+
+/* ============================================================
+   7. WEEKLY CHART + COACH RECOMMENDATION
+   ============================================================ */
+#weekly-activity-panel { border-radius: 20px; }
+#weekly-activity-panel canvas { width: 100% !important; }
+.rec-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.rec-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: .78rem; font-weight: 800; letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: 7px 14px; border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+body.lang-ar .rec-chip { text-transform: none; letter-spacing: 0; }
+.rec-chip:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(26,34,51,.12); }
+.rec-chip i { font-size: .78rem; }
+.rc-blue   { background: var(--accent-soft); color: var(--accent-dark); border-color: var(--accent-border); }
+.rc-green  { background: var(--green-bg); color: var(--green); border-color: rgba(29,157,107,.25); }
+.rc-amber  { background: var(--amber-bg); color: var(--amber); border-color: rgba(185,123,22,.25); }
+.rc-violet { background: rgba(139,92,246,.12); color: #7c3aed; border-color: rgba(139,92,246,.25); }
+.rc-red    { background: var(--red-bg); color: var(--red); border-color: rgba(201,68,68,.25); }
+
+/* ============================================================
+   8. FEATURE CARDS
+   ============================================================ */
+.dash-feature-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin: 26px 0 8px;
+}
+.dash-feature-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 18px;
+  cursor: pointer;
+  animation: cardStaggerIn .5s ease backwards;
+  transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, border-color .25s ease;
+}
+.dash-feature-card:nth-child(2) { animation-delay: .08s; }
+.dash-feature-card:nth-child(3) { animation-delay: .16s; }
+.dash-feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 26px rgba(26,34,51,.13); border-color: var(--accent-border); }
+.dash-feature-icon {
+  width: 44px; height: 44px; border-radius: 13px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.15rem; margin-bottom: 12px;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.dash-feature-card:hover .dash-feature-icon { transform: scale(1.1) rotate(-5deg); }
+.fc-diet .dash-feature-icon   { background: var(--green-bg); color: var(--green); }
+.fc-sports .dash-feature-icon { background: var(--accent-soft); color: var(--accent-dark); }
+.fc-morph .dash-feature-icon  { background: rgba(139,92,246,.12); color: #7c3aed; }
+.dash-feature-card h4 {
+  margin: 0 0 5px; font-size: .92rem; font-weight: 800;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--text);
+}
+body.lang-ar .dash-feature-card h4 { letter-spacing: 0; text-transform: none; }
+.dash-feature-card p { margin: 0; color: var(--muted); font-size: .85rem; line-height: 1.45; }
+
+/* ============================================================
+   9. NEW BOTTOM NAVIGATION BAR
+   ============================================================ */
+.bottom-nav {
+  background: var(--white) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 -2px 10px rgba(26,34,51,.06), 0 8px 28px rgba(26,34,51,.14) !important;
+  left: 12px !important; right: 12px !important; bottom: 10px !important;
+  padding: 7px 10px calc(7px + env(safe-area-inset-bottom, 0px)) !important;
+  overflow: hidden;
+}
+#bottom-nav .bottom-nav-items { gap: 4px; }
+/* Round 10: ALL five buttons are the SAME SIZE — equal width (flex:1 with
+   min-width:0 so long labels can't force wider buttons) and one fixed height
+   (so 1-line and 2-line labels end up identical). Labels wrap to two lines
+   in sentence case so they always fit their cell. */
+#bottom-nav .bottom-nav-item {
+  flex: 1;
+  min-width: 0;
+  height: 62px;
+  border-radius: 15px;
+  gap: 3px;
+  padding: 6px 2px;
+  color: #8d99af !important;
+  font-size: .64rem !important;
+  font-weight: 700;
+  letter-spacing: .01em;
+  position: relative;
+  z-index: 2;
+  transition: color .25s ease, background .2s ease;
+}
+body.lang-ar #bottom-nav .bottom-nav-item span { letter-spacing: 0; font-size: .68rem !important; }
+#bottom-nav .bottom-nav-item i { font-size: 1.22rem; transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+#bottom-nav .bottom-nav-item span { font-size: .64rem !important; line-height: 1.15; white-space: normal; text-align: center; overflow-wrap: break-word; }
+#bottom-nav .bottom-nav-item.active { color: var(--accent-dark) !important; background: var(--accent-soft) !important; }
+body.dark-mode #bottom-nav .bottom-nav-item.active { background: rgba(100, 149, 237, .16) !important; }
+#bottom-nav .bottom-nav-item.active i { transform: translateY(-2px) scale(1.12); }
+#bottom-nav .bottom-nav-item.active span { font-weight: 800; }
+/* Very narrow phones: keep labels inside their equal-width cells */
+@media (max-width: 360px) {
+  #bottom-nav .bottom-nav-item span { font-size: .55rem !important; }
+}
+/* Landscape compact mode: shorter bar, but all buttons stay the SAME size */
+@media (max-height: 500px) and (orientation: landscape) {
+  #bottom-nav .bottom-nav-item { height: 44px; gap: 1px; }
+  #bottom-nav .bottom-nav-item span { font-size: .55rem !important; }
+}
+/* More sheet matches new nav style */
+.bottom-nav-more {
+  border-radius: 20px !important;
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 40px rgba(26,34,51,.22) !important;
+}
+.bottom-nav-more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.bottom-nav-more-item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 7px; padding: 14px 6px; border-radius: 14px;
+  background: var(--bg); border: 1px solid var(--line);
+  font-size: .68rem; font-weight: 700; color: var(--text);
+  letter-spacing: .03em; text-transform: uppercase;
+  transition: all .2s ease;
+}
+body.lang-ar .bottom-nav-more-item { text-transform: none; letter-spacing: 0; }
+.bottom-nav-more-item i { font-size: 1.1rem; color: var(--accent-dark); transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+.bottom-nav-more-item:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-2px); }
+.bottom-nav-more-item:hover i { transform: scale(1.15); }
+.bottom-nav-more-logout { color: var(--red) !important; }
+.bottom-nav-more-logout i { color: var(--red) !important; }
+
+/* ============================================================
+   10. STREAKS TAB
+   ============================================================ */
+/* -- Weekly report card -- */
+.report-card-wrap {
+  display: flex; gap: 22px; align-items: center; flex-wrap: wrap;
+}
+.report-grade-box {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  flex-shrink: 0;
+}
+.report-grade-circle {
+  width: 110px; height: 110px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-style: italic; font-weight: 800; font-size: 3rem;
+  color: #fff;
+  background: conic-gradient(var(--accent-dark) var(--grade-pct, 0%), var(--line) 0deg);
+  position: relative;
+  animation: gradePop .6s cubic-bezier(.34,1.56,.64,1) backwards;
+}
+.report-grade-circle::before {
+  content: '';
+  position: absolute; inset: 7px; border-radius: 50%;
+  background: var(--white);
+}
+.report-grade-circle b { position: relative; z-index: 1; }
+body.lang-ar .report-grade-circle { font-style: normal; }
+.report-grade-label { font-size: .72rem; font-weight: 800; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; }
+body.lang-ar .report-grade-label { letter-spacing: 0; text-transform: none; }
+.report-subjects { flex: 1; min-width: 220px; display: grid; gap: 10px; }
+.report-subject { display: grid; gap: 5px; }
+.report-subject-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-size: .82rem; font-weight: 700; color: var(--text);
+}
+.report-subject-head b { color: var(--accent-dark); }
+.report-subject-bar {
+  height: 8px; border-radius: 999px; background: var(--line); overflow: hidden;
+}
+.report-subject-fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  transition: width 1s cubic-bezier(.22,1,.36,1);
+}
+.report-note {
+  margin-top: 14px; padding: 11px 14px; border-radius: 12px;
+  background: var(--accent-soft); border: 1px solid var(--accent-border);
+  color: var(--accent-dark); font-size: .88rem; font-weight: 600;
+  animation: fadeIn .5s ease .2s backwards;
+}
+.report-history { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+.report-history-chip {
+  font-size: .74rem; font-weight: 800; color: var(--muted);
+  background: var(--bg); border: 1px solid var(--line);
+  padding: 5px 11px; border-radius: 999px;
+}
+
+/* -- Heatmap -- */
+.prog-chart-block { margin-top: 18px; }
+.prog-chart-block:first-of-type { margin-top: 12px; }
+.prog-chart-block h4 {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .82rem; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text); margin-bottom: 12px;
+}
+body.lang-ar .prog-chart-block h4 { letter-spacing: 0; text-transform: none; }
+.prog-chart-block h4 i { color: var(--accent-dark); font-size: .85rem; }
+.streak-heatmap {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 13px);
+  grid-auto-columns: 13px;
+  gap: 3px;
+  /* Center the month grid horizontally (user request) */
+  justify-content: center;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+.streak-heatmap .hm-cell {
+  width: 13px; height: 13px; border-radius: 3.5px;
+  background: var(--line);
+  opacity: .55;
+  animation: hmPop .3s ease backwards;
+  transition: transform .15s ease;
+}
+.streak-heatmap .hm-cell:hover { transform: scale(1.35); opacity: 1; }
+.streak-heatmap .hm-cell.hm1 { background: #cfe0fb; opacity: 1; }
+.streak-heatmap .hm-cell.hm2 { background: #a5c4f4; opacity: 1; }
+.streak-heatmap .hm-cell.hm3 { background: #6f9ce8; opacity: 1; }
+.streak-heatmap .hm-cell.hm4 { background: var(--accent-dark); opacity: 1; }
+.streak-heatmap .hm-cell.hm-today { box-shadow: 0 0 0 2px var(--accent-dark) inset; }
+.heatmap-legend {
+  display: flex; align-items: center; gap: 5px; justify-content: flex-end;
+  margin-top: 8px; font-size: .7rem; font-weight: 700; color: var(--muted);
+}
+.heatmap-legend .hm {
+  width: 11px; height: 11px; border-radius: 3px; display: inline-block;
+}
+.heatmap-legend .hm0 { background: var(--line); }
+.heatmap-legend .hm1 { background: #cfe0fb; }
+.heatmap-legend .hm2 { background: #a5c4f4; }
+.heatmap-legend .hm3 { background: #6f9ce8; }
+.heatmap-legend .hm4 { background: var(--accent-dark); }
+
+/* ===== MONTHLY HEATMAP NAVIGATION (user request) ===== */
+.hm-nav {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-bottom: 10px;
+}
+.hm-nav-btn {
+  width: 28px; height: 28px; border-radius: 9px;
+  border: 1px solid var(--line); background: var(--white);
+  color: var(--accent-dark); cursor: pointer;
+  font-size: .72rem; display: inline-flex; align-items: center; justify-content: center;
+  transition: all .2s ease;
+}
+.hm-nav-btn:hover:not(:disabled) { border-color: var(--accent-border); background: var(--accent-soft); }
+.hm-nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+.hm-nav-label {
+  min-width: 130px; text-align: center;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: .98rem; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--text);
+}
+body.lang-ar .hm-nav-label { font-family: 'Cairo', sans-serif; text-transform: none; letter-spacing: 0; }
+/* Days outside the viewed month are dimmed further */
+.streak-heatmap .hm-cell.hm-out { opacity: .18; }
+
+/* -- Weight log row -- */
+.weight-log-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.weight-log-row input { flex: 1 1 auto; min-width: 0; width: auto; }
+/* Small inline buttons must not inherit the auth-screen width:100% rule */
+.btn.primary.small, .btn.small.primary { width: auto; flex: 0 0 auto; }
+.btn.primary.small.fit { width: 100%; }
+
+/* -- Workout history -- */
+.history-day-group { margin-bottom: 14px; }
+.history-day-head {
+  font-size: .74rem; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 7px; display: flex; align-items: center; gap: 8px;
+}
+body.lang-ar .history-day-head { letter-spacing: 0; text-transform: none; }
+.history-day-head::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.history-row {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: 12px; padding: 10px 13px; margin-bottom: 7px;
+  animation: fadeIn .35s ease backwards;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.history-row:hover { border-color: var(--accent-border); transform: translateX(2px); }
+[dir="rtl"] .history-row:hover { transform: translateX(-2px); }
+.history-ico {
+  width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); color: var(--accent-dark); font-size: .95rem;
+}
+.history-main { flex: 1 1 150px; min-width: 0; }
+.history-main b { display: block; font-size: .95rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history-main small { color: var(--muted); font-size: .78rem; }
+/* Round 18: prominent session note line (note-only logger feeds this) */
+.history-main small.history-note {
+  display: flex; align-items: center; gap: 5px;
+  color: var(--text); font-size: .78rem; font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.history-main small.history-note i { color: var(--amber); font-size: .7rem; flex-shrink: 0; }
+.history-nums { display: flex; gap: 8px; align-items: center; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; margin-left: auto; }
+.history-pill {
+  font-size: .74rem; font-weight: 800; color: var(--accent-dark);
+  background: var(--accent-soft); border: 1px solid var(--accent-border);
+  padding: 4px 10px; border-radius: 999px; white-space: nowrap;
+}
+.history-pill.hp-kcal { color: var(--green); background: var(--green-bg); border-color: rgba(29,157,107,.25); }
+.history-pill.hp-int { color: var(--amber); background: var(--amber-bg); border-color: rgba(185,123,22,.25); }
+.history-empty { color: var(--muted); text-align: center; padding: 16px; font-size: .9rem; }
+
+/* -- Badges wall -- */
+.badges-progress {
+  font-size: .85rem; font-weight: 700; color: var(--muted); margin-bottom: 12px;
+}
+.badges-progress b { color: var(--accent-dark); font-size: 1.05rem; }
+.badges-progress .badge-total-bar {
+  margin-top: 8px; height: 10px; border-radius: 999px; background: var(--line); overflow: hidden;
+}
+.badges-progress .badge-total-fill {
+  height: 100%; border-radius: 999px; width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  transition: width 1.1s cubic-bezier(.22,1,.36,1);
+}
+.badges-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 10px;
+}
+.badge-tile {
+  position: relative;
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: 16px; padding: 16px 10px 12px;
+  text-align: center;
+  animation: cardStaggerIn .45s ease backwards;
+  transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease;
+}
+.badge-tile:nth-child(4n+2) { animation-delay: .06s; }
+.badge-tile:nth-child(4n+3) { animation-delay: .12s; }
+.badge-tile:nth-child(4n+4) { animation-delay: .18s; }
+.badge-tile:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(26,34,51,.12); }
+.badge-tile-icon {
+  width: 52px; height: 52px; margin: 0 auto 9px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.35rem;
+  background: var(--accent-soft); color: var(--accent-dark);
+}
+.badge-tile.unlocked .badge-tile-icon {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  color: #fff;
+  box-shadow: 0 5px 14px rgba(74,123,217,.4);
+  animation: badgeShine 2.8s ease infinite;
+}
+.badge-tile.unlocked { border-color: var(--accent-border); background: linear-gradient(180deg, rgba(100,149,237,.05), transparent); }
+.badge-tile-name { font-size: .8rem; font-weight: 800; color: var(--text); letter-spacing: .02em; }
+.badge-tile-desc { font-size: .7rem; color: var(--muted); margin-top: 3px; line-height: 1.35; }
+.badge-tile-bar { margin-top: 8px; height: 5px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.badge-tile-bar i {
+  display: block; height: 100%; border-radius: 999px;
+  background: var(--accent); transition: width .9s ease;
+}
+.badge-tile .badge-check {
+  position: absolute; top: 8px; inset-inline-end: 8px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--green); color: #fff; font-size: .62rem;
+  display: flex; align-items: center; justify-content: center;
+  animation: checkPop .4s cubic-bezier(.34,1.56,.64,1) backwards;
+}
+.badge-tile.locked { opacity: .75; }
+.badge-tile.locked .badge-tile-icon { filter: grayscale(.6); opacity: .6; }
+
+/* ============================================================
+   11. CUSTOM WORKOUT BUILDER
+   ============================================================ */
+.builder-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.builder-modal-content input[type="text"] { width: 100%; margin-bottom: 10px; }
+.builder-muscle-chips {
+  display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 8px;
+}
+.builder-mchip {
+  flex-shrink: 0;
+  font-size: .74rem; font-weight: 700; letter-spacing: .03em;
+  color: var(--muted); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 6px 13px; cursor: pointer;
+  transition: all .2s ease;
+}
+.builder-mchip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.builder-mchip:hover { border-color: var(--accent); color: var(--accent-dark); }
+.builder-mchip.active:hover { color: #fff; }
+.builder-library {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px;
+  max-height: 260px; overflow-y: auto;
+  padding: 2px;
+}
+.builder-lib-item {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: 10px; padding: 8px 10px;
+  font-size: .8rem; font-weight: 600; color: var(--text);
+  cursor: pointer; text-align: start;
+  transition: all .18s ease;
+}
+.builder-lib-item small { display: block; color: var(--muted); font-size: .68rem; font-weight: 600; }
+.builder-lib-item:hover { border-color: var(--accent); }
+.builder-lib-item.picked { background: var(--accent-soft); border-color: var(--accent); }
+.builder-lib-item .bli-plus { margin-inline-start: auto; color: var(--accent-dark); font-weight: 800; }
+.builder-selected { display: grid; gap: 7px; margin-bottom: 14px; }
+.builder-sel-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: 12px; padding: 8px 11px;
+  animation: fadeIn .3s ease backwards;
+}
+.builder-sel-row .bsr-name {
+  font-weight: 700; font-size: .88rem; color: var(--text);
+  flex: 1; min-width: 120px;
+}
+.builder-sel-row input[type="number"] {
+  width: 62px; padding: 6px 8px; font-size: .85rem;
+}
+.builder-sel-row label { font-size: .7rem; color: var(--muted); font-weight: 700; }
+.bsr-btn {
+  width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
+  border: 1px solid var(--line); background: var(--white); color: var(--muted);
+  cursor: pointer; transition: all .2s ease;
+}
+.bsr-btn:hover { border-color: var(--red); color: var(--red); }
+.bsr-btn.bsr-up:hover { border-color: var(--accent); color: var(--accent-dark); }
+.bsr-btn.bsr-down:hover { border-color: var(--accent); color: var(--accent-dark); }
+.custom-workout-card {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: 14px; padding: 11px 13px; margin-bottom: 8px;
+  animation: fadeIn .35s ease backwards;
+}
+.custom-workout-card .cwc-main { flex: 1; min-width: 150px; }
+.custom-workout-card .cwc-main b { font-size: .95rem; color: var(--text); display: block; }
+.custom-workout-card .cwc-main small { color: var(--muted); font-size: .76rem; }
+.custom-workout-card .cwc-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ============================================================
+   12. SETTINGS ADDITIONS
+   ============================================================ */
+.settings-row { align-items: flex-start; flex-wrap: wrap; gap: 10px; }
+.settings-row .toggle-group { max-width: 100%; }
+.settings-row .toggle-btn { white-space: nowrap; padding: 6px 12px; }
+.settings-row-notif .toggle-group,
+.settings-row-data .toggle-group { flex-shrink: 0; }
+#notif-daily-row input[type="time"] { padding: 7px 9px; border-radius: 10px; border: 1px solid var(--line); background: var(--white); color: var(--text); }
+
+/* ============================================================
+   13. ANIMATIONS
+   ============================================================ */
+@keyframes gradePop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes hmPop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes badgeShine {
+  0%, 100% { box-shadow: 0 5px 14px rgba(74,123,217,.4); }
+  50% { box-shadow: 0 5px 22px rgba(74,123,217,.75); }
+}
+@keyframes checkPop { from { transform: scale(0); } to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .report-grade-circle, .streak-heatmap .hm-cell, .badge-tile, .badge-tile.unlocked .badge-tile-icon { animation: none !important; }
+}
+
+/* ============================================================
+   14. RESPONSIVE + RTL
+   ============================================================ */
+@media (max-width: 1024px) {
+  .dash-stats-grid, .dash-stats-grid.sk-grid { grid-template-columns: repeat(4, 1fr); }
+  .builder-library { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .dash-hero { padding: 16px 16px 14px; border-radius: 16px; }
+  .dash-hero-eyebrow { font-size: .6rem; padding: 4px 10px; margin-bottom: 10px; }
+  .dash-avatar { width: 46px; height: 46px; font-size: 1rem; border-radius: 13px; }
+  .dash-hero-idtext h1 { font-size: 1.35rem !important; }
+  .dash-hero-idtext p { font-size: .82rem; }
+  .dash-date-chip { font-size: .64rem; padding: 5px 10px; }
+  .dash-day-ghost { font-size: 3rem; }
+  .dash-stats-grid, .dash-stats-grid.sk-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .dash-stat-card { padding: 13px 13px 11px; }
+  .dash-stat-icon { width: 34px; height: 34px; font-size: .95rem; }
+  .dash-stat-body b { font-size: 1.7rem; }
+  .dash-stat-body small { font-size: .62rem; letter-spacing: .05em; }
+  body.lang-ar .dash-stat-body small { font-size: .72rem; }
+  .dash-rings-panel { flex-direction: column; gap: 18px; text-align: center; }
+  .dash-rings-wrap { width: 190px; height: 190px; }
+  .dash-rings-title { font-size: 1.05rem !important; border: none !important; padding: 0 !important; margin: 2px 0 10px !important; }
+  .dash-rings-legend { justify-content: center; }
+  .dash-rings-sub { font-size: .82rem; }
+  .dash-section-headtext h2 { font-size: 1.25rem; }
+  body.lang-ar .dash-section-headtext h2 { font-size: 1.15rem; }
+  .plan-split-head { padding: 10px 13px; gap: 10px; }
+  .plan-split-title { font-size: 1.02rem; }
+  .plan-split-stats { gap: 12px; width: 100%; margin-inline-start: 0; justify-content: space-between; }
+  .plan-split-stat b { font-size: 1.05rem; }
+  .plan-split-stat span { font-size: .54rem; }
+  /* Round 18: compact on mobile too — the workout card stays SHORT */
+  .plan-day-row, .plan-meal-row { padding: 8px 13px; }
+  .plan-day-head, .plan-meal-head { margin-bottom: 5px; }
+  .plan-ex-grid { grid-template-columns: 1fr 1fr; gap: 4px; }
+  .plan-ex-chip, .plan-food-chip { font-size: .72rem; padding: 4px 8px; border-radius: 8px; }
+  .plan-food-grid { gap: 4px; }
+  .dash-feature-grid { grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 20px; }
+  .dash-feature-card { padding: 13px 10px; border-radius: 14px; }
+  .dash-feature-icon { width: 36px; height: 36px; font-size: 1rem; margin-bottom: 8px; }
+  .dash-feature-card h4 { font-size: .64rem !important; letter-spacing: .02em; }
+  .dash-feature-card p { display: none; }
+  .report-grade-circle { width: 92px; height: 92px; font-size: 2.4rem; }
+  .badges-grid { grid-template-columns: repeat(auto-fill, minmax(106px, 1fr)); gap: 8px; }
+  .badge-tile { padding: 13px 7px 10px; }
+  .badge-tile-icon { width: 44px; height: 44px; font-size: 1.15rem; }
+  .builder-library { grid-template-columns: 1fr 1fr; max-height: 220px; }
+  .bottom-nav-more-grid { grid-template-columns: repeat(3, 1fr); }
+  #screen-app .main > h1 { font-size: 1.5rem !important; }
+}
+@media (max-width: 380px) {
+  .dash-day-ghost { display: none; }
+  .dash-feature-grid { grid-template-columns: 1fr 1fr; }
+  .dash-feature-card.fc-morph { display: none; }
+}
+/* RTL fine-tuning */
+[dir="rtl"] .dash-hero::before { background: repeating-linear-gradient(55deg, transparent 0 26px, rgba(100,149,237,.045) 26px 30px); }
+[dir="rtl"] .dash-goal-pct { text-align: left; }
+[dir="rtl"] .history-row:hover { transform: translateX(-2px); }
+[dir="rtl"] .plan-split-stats { margin-inline-start: 0; }
+body.lang-ar .report-grade-circle,
+body.lang-ar .dash-stat-body b,
+body.lang-ar .plan-split-stat b,
+body.lang-ar .dash-rings-center b { font-family: 'Barlow Condensed', sans-serif; }
+
+/* ============================================================
+   Workout-detail steps & tips lists (modal)
+   ============================================================ */
+.wd-list-block {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  animation: fadeIn .4s ease backwards;
+}
+.wd-list-title {
+  display: block;
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  margin-bottom: 8px;
+}
+body.lang-ar .wd-list-title { letter-spacing: 0; text-transform: none; }
+.wd-steps, .wd-tips {
+  margin: 0; padding-inline-start: 20px;
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: .88rem; color: var(--text);
+}
+.wd-steps li::marker { color: var(--accent); font-weight: 800; }
+.wd-tips li::marker { color: var(--green); }
+
+/* ============================================================
+   Round 18 — DAY SUMMARY POPUP (bar-graph click)
+   Opens from the weekly activity chart: full summary of that
+   day — calories burnt, minutes active, workouts (+ notes)
+   and meals eaten.
+   ============================================================ */
+.day-summary-content { max-width: 520px; }
+.ds-head h3 {
+  margin: 0 0 14px; font-size: 1.05rem; font-weight: 800;
+  color: var(--text); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.ds-head h3 i { color: var(--accent); }
+.ds-today-badge {
+  font-size: .58rem; font-weight: 800; letter-spacing: .1em;
+  background: var(--accent); color: #fff;
+  padding: 3px 9px; border-radius: 999px;
+}
+.ds-stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px;
+}
+.ds-stat {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 13px;
+  padding: 11px 6px 9px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.ds-stat i { font-size: .95rem; color: var(--accent); }
+.ds-stat b { font-size: 1.15rem; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; }
+.ds-stat span { font-size: .52rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+body.lang-ar .ds-stat span { letter-spacing: 0; text-transform: none; font-size: .6rem; }
+.ds-stat.ds-hot i { color: var(--amber); }
+.ds-stat.ds-meal i { color: var(--green); }
+.ds-sub {
+  margin: 14px 0 8px; font-size: .78rem; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--text);
+  display: flex; align-items: center; gap: 7px;
+}
+body.lang-ar .ds-sub { letter-spacing: 0; text-transform: none; }
+.ds-sub i { color: var(--accent); font-size: .8rem; }
+.ds-sub span { color: var(--muted); font-weight: 700; }
+.ds-list { display: flex; flex-direction: column; gap: 7px; }
+.ds-row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: 12px; padding: 9px 12px;
+  animation: fadeIn .3s ease backwards;
+}
+.ds-row-ico {
+  width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); color: var(--accent-dark); font-size: .9rem;
+}
+.ds-row-ico.ds-ico-meal { background: var(--green-bg); color: var(--green); }
+.ds-row-main { flex: 1; min-width: 0; }
+.ds-row-main b { display: block; font-size: .9rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ds-row-main small { color: var(--muted); font-size: .72rem; text-transform: capitalize; }
+.ds-row-main small.ds-note {
+  display: flex; align-items: center; gap: 5px;
+  color: var(--text); font-size: .76rem; font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  text-transform: none; /* keep the user's note exactly as written */
+}
+.ds-row-main small.ds-note i { color: var(--amber); font-size: .68rem; flex-shrink: 0; }
+.ds-row-nums { display: flex; gap: 8px; align-items: center; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+.ds-row-nums span { font-size: .7rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.ds-row-nums span.ds-hot-txt { color: var(--amber); }
+.ds-empty { text-align: center; color: var(--muted); font-size: .82rem; padding: 10px 6px; margin: 0; }
+@media (max-width: 480px) {
+  .ds-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .ds-row { flex-wrap: wrap; }
+  .ds-row-nums { width: 100%; justify-content: flex-start; padding-left: 44px; }
+}

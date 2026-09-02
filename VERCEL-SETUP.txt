@@ -1,0 +1,123 @@
+════════════════════════════════════════════════════════════════════
+ VOLTA — VERCEL VAULT SETUP (login details + cloud sync backend)
+════════════════════════════════════════════════════════════════════
+
+WHAT THIS IS
+------------
+Your website now ships its own backend: the new "api/" folder in this
+repository. When the repo is on Vercel, that folder becomes a real
+server (serverless functions) that STORES EVERY NEW ACCOUNT'S LOGIN
+DETAILS and syncs app data across devices.
+
+  • Sign up / log in with email  → account record (email + password +
+    profile) is stored on YOUR Vercel backend immediately.
+  • "Continue with Google"       → the Google account record is stored
+    there too (plus in your Firestore vault).
+  • Log in from ANY device with the same email → the record is pulled
+    back from the Vercel vault — profile, sessions, streak, diet, all
+    of it. Cloudsync works with no issues.
+
+Storage keys are one-way hashes of the email (the API never sees a
+bare email as a key) and only the app's own "volta-u-v1-*" /
+"volta-d-v1-*" namespace is accepted.
+
+────────────────────────────────────────────────────────────────────
+OPTION A — YOUR VERCEL PROJECT IS ALREADY CONNECTED (most likely)
+────────────────────────────────────────────────────────────────────
+Your app is already served from:
+  https://volta-aimobile-github-io.vercel.app
+That means the repo is connected to Vercel. You only need to push the
+new files:
+
+  1. Upload/copy the NEW "api/" folder (and updated index.html,
+     js/cloudsync.js, js/volta.js, sw.js, VERCEL-SETUP.txt) into your
+     volta-aimobile.github.io repository root — same way you always
+     update the site.
+  2. Push/commit. Vercel redeploys automatically (~1 minute).
+  3. Done. The app points at that exact URL already — NOTHING to
+     configure anywhere.
+
+VERIFY IT WORKS (30 seconds)
+  • Open  https://volta-aimobile-github-io.vercel.app/api/health
+    → you should see:  {"ok":true,"storage":"textdb",...}
+  • In the app: Settings → Cloud Backup card shows
+    "Vercel vault: synced".
+
+────────────────────────────────────────────────────────────────────
+OPTION B — CONNECT THE REPO TO VERCEL YOURSELF (if needed)
+────────────────────────────────────────────────────────────────────
+  1. Make sure the repo (with the api/ folder) is on GitHub.
+  2. Go to vercel.com → log in → "Add New…" → "Project".
+  3. Import your volta-aimobile.github.io repository.
+  4. Framework Preset: "Other"  (no build settings needed).
+  5. Deploy. You get a URL like
+        volta-aimobile-github-io-xxxx.vercel.app
+  6. Open index.html and set (line ~36):
+        window.VOLTA_SYNC_API = 'https://volta-aimobile-github-io-xxxx.vercel.app';
+     Push again — the app will use YOUR URL.
+  7. Verify with  <your-url>/api/health  as above.
+
+NOTE: the site itself stays on GitHub Pages. Vercel is only the
+backend/data vault — exactly what you asked for (never a publisher).
+
+────────────────────────────────────────────────────────────────────
+OPTIONAL — DURABILITY UPGRADE (2 minutes, recommended later)
+────────────────────────────────────────────────────────────────────
+Out of the box the vault keeps data in a shared cloud document store
+(textdb.dev — the same one the app already uses as fallback). To keep
+the data INSIDE your own Vercel project permanently:
+
+  1. Vercel dashboard → your project → "Storage" tab.
+  2. "Create Database" → choose KV / Upstash Redis (free plan is fine).
+  3. Connect it to the project when asked (env vars are injected
+     automatically) and redeploy if prompted.
+  4. /api/health now reports "storage":"kv+textdb" — the vault is
+     fully self-hosted. No code changes, ever.
+
+────────────────────────────────────────────────────────────────────
+HOW SYNC DECIDES WHERE TO READ/WRITE
+────────────────────────────────────────────────────────────────────
+  Writes → Vercel vault + Firestore + textdb.dev  (all best-effort;
+           one failing never blocks the others; offline changes are
+           queued and retried automatically).
+  Reads  → Firestore → Vercel vault → textdb.dev (first one that has
+           the account wins).
+
+If the api/ folder is not deployed yet, the Vercel transport silently
+stands by ("waiting for deploy" in Settings) and the other two keep
+sync working — pushing the repo flips it on with zero configuration.
+
+PRIVACY NOTE
+------------
+Accounts store the password the same way the app already does locally
+(this is a local-first fitness app; there is no server-side auth
+model). The keys are hashed, so the vault cannot be walked to list
+emails. If you ever want stricter protection, the api/ functions
+accept a shared-secret header — ask and it can be added.
+
+────────────────────────────────────────────────────────────────────
+NEW — AI MEAL SCANNER BACKEND (api/analyze-meal.js)
+────────────────────────────────────────────────────────────────────
+The Diet tab's "AI Meal Scanner" now has a real backend: take a photo
+of any meal and the server identifies it and returns calories +
+protein/carbs/fat + ingredients.
+
+One-time setup (2 minutes):
+  1. Go to https://aistudio.google.com → sign in with the SAME Google
+     account you use for Vercel/Firebase → click "Get API key" →
+     "Create API key" → copy it (starts with "AIza…").
+  2. Vercel dashboard → your project → Settings → Environment
+     Variables → add:
+        Name:  GEMINI_API_KEY
+        Value: <paste the key>
+     (Environment: Production + Preview + Development)
+  3. Redeploy the project (Deployments → latest → Redeploy).
+
+That's it — Gemini has a generous FREE tier, so there is nothing to
+pay. (Alternative: set OPENAI_API_KEY instead and the endpoint will
+automatically use OpenAI gpt-4o-mini.)
+
+VERIFY IT WORKS (30 seconds)
+  • Diet tab → "Take a photo of your meal" → pick any food photo →
+    within a few seconds you should see the dish name + kcal + macros,
+    then "Log Meal" adds it to the day's diet log.

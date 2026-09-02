@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<!-- Kill iOS Safari data detectors: without this, Safari auto-underlines text it
+     thinks is a phone/address/date (seen under "TODAY'S ACTIVITY GOAL" on iPhone). -->
+<meta name="format-detection" content="telephone=no,address=no,email=no,date=no" />
+<title>Volta — Smart Fitness Companion</title>
+<!-- Offline-first: all third-party assets are vendored locally (vendor/, img/)
+     so the app works with zero internet — both hosted and from a local file. -->
+<link rel="stylesheet" href="vendor/fonts/fonts.css" />
+<link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+<meta name="theme-color" content="#6495ED" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Volta" />
+<!-- Phase 8: Proper PWA manifest + icons for Play Store installability -->
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzY0OTVFRCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM0YTdiZDkiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJvbHQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmZmZmZiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNlOGU4ZTgiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDwhLS0gUm91bmRlZCBzcXVhcmUgYmFja2dyb3VuZCAtLT4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0idXJsKCNiZykiLz4KICA8IS0tIExpZ2h0bmluZyBib2x0IChWb2x0YSBicmFuZCkgLS0+CiAgPHBhdGggZD0iTTI4MCA4MCBMMTYwIDI4MCBMMjQwIDI4MCBMMjIwIDQzMiBMMzYwIDIyMCBMMjgwIDIyMCBaIiBmaWxsPSJ1cmwoI2JvbHQpIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" />
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzY0OTVFRCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM0YTdiZDkiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJvbHQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmZmZmZiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNlOGU4ZTgiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDwhLS0gUm91bmRlZCBzcXVhcmUgYmFja2dyb3VuZCAtLT4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0idXJsKCNiZykiLz4KICA8IS0tIExpZ2h0bmluZyBib2x0IChWb2x0YSBicmFuZCkgLS0+CiAgPHBhdGggZD0iTTI4MCA4MCBMMTYwIDI4MCBMMjQwIDI4MCBMMjIwIDQzMiBMMzYwIDIyMCBMMjgwIDIyMCBaIiBmaWxsPSJ1cmwoI2JvbHQpIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" />
+<link rel="stylesheet" href="css/volta.css">
+<link rel="stylesheet" href="css/volta-animations.css">
+<link rel="stylesheet" href="css/volta-sport-theme.css">
+<link rel="stylesheet" href="css/volta-redesign.css">
+</head>
+<body>
+<script>
+// ─── API BASE CONFIG ──────────────────────────────────────────────────────
+// The backend API + account vault lives on Vercel
+// (volta-aimobile-github-io.vercel.app) from the api/ folder in this repo.
+// Round 18: localhost/127.0.0.1 now use SAME-ORIGIN (the local dev server
+// ships the same api/ endpoints — analyze-meal, sync-user, sync-diet,
+// health). The Vercel vault is still targeted explicitly from file:// and
+// the static hosts (GitHub Pages / Firebase), as before.
+// If your Vercel project uses a different URL, paste it into
+// window.VOLTA_SYNC_API below. Health check: <API>/api/health
+var VOLTA_VERCEL_VAULT = 'https://volta-aimobile-github-io.vercel.app';
+var __voltaHost = window.location.hostname || '';
+window.VOLTA_API_BASE = (window.location.protocol === 'file:'
+  || __voltaHost === 'volta-aimobile.github.io'
+  || __voltaHost.indexOf('vercel.app') !== -1        // the vault itself
+  || __voltaHost.indexOf('web.app') !== -1           // Firebase hosting
+  || __voltaHost.indexOf('firebaseapp.com') !== -1   // Firebase hosting (alt)
+  ) ? VOLTA_VERCEL_VAULT : window.location.origin;
+// NOTE: file:// (the downloaded local copy) also targets the Vercel vault so
+// CloudSync keeps working offline-first from disk — the api/ functions send
+// Access-Control-Allow-Origin:* which permits file:// (null-origin) requests.
+// window.VOLTA_SYNC_API = 'https://your-project.vercel.app';
+
+// ═══ GOOGLE SIGN-IN (Firebase) — fill in to activate the real flow ═══
+// 1) console.firebase.google.com → Add project (e.g. "Volta")
+// 2) Authentication → Sign-in method → Google → Enable
+// 3) Authentication → Settings → Authorized domains → add:
+//      volta-aimobile.github.io     (production)
+//      localhost                    (local testing)
+// 4) Project settings (gear) → Your apps → Web app (</>) → register →
+//    copy the firebaseConfig values into the object below.
+// 5) Save + redeploy. "Continue with Google" switches to real sign-in
+//    automatically. Leave it as null to keep the demo picker.
+// LIVE CONFIG — project "volta-692ae" (Google sign-in + Firestore account sync)
+window.VOLTA_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBZi4_g_lfGFm6MF5_g-fnR3OgVBEvNMII",
+  authDomain: "volta-692ae.firebaseapp.com",
+  projectId: "volta-692ae",
+  storageBucket: "volta-692ae.firebasestorage.app",
+  messagingSenderId: "718181833048",
+  appId: "1:718181833048:web:1c9c6d007c7dad0c916d2d"
+};
+</script>
+<div class="offline-banner" id="offline-banner"><i class="fa-solid fa-wifi" style="margin-right:6px;"></i> <span data-ar="أنت غير متصل — تقدمك محفوظ على هذا الجهاز وسيتم مزامنته مع السيرفر تلقائياً">You're offline — your progress is saved on this device and will sync to the server automatically</span></div>
+
+<div id="splash-screen" dir="ltr" style="direction:ltr;">
+  <div class="splash-brand">
+    <i class="fa-solid fa-bolt"></i>
+    <span>Volta</span>
+  </div>
+  <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+</div>
+
+<!-- OCR Scanning Overlay with cool animations -->
+<div id="ocr-overlay">
+  <div class="ocr-panel" id="ocr-panel">
+    <div class="ocr-scanner-frame" id="ocr-scanner-frame">
+      <i class="fa-solid fa-file-lines doc-icon"></i>
+      <div class="scan-laser"></div>
+      <div class="ocr-orbit"></div>
+    </div>
+    <div>
+      <div class="ocr-title" id="ocr-title">Scanning your InBody…</div>
+      <div class="ocr-subtitle" id="ocr-subtitle">Reading body composition data</div>
+    </div>
+    <div class="ocr-progress-wrap">
+      <div class="ocr-progress-bar" id="ocr-progress-bar"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="ocr-progress-pct" id="ocr-progress-pct">0%</span>
+      <span class="ocr-phase-text" id="ocr-phase-text">Initializing<span class="ocr-typing"><span></span><span></span><span></span></span></span>
+    </div>
+  </div>
+</div>
+
+<section id="screen-landing" class="screen active">
+  <nav class="landing-nav">
+    <div class="brand"><i class="fa-solid fa-bolt"></i> Volta</div>
+    <div style="display:flex; gap:12px;">
+      <button class="btn ghost fit" onclick="showScreen('screen-auth'); switchAuthTab('login')" style="margin:0;" data-ar="تسجيل الدخول">Log in</button>
+      <button class="btn primary fit" onclick="showScreen('screen-auth'); switchAuthTab('signup')" style="margin:0;" data-ar="إنشاء حساب">Sign up</button>
+    </div>
+  </nav>
+  <div class="landing-hero">
+    <h1><span data-ar="رفيقك المتكامل لـ">Your All-in-One</span> <span data-ar="اللياقة الذكية">Smart Fitness</span> <span data-ar="رفيقك">Companion</span></h1>
+    <p data-ar="فولتا يتكيّف مع مزاجك وأهدافك وبيئتك. احصل على تمارين مخصصة وتنبيهات سلامة الطقس اللحظية وخطط وجبات مدعومة بالذكاء الاصطناعي في مكان واحد.">Volta adapts to your mood, your goals, and your environment. Get personalized workouts, real-time weather safety alerts, and AI-driven diet plans all in one place.</p>
+    <div class="landing-cta-stack" style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:18px;">
+      <button class="btn primary landing-cta-btn" onclick="showScreen('screen-auth'); switchAuthTab('signup')" data-ar="ابدأ مجاناً">Get Started for Free</button>
+      <!-- Premium button removed per user request -->
+    </div>
+
+  </div>
+  <div class="landing-features">
+    <div class="landing-feature"><i class="fa-solid fa-cloud-sun"></i><h3 data-ar="تنبيهات سلامة الطقس">Weather Safety Alerts</h3><p data-ar="فحوصات سلامة لحظية للرياضة الخارجية. اعرف بالضبط متى يكون التدريب خارجاً آمناً بناءً على الظروف الفعلية.">Live outdoor-sport safety checks. Know exactly when it's safe to train outside based on real-time conditions.</p></div>
+    <div class="landing-feature"><i class="fa-solid fa-dumbbell"></i><h3 data-ar="أكثر من 100 رياضة وتتبع">100+ Sports & Tracker</h3><p data-ar="من الملاكمة إلى اليوغا، احصل على تمرينات مخصصة لأكثر من 100 رياضة. سلّل جلساتك المباشرة بالمؤقت وحساب السعرات.">From Boxing to Yoga, get specific drills for 100 sports. Log your live sessions with timers and calorie tracking.</p></div>
+    <div class="landing-feature"><i class="fa-solid fa-utensils"></i><h3 data-ar="نظام غذائي ذكي">Smart Diet System</h3><p data-ar="اقتراحات وجبات دقيقة وأهداف مغذيات مخصصة لتركيب جسمك وأهداف لياقتك.">Accurate meal suggestions and macro targets tailored to your exact body composition and fitness goals.</p></div>
+    <div class="landing-feature"><i class="fa-solid fa-wand-magic-sparkles"></i><h3 data-ar="تمارين تحول المزاج">MoodMorph Workouts</h3><p data-ar="يتحوّل تمرينك ليناسب مزاجك ومستوى طاقتك والطقس في الخارج. لن تشعر أبداً بأنك مُجبر على روتين معين.">Your workout morphs to match your mood, energy level, and the live weather outside. Never feel forced into a routine again.</p></div>
+<!-- Marathon Planner feature removed per user request -->
+    <div class="landing-feature"><i class="fa-solid fa-calculator"></i><h3 data-ar="حاسبة اللياقة">Fitness Calculator</h3><p data-ar="اعرف متى بالضبط ستصل إلى وزنك المستهدف بناءً على TDEE الخاص بك والسعرات المحروقة بالتمرين.">Find out exactly when you'll hit your target weight based on your TDEE and logged exercise burn.</p></div>
+  </div>
+</section>
+
+<!-- Premium screen removed per user request -->
+
+<section id="screen-auth" class="screen">
+  <div class="auth-shell">
+    <div class="auth-side">
+      <div class="brand"><i class="fa-solid fa-bolt"></i> Volta</div>
+      <p data-ar="رفيقك المتكامل للتدريب. تمارين مخصصة، سلامة طقس لحظية، وتتبع تقدم في مكان واحد.">Your all-in-one training companion. Personalized workouts, live weather safety, and progress tracking in one place.</p>
+      <ul>
+        <li><i class="fa-solid fa-cloud-sun"></i> <span data-ar="تنبيهات سلامة الطقس اللحظية للرياضة الخارجية">Live outdoor-sport safety alerts</span></li>
+        <li><i class="fa-solid fa-dumbbell"></i> <span data-ar="تمارين منزلية لأكثر من 100 رياضة">Home workouts for 100 sports</span></li>
+        <li><i class="fa-solid fa-chart-line"></i> <span data-ar="تتبع الجلسات والأيام المتتالية">Session tracking &amp; streaks</span></li>
+        <li><i class="fa-solid fa-robot"></i> <span data-ar="مساعد ذكاء اصطناعي، دائماً جاهز">AI assistant, always on</span></li>
+      </ul>
+    </div>
+    <div class="auth-main">
+      <button class="back-to-home" onclick="showScreen('screen-landing')"><i class="fa-solid fa-arrow-left"></i> <span data-ar="العودة للرئيسية">Back to Home</span></button>
+      <div class="card-title" data-ar="أهلاً">Welcome</div>
+      <p class="tagline" data-ar="سجّل الدخول لمتابعة تدريبك.">Sign in to continue your training.</p>
+      <div class="auth-tabs">
+        <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')" data-ar="تسجيل الدخول">Log in</button>
+        <button id="tab-signup" class="auth-tab" onclick="switchAuthTab('signup')" data-ar="إنشاء حساب">Sign up</button>
+      </div>
+      <form id="auth-form" onsubmit="return handleAuth(event)">
+        <label data-ar="البريد الإلكتروني">Email</label>
+        <input type="email" id="auth-email" placeholder="you@gmail.com" required data-ar-ph="you@gmail.com" />
+        <label data-ar="كلمة المرور">Password</label>
+        <div class="pwd-wrapper">
+          <input type="password" id="auth-password" placeholder="••••••••" required data-ar-ph="••••••••" />
+          <span class="pwd-toggle" onclick="togglePwd('auth-password', this)"><i class="fa-solid fa-eye"></i></span>
+        </div>
+        <button type="button" class="btn link" onclick="showForgotPassword()" style="float:right;" data-ar="نسيت كلمة المرور؟">Forgot password?</button>
+        <button type="submit" class="btn primary" id="auth-submit" data-ar="تسجيل الدخول">Log in</button>
+      </form>
+      <p id="auth-msg" class="msg" style="margin-top:14px;text-align:center;font-weight:600;"></p>
+      <div class="divider"><span data-ar="أو">or</span></div>
+      <button class="btn google" onclick="openGooglePicker()">
+        <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.1 0 24 0 14.6 0 6.5 5.4 2.5 13.2l7.8 6.1C12.2 13.4 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.3 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C.9 16.5 0 20.1 0 24s.9 7.5 2.5 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.1 0 11.2-2 15-5.5l-7.5-5.8c-2.1 1.4-4.7 2.2-7.5 2.2-6.4 0-11.8-3.9-13.7-9.4l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+        <span data-ar="المتابعة مع Google">Continue with Google</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<section id="screen-forgot" class="screen">
+  <div class="auth-card">
+    <div class="card-title"><i class="fa-solid fa-key"></i> <span data-ar="إعادة تعيين كلمة المرور">Reset Password</span></div>
+    <p class="tagline" data-ar="أدخل بريدك الإلكتروني للحصول على رمز التحقق.">Enter your email to get a verification code.</p>
+    <div id="forgot-step1">
+      <form onsubmit="return sendResetCode(event)">
+        <label data-ar="البريد الإلكتروني">Email</label>
+        <input type="email" id="forgot-email" placeholder="you@gmail.com" required data-ar-ph="you@gmail.com" />
+        <button type="submit" class="btn primary" data-ar="إرسال الرمز">Send Code</button>
+      </form>
+    </div>
+    <div id="forgot-step2" class="hidden">
+      <div class="demo-inbox">
+        <b><i class="fa-solid fa-inbox"></i> <span data-ar="تحقق أمني">Security Check</span></b>
+        <small data-ar="لأمانك، أرسلنا رمزاً من 6 أرقام إلى بريدك الإلكتروني. (الوضع التجريبي: الرمز معروض أدناه)">For your safety, we sent a 6-digit code to your email. (Demo mode: code shown below)</small>
+        <div class="code-preview" id="forgot-code-preview"></div>
+      </div>
+      <form onsubmit="return confirmReset(event)">
+        <label data-ar="رمز التحقق">Verification Code</label>
+        <input type="text" id="forgot-code" maxlength="6" pattern="[0-9]{6}" placeholder="000000" required data-ar-ph="000000" />
+        <label data-ar="كلمة المرور الجديدة">New Password</label>
+        <div class="pwd-wrapper">
+          <input type="password" id="forgot-newpwd" placeholder="••••••••" required data-ar-ph="••••••••" />
+          <span class="pwd-toggle" onclick="togglePwd('forgot-newpwd', this)"><i class="fa-solid fa-eye"></i></span>
+        </div>
+        <button type="submit" class="btn primary" data-ar="تحديث كلمة المرور">Update Password</button>
+      </form>
+    </div>
+    <button class="btn ghost" onclick="showScreen('screen-auth')" data-ar="العودة لتسجيل الدخول">Back to Login</button>
+    <p id="forgot-msg" class="msg"></p>
+  </div>
+</section>
+
+<section id="screen-onboarding" class="screen">
+  <div class="auth-card wide" style="max-width:680px;">
+    <div id="inbody-intro" class="onboard-step">
+      <div class="card-title"><i class="fa-solid fa-user-pen"></i> <span data-ar="أخبرنا عنك">Tell us about you</span></div>
+      <p class="tagline" data-ar="نخصص التمارين والنظام الغذائي وتنبيهات السلامة باستخدام هذه المعلومات.">We personalize workouts, diet, and safety alerts using this info.</p>
+      <div class="demo-inbox" style="margin-top:0;margin-bottom:20px;">
+        <b><i class="fa-solid fa-barcode"></i> <span data-ar="تعبئة تلقائية من مسح InBody">Auto-fill from your InBody scan</span></b>
+        <small data-ar="ارفع صورة PNG/JPG لورقة نتائج InBody.">Upload a PNG/JPG photo of your InBody result sheet.</small>
+        <input type="file" id="inbody-file" accept="image/png,image/jpeg" />
+        <button type="button" class="btn ghost small" onclick="autofillFromInBody()"><i class="fa-solid fa-magnifying-glass"></i> <span data-ar="اقرأ InBody الخاص بي">Read my InBody</span></button>
+        <div id="inbody-progress-wrap" style="display:none;margin-top:12px;">
+          <div style="height:8px;background:var(--line);border-radius:6px;overflow:hidden;">
+            <div id="inbody-progress-bar" style="width:0%;height:100%;background:var(--accent);transition:width .25s ease;"></div>
+          </div>
+          <small id="inbody-progress-text" style="color:var(--muted);display:block;margin-top:6px;" data-ar="تجهيز الماسح…">Preparing scanner…</small>
+        </div>
+        <div id="inbody-results" style="display:none;margin-top:12px;background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:10px;padding:12px 14px;"></div>
+        <p id="inbody-status" class="msg"></p>
+      </div>
+      <button class="btn primary" onclick="startSurvey()" style="width:100%;"><i class="fa-solid fa-arrow-right"></i> <span data-ar="ابدأ الاستبيان">Start Survey</span></button>
+    </div>
+    <div id="survey-area" style="display:none;">
+      <button class="survey-back-btn" onclick="backFromSurvey()">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span data-ar="العودة للرئيسية">Back to Home</span>
+      </button>
+      <div class="survey-progress-fancy">
+        <div class="survey-progress-fancy-fill" id="survey-progress-fill" style="width:0%;"></div>
+      </div>
+      <div class="survey-counter" id="survey-counter" data-ar="السؤال 1 من 35">Question 1 of 35</div>
+      <div id="survey-question-content"></div>
+      <div class="survey-nav-fancy">
+        <button class="btn ghost" id="survey-prev-btn" onclick="prevSurveyQuestion()"><i class="fa-solid fa-arrow-left"></i> <span data-ar="رجوع">Back</span></button>
+        <button class="btn primary" id="survey-next-btn" onclick="nextSurveyQuestion()"><span data-ar="التالي">Next</span> <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="screen-app" class="screen">
+
+<button id="mobile-menu-btn" onclick="toggleMobileSidebar()"><i class="fa-solid fa-bars"></i></button>
+<div id="mobile-sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+  <button class="expand-btn" onclick="toggleSidebar()"><i class="fa-solid fa-chevron-right"></i></button>
+  <aside class="sidebar" id="sidebar">
+    <button class="collapse-btn" onclick="toggleSidebar()"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="brand"><i class="fa-solid fa-bolt"></i><span>Volta</span></div>
+    <button class="side-btn active" data-tab="home" onclick="showTab('home')"><i class="fa-solid fa-table-cells-large"></i><span data-ar="الرئيسية">Home</span></button>
+    <button class="side-btn" data-tab="streaks" onclick="showTab('streaks')"><i class="fa-solid fa-fire"></i><span data-ar="السلاسل والتقدم">Streaks &amp; Progress</span></button>
+    <button class="side-btn" data-tab="daily" onclick="showTab('daily')"><i class="fa-solid fa-clipboard-check"></i><span data-ar="الانضباط اليومي">Daily Discipline</span></button>
+    <button class="side-btn" data-tab="diet" onclick="showTab('diet')"><i class="fa-solid fa-utensils"></i><span data-ar="النظام الغذائي">Diet System</span></button>
+    <div class="side-divider" aria-hidden="true"></div>
+    <button class="side-btn" data-tab="sports" onclick="showTab('sports')"><i class="fa-solid fa-dumbbell"></i><span data-ar="الرياضة والتتبع">Sports &amp; Tracker</span></button>
+    <!-- Marathon tab removed per user request -->
+    <button class="side-btn" data-tab="weather" onclick="showTab('weather')"><i class="fa-solid fa-cloud-sun"></i><span data-ar="سلامة الطقس">Weather Safety</span></button>
+    <button class="side-btn" data-tab="moodmorph" onclick="showTab('moodmorph')"><i class="fa-solid fa-wand-magic-sparkles"></i><span data-ar="تحول المزاج">MoodMorph</span></button>
+    <button class="side-btn" data-tab="reminders" onclick="showTab('reminders')"><i class="fa-solid fa-bell"></i><span data-ar="التذكيرات">Reminders</span></button>
+    <button class="side-btn" data-tab="profile" onclick="showTab('profile')"><i class="fa-solid fa-user"></i><span data-ar="الملف الشخصي">Profile</span></button>
+    <div style="flex:1;"></div>
+    <button class="side-btn" data-tab="settings" onclick="showTab('settings')"><i class="fa-solid fa-gear"></i><span data-ar="الإعدادات">Settings</span></button>
+    <button class="side-btn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i><span data-ar="تسجيل الخروج">Log out</span></button>
+  </aside>
+
+  <main class="main">
+    <div id="tab-home" class="tab active">
+      <!-- ===== NEW DASHBOARD HERO (snapshot header) ===== -->
+      <div class="dash-hero">
+        <div class="dash-hero-eyebrow"><i class="fa-solid fa-bolt"></i><span data-ar="فولتا — لمحة اليوم الرسمية">FORM OFFICIAL — DAILY SNAPSHOT</span></div>
+        <div class="dash-hero-row">
+          <div class="dash-hero-id">
+            <span class="dash-avatar" id="dash-avatar">VB</span>
+            <div class="dash-hero-idtext">
+              <h1 id="greeting">Welcome</h1>
+              <p data-ar="لمحة عن يومك اليوم.">Here's your snapshot for today.</p>
+            </div>
+          </div>
+          <div class="dash-hero-date">
+            <span class="dash-date-chip" id="dash-date-chip">&mdash;</span>
+            <span class="dash-day-ghost" id="dash-day-num">01</span>
+          </div>
+        </div>
+      </div>
+      <!-- ===== 2x2 STAT CARDS ===== -->
+      <div class="dash-stats-grid">
+        <div class="dash-stat-card sc-bmi"><span class="dash-stat-icon"><i class="fa-solid fa-weight-scale"></i></span><div class="dash-stat-body"><b id="stat-bmi">--</b><small><span data-ar="مؤشر كتلة الجسم">BMI</span> &middot; <span id="stat-bmi-cat">--</span></small></div></div>
+        <div class="dash-stat-card sc-water"><span class="dash-stat-icon"><i class="fa-solid fa-droplet"></i></span><div class="dash-stat-body"><b id="stat-water">--</b><small data-ar="هدف الماء اليومي">DAILY WATER TARGET</small></div></div>
+        <div class="dash-stat-card sc-streak"><span class="dash-stat-icon"><i class="fa-solid fa-fire"></i></span><div class="dash-stat-body"><b id="stat-streak">0</b><small data-ar="أيام متتالية">DAY STREAK</small></div></div>
+        <div class="dash-stat-card sc-mins"><span class="dash-stat-icon"><i class="fa-solid fa-stopwatch"></i></span><div class="dash-stat-body"><b id="stat-week-mins">0</b><small data-ar="دقائق هذا الأسبوع">MINUTES THIS WEEK</small></div></div>
+      </div>
+      <!-- ===== 3 ACTIVITY RINGS (Calories / Minutes / Workouts today) ===== -->
+      <div class="panel dash-rings-panel" id="dash-rings-panel">
+        <div class="dash-rings-wrap">
+          <svg viewBox="0 0 200 200" class="dash-rings-svg" aria-hidden="true">
+            <circle class="ring-track t1" cx="100" cy="100" r="84"/>
+            <circle class="ring-track t2" cx="100" cy="100" r="65"/>
+            <circle class="ring-track t3" cx="100" cy="100" r="46"/>
+            <circle class="ring-val v1" id="ring-kcal-arc" cx="100" cy="100" r="84"/>
+            <circle class="ring-val v2" id="ring-mins-arc" cx="100" cy="100" r="65"/>
+            <circle class="ring-val v3" id="ring-ex-arc" cx="100" cy="100" r="46"/>
+          </svg>
+          <div class="dash-rings-center">
+            <b id="rings-center-num">0</b>
+            <span data-ar="سعرة اليوم">KCAL TODAY</span>
+          </div>
+        </div>
+        <div class="dash-rings-info">
+          <div class="dash-rings-eyebrow"><i class="fa-solid fa-bolt"></i><span data-ar="لنبدأ!">GAME ON</span></div>
+          <h3 class="dash-rings-title"><span data-ar="هدف نشاط اليوم: ">TODAY'S ACTIVITY GOAL: </span><b id="today-mins">0</b><span data-ar=" / "> / </span><b id="today-goal">15</b><span data-ar=" دقيقة"> MIN</span></h3>
+          <div class="goal-progress-bar-bg rings-goal-bar"><div class="goal-progress-bar-fill" id="today-progress-fill" style="width: 0%;"></div></div>
+          <p class="dash-rings-sub"><span data-ar="السعرات المحروقة اليوم: ">Calories burn today: </span><b id="today-kcal-burnt">0</b><span data-ar=" سعرة — تتحدث تلقائياً بعد مزامنة جلسات تمرينك."> kcal &mdash; updates automatically after you sync your workout sessions.</span></p>
+          <div class="dash-rings-legend">
+            <span class="ring-lg lg1"><i></i><span data-ar="سعرات">CALORIES</span><b id="ring-kcal-val">0</b></span>
+            <span class="ring-lg lg2"><i></i><span data-ar="دقائق">MINUTES</span><b id="ring-mins-val">0</b></span>
+            <span class="ring-lg lg3"><i></i><span data-ar="تمارين">WORKOUTS</span><b id="ring-ex-val">0</b></span>
+            <span class="ring-lg ring-sep"></span>
+            <span class="ring-lg"><i class="fa-solid fa-utensils"></i><span data-ar="مستهلكة">EATEN</span><b id="ring-kcal-consumed">0</b></span>
+            <span class="ring-lg"><i class="fa-solid fa-dumbbell"></i><span data-ar="تدريب">TRAIN</span><b id="ring-train-mins">0</b><span data-ar="د">M</span></span>
+          </div>
+        </div>
+      </div>
+      <!-- ===== PERFORMANCE LOG — WEEKLY ACTIVITY (moved under the rings per user request) ===== -->
+      <div class="dash-section-head">
+        <div class="dash-section-headtext">
+          <span class="dash-eyebrow"><i class="fa-solid fa-chart-column"></i><span data-ar="سجل الأداء">PERFORMANCE LOG</span></span>
+          <h2 data-ar="النشاط الأسبوعي">WEEKLY ACTIVITY</h2>
+        </div>
+      </div>
+      <div class="panel" id="weekly-activity-panel">
+        <!-- Round 15: fixed-height chart box — the canvas fills this box
+             exactly (maintainAspectRatio:false), so the bar graph keeps
+             correct proportions on EVERY phone and tablet size. -->
+        <div class="v-chart-box"><canvas id="weekChart"></canvas></div>
+      </div>
+      <!-- ===== WEIGHT GOAL PROGRESS ===== -->
+      <div class="panel goal-progress-panel hidden" id="goal-progress-panel">
+        <div class="dash-goal-row">
+          <span class="dash-goal-label"><i class="fa-solid fa-bullseye"></i> <span data-ar="تقدم الهدف: ">GOAL PROGRESS: </span><b id="goal-current">--</b><span id="goal-unit-mid" data-ar=" رطل ← "> LB &rarr; </span><b id="goal-target">--</b><span id="goal-unit-end" data-ar=" رطل"> LB</span></span>
+          <span class="goal-days-left-badge" id="goal-days-left-badge"><i class="fa-solid fa-calendar-day"></i><b id="goal-days-left-num">--</b><span id="goal-days-left-lbl" data-ar="يوم متبقي">DAYS LEFT</span></span>
+        </div>
+        <div class="goal-progress-bar-bg"><div class="goal-progress-bar-fill" id="goal-progress-fill" style="width: 0%;"></div></div>
+        <small class="dash-goal-pct" id="goal-percent">0%</small>
+      </div>
+      <!-- ===== COACH BUILT — YOUR PERSONAL PLAN ===== -->
+      <div class="dash-section-head">
+        <div class="dash-section-headtext">
+          <span class="dash-eyebrow"><i class="fa-solid fa-award"></i><span data-ar="من المدرب">COACH BUILT</span></span>
+          <h2 data-ar="خطتك الشخصية">YOUR PERSONAL PLAN</h2>
+        </div>
+        <button class="btn ghost small dash-regen-btn" onclick="regeneratePlan()" title="Regenerate"><i class="fa-solid fa-rotate"></i><span data-ar="إعادة التوليد">REGENERATE</span></button>
+      </div>
+      <div class="plan-mini-panel" id="your-plan-panel" style="display:none;">
+        <div id="your-plan-content"></div>
+      </div>
+      <div class="panel" id="coach-recommendation-panel">
+        <h3 class="dash-panel-title"><i class="fa-solid fa-brain"></i> <span data-ar="توصية المدرب">COACH'S RECOMMENDATION</span></h3>
+        <div id="recommendation-content" data-ar="جارٍ تحليل ملفك...">Analyzing your profile...</div>
+      </div>
+      <!-- ===== FEATURE CARDS ===== -->
+      <div class="dash-feature-grid">
+        <div class="dash-feature-card fc-diet" onclick="showTab('diet')">
+          <span class="dash-feature-icon"><i class="fa-solid fa-utensils"></i></span>
+          <h4 data-ar="نظام الحمية">DIET SYSTEM</h4>
+          <p data-ar="خطط وجبات مخصصة لأهدافك.">Personalized meal plans for your goals.</p>
+        </div>
+        <div class="dash-feature-card fc-sports" onclick="showTab('sports')">
+          <span class="dash-feature-icon"><i class="fa-solid fa-medal"></i></span>
+          <h4 data-ar="الرياضة والأنشطة">SPORTS &amp; ACTIVITIES TRACKER</h4>
+          <p data-ar="تتبع جلساتك المباشرة وسجل إنجازاتك.">Track your live sessions and log achievements.</p>
+        </div>
+        <div class="dash-feature-card fc-morph" onclick="showTab('moodmorph')">
+          <span class="dash-feature-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+          <h4 data-ar="مود مورف">MOODMORPH</h4>
+          <p data-ar="تمارين تناسب أهدافك ومزاجك.">Workouts for your goals and mood.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== NEW TAB: STREAKS & PROGRESS ===== -->
+    <div id="tab-streaks" class="tab">
+      <h1 style="font-size:1.45rem;font-weight:700;" data-ar="السلاسل والتقدم">Streaks &amp; Progress</h1>
+      <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="سلسلتك، شاراتك، سجل تمارينك وتقاريرك الأسبوعية.">Your streak, badges, workout history and weekly report card.</p>
+      <div class="dash-stats-grid sk-grid">
+        <div class="dash-stat-card sc-streak"><span class="dash-stat-icon"><i class="fa-solid fa-fire"></i></span><div class="dash-stat-body"><b id="sk-streak">0</b><small data-ar="السلسلة الحالية">CURRENT STREAK</small></div></div>
+        <div class="dash-stat-card sc-mins"><span class="dash-stat-icon"><i class="fa-solid fa-trophy"></i></span><div class="dash-stat-body"><b id="sk-best">0</b><small data-ar="أفضل سلسلة">BEST STREAK</small></div></div>
+        <div class="dash-stat-card sc-bmi"><span class="dash-stat-icon"><i class="fa-solid fa-dumbbell"></i></span><div class="dash-stat-body"><b id="sk-total">0</b><small data-ar="إجمالي التمارين">TOTAL WORKOUTS</small></div></div>
+        <div class="dash-stat-card sc-water"><span class="dash-stat-icon"><i class="fa-solid fa-stopwatch"></i></span><div class="dash-stat-body"><b id="sk-mins">0</b><small data-ar="إجمالي الدقائق">TOTAL MINUTES</small></div></div>
+      </div>
+      <!-- Weekly Report Card -->
+      <div class="panel" id="weekly-report-panel">
+        <h3 class="dash-panel-title"><i class="fa-solid fa-scroll"></i> <span data-ar="بطاقة تقرير الأسبوع">WEEKLY REPORT CARD</span></h3>
+        <div id="weekly-report-body"></div>
+      </div>
+      <!-- Progress charts -->
+      <div class="panel" id="progress-charts-panel">
+        <h3 class="dash-panel-title"><i class="fa-solid fa-chart-line"></i> <span data-ar="مخططات التقدم">PROGRESS CHARTS</span></h3>
+        <div class="prog-chart-block">
+          <h4><i class="fa-solid fa-calendar-days"></i> <span data-ar="خريطة النشاط الحرارية">ACTIVITY HEATMAP</span></h4>
+          <div class="hm-nav">
+            <button type="button" class="hm-nav-btn" id="hm-prev-btn" onclick="heatNavMonth(-1)" title="Previous month" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></button>
+            <span class="hm-nav-label" id="hm-month-label">&mdash;</span>
+            <button type="button" class="hm-nav-btn" id="hm-next-btn" onclick="heatNavMonth(1)" title="Next month" aria-label="Next month"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+          <div id="streak-heatmap" class="streak-heatmap"></div>
+          <div class="heatmap-legend"><span data-ar="أقل">LESS</span><i class="hm hm0"></i><i class="hm hm1"></i><i class="hm hm2"></i><i class="hm hm3"></i><i class="hm hm4"></i><span data-ar="أكثر">MORE</span></div>
+        </div>
+        <div class="prog-chart-block">
+          <h4><i class="fa-solid fa-chart-simple"></i> <span data-ar="الحجم الأسبوعي">WEEKLY VOLUME</span></h4>
+          <div class="v-chart-box"><canvas id="volumeChart"></canvas></div>
+        </div>
+        <!-- Weight Trend block removed per user request — weight now comes
+             from the weekly check-in survey (asks for it every week). -->
+      </div>
+      <!-- Workout history -->
+      <div class="panel" id="workout-history-panel">
+        <h3 class="dash-panel-title"><i class="fa-solid fa-clock-rotate-left"></i> <span data-ar="سجل التمارين">WORKOUT HISTORY</span></h3>
+        <div id="history-list"></div>
+      </div>
+      <!-- Badges wall -->
+      <div class="panel" id="badges-panel">
+        <h3 class="dash-panel-title"><i class="fa-solid fa-medal"></i> <span data-ar="جدار الشارات والإنجازات">BADGES &amp; ACHIEVEMENTS WALL</span></h3>
+        <div id="badges-progress" class="badges-progress"></div>
+        <div id="badges-grid" class="badges-grid"></div>
+      </div>
+    </div>
+
+    <div id="tab-sports" class="tab">
+      <h1 style="font-size:1.45rem;font-weight:700;" data-ar="الرياضة والتتبع">Sports &amp; Tracker</h1>
+      <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="اختر رياضة لرؤية تمرينها. الرياضات الموصى بها مميّزة.">Pick a sport to see its workout. Recommended sports are highlighted.</p>
+      <div id="sports-grid" class="sports-grid"></div>
+      <div id="workout-detail" class="panel hidden"></div>
+      <div class="cards-row" style="margin-top: 32px;">
+        <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-bullseye"></i></span><div><b id="tr-total">0</b><small data-ar="إجمالي الجلسات">Total sessions</small></div></div>
+        <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-stopwatch"></i></span><div><b id="tr-minutes">0</b><small data-ar="إجمالي الدقائق">Total minutes</small></div></div>
+        <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-calendar-week"></i></span><div><b id="tr-week">0</b><small data-ar="دقائق هذا الأسبوع">Minutes this week</small></div></div>
+        <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-trophy"></i></span><div><b id="tr-top">--</b><small data-ar="الرياضة الأبرز">Top sport</small></div></div>
+      </div>
+    </div>
+
+    <div id="tab-daily" class="tab">
+      <h1 style="font-size:1.45rem;font-weight:700;" data-ar="الانضباط اليومي">Daily Discipline</h1>
+      <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="خططتك التدريبية المخصصة. أكمل كل تمرين لتنتقل للتالي!">Your personalized training plan. Complete each workout to advance!</p>
+      <!-- ===== PLAN ACTIONS TOOLBAR (builder moved to a button per user request) ===== -->
+      <div class="daily-toolbar">
+        <button class="btn primary small" onclick="toolbarViewCurrentPlan()"><i class="fa-solid fa-eye"></i> <span data-ar="عرض خطتي الحالية">View Current Plan</span></button>
+        <button class="btn ghost small" onclick="dismissDePlanChoice()"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-ar="بدء خطة جديدة">Start a New Plan</span></button>
+        <button class="btn ghost small" onclick="openWorkoutBuilder()"><i class="fa-solid fa-hammer"></i> <span data-ar="منشئ التمارين">Custom Builder</span></button>
+      </div>
+      <div id="daily-exercise-content"></div>
+      <!-- Saved custom workouts (rendered only when the user has some) -->
+      <div id="custom-workouts-list"></div>
+    </div>
+
+    <!-- Marathon tab removed entirely per user request -->
+
+    <div id="tab-diet" class="tab">
+      <h1 style="font-size:1.45rem;font-weight:700;" data-ar="النظام الغذائي">Diet System</h1>
+      <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="اقتراحات وجبات دقيقة بناءً على أهدافك من المغذيات. تتحدّث يومياً!">Accurate meal suggestions based on your macro targets. Updates daily!</p>
+      <div class="panel"><h3><i class="fa-solid fa-apple-whole"></i> <span data-ar="أهدافك اليومية">Your Daily Targets</span></h3><div id="diet-targets">Calculating...</div></div>
+      <!-- ===== Diet Progress Bar: calories gained from food today ===== -->
+      <div class="panel" id="diet-progress-bar-panel">
+        <h3><i class="fa-solid fa-chart-pie"></i> <span data-ar="تقدم السعرات اليومي">Today's Calorie Progress</span></h3>
+        <div id="diet-progress-bar">Calculating...</div>
+      </div>
+      <!-- ===== My Diet Plan: the generated nutrition plan (brought back per user request) ===== -->
+      <div class="panel" id="diet-plan-panel">
+        <h3><i class="fa-solid fa-clipboard-list"></i> <span data-ar="خطة التغذية">My Diet Plan</span></h3>
+        <div id="diet-plan-body">Loading...</div>
+      </div>
+      <!-- Grocery list removed entirely per user request -->
+      <div class="panel"><h3><i class="fa-solid fa-robot"></i> <span data-ar="وجبات مولّدة بالذكاء الاصطناعي">AI-Generated Meals</span></h3><div id="diet-meals" class="diet-grid">Loading meals...</div></div>
+      <div class="panel">
+        <h3><i class="fa-solid fa-camera"></i> <span data-ar="ماسح الوجبات بالذكاء الاصطناعي">AI Meal Scanner</span></h3>
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;" data-ar="التقط صورة لأي وجبة وسيتعرف عليها الذكاء الاصطناعي ويحلل قيمتها الغذائية.">Take a photo of any meal and AI will identify it and analyze its nutrition.</p>
+
+        <!-- AI scanning animation overlay -->
+        <div id="ai-scan-overlay" style="display:none;text-align:center;padding:30px 20px;">
+          <div class="ai-scan-animation">
+            <div class="ai-scan-circle"></div>
+            <div class="ai-scan-circle ai-scan-circle-2"></div>
+            <div class="ai-scan-circle ai-scan-circle-3"></div>
+            <i class="fa-solid fa-utensils ai-scan-icon"></i>
+          </div>
+          <p style="margin-top:16px;font-weight:600;color:var(--accent);" id="ai-scan-text" data-ar="جارٍ تحليل وجبتك...">Analyzing your meal...</p>
+          <p style="font-size:.78rem;color:var(--muted);margin-top:4px;" data-ar="الذكاء الاصطناعي يتعرف على المكونات والسعرات">AI is identifying ingredients and calories</p>
+        </div>
+
+        <!-- Photo upload -->
+        <div id="ai-scan-upload-area">
+          <label style="display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;padding:24px;border:2px dashed var(--accent-border);border-radius:14px;background:var(--accent-soft);transition:all .2s ease;" onmouseover="this.style.borderColor='var(--accent)';this.style.background='var(--accent-soft)'" onmouseout="this.style.borderColor='var(--accent-border)';this.style.background='var(--accent-soft)'">
+            <i class="fa-solid fa-camera" style="font-size:2rem;color:var(--accent);"></i>
+            <b style="color:var(--accent);" data-ar="التقط صورة لوجبتك">Take a photo of your meal</b>
+            <small style="color:var(--muted);" data-ar="أو ارفع صورة من معرضك">Or upload from gallery</small>
+            <input type="file" id="ai-meal-file-input" accept="image/*" capture="environment" style="display:none;" onchange="analyzeMealPhoto(this)" />
+          </label>
+        </div>
+
+        <!-- Result panel -->
+        <div class="hidden" id="ai-meal-result-panel" style="background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:14px;padding:16px;margin-top:14px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <div style="width:40px;height:40px;border-radius:10px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">
+              <i class="fa-solid fa-bowl-food"></i>
+            </div>
+            <div>
+              <h4 id="ai-meal-name" style="margin:0;font-size:1rem;"></h4>
+              <p id="ai-meal-desc" style="margin:2px 0 0;font-size:.82rem;color:var(--muted);"></p>
+            </div>
+          </div>
+          <div class="diet-macros" style="margin-bottom:12px;">
+            <span class="macro-pill macro-kcal" id="ai-meal-kcal"></span>
+            <span class="macro-pill macro-p" id="ai-meal-protein"></span>
+            <span class="macro-pill macro-c" id="ai-meal-carbs"></span>
+            <span class="macro-pill macro-f" id="ai-meal-fat"></span>
+          </div>
+          <div id="ai-meal-ingredients" style="font-size:.82rem;color:var(--muted);margin-bottom:12px;"></div>
+          <button class="btn primary small" onclick="logScannedAIMeal()" style="width:100%;"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة إلى سجل الوجبات">Add to Meal Log</span></button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="builder-head">
+          <h3 style="margin:0;"><i class="fa-solid fa-list-check"></i> <span data-ar="سجل الوجبات اليومي">Today's Meal Log</span></h3>
+          <button class="btn primary small" onclick="addManualMealLog()"><i class="fa-solid fa-plus"></i> <span data-ar="تسجيل وجبة">Log Meal</span></button>
+        </div>
+        <div id="diet-log-list"><p style="color:var(--muted);text-align:center;padding:12px;" data-ar="لم تسجل أي وجبات بعد. استخدم ماسح الوجبات أو أضف يدوياً.">No meals logged yet. Use the AI meal scanner or add manually.</p></div>
+      </div>
+    </div>
+
+    <div id="tab-timer" class="tab" style="display:none;"></div>
+
+    <div id="tab-scanner" class="tab" style="display:none;"></div>
+
+    <!-- Round 6: Fitness Calculator screen REMOVED per user spec.
+         The auto-set goal weight + auto-calc logic still exists internally
+         (autoSetGoalWeight function), but the standalone tab is gone. The
+         user now manages their weight goal from the Profile tab. -->
+
+    <div id="tab-weather" class="tab">
+      <h1 style="font-size:1.45rem;font-weight:700;" data-ar="الطقس وسلامة الرياضة الخارجية">Weather &amp; Outdoor Sport Safety</h1>
+      <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="ظروف مباشرة وتوصيات لكل رياضة للتدريب في الخارج.">Live conditions and per-sport recommendations for training outside.</p>
+      <!-- Animated weather visual with day/night cycle -->
+      <div class="panel" style="text-align:center;">
+        <div class="weather-cloud-container" id="weather-cloud-container">
+          <!-- Birds (day only) -->
+          <div class="weather-birds">
+            <div class="weather-bird" style="top:30%;animation-delay:0s;">🦅</div>
+            <div class="weather-bird" style="top:50%;animation-delay:5s;">🦅</div>
+            <div class="weather-bird" style="top:20%;animation-delay:10s;">🦅</div>
+          </div>
+          <!-- Shooting stars (night only) -->
+          <div class="weather-shooting-star s1"></div>
+          <div class="weather-shooting-star s2"></div>
+          <!-- Stars (night only) -->
+          <div class="weather-stars" id="weather-stars">
+            <div class="weather-star" style="top:10%;left:15%;animation-delay:0s;"></div>
+            <div class="weather-star" style="top:20%;left:80%;animation-delay:0.5s;"></div>
+            <div class="weather-star" style="top:15%;left:50%;animation-delay:1s;"></div>
+            <div class="weather-star" style="top:30%;left:25%;animation-delay:1.5s;"></div>
+            <div class="weather-star" style="top:8%;left:65%;animation-delay:0.3s;"></div>
+            <div class="weather-star" style="top:25%;left:90%;animation-delay:0.8s;"></div>
+            <div class="weather-star" style="top:5%;left:35%;animation-delay:1.2s;"></div>
+            <div class="weather-star" style="top:18%;left:5%;animation-delay:0.6s;"></div>
+          </div>
+          <!-- Fog -->
+          <div class="weather-fog"></div>
+          <!-- Moon (night only) -->
+          <div class="weather-moon" id="weather-moon"></div>
+          <!-- Sun (day only) -->
+          <div class="weather-sun" id="weather-sun"></div>
+          <!-- Clouds (multiple random cloud shapes in a horizontal line) -->
+          <div class="weather-clouds-row" id="weather-clouds-row">
+            <div class="weather-cloud weather-cloud-1" data-shape="0"></div>
+            <div class="weather-cloud weather-cloud-2" data-shape="1"></div>
+            <div class="weather-cloud weather-cloud-3" data-shape="2"></div>
+            <div class="weather-cloud weather-cloud-4" data-shape="3"></div>
+            <div class="weather-cloud weather-cloud-5" data-shape="4"></div>
+          </div>
+          <!-- Rain -->
+          <div class="weather-rain" id="weather-rain" style="display:none;">
+            <div class="weather-rain-drop" style="left:10%; animation-delay:0s;"></div>
+            <div class="weather-rain-drop" style="left:30%; animation-delay:0.3s;"></div>
+            <div class="weather-rain-drop" style="left:50%; animation-delay:0.6s;"></div>
+            <div class="weather-rain-drop" style="left:70%; animation-delay:0.2s;"></div>
+            <div class="weather-rain-drop" style="left:90%; animation-delay:0.5s;"></div>
+          </div>
+          <!-- Snow -->
+          <div class="weather-snow" id="weather-snow" style="display:none;">
+            <div class="weather-snow-flake" style="left:10%; animation-delay:0s;">❄</div>
+            <div class="weather-snow-flake" style="left:30%; animation-delay:1s;">❄</div>
+            <div class="weather-snow-flake" style="left:50%; animation-delay:0.5s;">❄</div>
+            <div class="weather-snow-flake" style="left:70%; animation-delay:1.5s;">❄</div>
+            <div class="weather-snow-flake" style="left:90%; animation-delay:0.8s;">❄</div>
+          </div>
+        </div>
+        <div class="weather-temp-card" id="weather-temp-card">
+          <div id="weather-current">--</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3><i class="fa-solid fa-shield-halved"></i> <span data-ar="سلامة الرياضة الخارجية الآن">Outdoor sport safety right now</span></h3>
+        <div class="weather-search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="weather-search" placeholder="Search sports (e.g. Running, Cycling, Yoga...)" data-ar-ph="ابحث عن رياضات (مثل: الجري، الدراجة، اليوغا...)" oninput="filterSafetyGrid(this.value)" autocomplete="off" />
+          <button class="weather-search-clear" id="weather-search-clear" onclick="document.getElementById('weather-search').value=''; filterSafetyGrid('');" title="Clear search"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="safety-grid" class="safety-grid"><i>...</i></div>
+      </div>
+    </div>
+
+    <div id="tab-moodmorph" class="tab">
+      <h1 style="font-size:1.45rem;font-weight:700;" data-ar="تحول المزاج">MoodMorph</h1>
+      <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="يتحوّل تمرينك ليناسب مزاجك وطاقتك والطقس في الخارج.">Your workout morphs to match your mood, energy, and the live weather outside.</p>
+      <div class="panel moodmorph-panel">
+        <div class="moodmorph-header">
+          <div class="moodmorph-header-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <div>
+            <h3 style="margin:0;font-size:1.05rem;" data-ar="كيف تشعر الآن؟">How do you feel right now?</h3>
+            <small style="color:var(--muted);font-size:.82rem;" data-ar="اختر المزاج الذي يناسبك.">Pick the mood that fits you best.</small>
+          </div>
+        </div>
+        <div class="mood-cards-grid" id="mood-row">
+          <button class="mood-card" data-mood="stressed" onclick="pickMood(this)">
+            <div class="mood-card-icon mood-icon-stressed"><i class="fa-solid fa-bolt"></i></div>
+            <b data-ar="مجهد">Stressed</b>
+            <small data-ar="متوتر ومُرهق">Tense &amp; overwhelmed</small>
+          </button>
+          <button class="mood-card" data-mood="sad" onclick="pickMood(this)">
+            <div class="mood-card-icon mood-icon-sad"><i class="fa-solid fa-face-frown"></i></div>
+            <b data-ar="منخفض">Low</b>
+            <small data-ar="محبط أو فاقد الحافز">Down or unmotivated</small>
+          </button>
+          <button class="mood-card" data-mood="neutral" onclick="pickMood(this)">
+            <div class="mood-card-icon mood-icon-neutral"><i class="fa-solid fa-face-meh"></i></div>
+            <b data-ar="محايد">Neutral</b>
+            <small data-ar="ثابت ومستعد">Steady &amp; ready</small>
+          </button>
+          <button class="mood-card" data-mood="happy" onclick="pickMood(this)">
+            <div class="mood-card-icon mood-icon-happy"><i class="fa-solid fa-face-smile"></i></div>
+            <b data-ar="سعيد">Happy</b>
+            <small data-ar="نشيط وإيجابي">Upbeat &amp; positive</small>
+          </button>
+          <button class="mood-card" data-mood="pumped" onclick="pickMood(this)">
+            <div class="mood-card-icon mood-icon-pumped"><i class="fa-solid fa-rocket"></i></div>
+            <b data-ar="متحمس">Pumped</b>
+            <small data-ar="مليء بالطاقة">Fully energized</small>
+          </button>
+        </div>
+
+        <!-- Round 13: MoodMorph energy bar — COMPLETELY REBUILT FROM SCRATCH.
+             New namespaced .mm2-* classes (see CSS block above). Custom-painted
+             track with a smooth red→amber→green gradient that updates live as
+             the user drags. Big tabular-nums readout, 30px touch-friendly thumb. -->
+        <div class="mm2-energy">
+          <div class="mm2-energy-head">
+            <span class="mm2-energy-label">
+              <span class="mm2-energy-label-icon" id="mm2-energy-icon"><i class="fa-solid fa-bolt"></i></span>
+              <span class="mm2-energy-label-text">
+                <span data-ar="مستوى الطاقة">Energy level</span>
+                <small data-ar="اسحب لضبط طاقتك">Drag to set your energy</small>
+              </span>
+            </span>
+            <span class="mm2-energy-readout">
+              <span class="mm2-energy-readout-num" id="energy-label">5</span>
+              <span class="mm2-energy-readout-max">/10</span>
+            </span>
+          </div>
+          <div class="mm2-slider-wrap">
+            <input type="range" id="energy" min="1" max="10" value="5" step="1" oninput="updateEnergyLabel(this.value)" aria-label="Energy level" />
+          </div>
+          <div class="mm2-ticks">
+            <span>1</span>
+            <span data-ar="متوسط">5</span>
+            <span>10</span>
+          </div>
+        </div>
+
+        <button class="btn primary fit moodmorph-go" onclick="generateMoodWorkout()"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-ar="حوّل تمريني">Morph my workout</span></button>
+
+        <div style="margin-top:24px; border-top:1px solid var(--line); padding-top:18px;">
+          <h3 style="margin-bottom:10px;font-size:1rem;"><i class="fa-solid fa-spa" style="color:var(--accent);margin-right:6px;"></i> <span data-ar="بحاجة للاسترخاء بدلاً من ذلك؟">Need to relax instead?</span></h3>
+          <button class="btn ghost" onclick="startMeditation()"><i class="fa-solid fa-lungs"></i> <span data-ar="ابدأ جلسة تأمل">Start Meditation Session</span></button>
+        </div>
+      </div>
+      <div id="mood-result" class="panel hidden"></div>
+      <div id="mood-music" class="panel hidden"><h3><i class="fa-solid fa-music"></i> <span data-ar="قوائم التشغيل الموصى بها">Recommended Playlists</span></h3><div id="playlist-container"></div></div>
+    </div>
+
+    <div id="tab-reminders" class="tab">
+      <h1 style="font-size:1.45rem;font-weight:700;" data-ar="التذكيرات والتقويم">Reminders & Calendar</h1>
+      <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="لا تفوّت أي تمرين. أنشئ تذكيرات وصدّرها مباشرة إلى تقويم جهازك.">Never miss a workout. Create reminders and export them directly to your device's calendar.</p>
+      <div class="panel">
+        <h3><i class="fa-solid fa-bell"></i> <span data-ar="إنشاء تذكير جديد">Create New Reminder</span></h3>
+        <input type="text" id="rem-title" placeholder="Title (e.g. Morning Run)" data-ar-ph="العنوان (مثل: جري الصباح)" />
+        <div class="rem-datetime-grid">
+          <div class="rem-field-wrap">
+            <label for="rem-date" class="rem-field-label"><i class="fa-solid fa-calendar"></i> <span data-ar="التاريخ">Date</span></label>
+            <input type="date" id="rem-date" />
+          </div>
+          <div class="rem-field-wrap">
+            <label for="rem-time" class="rem-field-label"><i class="fa-solid fa-clock"></i> <span data-ar="الوقت">Time</span></label>
+            <input type="time" id="rem-time" value="09:00" />
+          </div>
+        </div>
+        <input type="text" id="rem-note" placeholder="Notes (optional)" data-ar-ph="ملاحظات (اختياري)" />
+        <button class="btn primary fit" onclick="saveReminder()"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة تذكير">Add Reminder</span></button>
+      </div>
+      <div class="panel">
+        <h3><i class="fa-solid fa-calendar-days"></i> <span data-ar="التذكيرات القادمة">Upcoming Reminders</span></h3>
+        <div id="reminders-list"></div>
+      </div>
+      <!-- Water Reminder Settings + engine: fully REMOVED per user request -->
+    </div>
+
+    <!-- Courses tab removed -->
+
+    <div id="tab-profile" class="tab">
+      <h1 style="font-size:1.45rem;font-weight:700;" data-ar="ملفك الشخصي">Your Profile</h1>
+      <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="المعلومات الشخصية والإحصاءات الكاملة.">Personal information and lifetime stats.</p>
+      <div class="panel" id="profile-view"></div>
+      <button class="btn ghost fit" onclick="editProfile()" style="margin-bottom: 12px;"><i class="fa-solid fa-pencil"></i> <span data-ar="تعديل المعلومات">Edit info</span></button>
+
+      <!-- InBody Scan Card -->
+      <div class="panel inbody-card">
+        <div class="inbody-head">
+          <div class="inbody-icon"><i class="fa-solid fa-barcode"></i></div>
+          <div>
+            <h3 data-ar="مسح InBody">InBody Scan</h3>
+            <small data-ar="ارفع ورقة نتائج InBody وسنقرأها تلقائياً.">Upload your InBody result sheet — we'll read it automatically.</small>
+          </div>
+        </div>
+        <label class="inbody-upload-area" id="inbody-profile-upload">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <b data-ar="اضغط لرفع ورقة InBody">Tap to upload InBody sheet</b>
+          <small data-ar="صورة PNG أو JPG لورقة النتائج">PNG or JPG photo of your result sheet</small>
+          <input type="file" id="inbody-profile-file" accept="image/png,image/jpeg" onchange="scanInBodyFromProfile(this)" />
+        </label>
+        <div id="inbody-profile-stats"></div>
+        <div id="inbody-profile-last"></div>
+        <div class="inbody-actions" id="inbody-profile-actions" style="display:none;">
+          <button class="btn ghost small fit" onclick="document.getElementById('inbody-profile-file').click()"><i class="fa-solid fa-rotate-right"></i> <span data-ar="إعادة المسح">Re-scan</span></button>
+          <button class="btn primary small fit" onclick="applyInBodyToProfile()"><i class="fa-solid fa-check"></i> <span data-ar="تطبيق على الملف">Apply to Profile</span></button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3><i class="fa-solid fa-bullseye"></i> <span data-ar="خطة هدف اللياقة">Fitness Goal Plan</span></h3>
+        <div id="profile-goal-plan"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+          <button class="btn primary fit" onclick="openGoalModal(true)"><i class="fa-solid fa-pen-to-square"></i> <span data-ar="تعديل خطة الهدف">Edit Goal Plan</span></button>
+          <!-- Round 6: moved Auto-Set Goal Weight button to Profile (since
+               the Fitness Calculator tab was removed). Computes a healthy
+               target weight from height + goal using the Devine formula. -->
+          <button class="btn ghost fit" onclick="autoSetGoalWeightFromProfile()"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-ar="ضبط تلقائي للوزن المستهدف">Auto-Set Goal Weight</span></button>
+        </div>
+      </div>
+      <!-- ===== "I'm busy / traveling" toggle =====
+           Per user spec: "add something where the user can say that they are busy
+           like travelling or something and change the workouts and stuff like that
+           (not a whole screen in the bar, something in profile or something)".
+           When ON, the app:
+             - reduces daily workout target to 50% (lighter sessions)
+             - marks the user as "busy" so daily streak doesn't break if they miss a day
+             - shows a small banner on the dashboard
+      -->
+      <div class="panel busy-mode-panel" id="profile-busy-panel">
+        <div class="busy-mode-header">
+          <div class="busy-mode-icon"><i class="fa-solid fa-suitcase-rolling"></i></div>
+          <div>
+            <h3 style="margin:0;font-size:1.05rem;"><span data-ar="مشغول أو مسافر؟">Busy / Traveling?</span></h3>
+            <small style="color:var(--muted);font-size:.82rem;" data-ar="اضبط شدة تمرينك أو أوقفه مؤقتاً.">Adjust workout intensity or pause it entirely.</small>
+          </div>
+        </div>
+        <p style="color:var(--muted);font-size:.88rem;margin:12px 0;" data-ar="فعّل هذا الوضع عندما تكون مسافراً أو مشغولاً. سيقلل النظام من مدة التمارين اليومية ولن يكسر سلسلتك إذا فاتك يوم.">Turn this on when you're traveling or too busy. The app will reduce daily workout durations and won't break your streak if you miss a day.</p>
+        <div class="busy-mode-toggle-row">
+          <div class="busy-mode-toggle-label">
+            <b data-ar="وضع الانشغال">Busy Mode</b>
+            <small data-ar="يقلل مدة التمارين إلى النصف.">Halves workout duration.</small>
+          </div>
+          <div class="toggle-group"><button class="toggle-btn active" id="busy-off-btn" onclick="setBusyMode(false)" data-ar="إيقاف">Off</button><button class="toggle-btn" id="busy-on-btn" onclick="setBusyMode(true)" data-ar="تشغيل">On</button></div>
+        </div>
+        <!-- Round 6: new "Stop Training" option. When ON, the user's daily goal
+             drops to 0 so no workouts are generated and no streak pressure. -->
+        <div class="busy-mode-toggle-row" style="margin-top:10px;">
+          <div class="busy-mode-toggle-label">
+            <b data-ar="إيقاف التدريب">Stop Training</b>
+            <small data-ar="يوقف التمارين اليومية مؤقتاً دون فقدان سلسلتك.">Pause daily workouts without losing your streak.</small>
+          </div>
+          <div class="toggle-group"><button class="toggle-btn active" id="stop-off-btn" onclick="setStopTraining(false)" data-ar="استئناف">Resume</button><button class="toggle-btn" id="stop-on-btn" onclick="setStopTraining(true)" data-ar="إيقاف">Stop</button></div>
+        </div>
+        <div id="busy-mode-banner" style="display:none;margin-top:12px;padding:10px 14px;background:var(--amber-bg);border:1px solid var(--amber);border-radius:10px;font-size:.85rem;color:var(--amber);">
+          <i class="fa-solid fa-circle-info"></i> <span data-ar="وضع الانشغال مفعّل — تم تعديل خطتك لتكون أخف.">Busy mode is on — your plan has been adjusted to be lighter.</span>
+        </div>
+        <div id="stop-training-banner" style="display:none;margin-top:10px;padding:10px 14px;background:#fdeaea;border:1px solid #e57373;border-radius:10px;font-size:.85rem;color:#c62828;">
+          <i class="fa-solid fa-pause-circle"></i> <span data-ar="التدريب متوقف مؤقتاً — استأنف متى شئت.">Training paused — resume any time.</span>
+        </div>
+      </div>
+      <!-- Mobile-only quick actions: Settings & Logout (side-by-side like photo) -->
+      <div class="profile-mobile-actions" id="profile-mobile-actions">
+        <button class="profile-action-btn profile-action-settings" onclick="showTab('settings')"><i class="fa-solid fa-gear"></i> <span data-ar="الإعدادات">Settings</span></button>
+        <button class="profile-action-btn profile-action-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> <span data-ar="تسجيل الخروج">Log out</span></button>
+      </div>
+    </div>
+
+    <div id="tab-settings" class="tab">
+      <h1 style="font-size:1.45rem;font-weight:700;" data-ar="الإعدادات">Settings</h1>
+      <p style="color:var(--muted);margin-bottom:8px;font-size:.92rem;" data-ar="خصّص تجربتك.">Customize your experience.</p>
+      <div class="panel">
+        <div class="settings-row">
+          <div><b data-ar="وضع المظهر">Theme Mode</b><small data-ar="بدّل بين المظهر الفاتح والداكن.">Switch between light and dark appearance.</small></div>
+          <div class="toggle-group"><button class="toggle-btn active" id="theme-light-btn" onclick="setTheme('light')" data-ar="فاتح">Light</button><button class="toggle-btn" id="theme-dark-btn" onclick="setTheme('dark')" data-ar="داكن">Dark</button></div>
+        </div>
+        <div class="settings-row">
+          <div><b data-ar="اللغة">Language</b><small data-ar="اختر لغتك المفضلة.">Select your preferred language.</small></div>
+          <div class="toggle-group"><button class="toggle-btn active" id="lang-en-btn" onclick="setLang('en')" data-ar="الإنجليزية">English</button><button class="toggle-btn" id="lang-ar-btn" onclick="setLang('ar')">العربية</button></div>
+        </div>
+        <div class="settings-row">
+          <div><b data-ar="موقع الطقس">Weather Location</b><small data-ar="فعّل للحصول على تنبيهات الطقس حسب موقعك.">Enable to get live weather alerts based on your location.</small></div>
+          <div class="toggle-group"><button class="toggle-btn active" id="loc-on-btn" onclick="setLoc(true)" data-ar="تشغيل">On</button><button class="toggle-btn" id="loc-off-btn" onclick="setLoc(false)" data-ar="إيقاف">Off</button></div>
+        </div>
+        <!-- ===== NEW: Units toggle (kg/cm vs lb/ft) ===== -->
+        <div class="settings-row">
+          <div><b data-ar="وحدات القياس">Units</b><small data-ar="بدّل بين المتري (كجم/سم) والإمبراطوري (رطل/قدم).">Switch between Metric (kg, cm) and Imperial (lb, ft).</small></div>
+          <div class="toggle-group"><button class="toggle-btn active" id="unit-metric-btn" onclick="setUnits('metric')" data-ar="متري">Metric</button><button class="toggle-btn" id="unit-imperial-btn" onclick="setUnits('imperial')" data-ar="إمبراطوري">Imperial</button></div>
+        </div>
+        <!-- ===== NEW: Local notifications (service worker) ===== -->
+        <div class="settings-row settings-row-notif">
+          <div><b data-ar="الإشعارات المحلية">Local Notifications</b><small id="notif-status-line" data-ar="تذكيرات التمارين والتذكيرات المجدولة عبر خدمة التطبيق.">Workout and reminder alerts via the service worker.</small>
+            <div id="notif-daily-row" style="display:none;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;">
+              <label for="notif-daily-time" style="font-size:.85rem;color:var(--muted);"><i class="fa-solid fa-clock"></i> <span data-ar="تذكير التمرين اليومي">Daily workout reminder</span></label>
+              <input type="time" id="notif-daily-time" value="18:00" style="width:110px;" onchange="setDailyNotifTime(this.value)" />
+            </div>
+          </div>
+          <div class="toggle-group"><button class="toggle-btn active" id="notif-on-btn" onclick="setNotifications(true)" data-ar="تشغيل">On</button><button class="toggle-btn" id="notif-off-btn" onclick="setNotifications(false)" data-ar="إيقاف">Off</button></div>
+        </div>
+        <!-- ===== NEW: Data Export / Import (JSON + CSV) ===== -->
+        <div class="settings-row settings-row-data">
+          <div><b data-ar="تصدير / استيراد البيانات">Data Export / Import</b><small data-ar="نسخ احتياطي كامل (JSON) أو تصدير الجلسات وسجل الوجبات (CSV).">Full backup (JSON) or export sessions &amp; diet log (CSV).</small></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+            <button class="btn ghost small" onclick="exportDataJSON()"><i class="fa-solid fa-file-code"></i> <span data-ar="تصدير JSON">Export JSON</span></button>
+            <button class="btn ghost small" onclick="exportDataCSV()"><i class="fa-solid fa-file-csv"></i> <span data-ar="تصدير CSV">Export CSV</span></button>
+            <button class="btn ghost small" onclick="document.getElementById('import-file-input').click()"><i class="fa-solid fa-file-import"></i> <span data-ar="استيراد">Import</span></button>
+            <input type="file" id="import-file-input" accept=".json,.csv" style="display:none;" onchange="importDataFile(this)" />
+          </div>
+        </div>
+        <!-- ===== Cloud Backup card REMOVED per user request (Round 11) =====
+             There is no longer any cloud-sync option in Settings. The sync
+             ENGINE itself still runs 100% automatically in the background
+             (saves after every change, offline queue, flush on hide/exit,
+             force-push on reconnect across Vercel / Firestore / backup
+             cloud) — nothing was removed from cloudsync.js. The status
+             updaters in cloudsync.js are null-safe, so the missing DOM
+             nodes are simply skipped. -->
+      </div>
+      <!-- ===== Google Fit API integration placeholder REMOVED per user spec ===== -->
+
+      <!-- ===== Cloud sync UI (Round 7): the Cloud Backup card above is the
+           only sync UI. Everything else stays 100% automatic in the
+           background (saves after every change, flushes on hide/exit,
+           force-pushes on reconnect via the persistent dirty marker)
+           across all three transports (Vercel / Firestore / backup cloud). -->
+      <!-- ===== Legacy note: manual sync setting removed (fully automatic) ===== -->
+
+    </div>
+  </main>
+</section>
+
+
+    <nav id="bottom-nav" class="bottom-nav">
+      <div class="bottom-nav-items">
+        <button class="bottom-nav-item active" data-btab="home" onclick="showTab('home')">
+          <i class="fa-solid fa-house"></i>
+          <span data-ar="الرئيسية">Home</span>
+        </button>
+        <button class="bottom-nav-item" data-btab="sports" onclick="showTab('sports')">
+          <i class="fa-solid fa-dumbbell"></i>
+          <span data-ar="الرياضة والتتبع">Sports &amp; Tracker</span>
+        </button>
+        <button class="bottom-nav-item" data-btab="daily" onclick="showTab('daily')">
+          <i class="fa-solid fa-clipboard-check"></i>
+          <span data-ar="الانضباط اليومي">Daily Discipline</span>
+        </button>
+        <button class="bottom-nav-item" data-btab="diet" onclick="showTab('diet')">
+          <i class="fa-solid fa-apple-whole"></i>
+          <span data-ar="الغذاء">Diet</span>
+        </button>
+        <button class="bottom-nav-item" data-btab="more" onclick="toggleBottomNavMore()">
+          <i class="fa-solid fa-grip"></i>
+          <span data-ar="المزيد">More</span>
+        </button>
+      </div>
+    </nav>
+    <div id="bottom-nav-more" class="bottom-nav-more">
+      <div class="bottom-nav-more-grid">
+        <button class="bottom-nav-more-item" onclick="showTab('streaks');closeBottomNavMore()">
+          <i class="fa-solid fa-fire"></i>
+          <span data-ar="السلاسل">Streaks</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('weather');closeBottomNavMore()">
+          <i class="fa-solid fa-cloud-sun"></i>
+          <span data-ar="الطقس">Weather</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('moodmorph');closeBottomNavMore()">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span data-ar="المزاج">Mood</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('reminders');closeBottomNavMore()">
+          <i class="fa-solid fa-bell"></i>
+          <span data-ar="التذكيرات">Reminders</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('profile');closeBottomNavMore()">
+          <i class="fa-solid fa-user"></i>
+          <span data-ar="الملف">Profile</span>
+        </button>
+        <button class="bottom-nav-more-item" onclick="showTab('settings');closeBottomNavMore()">
+          <i class="fa-solid fa-gear"></i>
+          <span data-ar="الإعدادات">Settings</span>
+        </button>
+        <button class="bottom-nav-more-item bottom-nav-more-logout" onclick="closeBottomNavMore();logout()">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span data-ar="تسجيل الخروج">Log out</span>
+        </button>
+      </div>
+    </div>
+
+<div id="session-overlay">
+  <button class="session-exit-btn" onclick="exitSession()">&times;</button>
+  <div class="session-content">
+    <h2 id="session-sport-name"></h2>
+    <div id="session-timer" class="session-timer">00:00</div>
+    <div id="session-calories" class="session-calories"><i class="fa-solid fa-fire"></i> 0 kcal</div>
+    <div id="session-distance" style="font-size:1.1rem;color:var(--accent);font-weight:600;margin-bottom:20px;display:none;"></div>
+    <div class="session-actions">
+      <button class="btn primary" onclick="stopLiveSession()"><i class="fa-solid fa-stop"></i> <span data-ar="إيقاف وتسجيل">Stop & Log</span></button>
+      <button class="btn ghost" id="session-pause-btn" onclick="pauseLiveSession()"><i class="fa-solid fa-pause"></i> <span data-ar="إيقاف مؤقت (60ث)">Pause (60s)</span></button>
+    </div>
+    <div id="session-pause-timer" class="session-pause-timer hidden"><span data-ar="استئناف خلال">Resuming in</span> <b id="pause-countdown">60</b><span data-ar="ثانية...">s...</span></div>
+    <div class="session-playlist-container" id="session-playlist-container"></div>
+  </div>
+</div>
+
+
+<!-- Coach Session Tracker Overlay -->
+<!-- Coach session overlay removed -->
+
+
+</div>
+
+<!-- Coach sections removed per user request -->
+
+<div id="add-athlete-modal" class="modal-overlay" style="z-index:10002;">
+  <div class="modal-content" style="max-width:460px;">
+    <button class="modal-close" onclick="closeModal('add-athlete-modal')">&times;</button>
+    <h3><i class="fa-solid fa-user-plus"></i> <span data-ar="إضافة رياضي">Add Athlete</span></h3>
+    <form onsubmit="return addAthlete(event)" style="margin-top:16px;">
+      <label data-ar="الاسم الكامل">Full Name</label>
+      <input type="text" id="add-athlete-name" placeholder="e.g. Alex Johnson" required data-ar-ph="مثال: أليكس جونسون" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div><label data-ar="الرياضة">Sport</label><select id="add-athlete-sport" required><option value="" data-ar="اختر…">Select…</option><option>Running</option><option>Cycling</option><option>Swimming</option><option>Strength</option><option>Football</option><option>Basketball</option><option>Tennis</option><option>HIIT</option><option>Yoga</option><option>Boxing</option></select></div>
+        <div><label data-ar="المستوى">Level</label><select id="add-athlete-level" required><option value="" data-ar="اختر…">Select…</option><option data-ar="مبتدئ">Beginner</option><option data-ar="متوسط">Intermediate</option><option data-ar="متقدم">Advanced</option></select></div>
+      </div>
+      <label data-ar="البريد الإلكتروني">Email</label>
+      <input type="email" id="add-athlete-email" placeholder="athlete@example.com" required data-ar-ph="athlete@example.com" />
+      <label data-ar="ملاحظات">Notes</label>
+      <textarea id="add-athlete-notes" rows="2" placeholder="Any notes about this athlete…" style="resize:vertical;" data-ar-ph="أي ملاحظات حول هذا الرياضي…"></textarea>
+      <button type="submit" class="btn primary" style="margin-top:12px;"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة للقائمة">Add to Roster</span></button>
+    </form>
+    <p id="add-athlete-msg" class="msg"></p>
+  </div>
+</div>
+
+<!-- ===== Athlete Detail Modal (Round 9) =====
+     Per user spec: "add more details button for athletes in volta coach".
+     The openAthleteDetail() JS function was already implemented but had no
+     modal HTML to render into — this shell fixes that. -->
+<div id="athlete-detail-modal" class="modal-overlay" style="z-index:10002;">
+  <div class="modal-content" style="max-width:560px;">
+    <button class="modal-close" onclick="closeModal('athlete-detail-modal')">&times;</button>
+    <div id="athlete-detail-body"></div>
+  </div>
+</div>
+
+<!-- New Plan Modal — rich variety of options for coaches -->
+<div id="new-plan-modal" class="modal-overlay" style="z-index:10002;">
+  <div class="modal-content" style="max-width:560px;">
+    <button class="modal-close" onclick="closeModal('new-plan-modal')">&times;</button>
+    <h3><i class="fa-solid fa-clipboard-list"></i> <span data-ar="إنشاء خطة تدريب جديدة">Create New Training Plan</span></h3>
+    <p style="margin-bottom:16px;" data-ar="أنشئ قالب خطة قابل لإعادة الاستخدام يمكنك تعيينه لأي من رياضيك.">Build a reusable plan template you can assign to any of your athletes.</p>
+    <form onsubmit="return createPlan(event)" style="margin-top:8px;">
+      <label><span data-ar="اسم الخطة">Plan Name</span> <span style="color:var(--red);">*</span></label>
+      <input type="text" id="np-name" placeholder="e.g. Off-Season Strength Block" required data-ar-ph="مثال: كتلة قوة خارج الموسم" />
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+        <div>
+          <label><span data-ar="الفئة">Category</span> <span style="color:var(--red);">*</span></label>
+          <select id="np-category" required onchange="updatePlanGoalOptions()">
+            <option value="" data-ar="اختر…">Select…</option>
+            <option>Running</option><option>Cycling</option><option>Swimming</option>
+            <option>Strength</option><option>HIIT</option><option>CrossFit</option>
+            <option>Yoga</option><option>Pilates</option><option>Boxing</option>
+            <option>Martial Arts</option><option>Football</option><option>Basketball</option>
+            <option>Tennis</option><option>Rowing</option><option>Triathlon</option>
+            <option>Rehabilitation</option><option>General Fitness</option>
+          </select>
+        </div>
+        <div>
+          <label><span data-ar="المستوى">Difficulty</span> <span style="color:var(--red);">*</span></label>
+          <select id="np-difficulty" required>
+            <option value="" data-ar="اختر…">Select…</option>
+            <option data-ar="مبتدئ">Beginner</option><option data-ar="متوسط">Intermediate</option><option data-ar="متقدم">Advanced</option><option data-ar="نخبة">Elite</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+        <div>
+          <label><span data-ar="المدة (أسابيع)">Duration (weeks)</span> <span style="color:var(--red);">*</span></label>
+          <select id="np-duration" required>
+            <option value="" data-ar="اختر…">Select…</option>
+            <option data-ar="أسبوعان">2 weeks</option><option data-ar="4 أسابيع">4 weeks</option><option data-ar="6 أسابيع">6 weeks</option>
+            <option data-ar="8 أسابيع">8 weeks</option><option data-ar="12 أسبوعاً">12 weeks</option><option data-ar="16 أسبوعاً">16 weeks</option>
+          </select>
+        </div>
+        <div>
+          <label><span data-ar="الجلسات / أسبوع">Sessions / week</span> <span style="color:var(--red);">*</span></label>
+          <select id="np-sessions" required>
+            <option value="" data-ar="اختر…">Select…</option>
+            <option data-ar="جلسة واحدة">1 session</option><option data-ar="جلستان">2 sessions</option><option data-ar="3 جلسات">3 sessions</option>
+            <option data-ar="4 جلسات">4 sessions</option><option data-ar="5 جلسات">5 sessions</option><option data-ar="6 جلسات">6 sessions</option><option data-ar="7 جلسات">7 sessions</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+        <div>
+          <label><span data-ar="الهدف الأساسي">Primary Goal</span> <span style="color:var(--red);">*</span></label>
+          <select id="np-goal" required>
+            <option value="" data-ar="اختر…">Select…</option>
+            <option data-ar="بناء العضلات">Build Muscle</option><option data-ar="فقدان الوزن">Lose Weight</option><option data-ar="زيادة القوة">Increase Strength</option>
+            <option data-ar="تحسين التحمل">Improve Endurance</option><option data-ar="تعزيز السرعة">Boost Speed</option><option data-ar="تحسين المرونة">Enhance Mobility</option>
+            <option data-ar="الأداء الرياضي">Sports Performance</option><option data-ar="إعادة التأهيل">Rehabilitation</option><option data-ar="الحفاظ على اللياقة">Maintain Fitness</option>
+          </select>
+        </div>
+        <div>
+          <label data-ar="المعدات">Equipment</label>
+          <select id="np-equipment">
+            <option data-ar="وزن الجسم فقط">Bodyweight Only</option><option>Dumbbells</option><option>Barbell</option>
+            <option data-ar="كettelbell">Kettlebells</option><option data-ar="أحزان المقاومة">Resistance Bands</option><option data-ar="أجهزة">Machines</option>
+            <option data-ar="صالة كاملة">Full Gym</option><option data-ar="خارجي">Outdoor</option><option data-ar="مختلط">Mixed</option>
+          </select>
+        </div>
+      </div>
+
+      <label style="margin-top:14px;" data-ar="التركيز المستهدف (اختر واحدة أو أكثر)">Target Focus (select one or more)</label>
+      <div id="np-focus-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')" data-ar="كامل الجسم">Full Body</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')" data-ar="الجزء العلوي">Upper Body</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')" data-ar="الجزء السفلي">Lower Body</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')" data-ar="العضلات الأساسية">Core</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')" data-ar="الكارديو">Cardio</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')" data-ar="المرونة">Mobility</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')" data-ar="القوة">Power</button>
+        <button type="button" class="focus-chip" onclick="this.classList.toggle('selected')" data-ar="البليومتريك">Plyometrics</button>
+      </div>
+
+      <label style="margin-top:14px;" data-ar="الوصف / الملاحظات">Description / Notes</label>
+      <textarea id="np-desc" rows="3" placeholder="Briefly describe the plan's purpose, who it suits, key milestones…" style="resize:vertical;" data-ar-ph="صف باختصار هدف الخطة، ومن تناسبها، أهم المعالم…"></textarea>
+
+      <label style="display:flex;align-items:center;gap:8px;margin-top:14px;cursor:pointer;font-weight:500;">
+        <input type="checkbox" id="np-autogen" checked style="width:auto;" />
+        <span data-ar="إنشاء تمارين أسبوعية نموذجية تلقائياً بناءً على الاختيارات">Auto-generate sample weekly workouts based on selections</span>
+      </label>
+
+      <div id="np-preview" style="display:none;margin-top:14px;background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:10px;padding:12px 14px;"></div>
+
+      <div style="display:flex;gap:10px;margin-top:18px;">
+        <button type="button" class="btn ghost" onclick="closeModal('new-plan-modal')" style="flex:1;" data-ar="إلغاء">Cancel</button>
+        <button type="submit" class="btn primary" style="flex:2;"><i class="fa-solid fa-plus"></i> <span data-ar="إنشاء الخطة">Create Plan</span></button>
+      </div>
+    </form>
+    <p id="new-plan-msg" class="msg"></p>
+  </div>
+</div>
+
+<!-- CSS moved to css/volta.css -->
+
+<div id="meal-modal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal('meal-modal')">&times;</button>
+    <h3 id="modal-title"></h3>
+    <p id="modal-desc"></p>
+    <div id="modal-macros" class="diet-macros" style="margin-top:10px;"></div>
+    <h4 id="modal-ing-title" data-ar="التغذية والمكونات">Nutrition & Ingredients</h4>
+    <ul id="modal-ingredients"></ul>
+    <h4 id="modal-rec-title" data-ar="خطوات التحضير">Recipe Steps</h4>
+    <ol id="modal-recipe"></ol>
+  </div>
+</div>
+
+<div id="sport-modal" class="modal-overlay" style="z-index: 9999;">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal('sport-modal')">&times;</button>
+    <h3 id="sport-modal-title"></h3>
+    <p id="sport-modal-desc" style="color:var(--muted); margin-bottom:16px;"></p>
+    <h4 data-ar="المعدات المطلوبة">Equipment Needed</h4>
+    <div id="sport-modal-equip"></div>
+    <h4 data-ar="أماكن قريبة">Nearby Places</h4>
+    <p style="font-size:.9rem;" data-ar="ابحث عن ملاعب أو صالات رياضية أو ملاعب محلية بالقرب منك.">Find local courts, gyms, or fields near you.</p>
+    <button class="btn primary fit" id="sport-modal-map-btn"><i class="fa-solid fa-map-location-dot"></i> <span data-ar="ابحث في خرائط Google">Find on Google Maps</span></button>
+  </div>
+</div>
+
+<div id="sport-search-modal" class="modal-overlay" style="z-index: 9998;">
+  <div class="modal-content" style="max-width: 600px; height: 80vh; display: flex; flex-direction: column;">
+    <button class="modal-close" onclick="closeModal('sport-search-modal')" style="align-self: flex-end; margin-bottom: -10px;">&times;</button>
+    <h3 data-ar="استكشف جميع الرياضات الـ 100">Explore All 100 Sports</h3>
+    <input type="text" id="sport-search-input" placeholder="Search sports..." oninput="renderSportSearchList()" style="margin-bottom: 16px;" data-ar-ph="ابحث عن رياضة...">
+    <!-- Scroll wrapper: the grid itself must NEVER get a definite height.
+         A grid with a fixed/max height inside a scroll container collapses its
+         auto rows (cards render as 30px slivers). The wrapper scrolls instead,
+         the grid stays content-sized → full-height cards, header stays put. -->
+    <div id="sport-search-scroll" style="flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+      <div id="sport-search-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;"></div>
+    </div>
+  </div>
+</div>
+
+<div id="goal-modal" class="modal-overlay">
+  <div class="modal-content" style="max-width:520px;">
+    <button class="modal-close" onclick="closeGoalModal()">&times;</button>
+    <h3><i class="fa-solid fa-bullseye"></i> <span data-ar="هدف اللياقة التفصيلي">Your Detailed Fitness Goal</span></h3>
+    <div id="goal-modal-content"></div>
+    <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:16px;">
+      <label style="font-weight:600;margin-bottom:6px;display:block;" data-ar="تفاصيل إضافية للهدف">Additional Goal Details</label>
+      <textarea id="goal-extra-notes" rows="3" placeholder="Describe your goal in more detail..." style="width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:.9rem;resize:vertical;background:var(--white);color:var(--text);" data-ar-ph="صف هدفك بمزيد من التفصيل..."></textarea>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+        <div><label style="font-size:.85rem;" data-ar="الوزن المستهدف (كجم)">Target Weight (kg)</label><input type="number" id="goal-target-weight" placeholder="e.g. 75" style="width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:.9rem;background:var(--white);color:var(--text);" data-ar-ph="مثال: 75" /></div>
+        <div><label style="font-size:.85rem;" data-ar="التاريخ المستهدف">Target Date</label><input type="date" id="goal-target-date" style="width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:.9rem;background:var(--white);color:var(--text);" /></div>
+      </div>
+      <div style="margin-top:12px;">
+        <label style="font-size:.85rem;" data-ar="الأهداف الأسبوعية المصغرة">Weekly Mini-Goals</label>
+        <textarea id="goal-weekly-targets" rows="2" placeholder="e.g. Run 3x per week, Lose 0.5kg..." style="width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:.9rem;resize:vertical;background:var(--white);color:var(--text);" data-ar-ph="مثال: اركض 3 مرات أسبوعياً، افقد 0.5 كجم..."></textarea>
+      </div>
+    </div>
+    <button class="btn primary" onclick="closeGoalModal()" style="margin-top: 20px;" data-ar="حفظ ومتابعة">Save & Continue</button>
+  </div>
+</div>
+
+<div id="welcome-modal" class="modal-overlay">
+  <div class="modal-content" style="text-align:center;">
+    <button class="modal-close" onclick="closeModal('welcome-modal')" style="align-self: flex-end; margin-bottom: -10px;">&times;</button>
+    <h2 style="margin-bottom:8px;" data-ar="مرحباً بك في فولتا! 🚀">Welcome to Volta! 🚀</h2>
+    <p style="color:var(--muted); margin-bottom:24px;" data-ar="رفيقك المتكامل للياقة الذكية. إليك ما يمكنك فعله:">Your all-in-one smart fitness companion. Here is what you can do:</p>
+    <div class="welcome-feature"><i class="fa-solid fa-dumbbell"></i><div><b data-ar="الرياضة والتتبع">Sports & Tracker</b><small data-ar="سجّل جلساتك المباشرة بالمؤقت وحساب السعرات.">Log live sessions with timers and calorie tracking.</small></div></div>
+    <div class="welcome-feature"><i class="fa-solid fa-clipboard-check"></i><div><b data-ar="الانضباط اليومي">Daily Discipline</b><small data-ar="خطتك التدريبية اليومية مع مؤقتات وتتبّع للتقدم.">Your daily training plan with guided timers and progress tracking.</small></div></div>
+    <div class="welcome-feature"><i class="fa-solid fa-cloud-arrow-up"></i><div><b data-ar="مزامنة سحابية">Cloud Sync</b><small data-ar="تقدمك محفوظ على السيرفر ويتبعك على كل جهاز.">Your progress is saved to your server and follows you to any device.</small></div></div>
+    <div class="welcome-feature"><i class="fa-solid fa-utensils"></i><div><b data-ar="النظام الغذائي">Diet System</b><small data-ar="احصل على وجبات ومغذيات دقيقة تناسب أهدافك.">Get accurate meals and macros tailored to your goals.</small></div></div>
+    <div class="welcome-feature"><i class="fa-solid fa-calculator"></i><div><b data-ar="حاسبة اللياقة">Fitness Calculator</b><small data-ar="اعرف متى بالضبط ستصل إلى وزنك المستهدف.">Find out exactly when you'll hit your target weight.</small></div></div>
+    <button class="btn primary" onclick="closeModal('welcome-modal')" style="margin-top:24px;" data-ar="هيا بنا!">Let's Go!</button>
+  </div>
+</div>
+
+<!-- Premium Paywall + Payment modals removed per user request -->
+
+<!-- Phase 7: Coach Profile Modal -->
+<div id="coach-profile-modal" class="modal-overlay" style="z-index:10004;">
+  <div class="modal-content" style="max-width:480px;">
+    <button class="modal-close" onclick="closeModal('coach-profile-modal')" style="align-self: flex-end; margin-bottom: -10px;">&times;</button>
+    <div id="coach-profile-modal-body"></div>
+  </div>
+</div>
+
+<!-- Phase 7: Coach Payment Modal -->
+<div id="coach-payment-modal" class="modal-overlay" style="z-index:10005;">
+  <div class="modal-content" style="max-width:440px;">
+    <button class="modal-close" onclick="closeModal('coach-payment-modal')" style="align-self: flex-end; margin-bottom: -10px;">&times;</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <i class="fa-solid fa-lock" style="color:var(--green);font-size:1.1rem;"></i>
+      <h2 style="margin:0;" data-ar="توظيف المدرب">Hire Coach</h2>
+    </div>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px;" data-ar="أدخل بيانات الدفع لتوظيف هذا المدرب.">Enter your payment details to hire this coach.</p>
+    <div style="background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <b id="coach-pay-name" style="font-size:.95rem;">Coach Name</b>
+        <b id="coach-pay-price" style="font-size:1.3rem;color:var(--accent);">$0.00</b>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);">
+        <span data-ar="رسوم المنصة (10%)">Platform fee (10%)</span>
+        <span id="coach-pay-fee">$0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--green);">
+        <span data-ar="يدفع المدرب (90%)">Coach receives (90%)</span>
+        <span id="coach-pay-payout">$0.00</span>
+      </div>
+    </div>
+    <label style="font-size:.82rem;font-weight:600;display:block;margin-bottom:4px;" data-ar="اسم حامل البطاقة">Cardholder name</label>
+    <input id="coach-pay-card-name" type="text" placeholder="Alex Johnson" autocomplete="cc-name" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-size:.95rem;margin-bottom:12px;background:var(--white);color:var(--text);" />
+    <label style="font-size:.82rem;font-weight:600;display:block;margin-bottom:4px;" data-ar="رقم البطاقة">Card number</label>
+    <div style="position:relative;margin-bottom:12px;">
+      <input id="coach-pay-card-number" type="text" inputmode="numeric" maxlength="19" placeholder="4242 4242 4242 4242" autocomplete="cc-number" style="width:100%;padding:11px 44px 11px 12px;border:1px solid var(--line);border-radius:8px;font-size:.95rem;background:var(--white);color:var(--text);font-family:monospace;letter-spacing:.5px;" oninput="VoltaMarketplace.formatCardNumber(this)" />
+      <i class="fa-regular fa-credit-card" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1rem;"></i>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:12px;">
+      <div style="flex:1;">
+        <label style="font-size:.82rem;font-weight:600;display:block;margin-bottom:4px;" data-ar="تاريخ الانتهاء">Expiry</label>
+        <input id="coach-pay-card-expiry" type="text" inputmode="numeric" maxlength="5" placeholder="MM/YY" autocomplete="cc-exp" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-size:.95rem;background:var(--white);color:var(--text);font-family:monospace;" oninput="VoltaMarketplace.formatCardExpiry(this)" />
+      </div>
+      <div style="flex:1;">
+        <label style="font-size:.82rem;font-weight:600;display:block;margin-bottom:4px;" data-ar="رمز الأمان (CVC)">CVC</label>
+        <input id="coach-pay-card-cvc" type="text" inputmode="numeric" maxlength="4" placeholder="123" autocomplete="cc-csc" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-size:.95rem;background:var(--white);color:var(--text);font-family:monospace;" />
+      </div>
+    </div>
+    <label style="font-size:.82rem;font-weight:600;display:block;margin-bottom:4px;" data-ar="الرمز البريدي">ZIP / Postal code</label>
+    <input id="coach-pay-card-zip" type="text" inputmode="numeric" maxlength="10" placeholder="10001" autocomplete="postal-code" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-size:.95rem;margin-bottom:14px;background:var(--white);color:var(--text);font-family:monospace;" />
+    <p id="coach-pay-error" style="color:var(--red);font-size:.82rem;margin:-4px 0 12px;display:none;font-weight:600;"></p>
+    <button class="btn primary" id="coach-pay-submit-btn" style="width:100%;padding:13px;font-size:1rem;" onclick="VoltaMarketplace.processPayment()" data-ar="ادفع وتوظيف المدرب">Pay &amp; Hire Coach</button>
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;color:var(--muted);font-size:.72rem;">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span data-ar="محمي بتشفير 256-bit (تجريبي)">Secured with 256-bit encryption (demo)</span>
+    </div>
+  </div>
+</div>
+
+<div id="meditation-overlay" class="meditation-overlay">
+  <button class="meditation-close" onclick="stopMeditation()">&times;</button>
+  <div class="breath-circle" id="breath-circle" data-ar="شهيق">Breathe In</div>
+  <p style="opacity:0.8; font-size:1.1rem;" data-ar="اتبع الدائرة">Follow the circle</p>
+  <div id="meditation-audio" style="margin-top:30px; display: flex; gap: 10px; flex-direction: column; align-items: center;"></div>
+</div>
+
+
+<!-- Manual Meal Log Modal -->
+<div id="manual-meal-modal" class="modal-overlay" style="z-index:10002;">
+  <div class="modal-content" style="max-width:460px;">
+    <button class="modal-close" onclick="closeModal('manual-meal-modal')">&times;</button>
+    <h3><i class="fa-solid fa-utensils"></i> <span data-ar="إضافة وجبة يدوياً">Add Meal Manually</span></h3>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:14px;" data-ar="أدخل تفاصيل وجبتك. لا تعرف القيم الدقيقة؟ لا تقلق، أدخل ما تعرفه واترك الباقي صفراً.">Enter your meal details. Don't know exact values? No worries — enter what you know and leave the rest as 0.</p>
+    <form onsubmit="return submitManualMeal(event)" style="margin-top:16px;">
+      <label data-ar="اسم الوجبة">Meal Name</label>
+      <input type="text" id="meal-name-input" placeholder="e.g. Grilled Chicken Salad" required data-ar-ph="مثال: سلطة دجاج مشوي" style="margin-bottom:12px;" />
+      <label data-ar="نوع الوجبة">Meal Type</label>
+      <select id="meal-type-input" style="margin-bottom:12px;">
+        <option value="breakfast" data-ar="فطور">Breakfast</option>
+        <option value="lunch" data-ar="غداء">Lunch</option>
+        <option value="dinner" data-ar="عشاء">Dinner</option>
+        <option value="snack" data-ar="وجبة خفيفة">Snack</option>
+      </select>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label data-ar="السعرات الحرارية (كيلو)">Calories (kcal)</label>
+          <input type="number" id="meal-kcal-input" placeholder="e.g. 350" min="0" value="0" data-ar-ph="مثال: 350" />
+        </div>
+        <div>
+          <label data-ar="حجم الحصة">Serving Size</label>
+          <input type="text" id="meal-serving-input" placeholder="e.g. 1 plate" data-ar-ph="مثال: طبق واحد" />
+        </div>
+      </div>
+      <div style="background:var(--accent-soft);border-radius:10px;padding:12px;margin-bottom:12px;">
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:8px;" data-ar="المغذيات الكلية (اختياري - اتركها صفراً إذا لم تكن متأكداً)">Macros (optional — leave as 0 if unsure)</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div>
+            <label style="font-size:.75rem;color:var(--green);" data-ar="بروتين (غ)">Protein (g)</label>
+            <input type="number" id="meal-protein-input" min="0" value="0" style="font-size:.9rem;padding:8px;" />
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:var(--amber);" data-ar="كربوهيدرات (غ)">Carbs (g)</label>
+            <input type="number" id="meal-carbs-input" min="0" value="0" style="font-size:.9rem;padding:8px;" />
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:var(--red);" data-ar="دهون (غ)">Fat (g)</label>
+            <input type="number" id="meal-fat-input" min="0" value="0" style="font-size:.9rem;padding:8px;" />
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn primary" style="margin-top:8px;"><i class="fa-solid fa-plus"></i> <span data-ar="إضافة الوجبة">Add Meal</span></button>
+    </form>
+  </div>
+</div>
+
+<div id="workout-detail-modal" class="modal-overlay" style="z-index:10001;">
+  <div class="modal-content workout-detail-modal-content" style="max-width:480px;">
+    <!-- X close button: visible BEFORE the user starts the workout (so they can
+         back out if they opened the wrong exercise). Once they click "Start
+         Workout", the X is hidden via JS (startWorkoutTimer) so they can't bail
+         out mid-exercise. The X comes back when the modal is reopened. -->
+    <button class="modal-close" id="workout-detail-close" onclick="closeWorkoutDetail()" style="align-self:flex-end;cursor:pointer;color:var(--muted);font-size:1.5rem;border:none;background:transparent;margin-bottom:-10px;">&times;</button>
+    <div id="workout-detail-body"></div>
+  </div>
+</div>
+
+<!-- ===== DAILY STREAK FLAME POPUP =====
+     Shown when the user reaches their daily activity goal.
+     Bump the streak count, show burning flame, "keep going" message. -->
+<div id="streak-popup-overlay" role="dialog" aria-modal="true" aria-labelledby="streak-popup-title">
+  <div id="streak-popup-card">
+    <div class="streak-flame"><i class="fa-solid fa-fire"></i></div>
+    <div class="streak-count" id="streak-popup-count">1</div>
+    <div class="streak-label" id="streak-popup-title" data-ar="يوم في السلسلة!">Day Streak!</div>
+    <div class="streak-sub" id="streak-popup-sub" data-ar="أحسنت! وصلت إلى هدفك اليومي. استمر!">Great job! You hit your daily goal. Keep going!</div>
+    <button class="streak-close-btn" onclick="closeStreakPopup()" data-ar="متابعة">Keep Going</button>
+  </div>
+</div>
+
+<!-- ===== GREAT WORK ANIMATION POPUP (Round 7) =====
+     Replaces the old alert() "Great job! You're now on Day X of Y" popup that
+     fired when the user finished a day in daily exercise. Per user spec:
+     "when the user finishes a day in daily exercise, i want you to remove that
+     popup that motivates the user and make a cool animation that says great
+     work or something like that with animations (e.g. biceps flexing, etc.)".
+     This overlay shows a flexing bicep emoji (💪) that scales/rotates with a
+     "flex" animation, plus a "GREAT WORK!" headline and a context-aware subtitle. -->
+<div id="great-work-overlay" role="dialog" aria-modal="true">
+  <div id="great-work-card">
+    <div class="gw-flame-container">
+      <div class="gw-flame gw-flame-1"></div>
+      <div class="gw-flame gw-flame-2"></div>
+      <div class="gw-flame gw-flame-3"></div>
+      <div class="gw-flame gw-flame-4"></div>
+      <div class="gw-flame gw-flame-5"></div>
+      <div class="gw-streak-number" id="gw-streak-number">0</div>
+      <div class="gw-streak-label" data-ar="يوم متتالي">DAY STREAK</div>
+    </div>
+    <div class="gw-headline" id="great-work-headline" data-ar="عمل رائع!">GREAT WORK!</div>
+    <div class="gw-sub" id="great-work-sub" data-ar="لقد أكملت تمرين اليوم. استمر!">You crushed today's workout. Keep it up!</div>
+    <div class="gw-sparks-row">
+      <span class="gw-spark">✦</span>
+      <span class="gw-spark">✦</span>
+      <span class="gw-spark">✦</span>
+      <span class="gw-spark">✦</span>
+      <span class="gw-spark">✦</span>
+    </div>
+    <button class="gw-close-btn" onclick="closeGreatWorkPopup()" data-ar="متابعة">Continue</button>
+  </div>
+</div>
+
+<!-- ===== WEEKLY PROGRESS SURVEY =====
+     Pops up every 7 days to ask the user about their progress.
+     Asks: current weight, energy level, satisfaction, challenges. -->
+<div id="weekly-survey-modal" class="modal-overlay" style="z-index:10060;">
+  <div class="modal-content" style="max-width:520px;max-height:90vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeWeeklySurvey()">&times;</button>
+    <h3><i class="fa-solid fa-clipboard-check" style="color:var(--accent);"></i> <span data-ar="استبيان التقدم الأسبوعي">Weekly Progress Check-in</span></h3>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px;" data-ar="مر أسبوع! أخبرنا كيف كان تقدمك لنعدّل خطة التدريب والوجبات.">It's been a week! Tell us how your progress went so we can adjust your plan.</p>
+    <div id="weekly-survey-body"></div>
+    <button class="btn primary" onclick="saveWeeklySurvey()" style="margin-top:14px;width:100%;"><i class="fa-solid fa-check"></i> <span data-ar="حفظ ومتابعة">Save & Continue</span></button>
+  </div>
+</div>
+
+<!-- ===== My Plan popup — full-week workout view (workout days only) ===== -->
+<!-- Opened from Daily Exercise ("View Current Plan") and from the small
+     dashboard plan card ("View"). Lists every training day with its
+     exercises. Round 13 (user request): workout-only popup — the diet
+     section and the "Train This Plan" button were removed. -->
+<div id="plan-view-modal" class="modal-overlay" style="z-index:10055;">
+  <div class="modal-content" style="max-width:560px;max-height:88vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closePlanViewPopup()">&times;</button>
+    <h3 style="margin-top:0;"><i class="fa-solid fa-clipboard-list" style="color:var(--accent);"></i> <span data-ar="خطتي">My Plan</span></h3>
+    <p id="plan-view-sub" style="color:var(--muted);font-size:.85rem;margin:-4px 0 14px;"></p>
+    <div id="plan-view-body"></div>
+  </div>
+</div>
+
+<!-- InBody Follow-up Form: asks for fields the OCR couldn't read, using the same
+     survey question definitions as the main onboarding survey. -->
+<div id="inbody-followup-modal" class="modal-overlay" style="z-index:10050;">
+  <div class="modal-content" style="max-width:520px;max-height:90vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeInBodyFollowup()">&times;</button>
+    <div id="inbody-followup-body"></div>
+  </div>
+</div>
+
+<!-- ===== Custom Workout Builder modal ===== -->
+<div id="builder-modal" class="modal-overlay" style="z-index:10060;">
+  <div class="modal-content builder-modal-content" style="max-width:620px;max-height:90vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeWorkoutBuilder()">&times;</button>
+    <h3 style="margin-top:0;"><i class="fa-solid fa-hammer" style="color:var(--accent);"></i> <span data-ar="منشئ التمارين المخصصة">Custom Workout Builder</span></h3>
+    <input type="text" id="builder-wname" placeholder="Workout name (e.g. My Arm Day)" data-ar-ph="اسم التمرين (مثل: يوم الذراع)" />
+    <div class="builder-exercise-picker">
+      <input type="text" id="builder-search" placeholder="Search exercises..." data-ar-ph="ابحث عن التمارين..." oninput="renderBuilderLibrary()" />
+      <div id="builder-muscle-chips" class="builder-muscle-chips"></div>
+      <div id="builder-library" class="builder-library"></div>
+    </div>
+    <h4 style="margin:14px 0 8px;"><span data-ar="تمارين التمرين">Workout exercises</span> (<span id="builder-count">0</span>)</h4>
+    <div id="builder-selected" class="builder-selected"></div>
+    <button class="btn primary fit" onclick="saveCustomWorkout()"><i class="fa-solid fa-floppy-disk"></i> <span data-ar="حفظ التمرين المخصص">Save Custom Workout</span></button>
+  </div>
+</div>
+
+<script>
+(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="ndl_6Z-6DcDLM9g7DY-XD";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+</script>
+<!-- Vendored third-party libs (offline-first): chat widget stays CDN (network
+     service by nature); everything else loads from local vendor/ files. -->
+<script src="vendor/chart.umd.js"></script>
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="vendor/tesseract/tesseract.min.js"></script>
+<!-- Phase 2: Database layer + seed data — loaded BEFORE volta.js so VoltaDB is available -->
+<script src="js/db.js"></script>
+<script src="js/data/meals.js"></script>
+<script src="js/data/workouts.js"></script>
+<!-- CloudSync: Vercel-backed cross-device sync. Loaded BEFORE volta.js so
+     its syncUserToCloud / syncDietLogToCloud functions are available when
+     volta.js's saveUser() / saveDietLog() run. -->
+<script src="js/cloudsync.js"></script>
+<!-- Phase 3: Survey-driven plan engine -->
+<script src="js/plan-engine.js"></script>
+<!-- Phase 4: Premium subscription management -->
+<script src="js/premium.js"></script>
+<!-- Push notifications (workout reminders; water reminder removed) -->
+<script src="js/notifications.js"></script>
+<!-- Phase 7: Coach marketplace -->
+<script src="js/marketplace.js"></script>
+<!-- Coach ↔ Athlete chat -->
+<script src="js/chat.js"></script>
+<!-- NEW: Volta feature modules — units, badges, report card, charts, builder,
+     data export/import. Loaded BEFORE volta.js so its renderers
+     can delegate to window.VoltaFeatures at call time. -->
+<script src="js/volta-features.js"></script>
+<script src="js/volta.js"></script>
+<script src="js/volta-animations.js"></script>
+<script src="js/volta-clouds.js"></script>
+<script src="js/volta-google.js"></script>
+<script>
+/* ── Deploy guard (v20) ─────────────────────────────────────────────────
+   Detects an INCOMPLETE upload (e.g. only index.html reached the server
+   and the css/ + js/ folders are missing → the page shows unstyled HTML).
+   When the full app is deployed correctly this guard never appears.   */
+(function () {
+  function appHealthy() {
+    var cssOk = false;
+    try { cssOk = getComputedStyle(document.body).backgroundColor !== 'rgba(0, 0, 0, 0)'; } catch (e) {}
+    return cssOk && typeof window.showScreen === 'function';
+  }
+  function showGuard() {
+    if (appHealthy()) return;
+    var cssOk = false;
+    try { cssOk = getComputedStyle(document.body).backgroundColor !== 'rgba(0, 0, 0, 0)'; } catch (e) {}
+    var missing = [];
+    if (!cssOk) missing.push('the stylesheet folder <b>css/</b> (and most likely <b>vendor/</b> and <b>img/</b> too)');
+    if (typeof window.showScreen !== 'function') missing.push('the script folder <b>js/</b>');
+    var box = document.createElement('div');
+    box.id = 'deploy-guard';
+    box.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#ffffff;color:#1a2233;font:15px/1.6 -apple-system,Segoe UI,Roboto,sans-serif;padding:28px 20px;overflow:auto;';
+    box.innerHTML =
+      '<div style="max-width:660px;margin:0 auto;">' +
+      '<div style="background:#eef3fe;border:1px solid #c9d8f7;border-radius:12px;padding:20px 22px;">' +
+      '<h1 style="font-size:19px;margin:0 0 12px;color:#2b4a8b;">Volta &mdash; app files are missing on this server</h1>' +
+      '<p style="margin:0 0 10px;">The page loaded, but ' + missing.join(' and ') +
+      ' returned 404 (Not Found). This happens when only <b>index.html</b> and a few loose files were uploaded, without the folders next to them.</p>' +
+      '<p style="margin:0 0 6px;"><b>How to fix &mdash; upload the complete Volta folder so the server contains ALL of these:</b></p>' +
+      '<ul style="margin:6px 0 12px;padding-left:22px;">' +
+      '<li><b>index.html</b>, <b>manifest.json</b>, <b>sw.js</b>, <b>icon-192.png</b>, <b>icon-512.png</b></li>' +
+      '<li>folder <b>css/</b> &mdash; 4 files</li>' +
+      '<li>folder <b>js/</b> &mdash; all files and subfolders</li>' +
+      '<li>folder <b>vendor/</b> &mdash; fonts, fontawesome, leaflet, chart.umd.js, tesseract</li>' +
+      '<li>folder <b>img/</b></li>' +
+      '<li>folder <b>api/</b> &mdash; only used when hosting on Vercel (see VERCEL-SETUP.txt)</li>' +
+      '</ul>' +
+      '<p style="margin:0 0 10px;"><b>Quick check:</b> open <b>/css/volta.css</b> in the browser &mdash; it must show CSS code, not a Not Found page.</p>' +
+      '<p style="margin:0;color:#5a6577;">After re-uploading, hard-refresh this page (Ctrl+Shift+R). If it still looks unstyled, clear the old offline copy: browser DevTools &rarr; Application &rarr; Clear storage. This message disappears automatically once the files are found.</p>' +
+      '</div></div>';
+    document.body.appendChild(box);
+    var tries = 0;
+    var t = setInterval(function () {
+      tries++;
+      if (appHealthy()) { clearInterval(t); var b = document.getElementById('deploy-guard'); if (b) b.remove(); }
+      else if (tries > 200) clearInterval(t);
+    }, 3000);
+  }
+  function start() { setTimeout(showGuard, 1200); }
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start);
+})();
+</script>
+</body>
+</html>
