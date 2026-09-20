@@ -1,0 +1,97 @@
+/* ============================================================
+   VOLTA v45 — MOBILE READABILITY SCALE (css/volta-mobile.css)
+   Loaded LAST so it wins the cascade on phones only.
+
+   User request: "for mobile pwa, make all popups, buttons, widgets,
+   fonts noticeably bigger ... the data isnt that clear, i want it big
+   but doesnt look bad and dont change anything in the ui".
+
+   The rules below do NOT redesign anything — every widget keeps its
+   exact layout, colors and shape. Three systematic moves:
+     1. Root type scale: html font-size 16.5px → 19px (≤768px), so every
+        rem-sized font, padding, radius and icon across ALL screens and
+        popups jumps ~15% in proportion.
+     2. px-sized touch controls (buttons, inputs, bottom nav, modal
+        frames, icon tiles) get explicit bumps so they grow with it.
+     3. The Daily Discipline exercise popup (workout-detail) goes
+        FULL SCREEN on phones — the exercise photo + steps + timer
+        finally read at arm's length.
+
+   Small phones (≤360px) scale to 18px instead of 19px so dense grids
+   never wrap awkwardly.
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ── 1. TYPE SCALE — everything rem-based gets ~15% bigger ── */
+  html { font-size: 19px; }
+
+  /* ── 2. BUTTONS — comfortable touch targets ── */
+  .btn { padding: 13px 20px; font-size: .95rem; }
+  .btn.small { padding: 10px 15px; font-size: .85rem; }
+  .gemini-meal-regen { padding: 13px 16px; }
+
+  /* ── 3. FORM CONTROLS — bigger fields (also kills iOS focus-zoom) ── */
+  input, select, textarea { font-size: .95rem; padding: 12px 14px; }
+
+  /* ── 4. MODALS & POPUPS — roomier frames, easier close button ── */
+  .modal-overlay { padding: 12px; }
+  .modal-content { padding: 26px 22px; max-width: 560px; border-radius: 18px; }
+  .modal-close { width: 48px; height: 48px; min-width: 48px; font-size: 2rem; }
+
+  /* ── 5. BOTTOM NAVIGATION ("screen bar") — BACK TO THE OLD SIZE (v46) ──
+     v45 enlarged the bar (58px items, 24px icons). The user asked to bring
+     back the OLD size. Removing the v45 overrides alone was NOT enough:
+     the nav is sized in rem (#bottom-nav .bottom-nav-item i = 1.22rem,
+     labels = .64rem), so the v45 root scale (16.5px → 19px) still renders
+     it ~15% bigger than the old look. The bar is therefore PINNED here to
+     its exact pre-v45 rendered pixel size (what 1.22rem / .64rem rendered
+     at the old 16.5px root): 62px items, 20px icons, ~10.5px labels,
+     9/10/9 bar padding. The main-content clearance returns to the v-shell
+     baseline (80px + safe) which matches the old bar height exactly. */
+  #bottom-nav .bottom-nav-item { height: 62px; gap: 3px; padding: 6px 2px; }
+  #bottom-nav .bottom-nav-item i { font-size: 20px !important; }
+  #bottom-nav .bottom-nav-item span { font-size: 10.5px !important; }
+  body.lang-ar #bottom-nav .bottom-nav-item span { font-size: 11.2px !important; letter-spacing: 0; }
+  #screen-app .main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
+  .daily-exercise-container { padding-bottom: 90px; }
+
+  /* ── 6. WIDGET TILES — bigger icons inside the same cards ──
+     v46 (user, pictures 1+2): the v45 padding here had shrunk the BOTTOM
+     padding to 13px, which pressed the label text DOWN onto the glowing
+     bar. 26px restores clear air between text and bar on every stat tile
+     (Home 2×2 cards AND the Streaks & Progress grid). */
+  .dash-stat-card { padding: 15px 15px 26px; }
+  .dash-stat-icon { width: 40px; height: 40px; font-size: 1.05rem; }
+  .dash-feature-icon { width: 42px; height: 42px; font-size: 1.1rem; }
+  .mood-card-icon { width: 42px; height: 42px; font-size: 1.1rem; }
+  .moodmorph-header-icon { width: 44px; height: 44px; font-size: 1.25rem; }
+
+  /* ── 7. DAILY DISCIPLINE EXERCISE POPUP — FULL SCREEN ──
+     (user: "for daily discipline exercise popup take the whole screen")
+     Beats the inline max-width:640px and the 90vh cap; the sticky X
+     stays on top and the START→END photo gets the room it deserves. */
+  #workout-detail-modal { padding: 0; }
+  #workout-detail-modal .modal-content.workout-detail-modal-content {
+    max-width: 100% !important;
+    width: 100%;
+    margin: 0 !important; /* beats the mobile modal inset (100% - 24px) */
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh !important;
+    max-height: 100dvh !important;
+    border-radius: 0;
+    padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  #workout-detail-modal .workout-detail-img-wrap {
+    max-height: 46vh;
+    max-height: 46dvh;
+  }
+}
+
+/* Small phones — a step back so dense grids never wrap awkwardly */
+@media (max-width: 360px) {
+  html { font-size: 18px; }
+}
+/* v46: the landscape nav compaction was removed together with the portrait
+   enlargement — the baseline nav size IS the size the user wants. */

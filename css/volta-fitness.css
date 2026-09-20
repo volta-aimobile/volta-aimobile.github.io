@@ -1,0 +1,1065 @@
+/* ============================================================
+   VOLTA FITNESS REDesign — v19 (user: "make it look like the
+   Apple Fitness app and MyFitnessPal with a mix of the current UI")
+   ----------------------------------------------------------------
+   Loaded LAST (after volta-premium.css) so it wins the cascade.
+   What this layer does:
+   • Always-on dark "Apple Fitness" canvas: near-black bg, elevated
+     card surfaces, vivid activity colors (red / green / cyan).
+   • Bold metric typography: big tabular numbers, tight uppercase
+     eyebrows — the Apple Fitness "summary" feel.
+   • MyFitnessPal signatures: calorie-budget bar on the diet card,
+     macro chips, food chips with check icons, blue CTAs.
+   • Everything else (layout, structure, components, behavior) is
+     the existing app — only the skin changes.
+   GUARD: premium gold styling (vp-cta gold, gold premium pill,
+   gold gradients) is intentionally NOT touched here.
+   ============================================================ */
+
+/* ============ 1) TOKENS — always-dark Apple Fitness palette ============ */
+:root {
+  --bg: #0a0c10;
+  --white: #151922;            /* card surface (name kept: used everywhere) */
+  --text: #f2f5f9;
+  --muted: #97a1b4;
+  --line: #262d3a;
+  --accent: #2f7cff;           /* Apple/MFP vivid blue */
+  --accent-dark: #1f66e8;
+  --accent-soft: #1a2b4d;
+  --accent-border: #2c4a85;
+  --green: #30d158;            /* Apple exercise green */
+  --green-bg: #12301c;
+  --amber: #ff9f0a;            /* Apple orange */
+  --amber-bg: #332410;
+  --red: #ff453a;              /* Apple red */
+  --red-bg: #39191a;
+  --cyan: #64d2ff;             /* Apple cyan */
+  --vfit-surface: #1c222e;     /* elevated surface */
+  --vfit-ink-dim: #c3cbd9;
+  --radius: 20px;
+  --shadow: 0 1px 2px rgba(0,0,0,.5), 0 10px 30px rgba(0,0,0,.45);
+  --sidebar-bg: #0e1118;
+}
+
+/* body.dark-mode keeps working — its overrides simply land on the
+   same dark family. Reskin the few stray light-mode defaults. */
+body {
+  background:
+    radial-gradient(1200px 500px at 85% -10%, rgba(47,124,255,.16), transparent 60%),
+    radial-gradient(900px 420px at -10% 110%, rgba(48,209,88,.07), transparent 55%),
+    var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+body.dark-mode { --bg: #0a0c10; --white: #151922; --sidebar-bg: #0e1118; }
+
+/* ============ 2) SPLASH + SCREENS ============ */
+#splash-screen { background: #0a0c10 !important; }
+.splash-brand span { color: #f2f5f9 !important; }
+.splash-loader { background: #273041 !important; }
+
+.screen { background: transparent; }
+#screen-landing,
+#screen-auth,
+#screen-forgot,
+#screen-onboarding,
+#screen-coach-auth { background: transparent; }
+
+/* ============ 3) APP SHELL ============ */
+.main { background: transparent; }
+.panel {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 0 rgba(255,255,255,.03) inset, 0 8px 24px rgba(0,0,0,.26);
+}
+.panel h3 { color: var(--text); }
+
+/* Desktop sidebar — dark glass */
+.sidebar {
+  background: linear-gradient(180deg, #0e1118, #0b0e14);
+  border-right: 1px solid var(--line);
+}
+.side-btn {
+  color: var(--muted);
+  border-radius: 14px;
+  transition: background .18s, color .18s, transform .18s;
+}
+.side-btn:hover { background: rgba(47,124,255,.1); color: var(--text); transform: translateX(2px); }
+.side-btn.active {
+  background: linear-gradient(135deg, rgba(47,124,255,.22), rgba(47,124,255,.08));
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(47,124,255,.35);
+}
+.side-btn.active i { color: var(--accent); }
+.side-divider { background: var(--line); }
+.sidebar .brand span { color: #f2f5f9; }
+.sidebar .brand i { color: var(--accent); }
+
+/* Phone bottom nav — Apple-style dark glass + active pill.
+   NOTE: volta-redesign.css now styles this as a NORMAL full-width bar
+   docked to the bottom edge (v25, user request) — only the COLORS here
+   make it a dark glass surface. */
+body .bottom-nav,
+body.dark-mode .bottom-nav {
+  background: rgba(10,12,16,.92) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255,255,255,.08) !important;
+  box-shadow: 0 -2px 10px rgba(0,0,0,.45), 0 10px 30px rgba(0,0,0,.5) !important;
+}
+.bottom-nav-item { color: #6d7789; }
+.bottom-nav-item i { color: #6d7789; }
+.bottom-nav-item.active {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(47,124,255,.35), rgba(47,124,255,.15));
+  box-shadow: inset 0 0 0 1px rgba(47,124,255,.4);
+}
+.bottom-nav-item.active i { color: #7db3ff; }
+.bottom-nav-more {
+  background: rgba(16,19,26,.97);
+  border: 1px solid var(--line);
+  box-shadow: 0 -8px 30px rgba(0,0,0,.5);
+}
+.bottom-nav-more-item { background: var(--vfit-surface); color: var(--text); }
+.bottom-nav-more-item:active { background: rgba(47,124,255,.2); }
+
+/* ============ 4) BUTTONS — MFP blue CTAs, pill geometry ============ */
+.btn {
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  transition: transform .15s, box-shadow .2s, background .2s, filter .2s;
+}
+.btn.primary {
+  /* v25 (user): no diagonal effect on buttons — flat fill */
+  background: #3d8bff;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(47,124,255,.22), inset 0 1px 0 rgba(255,255,255,.22);
+}
+.btn.primary:hover { filter: brightness(1.08); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(47,124,255,.28); }
+.btn.primary:active { transform: scale(.98); }
+.btn.ghost {
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+.btn.ghost:hover { background: rgba(47,124,255,.12); border-color: var(--accent-border); color: #fff; }
+.btn.small { border-radius: 999px; }
+/* ============ 4b) AUTH BUTTONS — rounded rectangles (v43) ============
+   User: "make the login and signup buttons rounded rectangles instead of
+   this shape" — the pill geometry was reading as a capsule on the auth
+   screen. Every login/signup surface drops to a 14px rounded rectangle:
+   the auth form (Log in / Sign up submit + Continue with Google), the
+   forgot-password screen, the coach login, and the landing nav pair
+   (Log in / Sign up) + the Get Started CTA. */
+#screen-auth .btn,
+#screen-forgot .btn,
+#screen-coach-auth .btn,
+#screen-landing .landing-nav .btn,
+#screen-landing .landing-cta-stack .btn {
+  border-radius: 14px;
+}
+/* workout start button keeps var(--accent) inline — deepen it here */
+#workout-start-timer-btn { box-shadow: 0 4px 12px rgba(47,124,255,.24) !important; }
+
+/* ============ 5) DASHBOARD HERO ============ */
+.dash-hero {
+  background:
+    radial-gradient(400px 200px at 90% 0%, rgba(47,124,255,.25), transparent 70%),
+    linear-gradient(135deg, #1a2030 0%, #12161f 60%);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.26);
+}
+.dash-avatar {
+  border-radius: 18px;
+  background: linear-gradient(135deg, #3d8bff, #1f66e8);
+  box-shadow: 0 3px 10px rgba(47,124,255,.26);
+}
+.dash-hero-idtext h1 { color: #fff; }
+.dash-date-chip {
+  background: rgba(47,124,255,.15);
+  border-color: rgba(47,124,255,.35);
+  color: #9dc2ff;
+}
+.dash-day-ghost { -webkit-text-stroke: 2px rgba(47,124,255,.4); opacity: .55; }
+
+/* ============ 6) STAT TILES — Apple Fitness summary cards ============ */
+.dash-stats-grid { gap: 10px; }
+.dash-stat-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s, border-color .2s;
+}
+.dash-stat-card:hover { transform: translateY(-2px); border-color: rgba(47,124,255,.4); }
+/* v21 (user): glow bar moved to the BOTTOM, centered — was a left edge bar.
+   Number + label + icon now sit centered in the middle of the tile. */
+.dash-stat-card::before {
+  width: 44px; height: 4px; border-radius: 99px;
+  position: absolute; left: 50%; right: auto; top: auto; bottom: 9px;
+  transform: translateX(-50%);
+  box-shadow: 0 0 6px currentColor;
+}
+.dash-stat-card.sc-bmi::before    { background: #64d2ff; color: #64d2ff; }
+.dash-stat-card.sc-water::before  { background: #64d2ff; color: #64d2ff; }
+.dash-stat-card.sc-streak::before { background: #ff9f0a; color: #ff9f0a; }
+.dash-stat-card.sc-mins::before   { background: #30d158; color: #30d158; }
+.dash-stat-card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 4px;
+  /* v46 (user, pictures 1+2): "move the text above the glowing bars a bit up"
+     — 24px bottom padding put the label only ~11px above the glow bar;
+     28px lifts the centered content a visible notch on desktop too. */
+  padding: 14px 10px 28px;
+}
+.dash-stat-card .dash-stat-icon {
+  position: relative; margin: 0;
+  width: 42px; height: 42px; border-radius: 14px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.05rem;
+}
+.dash-stat-card.sc-bmi .dash-stat-icon    { background: rgba(100,210,255,.16); color: #64d2ff; }
+.dash-stat-card.sc-water .dash-stat-icon  { background: rgba(100,210,255,.16); color: #64d2ff; }
+.dash-stat-card.sc-streak .dash-stat-icon { background: rgba(255,159,10,.16); color: #ff9f0a; }
+.dash-stat-card.sc-mins .dash-stat-icon   { background: rgba(48,209,88,.16); color: #30d158; }
+.dash-stat-card .dash-stat-body { flex: 0 0 auto; min-width: 0; }
+.dash-stat-card .dash-stat-body b {
+  display: block;
+  font-size: 1.65rem; line-height: 1.05; font-weight: 800;
+  font-variant-numeric: tabular-nums; letter-spacing: -.01em; color: #fff;
+}
+.dash-stat-card .dash-stat-body small {
+  display: block; margin-top: 3px;
+  font-size: .62rem; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--muted); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ============ 7) ACTIVITY RINGS — Apple colors ============ */
+.dash-rings-panel {
+  background:
+    radial-gradient(300px 200px at 15% 15%, rgba(255,69,58,.10), transparent 65%),
+    var(--white);
+}
+.ring-track { stroke: #232a36; opacity: 1; }
+.ring-val.v1 { stroke: #ff453a; filter: drop-shadow(0 0 3px rgba(255,69,58,.32)); }
+.ring-val.v2 { stroke: #30d158; filter: drop-shadow(0 0 3px rgba(48,209,88,.28)); }
+.ring-val.v3 { stroke: #64d2ff; filter: drop-shadow(0 0 3px rgba(100,210,255,.28)); }
+/* beat the redesign-layer ring glow (html.v-js has higher specificity) with
+   a same-specificity rule that loads later — softer blur + Apple colors */
+html.v-js .ring-val.v1 { filter: drop-shadow(0 0 3px rgba(255,69,58,.32)); }
+html.v-js .ring-val.v2 { filter: drop-shadow(0 0 3px rgba(48,209,88,.28)); }
+html.v-js .ring-val.v3 { filter: drop-shadow(0 0 3px rgba(100,210,255,.28)); }
+.ring-val { stroke-linecap: round; }
+.dash-rings-center b {
+  color: #fff; font-variant-numeric: tabular-nums;
+  font-weight: 800; letter-spacing: -.02em;
+}
+.dash-rings-center span { color: var(--muted); }
+/* v26 (user, picture 2): "make game on colored in blue" — was red
+   (#ff6961); now the app's accent blue like the other ring accents. */
+.dash-rings-eyebrow { color: #7db3ff; }
+.dash-rings-title { color: #dfe6f2; }
+.dash-rings-sub { color: var(--muted); }
+.dash-rings-sub b { color: #fff; }
+.ring-lg { color: var(--muted); }
+.ring-lg b { color: #fff; }
+.ring-lg.lg1 i { background: #ff453a; box-shadow: 0 0 4px rgba(255,69,58,.38); }
+.ring-lg.lg2 i { background: #30d158; box-shadow: 0 0 4px rgba(48,209,88,.38); }
+.ring-lg.lg3 i { background: #64d2ff; box-shadow: 0 0 4px rgba(100,210,255,.38); }
+
+/* section heads — Apple "summary" eyebrows */
+.dash-section-head h2 { color: #fff; font-weight: 800; letter-spacing: -.01em; }
+.dash-eyebrow {
+  color: var(--accent);
+  font-weight: 800; letter-spacing: .16em; font-size: .66rem; text-transform: uppercase;
+}
+.dash-panel-title { color: #dfe6f2; }
+
+/* progress bars */
+.goal-progress-bar-bg { background: #232a36; border-radius: 99px; overflow: hidden; }
+.goal-progress-bar-fill {
+  background: linear-gradient(90deg, #30d158, #64d2ff);
+  box-shadow: 0 0 6px rgba(48,209,88,.3);
+}
+.goal-progress-panel .dash-goal-label { color: var(--vfit-ink-dim); }
+.goal-progress-panel .dash-goal-label b { color: #fff; }
+.goal-days-left-badge { background: rgba(47,124,255,.15); color: #9dc2ff; border: 1px solid rgba(47,124,255,.3); }
+.dash-goal-pct { color: #fff; font-weight: 800; }
+
+/* ============ 8) WEEK CHART PANEL + EMPTY STATE ============ */
+#weekly-activity-panel { background: var(--white); }
+.v-chart-box { background: transparent; }
+.v-chart-empty { color: var(--muted); }
+.v-chart-empty i { color: var(--accent); }
+.v-chart-empty p { color: var(--muted); }
+
+/* ============ 9) PLAN CARDS (workout + diet) ============ */
+.plan-mini-panel { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); }
+.plan-day-row { background: var(--vfit-surface); border: 1px solid var(--line); border-radius: 16px; }
+.plan-day-name { color: #fff; font-weight: 800; }
+.plan-day-kcal { color: var(--muted); }
+.plan-focus-chip { background: rgba(47,124,255,.15); color: #9dc2ff; border: 1px solid rgba(47,124,255,.3); }
+.plan-ex-chip {
+  background: #232b39; color: var(--vfit-ink-dim);
+  border: 1px solid var(--line); border-radius: 10px;
+}
+.plan-ex-chip i { color: var(--accent); }
+.plan-ex-chip.is-done { border-color: rgba(48,209,88,.5); background: rgba(48,209,88,.12); }
+.plan-ex-chip.is-done i { color: #30d158; }
+.plan-more-toggle { background: rgba(47,124,255,.1); color: #9dc2ff; border: 1px solid rgba(47,124,255,.25); }
+.plan-pager { color: var(--muted); }
+.plan-pager button { background: rgba(47,124,255,.15); color: #9dc2ff; }
+.plan-hiitt-note { background: rgba(255,69,58,.1); color: #ff8a80; border: 1px solid rgba(255,69,58,.25); }
+
+/* diet split card — MyFitnessPal diary look */
+.plan-split-card { background: var(--white); border: 1px solid var(--line); border-radius: 16px; }
+/* v28 (user): the diet banner matches the WORKOUT banner — same dark navy
+   gradient (no more light blue tint), so both card headers read identically. */
+.plan-split-head.ph-diet { background: linear-gradient(120deg, #1a2233 0%, #2a3a55 100%); border-bottom: none; }
+.plan-split-title { color: #fff; }
+/* v25 (user, picture 4): the plan-head icon is white too (was accent blue) */
+.plan-split-title i { color: #fff; }
+.plan-split-stat b { color: #fff; font-variant-numeric: tabular-nums; font-weight: 800; }
+/* v25: the small stat labels are pure white (was muted) */
+.plan-split-stat span { color: #fff; font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+.plan-meal-row { background: var(--vfit-surface); border: 1px solid var(--line); border-radius: 14px; }
+.plan-meal-name { color: #fff; font-weight: 700; }
+.plan-meal-kcal {
+  background: rgba(255,159,10,.14); color: #ffb84d;
+  border: 1px solid rgba(255,159,10,.3); font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.plan-food-grid { gap: 8px; }
+.plan-food-chip {
+  background: #232b39; color: var(--vfit-ink-dim);
+  border: 1px solid var(--line); border-radius: 999px;
+}
+.plan-food-chip i { color: #30d158; } /* v44: no <i> left in meal chips (check marks removed) — kept harmless */
+.plan-food-chip-btn:hover { border-color: rgba(48,209,88,.5); background: rgba(48,209,88,.1); color: #fff; }
+.plan-water-note { background: rgba(100,210,255,.1); color: #8fd8ff; border: 1px solid rgba(100,210,255,.25); }
+
+/* MFP calorie budget bar (JS-injected into the diet split head).
+   v21 (user: "calorie counter isn't aligned correctly"): number + label now
+   read as ONE centered unit — big number, label right under it, bar below.
+   Was: number far left, label far right (space-between) — looked disjointed. */
+.vfit-budget { padding: 10px 15px 2px; }
+.vfit-budget-row { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-align: center; }
+.vfit-budget-kcal { font-size: 1.42rem; line-height: 1.1; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.vfit-budget-lbl { font-size: .62rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.vfit-budget-bar {
+  margin-top: 8px; height: 10px; border-radius: 99px;
+  background: #232a36; overflow: hidden; position: relative;
+}
+.vfit-budget-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, #3d8bff, #64d2ff);
+  box-shadow: 0 0 6px rgba(47,124,255,.32);
+  transition: width .5s ease;
+}
+.vfit-budget-fill.over { background: linear-gradient(90deg, #ff9f0a, #ff453a); box-shadow: 0 0 6px rgba(255,69,58,.32); }
+.vfit-budget-macros { display: flex; gap: 14px; margin-top: 9px; flex-wrap: wrap; }
+.vfit-macro { display: flex; align-items: center; gap: 6px; font-size: .68rem; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.vfit-macro i { width: 8px; height: 8px; border-radius: 99px; display: inline-block; }
+.vfit-macro.mp i { background: #ff453a; box-shadow: 0 0 3px rgba(255,69,58,.38); }
+.vfit-macro.mc i { background: #64d2ff; box-shadow: 0 0 3px rgba(100,210,255,.38); }
+.vfit-macro.mf i { background: #ff9f0a; box-shadow: 0 0 3px rgba(255,159,10,.38); }
+.vfit-macro b { color: #fff; }
+
+/* ============ 10) WORKOUT TRACKER — Apple-style rows ============ */
+.workout-block {
+  background: var(--vfit-surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 16px;
+  gap: 12px;
+}
+.workout-block.locked { opacity: .45; }
+/* v26 (user, picture 1): "make the highlight white instead of blue" —
+   the active exercise card loses its blue tint, border and glow. Dark
+   theme: clean elevated surface (a literal white card would glare in a
+   dark UI); light theme below gets the literal white. */
+.workout-block.active {
+  border-color: var(--line);
+  background: var(--vfit-surface);
+  box-shadow: none;
+}
+.workout-block.done { border-color: rgba(48,209,88,.45); background: rgba(48,209,88,.07); }
+.workout-item-icon {
+  border-radius: 14px;
+  background: #232b39; color: var(--muted);
+}
+.workout-block.active .workout-item-icon { background: #232b39; color: var(--muted); }
+.workout-block.done .workout-item-icon { background: rgba(48,209,88,.18); color: #30d158; }
+.workout-block.locked .workout-item-icon { background: #1c222c; color: #5b6474; }
+.workout-item-info b { color: #fff; }
+.workout-item-info small { color: var(--muted); }
+.workout-cal-badge {
+  background: rgba(255,69,58,.12); color: #ff8a80;
+  border: 1px solid rgba(255,69,58,.25);
+  font-variant-numeric: tabular-nums; font-weight: 800;
+}
+.workout-block .fa-chevron-right { color: var(--muted); }
+
+/* workout detail modal image frame */
+.workout-detail-img-wrap { background: #10141b; border: 1px solid var(--line); border-radius: 16px; }
+.workout-detail-img { border-radius: 16px; }
+.wd-se-label { background: rgba(10,12,16,.78); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: #fff; border: 1px solid rgba(255,255,255,.14); }
+.workout-timer-display { color: #fff; font-variant-numeric: tabular-nums; }
+
+/* ============ 11) MODALS, POPUPS, INPUTS ============ */
+.modal-overlay { background: rgba(4,6,10,.72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.modal-overlay .modal-content,
+.modal-card, .modal-content {
+  background: #141822 !important;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  color: var(--text);
+  box-shadow: 0 18px 44px rgba(0,0,0,.5);
+}
+.modal-content h3, .modal-content h2, .modal-card h3 { color: #fff; }
+input, select, textarea {
+  background: #0f131a;
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 12px;
+}
+input::placeholder, textarea::placeholder { color: #5b6474; }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(47,124,255,.2);
+  outline: none;
+}
+input[type="range"] { background: #232a36; }
+select option { background: #141822; color: var(--text); }
+
+/* ============ 12) AUTH / LANDING / ONBOARDING ============ */
+.auth-shell { background: #141822; border: 1px solid var(--line); box-shadow: 0 30px 70px rgba(0,0,0,.55); }
+.auth-side { background: linear-gradient(150deg, #1f66e8, #0f3fa8); }
+.auth-main { background: #141822; }
+.auth-tabs button { color: var(--muted); }
+.auth-tabs button.active { color: #fff; border-color: var(--accent); }
+.landing-hero h1 { color: #fff; text-shadow: 0 2px 30px rgba(47,124,255,.35); }
+.landing-hero p { color: var(--muted); }
+.landing-topbar { background: rgba(10,12,16,.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.landing-topbar .brand span { color: #fff; }
+.landing-cta-btn {
+  /* v25 (user): no diagonal effect on buttons — flat fill */
+  background: #3d8bff;
+  box-shadow: 0 6px 18px rgba(47,124,255,.26);
+  border-radius: 999px;
+}
+.landing-feature { background: var(--white); border: 1px solid var(--line); color: var(--vfit-ink-dim); }
+.landing-feature i { color: var(--accent); }
+.landing-feature h4, .landing-feature b { color: #fff; }
+
+/* onboarding / survey panel */
+.panel.daily-exercise-container { background: var(--white); }
+.de-step-title { color: #fff; }
+.de-step-desc { color: var(--muted); }
+.muscle-select-btn { background: var(--vfit-surface); color: var(--vfit-ink-dim); border: 1px solid var(--line); }
+.muscle-select-btn.selected { background: rgba(47,124,255,.3); color: #fff; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47,124,255,.2); }
+.muscle-view-btn { background: var(--vfit-surface); color: var(--muted); border: 1px solid var(--line); }
+.muscle-view-btn.active { color: #fff; border-color: var(--accent); background: rgba(47,124,255,.15); }
+.de-day-btn { background: var(--vfit-surface); color: var(--vfit-ink-dim); border: 1px solid var(--line); }
+.de-day-btn.selected { background: rgba(47,124,255,.2); color: #fff; border-color: var(--accent); }
+/* v27 (user, picture 1): "always make the number x blue (e.g day x of y)" —
+   .de-day-num is REMOVED from the white/charcoal theming lists above and gets
+   its own accent-blue rule, so the current-day number reads blue in BOTH the
+   h2 headline and the .de-day-sub subtitle, in dark AND light themes. */
+.de-day-header, .de-day-sub { color: #fff; }
+.de-day-num { color: var(--accent); }
+.de-today-kcal-popup { background: transparent; color: var(--vfit-ink-dim); border: none; }
+/* === v27 (user, picture 1): BIG centered burning-flame calorie counter ===
+   "make the daily calorie count in the middle and make it bigger, by making
+   a big burning flame and the number in it so it looks cool" — a hero flame
+   sits centered above the workout list: gradient fire glyph with a blurred
+   warm halo behind it, gently flickering (fireBurn), with the kcal count
+   rendered INSIDE the flame body and a small uppercase label below. */
+.de-kcal-flame { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; margin: 2px auto 14px; text-align: center; }
+.de-kcal-flame-ic { position: relative; width: 124px; height: 112px; display: flex; align-items: center; justify-content: center; }
+.de-kcal-flame-ic .fa-fire {
+  position: relative; z-index: 1; font-size: 6.3rem; line-height: 1;
+  background: linear-gradient(180deg, #ffe08a 0%, #ffc23a 26%, #ff8a1e 60%, #ff3d2e 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 3px 10px rgba(255, 110, 30, .5));
+  animation: fireBurn 0.6s ease-in-out infinite alternate; transform-origin: bottom center;
+}
+/* blurred halo — a second fire glyph behind the crisp one for a warm glow */
+.de-kcal-flame-ic::after {
+  content: "\f06d"; font-family: "Font Awesome 6 Free"; font-weight: 900;
+  position: absolute; z-index: 0; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 6.3rem; line-height: 1; color: rgba(255, 120, 40, .38);
+  filter: blur(15px); transform: scale(1.12);
+}
+/* the kcal count INSIDE the flame — white on the bright flame body */
+.de-kcal-flame-num {
+  position: absolute; z-index: 2; left: 50%; top: 60%; transform: translate(-50%, -50%);
+  font-size: 1.78rem; font-weight: 800; color: #fff; line-height: 1;
+  font-variant-numeric: tabular-nums; letter-spacing: -.02em;
+  text-shadow: 0 1px 2px rgba(96, 20, 0, .9), 0 0 10px rgba(255, 96, 24, .8), 0 2px 6px rgba(0, 0, 0, .35);
+}
+.de-kcal-flame-lbl { color: var(--muted); font-size: .68rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+html[data-vfit-theme="light"] .de-kcal-flame-lbl { color: #bf5a16; }
+
+/* ============ 13) MISC DARK FIXES (stray hardcoded light values) ============ */
+.toast { background: #141822; color: var(--text); border: 1px solid var(--line); box-shadow: 0 18px 40px rgba(0,0,0,.5); }
+.toast.success { border-color: rgba(48,209,88,.5); }
+.toast.error { border-color: rgba(255,69,58,.5); }
+.volta-confirm-popup, .modal-popup, #day-summary-popup, .plan-view-modal {
+  background: #141822; color: var(--text); border: 1px solid var(--line);
+}
+.volta-confirm-popup h3, .modal-popup h3 { color: #fff; }
+.volta-confirm-popup p, .modal-popup p { color: var(--muted); }
+#streak-popup-card, #great-work-card { background: #141822; color: var(--text); border: 1px solid var(--line); }
+#streak-popup-card h2, #great-work-card h2 { color: #fff; }
+
+/* diet tab surfaces */
+.diet-grid .gemini-meal, .gemini-meal {
+  background: var(--vfit-surface); border: 1px solid var(--line); border-radius: 16px; color: var(--text);
+}
+.gemini-meal h4, .gemini-meal b { color: #fff; }
+.gemini-meal-src { background: transparent; border: none; color: var(--muted); }
+.gemini-meal-src-line i { color: var(--accent); }
+/* v45: the regen button wears a real frame in the dark fitness theme too */
+.gemini-meal-regen { background: rgba(47,124,255,.13); color: #9dc2ff; border: 1.5px solid rgba(100,149,237,.5); }
+.gemini-meal-regen:hover { background: rgba(47,124,255,.22); color: #fff; border-color: rgba(139,169,255,.85); }
+
+/* chat / coach */
+#chat-panel, .chat-msg, .chat-input-area { background: var(--vfit-surface); color: var(--text); border-color: var(--line); }
+.chat-msg.user { background: linear-gradient(135deg, #3d8bff, #1f66e8); color: #fff; }
+.chat-msg.ai { background: #1a1f2a; color: var(--text); }
+
+/* tables / lists / misc text */
+table { color: var(--text); }
+th { color: var(--muted); }
+hr { border-color: var(--line); }
+.badge-card, .task-card, .stat-card, .mood-card, .sport-card {
+  background: var(--white); border: 1px solid var(--line); color: var(--text);
+}
+.stat-card .stat-icon { background: rgba(47,124,255,.15); color: #9dc2ff; }
+.badge-card h4, .task-card h4, .stat-card b { color: #fff; }
+
+/* scrollbars — Apple dark */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a3344; border-radius: 99px; border: 2px solid #0a0c10; }
+::-webkit-scrollbar-thumb:hover { background: #39445c; }
+* { scrollbar-color: #2a3344 #0a0c10; }
+
+/* focus ring */
+:focus-visible { outline: 2px solid rgba(47,124,255,.7); outline-offset: 2px; }
+
+/* ============ 14) PHONE POLISH ============ */
+@media (max-width: 768px) {
+  .panel { border-radius: 18px; }
+  .dash-stat-card .dash-stat-body b { font-size: 1.45rem; }
+  .dash-day-ghost { font-size: 3.4rem; }
+  .bottom-nav { padding-top: 8px; }
+  .bottom-nav-item { border-radius: 16px; }
+  .dash-rings-wrap { max-width: 200px; }
+  /* v21: budget strip inset matches the split-head's phone padding (13px) */
+  .vfit-budget { padding: 10px 13px 2px; }
+}
+
+/* ============ 15) REDUCED MOTION ============ */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .dash-stat-card, .plan-day-row, .workout-block { transition: none; }
+}
+
+/* ============================================================
+   16) UNIVERSAL ROUNDING — v20 (user: "remove every sharp
+   edge and make everything rounded")
+   Radius scale: xs 8 / sm 12 / md 16 / lg 20 / pill 999.
+   Only curated component selectors — circles (50%) and
+   full-bleed chrome (body, overlays, screens) are untouched.
+   ============================================================ */
+:root { --vfit-r-xs: 8px; --vfit-r-sm: 12px; --vfit-r-md: 16px; --vfit-r-lg: 20px; }
+
+/* --- A. Pills: chips, badges, tags, small labels --- */
+.music-chip, .rec-chip, .rc-blue, .rc-green, .rc-amber, .rc-violet, .rc-red,
+.badge-on-track, .badge-needs-attention, .badge-new, .history-pill,
+.builder-mchip, .coach-filter-chip, .goal-days-left-badge, .dash-date-chip,
+.workout-cal-badge, .wd-se-label, .plan-meal-kcal, .plan-water-note,
+.plan-hiitt-note, .macro-kcal, .macro-p, .macro-c, .macro-f,
+/* v29 (user, picture 5): "make the meals block style the exact same as
+   workout plan workout block, slightly rounded rectangle" — .plan-food-chip-btn
+   is REMOVED from this pill list: the dashboard meal chips get the SAME
+   slightly-rounded-rectangle geometry as the workout chips (.plan-ex-chip,
+   border-radius 10px) instead of the full 999px pill. */
+.plan-focus-chip, .plan-more-toggle, .plan-pager button,
+.gemini-meal-src, .wd-assist-chip, .vp-ai-chip, .mobile-kcal-extra,
+.badge-card .badge-ico, #today-kcal-burnt-row {
+  border-radius: 999px !important;
+}
+
+/* --- B. Buttons & interactive tiles --- */
+.toggle-btn { border-radius: 999px !important; }
+.toggle-group { border-radius: 999px !important; }
+.muscle-select-btn, .muscle-view-btn, .de-day-btn, .see-more-btn,
+.bsr-btn, .coach-quick-action, .coach-export-btn, .hm-nav-btn,
+.back-to-home, .gemini-meal-regen, .offline-meal-pick, .followup-opt,
+.vai-mini-btn, .vp-ai-row-btn, .vp-ai-detail-btn, .vp-ctx-entry,
+.btn.vp-ctx-entry, .mood-btn, .rec-sport-card, .weather-search-wrap,
+.de-today-kcal-popup, .coach-weekly-day.today, .gemini-meal-src.loading {
+  border-radius: var(--vfit-r-sm) !important;
+}
+/* circular icon buttons */
+.info-btn, .modal-close, .meditation-close, .session-exit-btn,
+.session-exit, .weather-search-clear, .vai-cam-badge.live .dot,
+.ocr-orbit::after, .divider::before, .divider::after {
+  border-radius: 50% !important;
+}
+.auth-tabs button.active { border-radius: var(--vfit-r-sm) var(--vfit-r-sm) 0 0; }
+
+/* --- C. Cards, rows, panels, popups --- */
+.moodmorph-panel, .inbody-card, .inbody-upload-area, .weather-temp-card,
+.athlete-card, .dash-feature-card, .meal-card, .diet-card, .mood-card,
+#chat-panel, .chat-input-area, .chat-msg, .settings-row, .toast,
+.volta-confirm-popup, .modal-popup, #day-summary-popup, .plan-view-modal,
+#streak-popup-card, #great-work-card, .vai-result, .vai-safety, .vai-msg,
+.vp-home-card, .vp-plan, .vp-feature, .vp-fx, .vp-meal-flash, .athlete-detail-overlay,
+.coach-session-overlay .coach-session-panel, .weather-safety .safety-item {
+  border-radius: var(--vfit-r-md) !important;
+}
+.history-row, .builder-lib-item, .plan-meal-row, .de-today-kcal-popup {
+  border-radius: 14px !important;
+}
+.badge-tile { border-radius: 18px !important; }
+.plan-split-head.ph-diet, .plan-split-head.ph-workout { border-radius: var(--vfit-r-md) var(--vfit-r-md) 0 0 !important; }
+.sessions-table { border-radius: var(--vfit-r-md); overflow: hidden; border-collapse: separate; border-spacing: 0; }
+.sessions-table th:first-child { border-top-left-radius: var(--vfit-r-sm); }
+.sessions-table th:last-child { border-top-right-radius: var(--vfit-r-sm); }
+.sessions-table tr:last-child td:first-child { border-bottom-left-radius: var(--vfit-r-sm); }
+.sessions-table tr:last-child td:last-child { border-bottom-right-radius: var(--vfit-r-sm); }
+
+/* --- D. Squircle icon tiles (match .dash-stat-icon) --- */
+.stat-card .stat-icon, .dash-feature-icon, .badge-tile-icon,
+.ds-row-ico, .coach-weekly-day { border-radius: 14px !important; }
+
+/* --- E. Decorative bars & underline accents → soft pills --- */
+.panel h3::after, .modal-content h3::after, .main > h1::after,
+#tab-weather > h1::after, .weather-temp-card::after,
+.history-day-head::after, .safety-item::before,
+.ocr-scanner-frame .scan-laser, hr {
+  border-radius: 999px !important;
+}
+.banner-overlay, .banner-card::before, .sport-card::before,
+.landing-feature::before, .dash-hero::before,
+.dash-stat-card.sc-bmi::before, .dash-stat-card.sc-water::before,
+.dash-stat-card.sc-streak::before, .dash-stat-card.sc-mins::before {
+  border-radius: inherit !important;
+}
+
+/* --- F. Circular blobs / weather decor --- */
+.mood-icon-stressed, .mood-icon-sad, .mood-icon-neutral,
+.mood-icon-happy, .mood-icon-pumped, .gw-flame-1, .gw-flame-2,
+.gw-flame-3, .gw-flame-4, .gw-flame-5,
+.weather-clouds-row .weather-cloud, .weather-cloud-container::before,
+.weather-cloud-container::after, .weather-clouds-row::before,
+.weather-clouds-row::after, .weather-rain::after,
+#mobile-kcal-ring .ring-mini-sep {
+  border-radius: 50% !important;
+}
+.ocr-scanner-frame::before, .ocr-scanner-frame::after { border-radius: 6px !important; }
+
+/* --- G. Heatmap + mini charts --- */
+.streak-heatmap .hm-cell, .heatmap-legend .hm,
+.heatmap-legend .hm0, .heatmap-legend .hm1, .heatmap-legend .hm2,
+.heatmap-legend .hm3, .heatmap-legend .hm4 { border-radius: 7px !important; }
+.vai-trend-bar i { border-radius: 6px 6px 3px 3px; }
+
+/* --- H. Inputs & misc --- */
+input[type="range"] { border-radius: 999px !important; }
+/* v44 (user): "make energy bar in moodmorph with rounded corners" — the
+   energy box (v25 had squared it) is rounded again; the slider TRACK keeps
+   its natural pill shape. */
+.mm2-energy { border-radius: 18px !important; }
+.vai-plan-meal .m-add { border-radius: var(--vfit-r-xs) !important; }
+.meal-img, .modal-content img.meal-img { border-radius: 14px !important; }
+.workout-detail-img-wrap, .workout-detail-img { border-radius: var(--vfit-r-md) !important; }
+
+/* ============================================================
+   17) LIGHT THEME OPTION — v20 (user: "bring back light
+   theme as an option")
+   Driven by <html data-vfit-theme="light"> (set by Settings →
+   Theme; persisted as localStorage.vfit_theme; default dark).
+   Apple-Fitness-light / MyFitnessPal palette: soft gray canvas,
+   white cards, same vivid accents. All selectors scoped under
+   html[data-vfit-theme="light"] so the dark skin above stays
+   the default. GOLD RULE intact — premium gold untouched.
+   ============================================================ */
+
+/* --- 17.1) Light tokens --- */
+html[data-vfit-theme="light"] {
+  --bg: #f2f4f8;
+  --white: #ffffff;
+  --text: #10151f;
+  --muted: #6b7686;
+  --line: #e3e8f0;
+  --accent: #2f7cff;
+  --accent-dark: #1f66e8;
+  --accent-soft: #e8f0ff;
+  --accent-border: #bcd2ff;
+  --green: #34c759;
+  --green-bg: #e6f9ec;
+  --amber: #ff9500;
+  --amber-bg: #fff3e0;
+  --red: #ff3b30;
+  --red-bg: #ffe9e7;
+  --cyan: #32ade6;
+  --vfit-surface: #f4f6fa;
+  --vfit-ink-dim: #3a4354;
+  --shadow: 0 1px 2px rgba(16,24,40,.06), 0 10px 30px rgba(16,24,40,.12);
+  --sidebar-bg: #ffffff;
+}
+
+/* --- 17.2) Canvas, splash --- */
+html[data-vfit-theme="light"] body {
+  background:
+    radial-gradient(1200px 500px at 85% -10%, rgba(47,124,255,.08), transparent 60%),
+    radial-gradient(900px 420px at -10% 110%, rgba(52,199,89,.05), transparent 55%),
+    var(--bg);
+  color: var(--text);
+}
+html[data-vfit-theme="light"] #splash-screen { background: #f5f7fb !important; }
+html[data-vfit-theme="light"] .splash-brand span { color: #10151f !important; }
+html[data-vfit-theme="light"] .splash-loader { background: #dfe6f2 !important; }
+
+/* --- 17.3) Shell: panels, sidebar, bottom nav --- */
+html[data-vfit-theme="light"] .panel {
+  box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 8px 24px rgba(16,24,40,.1);
+}
+html[data-vfit-theme="light"] .sidebar {
+  background: linear-gradient(180deg, #ffffff, #f7f9fc);
+}
+html[data-vfit-theme="light"] .sidebar .brand span { color: #10151f; }
+html[data-vfit-theme="light"] .side-btn:hover { background: rgba(47,124,255,.08); color: var(--text); }
+/* v21 (user: "text black instead of white in the side bar") — the active
+   side button kept white ink from the dark skin, unreadable on the light
+   blue active background. Near-black ink + keep the blue active tint. */
+html[data-vfit-theme="light"] .side-btn.active { color: #10151f; }
+html[data-vfit-theme="light"] .side-btn.active i { color: #2f7cff; }
+html[data-vfit-theme="light"] body .bottom-nav,
+html[data-vfit-theme="light"] body.dark-mode .bottom-nav {
+  background: rgba(255,255,255,.9) !important;
+  border: 1px solid rgba(16,24,40,.08) !important;
+  box-shadow: 0 -2px 10px rgba(16,24,40,.08), 0 10px 30px rgba(16,24,40,.12) !important;
+}
+html[data-vfit-theme="light"] .bottom-nav-item,
+html[data-vfit-theme="light"] .bottom-nav-item i { color: #7a8499; }
+html[data-vfit-theme="light"] .bottom-nav-item.active {
+  color: #1f66e8;
+  background: linear-gradient(135deg, rgba(47,124,255,.16), rgba(47,124,255,.07));
+  box-shadow: inset 0 0 0 1px rgba(47,124,255,.28);
+}
+html[data-vfit-theme="light"] .bottom-nav-item.active i { color: #2f7cff; }
+html[data-vfit-theme="light"] .bottom-nav-more {
+  background: rgba(255,255,255,.98);
+  box-shadow: 0 -8px 30px rgba(16,24,40,.18);
+}
+
+/* --- 17.4) Buttons --- */
+html[data-vfit-theme="light"] .btn.ghost { background: rgba(16,24,40,.03); color: var(--text); }
+html[data-vfit-theme="light"] .btn.ghost:hover { background: rgba(47,124,255,.1); color: #10151f; }
+
+/* --- 17.5) Dashboard --- */
+html[data-vfit-theme="light"] .dash-hero {
+  background:
+    radial-gradient(400px 200px at 90% 0%, rgba(47,124,255,.14), transparent 70%),
+    linear-gradient(135deg, #eef4ff 0%, #e2ecfd 60%);
+  border-color: #d8e4f8;
+  box-shadow: 0 8px 22px rgba(16,24,40,.1);
+}
+html[data-vfit-theme="light"] .dash-hero-idtext h1 { color: #10151f; }
+html[data-vfit-theme="light"] .dash-date-chip { background: rgba(47,124,255,.1); border-color: rgba(47,124,255,.28); color: #2f7cff; }
+html[data-vfit-theme="light"] .dash-day-ghost { -webkit-text-stroke: 2px rgba(47,124,255,.3); }
+html[data-vfit-theme="light"] .dash-stat-card .dash-stat-body b { color: #10151f; }
+html[data-vfit-theme="light"] .dash-stat-card.sc-bmi .dash-stat-icon,
+html[data-vfit-theme="light"] .dash-stat-card.sc-water .dash-stat-icon { background: rgba(50,173,230,.16); color: #1f9fd6; }
+html[data-vfit-theme="light"] .dash-stat-card.sc-streak .dash-stat-icon { background: rgba(255,149,0,.16); color: #e08600; }
+html[data-vfit-theme="light"] .dash-stat-card.sc-mins .dash-stat-icon { background: rgba(52,199,89,.16); color: #1d9d6b; }
+html[data-vfit-theme="light"] .dash-stat-card.sc-bmi::before,
+html[data-vfit-theme="light"] .dash-stat-card.sc-water::before { background: #32ade6; color: #32ade6; }
+html[data-vfit-theme="light"] .dash-stat-card.sc-streak::before { background: #ff9500; color: #ff9500; }
+html[data-vfit-theme="light"] .dash-stat-card.sc-mins::before { background: #34c759; color: #34c759; }
+
+/* rings — Apple light palette */
+html[data-vfit-theme="light"] .dash-rings-panel {
+  background:
+    radial-gradient(300px 200px at 15% 15%, rgba(255,59,48,.07), transparent 65%),
+    var(--white);
+}
+html[data-vfit-theme="light"] .ring-track { stroke: #e3e8f0; }
+html[data-vfit-theme="light"] .ring-val.v1 { stroke: #ff3b30; filter: none; }
+html[data-vfit-theme="light"] .ring-val.v2 { stroke: #34c759; filter: none; }
+html[data-vfit-theme="light"] .ring-val.v3 { stroke: #32ade6; filter: none; }
+html[data-vfit-theme="light"] .dash-rings-center b { color: #10151f; }
+html[data-vfit-theme="light"] .dash-rings-eyebrow { color: #2f7cff; }
+html[data-vfit-theme="light"] .dash-rings-title { color: #222a38; }
+html[data-vfit-theme="light"] .dash-rings-sub b { color: #10151f; }
+html[data-vfit-theme="light"] .ring-lg b { color: #10151f; }
+html[data-vfit-theme="light"] .ring-lg.lg1 i { background: #ff3b30; box-shadow: none; }
+html[data-vfit-theme="light"] .ring-lg.lg2 i { background: #34c759; box-shadow: none; }
+html[data-vfit-theme="light"] .ring-lg.lg3 i { background: #32ade6; box-shadow: none; }
+
+html[data-vfit-theme="light"] .dash-section-head h2 { color: #10151f; }
+html[data-vfit-theme="light"] .dash-panel-title { color: #222a38; }
+html[data-vfit-theme="light"] .goal-progress-bar-bg { background: #e3e8f0; }
+html[data-vfit-theme="light"] .goal-progress-bar-fill { background: linear-gradient(90deg, #34c759, #32ade6); box-shadow: none; }
+html[data-vfit-theme="light"] .goal-progress-panel .dash-goal-label b { color: #10151f; }
+html[data-vfit-theme="light"] .goal-days-left-badge { background: rgba(47,124,255,.1); color: #2f7cff; border-color: rgba(47,124,255,.25); }
+html[data-vfit-theme="light"] .dash-goal-pct { color: #10151f; }
+
+/* --- 17.6) Plan cards --- */
+html[data-vfit-theme="light"] .plan-day-name { color: #10151f; }
+html[data-vfit-theme="light"] .plan-focus-chip { background: rgba(47,124,255,.1); color: #2f7cff; border-color: rgba(47,124,255,.25); }
+html[data-vfit-theme="light"] .plan-ex-chip { background: #f1f4f9; color: #3a4354; }
+html[data-vfit-theme="light"] .plan-ex-chip.is-done { border-color: rgba(52,199,89,.5); background: rgba(52,199,89,.1); }
+html[data-vfit-theme="light"] .plan-ex-chip.is-done i { color: #1d9d6b; }
+html[data-vfit-theme="light"] .plan-more-toggle { background: rgba(47,124,255,.08); color: #2f7cff; border-color: rgba(47,124,255,.2); }
+html[data-vfit-theme="light"] .plan-pager button { background: rgba(47,124,255,.1); color: #2f7cff; }
+html[data-vfit-theme="light"] .plan-hiitt-note { background: rgba(255,59,48,.07); color: #d93025; border-color: rgba(255,59,48,.22); }
+/* v28 (user): "make diet plan banner the same color as workout plan banner"
+   — the diet head keeps the SAME dark navy gradient in LIGHT mode too (the
+   old light-tint override + dark labels are gone); its labels stay WHITE
+   exactly like the workout head. */
+html[data-vfit-theme="light"] .plan-split-head.ph-diet { background: linear-gradient(120deg, #1a2233 0%, #2a3a55 100%); }
+html[data-vfit-theme="light"] .plan-split-head.ph-diet .plan-split-title,
+html[data-vfit-theme="light"] .plan-split-head.ph-diet .plan-split-stat b,
+html[data-vfit-theme="light"] .plan-split-head.ph-diet .plan-split-stat span { color: #fff; }
+html[data-vfit-theme="light"] .plan-split-head.ph-diet .plan-split-title i { color: #fff; }
+html[data-vfit-theme="light"] .plan-split-head.ph-workout .plan-split-title,
+html[data-vfit-theme="light"] .plan-split-head.ph-workout .plan-split-stats b,
+html[data-vfit-theme="light"] .plan-split-head.ph-workout .plan-split-stat span,
+html[data-vfit-theme="light"] .plan-split-head.ph-workout .plan-split-title i { color: #fff; }
+html[data-vfit-theme="light"] .plan-meal-name { color: #10151f; }
+html[data-vfit-theme="light"] .plan-meal-kcal { background: rgba(255,149,0,.12); color: #c77700; border-color: rgba(255,149,0,.3); }
+html[data-vfit-theme="light"] .plan-food-chip { background: #f1f4f9; color: #3a4354; }
+html[data-vfit-theme="light"] .plan-food-chip i { color: #1d9d6b; }
+html[data-vfit-theme="light"] .plan-food-chip-btn:hover { background: rgba(52,199,89,.08); color: #10151f; }
+html[data-vfit-theme="light"] .plan-water-note { background: rgba(50,173,230,.08); color: #1f8fd0; border-color: rgba(50,173,230,.25); }
+
+/* MFP budget strip */
+html[data-vfit-theme="light"] .vfit-budget-kcal { color: #10151f; }
+html[data-vfit-theme="light"] .vfit-budget-bar { background: #e3e8f0; }
+html[data-vfit-theme="light"] .vfit-budget-fill { background: linear-gradient(90deg, #3d8bff, #32ade6); box-shadow: none; }
+html[data-vfit-theme="light"] .vfit-budget-fill.over { background: linear-gradient(90deg, #ff9500, #ff3b30); box-shadow: none; }
+html[data-vfit-theme="light"] .vfit-macro.mp i { background: #ff3b30; box-shadow: none; }
+html[data-vfit-theme="light"] .vfit-macro.mc i { background: #32ade6; box-shadow: none; }
+html[data-vfit-theme="light"] .vfit-macro.mf i { background: #ff9500; box-shadow: none; }
+html[data-vfit-theme="light"] .vfit-macro b { color: #10151f; }
+
+/* --- 17.7) Workout tracker --- */
+html[data-vfit-theme="light"] .workout-block.active {
+  border-color: var(--line);
+  background: #ffffff;
+  box-shadow: none;
+}
+html[data-vfit-theme="light"] .workout-block.done { border-color: rgba(52,199,89,.45); background: rgba(52,199,89,.07); }
+html[data-vfit-theme="light"] .workout-item-icon { background: #eef1f7; color: #5b6474; }
+html[data-vfit-theme="light"] .workout-block.active .workout-item-icon { background: #eef1f7; color: #5b6474; }
+html[data-vfit-theme="light"] .workout-block.done .workout-item-icon { background: rgba(52,199,89,.14); color: #1d9d6b; }
+html[data-vfit-theme="light"] .workout-block.locked .workout-item-icon { background: #e9edf4; color: #98a2b3; }
+html[data-vfit-theme="light"] .workout-item-info b { color: #10151f; }
+html[data-vfit-theme="light"] .workout-cal-badge { background: rgba(255,59,48,.08); color: #d93025; border-color: rgba(255,59,48,.22); }
+html[data-vfit-theme="light"] .workout-detail-img-wrap { background: #e9edf5; }
+html[data-vfit-theme="light"] .workout-timer-display { color: #10151f; }
+
+/* --- 17.8) Modals, inputs, popups --- */
+html[data-vfit-theme="light"] .modal-overlay { background: rgba(16,24,40,.35); }
+html[data-vfit-theme="light"] .modal-overlay .modal-content,
+html[data-vfit-theme="light"] .modal-card, html[data-vfit-theme="light"] .modal-content {
+  background: #ffffff !important;
+  box-shadow: 0 18px 44px rgba(16,24,40,.22);
+}
+html[data-vfit-theme="light"] .modal-content h3, html[data-vfit-theme="light"] .modal-content h2,
+html[data-vfit-theme="light"] .modal-card h3 { color: #10151f; }
+html[data-vfit-theme="light"] input, html[data-vfit-theme="light"] select, html[data-vfit-theme="light"] textarea {
+  background: #f4f6fa;
+}
+html[data-vfit-theme="light"] input::placeholder, html[data-vfit-theme="light"] textarea::placeholder { color: #9aa3b5; }
+html[data-vfit-theme="light"] input[type="range"] { background: #e3e8f0; }
+html[data-vfit-theme="light"] select option { background: #ffffff; color: #10151f; }
+
+/* --- 17.9) Auth / landing / onboarding --- */
+html[data-vfit-theme="light"] .auth-shell { background: #ffffff; box-shadow: 0 30px 70px rgba(16,24,40,.18); }
+html[data-vfit-theme="light"] .auth-main { background: #ffffff; }
+html[data-vfit-theme="light"] .auth-tabs button.active { color: #10151f; }
+html[data-vfit-theme="light"] .landing-hero h1 { color: #10151f; text-shadow: 0 2px 30px rgba(47,124,255,.18); }
+html[data-vfit-theme="light"] .landing-topbar { background: rgba(255,255,255,.88); border-bottom-color: #e3e8f0; }
+html[data-vfit-theme="light"] .landing-topbar .brand span { color: #10151f; }
+html[data-vfit-theme="light"] .landing-feature h4, html[data-vfit-theme="light"] .landing-feature b { color: #10151f; }
+html[data-vfit-theme="light"] .de-step-title { color: #10151f; }
+html[data-vfit-theme="light"] .muscle-select-btn { color: #3a4354; }
+html[data-vfit-theme="light"] .muscle-view-btn { color: #5b6474; }
+html[data-vfit-theme="light"] .de-day-btn { color: #3a4354; }
+html[data-vfit-theme="light"] .de-day-header, html[data-vfit-theme="light"] .de-day-sub { color: #10151f; }
+html[data-vfit-theme="light"] .de-day-num { color: var(--accent); }
+
+/* --- 17.10) Misc surfaces --- */
+html[data-vfit-theme="light"] .toast { background: #ffffff; box-shadow: 0 18px 40px rgba(16,24,40,.2); }
+html[data-vfit-theme="light"] .toast.success { border-color: rgba(52,199,89,.5); }
+html[data-vfit-theme="light"] .toast.error { border-color: rgba(255,59,48,.5); }
+html[data-vfit-theme="light"] .volta-confirm-popup, html[data-vfit-theme="light"] .modal-popup,
+html[data-vfit-theme="light"] #day-summary-popup, html[data-vfit-theme="light"] .plan-view-modal { background: #ffffff; }
+html[data-vfit-theme="light"] .volta-confirm-popup h3, html[data-vfit-theme="light"] .modal-popup h3 { color: #10151f; }
+html[data-vfit-theme="light"] #streak-popup-card, html[data-vfit-theme="light"] #great-work-card { background: #ffffff; }
+html[data-vfit-theme="light"] #streak-popup-card h2, html[data-vfit-theme="light"] #great-work-card h2 { color: #10151f; }
+html[data-vfit-theme="light"] .gemini-meal h4, html[data-vfit-theme="light"] .gemini-meal b { color: #10151f; }
+html[data-vfit-theme="light"] .gemini-meal-src { background: transparent; border: none; }
+html[data-vfit-theme="light"] .gemini-meal-regen { background: rgba(47,124,255,.07); color: #2f7cff; border: 1.5px solid rgba(47,124,255,.4); }
+html[data-vfit-theme="light"] .gemini-meal-regen:hover { background: rgba(47,124,255,.14); color: #1f66e8; border-color: rgba(47,124,255,.65); }
+html[data-vfit-theme="light"] .chat-msg.ai { background: #f1f4f9; color: #10151f; }
+html[data-vfit-theme="light"] .badge-card h4, html[data-vfit-theme="light"] .task-card h4,
+html[data-vfit-theme="light"] .stat-card b { color: #10151f; }
+html[data-vfit-theme="light"] .stat-card .stat-icon { background: rgba(47,124,255,.1); color: #2f7cff; }
+
+/* scrollbars — light */
+html[data-vfit-theme="light"] ::-webkit-scrollbar-thumb { background: #c6cfdd; border: 2px solid #f5f7fb; }
+html[data-vfit-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #aab6c9; }
+html[data-vfit-theme="light"] * { scrollbar-color: #c6cfdd #f5f7fb; }
+
+/* status-bar color hint for installed PWA/APK */
+html[data-vfit-theme="light"] { color-scheme: light; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   v33 ROUND — picture fixes (Weather underline · RecoveryIQ alignment)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* --- v33 · picture 3: the Weather h1 underline was too long ---
+   The redesign rules give every title a fit-content box so the blue stripe
+   spans exactly the text width. But the Weather tab's h1 is a DIRECT child
+   of #tab-weather (not of .main), so it never received the fit-content box
+   — it stayed a full-width block and its 100% stripe ran across the whole
+   content column. Shrink the box to the text: the stripe hugs the title. */
+#tab-weather > h1 {
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 100%;
+}
+
+/* --- v33 · picture 4: RecoveryIQ header text pushed right ---
+   .vai-head was built for chat headers with a close button on the right
+   (justify-content: space-between). The RecoveryIQ screen header only has
+   the icon + text block, so space-between shoved the title/subtitle toward
+   the middle-right. Pin the header content to the LEFT and restore the
+   natural reading flow. The title's blue stripe follows automatically
+   (it is centered under the fit-content title box). */
+.recovery-screen-panel .vai-head {
+  justify-content: flex-start;
+  gap: 12px;
+  text-align: left;
+}
+.recovery-screen-panel .vai-head h3,
+.recovery-screen-panel .vai-head small {
+  text-align: left;
+  margin: 0;
+}
+html[dir="rtl"] .recovery-screen-panel .vai-head {
+  justify-content: flex-start;
+}
+
+/* ============ 21) HOVER GLOW — REMOVED (v44) ============
+   v43 added an electric-blue hover glow to every widget; the user
+   asked to take it back out ("remove the glow effect i told you to
+   add"). The whole --vglow halo system (dark + light variants) is
+   gone — widgets return to their pre-v43 hover behavior. */
+
+
+/* ============================================================
+   22) v44 FIXES — user picture round
+   ============================================================ */
+
+/* --- A. Scanner result: kcal as a BLUE tag (picture 3) ---
+   The result panel background IS --accent-soft, so the kcal pill's soft
+   blue fill vanished into it and read as bare text. A solid accent tag
+   matches the AI-generated meal cards' look and stays visible. */
+#ai-meal-result-panel .macro-kcal {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 2px 10px rgba(100, 149, 237, .35);
+}
+
+/* --- B. Diet plan card: ALIGNED rounded corners (picture 4) ---
+   The meal-row boxes sat flush against the card edge, so their right
+   corners read square-cut. A small inset lets every radius read, and the
+   three levels (card 18 → row 12 → chip 9) step consistently. Applies to
+   BOTH diet cards (dashboard .plan-day-row rows, Diet tab .plan-meal-row)
+   and harmonizes the Diet-tab chips with the dashboard ones. */
+.plan-split-card .plan-day-row,
+.plan-split-card .plan-meal-row {
+  margin: 8px 10px;
+  border-top: none;
+  border-radius: 12px !important;
+}
+.plan-split-card .plan-day-row:first-of-type { margin-top: 10px; }
+.plan-split-card .plan-water-note {
+  margin: 4px 10px 10px;
+  border-top: none;
+  border-radius: 12px !important;
+}
+.plan-split-card .plan-food-chip { border-radius: 9px !important; }
+
+
+/* ============================================================
+   23) v46 FIXES — user picture round
+   ============================================================ */
+
+/* --- A. Dashboard plan cards: FRAME OFF, PLANS BIGGER (user) ---
+   "remove the frame around workout plan and diet plan in dashboard, and
+   make both workout and diet plans bigger". The section wore a double
+   frame: the outer .plan-mini-panel border AND each .plan-split-card
+   border. Both are gone — the two plan cards now float straight on the
+   dashboard (their soft shadow keeps depth, no hard edge). The headers,
+   day rows and WORKOUT exercise chips all step up a size. */
+.plan-mini-panel {
+  background: transparent; border: none; box-shadow: none;
+  padding: 0 !important; /* beats the sport-theme inset */
+}
+.plan-split-card { border: none; }
+
+.plan-split-head { padding: 14px 18px; }
+.plan-split-title { font-size: 1.32rem; }
+.plan-split-stat b { font-size: 1.28rem; }
+.plan-split-stat span { font-size: .66rem; }
+.plan-day-row { padding: 12px 16px; }
+.plan-day-head { margin-bottom: 8px; }
+.plan-day-name { font-size: .95rem; }
+.plan-day-kcal { font-size: .72rem; }
+/* workout exercise chips grow with the plan (v10 equality superseded —
+   the user now wants the plans bigger but the MEALS compact) */
+.plan-ex-chip { font-size: .95rem; padding: 9px 13px; border-radius: 11px; }
+
+/* --- B. Dashboard meal chips: SMALLER (user) ---
+   "make meals size smaller in dashboard" — the food-name chips inside the
+   dashboard DIET PLAN card. Scoped to .plan-ex-chip.plan-food-chip-btn so
+   the Diet tab's own chips (.plan-food-chip.plan-food-chip-btn) and the
+   workout chips above stay untouched. */
+.plan-ex-chip.plan-food-chip-btn {
+  font-size: .74rem; padding: 5px 9px; gap: 5px; border-radius: 9px;
+}
+
+/* --- C. Water note: compact ROUNDED pill that fits (user, picture 3) ---
+   "the liter count is way past the space, make it smaller and make its
+   corners rounded". The old note was width:100% PLUS 10px side margins —
+   20px wider than its card, so the right side bled past the usable space
+   and got clipped square by the card's overflow:hidden. The note is now a
+   compact auto-width pill: hugs the text, fully rounded, smaller type. */
+.plan-split-card .plan-water-note {
+  width: auto;                    /* kills the 100%+margins overflow */
+  font-size: .72rem;
+  padding: 8px 14px;
+  gap: 6px;
+  margin: 8px 10px 10px;
+  border-top: none;
+  border-radius: 999px !important;
+  white-space: nowrap;
+}
+.plan-split-card .plan-water-note i { font-size: 1.05em; }
