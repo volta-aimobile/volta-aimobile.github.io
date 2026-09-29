@@ -1,0 +1,172 @@
+@media (max-width: 768px) {
+
+  html { font-size: 20px; }
+
+  .plan-split-stat span { font-size: .6rem; }
+  .history-day-head { font-size: .74rem; }
+  .history-day-sum { font-size: .72rem; }
+  .diet-log-body small { font-size: .74rem; }
+  .plan-meal-per, .vp-plan-per { font-size: .74rem; }
+  .dash-goal-pct { font-size: .74rem; }
+
+  .btn { padding: 13px 20px; font-size: 1rem; }
+  .btn.small { padding: 10px 15px; font-size: .88rem; }
+  .gemini-meal-regen { padding: 13px 16px; }
+
+  input, select, textarea { font-size: 1rem; padding: 12px 14px; }
+
+  .modal-overlay { padding: 12px; }
+  .modal-content { padding: 26px 22px; max-width: 560px; border-radius: 18px; }
+  .modal-close { width: 48px; height: 48px; min-width: 48px; }
+
+  #bottom-nav .bottom-nav-item { height: 62px; gap: 3px; padding: 6px 2px; }
+  #bottom-nav .bottom-nav-item i { font-size: 20px !important; }
+  #bottom-nav .bottom-nav-item span { font-size: 11.5px !important; }
+  body.lang-ar #bottom-nav .bottom-nav-item span { font-size: 12.2px !important; letter-spacing: 0; }
+  #screen-app .main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
+  .daily-exercise-container { padding-bottom: 90px; }
+
+  .dash-stat-card { padding: 15px 15px 26px; }
+  .dash-stat-icon { width: 40px; height: 40px; font-size: 1.05rem; }
+  .dash-feature-icon { width: 42px; height: 42px; font-size: 1.1rem; }
+  .mood-card-icon { width: 42px; height: 42px; font-size: 1.1rem; }
+  .moodmorph-header-icon { width: 44px; height: 44px; font-size: 1.25rem; }
+
+  #workout-detail-modal { padding: 0; }
+  #workout-detail-modal .modal-content.workout-detail-modal-content {
+    max-width: 100% !important;
+    width: 100%;
+    margin: 0 !important;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh !important;
+    max-height: 100dvh !important;
+    border-radius: 0;
+    padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  #workout-detail-modal .workout-detail-img-wrap {
+    max-height: 46vh;
+    max-height: 46dvh;
+  }
+
+  #tab-moodmorph .mm2-slider-wrap input[type="range"] {
+    height: 6px !important;
+    border-radius: 999px !important;
+    background: rgba(100,149,237,.32) !important;
+  }
+  #tab-moodmorph .mm2-slider-wrap input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    background: #fff !important;
+    border: 3px solid var(--accent) !important;
+    box-shadow: 0 4px 14px rgba(26,34,51,.35), 0 0 0 2px rgba(100,149,237,.15) !important;
+    margin-top: -17px !important;
+    cursor: grab !important;
+  }
+  #tab-moodmorph .mm2-slider-wrap input[type="range"]::-moz-range-thumb {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    background: #fff !important;
+    border: 3px solid var(--accent) !important;
+    box-shadow: 0 4px 14px rgba(26,34,51,.35) !important;
+    cursor: grab !important;
+  }
+  #tab-moodmorph .mm2-slider-wrap input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+  }
+  #tab-moodmorph .mm2-slider-wrap input[type="range"]::-moz-range-track {
+    height: 6px !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+  }
+  #tab-moodmorph .mm2-slider-wrap { padding: 24px 6px 14px !important; }
+
+  #tab-diet { padding-bottom: 180px !important; }
+}
+
+@media (max-width: 360px) {
+  html { font-size: 19px; }
+}
+
+.diet-card h4, .task-card h4 { font-size: 1.12rem !important; font-weight: 800 !important; margin-bottom: 8px; }
+.diet-card .diet-desc, .task-card .task-desc { font-size: .92rem !important; line-height: 1.5 !important; margin-bottom: 12px; }
+.diet-macros { gap: 8px; }
+.macro-pill { font-size: .82rem !important; padding: 5px 12px !important; border-radius: 20px !important; }
+.diet-card .diet-log-meal-btn { font-size: .92rem !important; padding: 11px 14px !important; }
+.diet-card .diet-more-info { font-size: .82rem !important; padding: 8px 12px !important; }
+.diet-card .diet-desc[style] { font-size: .84rem !important; }
+
+.plan-meal-row { padding: 12px 15px !important; }
+.plan-meal-name { font-size: .95rem !important; letter-spacing: .04em; }
+.plan-macro-tags .macro-pill { font-size: .8rem !important; padding: 5px 11px !important; }
+.plan-food-grid { gap: 8px; }
+.plan-food-chip {
+  font-size: .94rem !important;
+  padding: 10px 14px !important;
+  border-radius: 11px !important;
+  line-height: 1.35;
+}
+.plan-ex-chip { font-size: .94rem !important; padding: 10px 14px !important; border-radius: 11px !important; }
+.plan-day-name { font-size: .9rem !important; }
+.plan-day-kcal { font-size: .74rem !important; padding: 4px 11px !important; }
+
+.diet-target { font-size: 1.02rem !important; }
+.diet-macros .macro-pill { font-size: .82rem !important; }
+
+@media (max-width: 768px) {
+  #tab-diet .diet-card { padding: 16px !important; }
+  #tab-diet .macro-pill { font-size: .78rem !important; padding: 5px 10px !important; }
+  .plan-meal-row { padding: 11px 13px !important; }
+  .plan-food-chip, .plan-ex-chip { font-size: .88rem !important; padding: 9px 12px !important; }
+  .plan-meal-name { font-size: .92rem !important; }
+}
+
+#plan-view-modal .plan-day-name { font-size: 1.08rem !important; }
+#plan-view-modal .plan-day-name-wrap b { font-size: 1.08rem; }
+#plan-view-modal .plan-day-count { font-size: .74rem; padding: 2px 9px; }
+#plan-view-modal .plan-day-focus { font-size: .78rem; padding: 3px 10px; }
+#plan-view-modal .plan-exercise-tag {
+  font-size: .98rem !important;
+  font-weight: 600;
+  color: var(--text);
+  padding: 5px 11px;
+  border-radius: 8px;
+  line-height: 1.35;
+}
+#plan-view-modal .plan-exercise-tag small { font-size: .82rem; }
+#plan-view-modal .plan-more-toggle { font-size: .85rem; padding: 8px 10px; }
+#plan-view-modal .plan-cardio { font-size: .85rem; }
+#plan-view-modal .plan-rest-note { color: var(--muted); font-size: .92rem; font-weight: 600; }
+#plan-view-modal .plan-day { padding: 12px 14px; }
+#plan-view-modal .plan-day-exercises { gap: 7px; }
+@media (max-width: 640px) {
+  #plan-view-modal .plan-exercise-tag { font-size: .92rem !important; padding: 5px 10px; }
+  #plan-view-modal .plan-day-name { font-size: 1.0rem !important; }
+  #plan-view-modal .plan-day-name-wrap b { font-size: 1.0rem; }
+}
+
+.vp-cancel-sub-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px 14px;
+  border: 1px solid var(--red);
+  border-radius: 12px;
+  background: var(--red-bg);
+  color: var(--red);
+  font-size: .92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter .15s ease, transform .15s ease;
+}
+.vp-cancel-sub-btn:hover { filter: brightness(1.04); transform: translateY(-1px); }
+.vp-cancel-sub-btn:active { transform: translateY(0); }
+.vp-cancel-sub-btn i { font-size: .95rem; }

@@ -1,0 +1,332 @@
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+html.v-js .v-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .55s cubic-bezier(.22, 1, .36, 1),
+              transform .55s cubic-bezier(.22, 1, .36, 1);
+}
+html.v-js .v-reveal.v-in {
+  opacity: 1;
+  transform: none;
+}
+
+ 
+ 
+
+
+
+
+
+
+
+@keyframes vSlideUpTab {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+    animation-timing-function: cubic-bezier(.16, 1, .3, 1);
+  }
+  62% {
+    opacity: 1;
+    transform: translate3d(0, -3px, 0);
+    animation-timing-function: cubic-bezier(.3, 0, .3, 1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+html.v-js .tab.active > * {
+  animation: vSlideUpTab .38s backwards;
+}
+html.v-js .tab.active > *:nth-child(1) { animation-delay: 0s; }
+html.v-js .tab.active > *:nth-child(2) { animation-delay: .02s; }
+html.v-js .tab.active > *:nth-child(3) { animation-delay: .035s; }
+html.v-js .tab.active > *:nth-child(4) { animation-delay: .05s; }
+html.v-js .tab.active > *:nth-child(5) { animation-delay: .06s; }
+html.v-js .tab.active > *:nth-child(6) { animation-delay: .065s; }
+html.v-js .tab.active > *:nth-child(7) { animation-delay: .07s; }
+html.v-js .tab.active > *:nth-child(8) { animation-delay: .075s; }
+html.v-js .tab.active > :nth-child(n+9) { animation-delay: .075s; }
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+@keyframes vUnderlineSweep {
+  from { transform: translateX(-50%) skewX(-24deg) scaleX(0); }
+  to   { transform: translateX(-50%) skewX(-24deg) scaleX(1); }
+}
+ 
+
+@keyframes vUnderlineSweepPlain {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+#screen-app .panel h3::after,
+.modal-content h3::after,
+#screen-app .main > h1::after,
+#screen-app .tab > h1::after,
+#tab-weather > h1::after {
+  transform-origin: left center;
+  animation: vUnderlineSweep .55s cubic-bezier(.22, 1, .36, 1) .12s backwards;
+}
+ 
+
+
+#tab-weather .weather-temp-card::after {
+  transform-origin: left center;
+  animation: vUnderlineSweepPlain .55s cubic-bezier(.22, 1, .36, 1) .15s backwards;
+}
+ 
+body.lang-ar #screen-app .panel h3::after,
+body.lang-ar .modal-content h3::after,
+body.lang-ar #screen-app .main > h1::after,
+body.lang-ar #screen-app .tab > h1::after,
+body.lang-ar #tab-weather > h1::after,
+body.lang-ar #tab-weather .weather-temp-card::after {
+  transform-origin: right center;
+}
+
+
+ 
+ 
+
+
+
+
+
+
+.stat-card, .sport-card, .diet-card, .safety-item { contain: layout style; }
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-border);
+  box-shadow: 0 6px 14px rgba(26, 34, 51, .12);
+}
+.stat-icon { transition: transform .28s cubic-bezier(.34, 1.56, .64, 1); }
+.stat-card:hover .stat-icon { transform: scale(1.15) rotate(-6deg); }
+
+.banner-card img { transition: transform .6s cubic-bezier(.22, 1, .36, 1); }
+.banner-card:hover img { transform: scale(1.08); }
+.banner-card:hover { transform: translateY(-4px); box-shadow: 0 6px 16px rgba(26, 34, 51, .14); }
+
+.sport-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+  box-shadow: 0 6px 14px rgba(26, 34, 51, .12);
+}
+
+.sidebar .side-btn i { transition: transform .2s ease; }
+.sidebar .side-btn:not(.active):hover i { transform: scale(1.15); }
+
+
+ 
+ 
+
+
+
+
+
+
+
+html.v-nav-glider-on #bottom-nav .bottom-nav-items { position: relative; }
+html.v-nav-glider-on #bottom-nav .bottom-nav-item { z-index: 1; }
+ 
+
+
+html.v-nav-glider-on #bottom-nav .bottom-nav-item.active {
+  background: transparent !important;
+}
+ 
+
+
+
+
+
+
+html.v-nav-glider-on body.dark-mode #bottom-nav .bottom-nav-item.active {
+  background: transparent !important;
+}
+.v-nav-glider {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: 56px;
+  height: calc(100% - 8px);
+  border-radius: 15px;  
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  box-shadow: 0 2px 8px rgba(26, 34, 51, .08);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transform: translateX(0);  
+  transition: transform .34s cubic-bezier(.3, 1.35, .45, 1),
+              width .34s cubic-bezier(.3, 1.35, .45, 1),
+              opacity .18s ease;
+  will-change: transform;
+}
+body.dark-mode .v-nav-glider {
+  background: rgba(100, 149, 237, .16);
+  box-shadow: none;
+}
+ 
+
+body.lang-ar .v-nav-glider { border-radius: 15px; }
+
+
+ 
+ 
+
+
+#v-celebrate {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  overflow: hidden;
+}
+#v-celebrate .v-confetti {
+  position: absolute;
+  top: -14px;
+  will-change: transform, opacity;
+}
+#v-celebrate .v-check {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 92px;
+  height: 92px;
+  margin: -46px 0 0 -46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #4a7bd9);
+  box-shadow: 0 10px 30px rgba(74, 123, 217, .45),
+              0 0 0 10px rgba(100, 149, 237, .12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 42px;
+  animation: vCheckPop .95s cubic-bezier(.34, 1.56, .64, 1) forwards;
+}
+@keyframes vCheckPop {
+  0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+  45%  { transform: scale(1.15) rotate(4deg); opacity: 1; }
+  70%  { transform: scale(.97) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+
+ 
+.btn {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(.96); }
+.btn .v-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: rgba(255, 255, 255, .5);
+  transform: scale(0);
+  animation: vRipple .6s ease-out forwards;
+}
+.btn .v-ripple.tinted { background: rgba(100, 149, 237, .3); }
+@keyframes vRipple {
+  to { transform: scale(2.6); opacity: 0; }
+}
+
+
+ 
+.goal-progress-bar-fill {
+  transition: width .9s cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+
+ 
+.v-pop { animation: vNumPop .38s cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes vNumPop {
+  40% { transform: scale(1.22); }
+}
+.stat-card b, #today-kcal-burnt, #mobile-kcal-num { display: inline-block; }
+
+
+ 
+.modal-overlay { transition: opacity .2s ease, visibility .2s ease; }
+.modal-overlay.active .modal-content {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .22);
+}
+
+
+ 
+.btn:focus-visible,
+.side-btn:focus-visible,
+.bottom-nav-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+
+ 
+@media (prefers-reduced-motion: reduce) {
+  html.v-js .v-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  html.v-js .tab.active > *,
+  .bottom-nav-item.active,
+  .v-pop {
+    animation: none !important;
+  }
+  .screen.active {
+    animation: none !important;
+  }
+  #screen-app .panel h3::after,
+  .modal-content h3::after,
+  #screen-app .main > h1::after,
+  #screen-app .tab > h1::after,
+  #tab-weather > h1::after,
+  #tab-weather .weather-temp-card::after {
+    animation: none !important;
+  }
+  .stat-card:hover, .banner-card:hover, .sport-card:hover { transform: none; }
+}
+
+
+ 
+ 
+
+
+#diet-meals .diet-meal-name {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .15s ease;
+}
+#diet-meals .diet-meal-name:hover { color: var(--accent); }
